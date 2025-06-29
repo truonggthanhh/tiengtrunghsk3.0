@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, Home, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 
-const BATCH_SIZE = 15;
+const BATCH_SIZE = 10;
 
 const FlashcardPage = () => {
   const { level } = useParams<{ level: string }>();
