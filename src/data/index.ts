@@ -1,10 +1,11 @@
 import { hsk1Vocabulary, type VocabularyWord } from './hsk1';
 import { hsk2Vocabulary } from './hsk2';
+import { hsk3Vocabulary } from './hsk3';
 
 const vocabularyData: { [key: string]: VocabularyWord[] } = {
   '1': hsk1Vocabulary,
   '2': hsk2Vocabulary,
-  '3': [],
+  '3': hsk3Vocabulary,
   '4': [],
   '5': [],
   '6': [],
