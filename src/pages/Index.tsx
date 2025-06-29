@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import {
@@ -15,34 +16,46 @@ import HeroIllustration from "@/components/HeroIllustration";
 
 const exerciseTypes = [
   {
+    slug: "flashcard",
     title: "Flashcard",
     description: "Ôn tập từ vựng qua thẻ ghi nhớ",
     icon: <BookOpen />,
+    isAvailable: true,
   },
   {
+    slug: "fill-in-the-blank",
     title: "Điền từ",
     description: "Điền từ còn thiếu vào chỗ trống",
     icon: <FileQuestion />,
+    isAvailable: false,
   },
   {
+    slug: "multiple-choice",
     title: "Trắc nghiệm",
     description: "Chọn đáp án đúng cho câu hỏi",
     icon: <CheckSquare />,
+    isAvailable: false,
   },
   {
+    slug: "sentence-scramble",
     title: "Sắp xếp câu",
     description: "Sắp xếp các từ thành câu hoàn chỉnh",
     icon: <Shuffle />,
+    isAvailable: false,
   },
   {
+    slug: "pinyin-choice",
     title: "Chọn phiên âm",
     description: "Chọn pinyin đúng cho chữ Hán",
     icon: <Mic />,
+    isAvailable: false,
   },
   {
+    slug: "meaning-choice",
     title: "Chọn nghĩa",
     description: "Chọn nghĩa đúng cho từ vựng",
     icon: <Puzzle />,
+    isAvailable: false,
   },
 ];
 
@@ -63,8 +76,10 @@ const Index = () => {
               <p className="max-w-xl mx-auto lg:mx-0 text-lg md:text-xl text-muted-foreground mb-8">
                 Nền tảng ôn luyện HSK toàn diện, giúp bạn tự tin vượt qua kỳ thi với điểm số cao nhất.
               </p>
-              <Button size="lg">
-                Bắt đầu học ngay <ArrowRight className="ml-2 h-5 w-5" />
+              <Button size="lg" asChild>
+                <Link to={`/hsk/${level}/flashcard`}>
+                  Bắt đầu học ngay <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
               </Button>
             </div>
             <div className="hidden lg:block">
@@ -99,21 +114,25 @@ const Index = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {exerciseTypes.map((exercise) => (
-              <Card key={exercise.title} className="flex flex-col text-center hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-in-out cursor-pointer group">
-                <CardHeader className="items-center flex-grow">
-                  <div className="mb-4 bg-primary/10 p-4 rounded-full transition-colors group-hover:bg-primary">
-                    {React.cloneElement(exercise.icon, { className: "w-8 h-8 text-primary transition-colors group-hover:text-primary-foreground" })}
-                  </div>
-                  <CardTitle className="text-xl">{exercise.title}</CardTitle>
-                  <CardDescription>{exercise.description}</CardDescription>
-                </CardHeader>
-                <CardFooter>
-                  <Button variant="ghost" className="w-full text-primary">
-                    Luyện tập
-                    <ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </CardFooter>
-              </Card>
+              <div key={exercise.slug} className={!exercise.isAvailable ? 'opacity-50' : ''}>
+                <Link to={exercise.isAvailable ? `/hsk/${level}/${exercise.slug}` : '#'} className={!exercise.isAvailable ? 'pointer-events-none' : ''}>
+                  <Card className="flex flex-col text-center h-full hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-in-out group cursor-pointer">
+                    <CardHeader className="items-center flex-grow">
+                      <div className="mb-4 bg-primary/10 p-4 rounded-full transition-colors group-hover:bg-primary">
+                        {React.cloneElement(exercise.icon, { className: "w-8 h-8 text-primary transition-colors group-hover:text-primary-foreground" })}
+                      </div>
+                      <CardTitle className="text-xl">{exercise.title}</CardTitle>
+                      <CardDescription>{exercise.description}</CardDescription>
+                    </CardHeader>
+                    <CardFooter>
+                      <Button variant="ghost" className="w-full text-primary" disabled={!exercise.isAvailable}>
+                        {exercise.isAvailable ? 'Luyện tập' : 'Sắp ra mắt'}
+                        {exercise.isAvailable && <ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />}
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </Link>
+              </div>
             ))}
           </div>
         </section>
