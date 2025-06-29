@@ -4,20 +4,40 @@ import Header from '@/components/Header';
 import Flashcard from '@/components/Flashcard';
 import { getVocabularyByLevel } from '@/data';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Home } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Home, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
+
+const BATCH_SIZE = 15;
 
 const FlashcardPage = () => {
   const { level } = useParams<{ level: string }>();
-  const vocabulary = useMemo(() => getVocabularyByLevel(level || '1'), [level]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const fullVocabulary = useMemo(() => getVocabularyByLevel(level || '1'), [level]);
+  
+  const [batchIndex, setBatchIndex] = useState(0);
+  const [currentIndexInBatch, setCurrentIndexInBatch] = useState(0);
+
+  const totalBatches = Math.ceil(fullVocabulary.length / BATCH_SIZE);
+
+  const currentBatchVocabulary = useMemo(() => {
+    const start = batchIndex * BATCH_SIZE;
+    const end = start + BATCH_SIZE;
+    return fullVocabulary.slice(start, end);
+  }, [fullVocabulary, batchIndex]);
+
+  const goToNextWord = () => {
+    setCurrentIndexInBatch(prev => (prev + 1) % currentBatchVocabulary.length);
+  };
+
+  const goToPreviousWord = () => {
+    setCurrentIndexInBatch(prev => (prev - 1 + currentBatchVocabulary.length) % currentBatchVocabulary.length);
+  };
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'ArrowRight') {
-        goToNext();
+        goToNextWord();
       } else if (event.key === 'ArrowLeft') {
-        goToPrevious();
+        goToPreviousWord();
       }
     };
 
@@ -25,9 +45,23 @@ const FlashcardPage = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [currentIndex]);
+  }, [currentBatchVocabulary]);
 
-  if (!vocabulary || vocabulary.length === 0) {
+  const goToNextBatch = () => {
+    if (batchIndex < totalBatches - 1) {
+      setBatchIndex(prev => prev + 1);
+      setCurrentIndexInBatch(0);
+    }
+  };
+
+  const goToPreviousBatch = () => {
+    if (batchIndex > 0) {
+      setBatchIndex(prev => prev - 1);
+      setCurrentIndexInBatch(0);
+    }
+  };
+
+  if (!fullVocabulary || fullVocabulary.length === 0) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -46,17 +80,17 @@ const FlashcardPage = () => {
     );
   }
 
-  const currentWord = vocabulary[currentIndex];
+  const currentWord = currentBatchVocabulary[currentIndexInBatch];
 
-  const goToNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % vocabulary.length);
-  };
+  if (!currentWord) {
+    return (
+        <div className="min-h-screen bg-background flex flex-col items-center justify-center">
+            <p>Đang tải từ vựng...</p>
+        </div>
+    )
+  }
 
-  const goToPrevious = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + vocabulary.length) % vocabulary.length);
-  };
-
-  const progressValue = ((currentIndex + 1) / vocabulary.length) * 100;
+  const progressValue = ((currentIndexInBatch + 1) / currentBatchVocabulary.length) * 100;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -76,18 +110,31 @@ const FlashcardPage = () => {
           />
 
           <div className="mt-8">
+            <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-muted-foreground">Tiến độ đợt này</span>
+                <span className="text-sm font-semibold">Đợt {batchIndex + 1} / {totalBatches}</span>
+            </div>
             <Progress value={progressValue} className="w-full mb-4" />
             <div className="flex justify-between items-center mb-6">
-              <Button variant="outline" onClick={goToPrevious}>
+              <Button variant="outline" onClick={goToPreviousWord}>
                 <ArrowLeft className="mr-2 h-4 w-4" /> Từ trước
               </Button>
               <span className="text-lg font-medium text-muted-foreground">
-                {currentIndex + 1} / {vocabulary.length}
+                {currentIndexInBatch + 1} / {currentBatchVocabulary.length}
               </span>
-              <Button variant="outline" onClick={goToNext}>
+              <Button variant="outline" onClick={goToNextWord}>
                 Từ tiếp theo <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
+          </div>
+
+          <div className="flex justify-center items-center gap-4 mb-8">
+            <Button variant="secondary" onClick={goToPreviousBatch} disabled={batchIndex === 0}>
+                <ChevronsLeft className="mr-2 h-4 w-4" /> Đợt trước
+            </Button>
+            <Button variant="secondary" onClick={goToNextBatch} disabled={batchIndex >= totalBatches - 1}>
+                Đợt tiếp theo <ChevronsRight className="ml-2 h-4 w-4" />
+            </Button>
           </div>
           
           <div className="text-center mt-8">
