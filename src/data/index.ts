@@ -1,9 +1,9 @@
 import { hsk1Vocabulary, type VocabularyWord } from './hsk1';
+import { hsk2Vocabulary } from './hsk2';
 
 const vocabularyData: { [key: string]: VocabularyWord[] } = {
   '1': hsk1Vocabulary,
-  // Dữ liệu cho các cấp độ HSK khác sẽ được thêm vào đây
-  '2': [],
+  '2': hsk2Vocabulary,
   '3': [],
   '4': [],
   '5': [],
