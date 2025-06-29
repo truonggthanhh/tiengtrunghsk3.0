@@ -11,6 +11,7 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { BookOpen, CheckSquare, Shuffle, FileQuestion, Mic, Puzzle, ArrowRight, ChevronRight } from "lucide-react";
+import HeroIllustration from "@/components/HeroIllustration";
 
 const exerciseTypes = [
   {
@@ -53,16 +54,23 @@ const Index = () => {
       <Header />
       <main className="container mx-auto p-4 md:p-8">
         
-        <section className="text-center py-16 md:py-20 mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary">
-            Chinh Phục Tiếng Trung Cùng HSK Master
-          </h1>
-          <p className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground mb-8">
-            Nền tảng ôn luyện HSK toàn diện, giúp bạn tự tin vượt qua kỳ thi với điểm số cao nhất.
-          </p>
-          <Button size="lg">
-            Bắt đầu học ngay <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
+        <section className="py-16 md:py-20 mb-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="text-center lg:text-left">
+              <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary">
+                Chinh Phục Tiếng Trung Cùng TIẾNG TRUNG HAOHAO
+              </h1>
+              <p className="max-w-xl mx-auto lg:mx-0 text-lg md:text-xl text-muted-foreground mb-8">
+                Nền tảng ôn luyện HSK toàn diện, giúp bạn tự tin vượt qua kỳ thi với điểm số cao nhất.
+              </p>
+              <Button size="lg">
+                Bắt đầu học ngay <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
+            <div className="hidden lg:block">
+              <HeroIllustration />
+            </div>
+          </div>
         </section>
 
         <section className="mb-16">
