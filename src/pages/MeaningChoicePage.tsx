@@ -194,7 +194,13 @@ const MeaningChoicePage = () => {
             <p className="text-muted-foreground">Chọn nghĩa đúng cho từ vựng sau.</p>
           </div>
 
-          <Progress value={progressValue} className="w-full mb-4" />
+          <div className="mb-4">
+            <div className="flex justify-between items-center mb-2 text-muted-foreground">
+              <span>Câu: {currentIndex + 1} / {vocabulary.length}</span>
+              <span>Đúng: {correctAnswers}</span>
+            </div>
+            <Progress value={progressValue} className="w-full" />
+          </div>
           
           <Card className="mb-8">
             <CardContent className="p-10 flex items-center justify-center">
