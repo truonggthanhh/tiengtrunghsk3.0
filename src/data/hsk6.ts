@@ -46,5 +46,18 @@ export const hsk6Vocabulary: VocabularyWord[] = [
   { id: 4327, hanzi: "颁发", pinyin: "bānfā", meaning: "Ban phát, cấp phát", examples: [{ hanzi: "学校给获奖学生颁发了奖状。", translation: "Nhà trường đã cấp phát giấy khen cho học sinh đoạt giải." }] },
   { id: 4328, hanzi: "斑", pinyin: "bān", meaning: "Vết, đốm", examples: [{ hanzi: "这只猫身上有黑色的斑点。", translation: "Trên người con mèo này có những đốm đen." }] },
   { id: 4329, hanzi: "版本", pinyin: "bǎnběn", meaning: "Phiên bản", examples: [{ hanzi: "这个软件有几个不同的版本。", translation: "Phần mềm này có mấy phiên bản khác nhau." }] },
-  { id: 4330, hanzi: "半途而废", pinyin: "bàntú'érfèi", meaning: "Bỏ cuộc giữa chừng", examples: [{ hanzi: "做事不能半途而废。", translation: "Làm việc không thể bỏ cuộc giữa chừng." }] }
+  { id: 4330, hanzi: "半途而废", pinyin: "bàntú'érfèi", meaning: "Bỏ cuộc giữa chừng", examples: [{ hanzi: "做事不能半途而废。", translation: "Làm việc không thể bỏ cuộc giữa chừng." }] },
+  { id: 4331, hanzi: "半岛", pinyin: "bàndǎo", meaning: "Bán đảo", examples: [{ hanzi: "朝鲜半岛位于亚洲东部。", translation: "Bán đảo Triều Tiên nằm ở phía đông châu Á." }] },
+  { id: 4332, hanzi: "伴侣", pinyin: "bànlǚ", meaning: "Bạn đời", examples: [{ hanzi: "他是我理想的生活伴侣。", translation: "Anh ấy là người bạn đời lý tưởng của tôi." }] },
+  { id: 4333, hanzi: "伴随", pinyin: "bànsuí", meaning: "Đi cùng, kèm theo", examples: [{ hanzi: "成功往往伴随着艰辛。", translation: "Thành công thường đi kèm với gian khổ." }] },
+  { id: 4334, hanzi: "扮演", pinyin: "bànyǎn", meaning: "Đóng vai", examples: [{ hanzi: "他在电影里扮演一个英雄。", translation: "Anh ấy đóng vai một anh hùng trong phim." }] },
+  { id: 4335, hanzi: "绑架", pinyin: "bǎngjià", meaning: "Bắt cóc", examples: [{ hanzi: "他被匪徒绑架了。", translation: "Anh ấy đã bị bọn cướp bắt cóc." }] },
+  { id: 4336, hanzi: "榜样", pinyin: "bǎngyàng", meaning: "Tấm gương", examples: [{ hanzi: "我们应该向雷锋同志学习，他是我们的好榜样。", translation: "Chúng ta nên học tập đồng chí Lôi Phong, ông là tấm gương tốt của chúng ta." }] },
+  { id: 4337, hanzi: "磅", pinyin: "bàng", meaning: "Pound (đơn vị đo)", examples: [{ hanzi: "这个西瓜重十磅。", translation: "Quả dưa hấu này nặng mười pound." }] },
+  { id: 4338, hanzi: "包庇", pinyin: "bāobì", meaning: "Bao che", examples: [{ hanzi: "我们不能包庇犯罪分子。", translation: "Chúng ta không thể bao che cho phần tử tội phạm." }] },
+  { id: 4339, hanzi: "包袱", pinyin: "bāofu", meaning: "Gánh nặng", examples: [{ hanzi: "他心里有个沉重的包袱。", translation: "Trong lòng anh ấy có một gánh nặng trĩu." }] },
+  { id: 4340, hanzi: "包围", pinyin: "bāowéi", meaning: "Bao vây", examples: [{ hanzi: "敌人被我们包围了。", translation: "Kẻ địch đã bị chúng ta bao vây." }] },
+  { id: 4341, hanzi: "饱和", pinyin: "bǎohé", meaning: "Bão hòa", examples: [{ hanzi: "市场已经饱和了。", translation: "Thị trường đã bão hòa." }] },
+  { id: 4342, hanzi: "饱经沧桑", pinyin: "bǎojīngcāngsāng", meaning: "Trải qua nhiều thăng trầm", examples: [{ hanzi: "这位老人饱经沧桑的脸上刻满了皱纹。", translation: "Trên khuôn mặt từng trải của ông lão này hằn đầy nếp nhăn." }] },
+  { id: 4343, hanzi: "保管", pinyin: "bǎoguǎn", meaning: "Bảo quản", examples: [{ hanzi: "请把这些文件保管好。", translation: "Xin hãy bảo quản tốt những tài liệu này." }] }
 ];
