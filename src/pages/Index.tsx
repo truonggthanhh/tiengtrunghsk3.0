@@ -70,7 +70,7 @@ const Index = () => {
         <section className="py-16 md:py-20 mb-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="text-center lg:text-left">
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary">
+              <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 dark:from-blue-300 dark:via-blue-400 dark:to-blue-500">
                 Chinh Phục Tiếng Trung Cùng TIẾNG TRUNG HAOHAO
               </h1>
               <p className="max-w-xl mx-auto lg:mx-0 text-lg md:text-xl text-muted-foreground mb-8">
