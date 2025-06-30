@@ -50,6 +50,16 @@ const PinyinChoicePage = () => {
     setOptions(finalOptions);
   }, [currentWord, fullVocabulary]);
 
+  const goToNextWord = useCallback(() => {
+    setSelectedPinyin(null);
+    setIsCorrect(null);
+    if (currentIndex < vocabulary.length - 1) {
+      setCurrentIndex(prev => prev + 1);
+    } else {
+      setShowResult(true);
+    }
+  }, [currentIndex, vocabulary.length]);
+
   useEffect(() => {
     if (vocabulary.length > 0 && currentIndex < vocabulary.length) {
       generateOptions();
@@ -77,16 +87,9 @@ const PinyinChoicePage = () => {
     setIsCorrect(correct);
     if (correct) {
       setCorrectAnswers(prev => prev + 1);
-    }
-  };
-
-  const goToNextWord = () => {
-    setSelectedPinyin(null);
-    setIsCorrect(null);
-    if (currentIndex < vocabulary.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-    } else {
-      setShowResult(true);
+      setTimeout(() => {
+        goToNextWord();
+      }, 1200);
     }
   };
   
@@ -233,7 +236,7 @@ const PinyinChoicePage = () => {
             })}
           </div>
 
-          {selectedPinyin && (
+          {selectedPinyin && isCorrect === false && (
             <div className="mt-8 text-center">
               <Button onClick={goToNextWord} size="lg">
                 {currentIndex === vocabulary.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}
