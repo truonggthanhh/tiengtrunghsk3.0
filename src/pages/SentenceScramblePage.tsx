@@ -27,7 +27,12 @@ interface CharObject {
 const SentenceScramblePage = () => {
   const { level } = useParams<{ level: string }>();
   const fullVocabulary = useMemo(() => getVocabularyByLevel(level || '1'), [level]);
-  const vocabularyWithExamples = useMemo(() => fullVocabulary.filter(word => word.examples && word.examples.length > 0), [fullVocabulary]);
+  
+  const allAvailableQuestions = useMemo(() => {
+    return fullVocabulary.flatMap(word => 
+      word.examples ? word.examples.map(ex => ({ sentence: ex.hanzi, translation: ex.translation })) : []
+    );
+  }, [fullVocabulary]);
 
   const [questionCount, setQuestionCount] = useState<number | null>(null);
   const [questions, setQuestions] = useState<{ sentence: string; translation: string; }[]>([]);
@@ -60,14 +65,8 @@ const SentenceScramblePage = () => {
 
   const handleStart = (count: number) => {
     setQuestionCount(count);
-    const shuffledVocab = shuffleArray(vocabularyWithExamples);
-    const selectedQuestions = shuffledVocab.slice(0, count).map(word => {
-      const example = word.examples![Math.floor(Math.random() * word.examples!.length)];
-      return {
-        sentence: example.hanzi,
-        translation: example.translation,
-      };
-    });
+    const shuffledQuestions = shuffleArray(allAvailableQuestions);
+    const selectedQuestions = shuffledQuestions.slice(0, count);
     setQuestions(selectedQuestions);
     
     setCurrentIndex(0);
@@ -119,7 +118,7 @@ const SentenceScramblePage = () => {
     setShowResult(false);
   };
 
-  if (vocabularyWithExamples.length === 0) {
+  if (allAvailableQuestions.length === 0) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -153,11 +152,11 @@ const SentenceScramblePage = () => {
                   <Button 
                     key={count} 
                     onClick={() => handleStart(count)} 
-                    disabled={vocabularyWithExamples.length < count}
+                    disabled={allAvailableQuestions.length < count}
                     size="lg"
                   >
                     {count} câu
-                    {vocabularyWithExamples.length < count && ` (Không đủ câu)`}
+                    {allAvailableQuestions.length < count && ` (Không đủ câu)`}
                   </Button>
                 ))}
                 <Button asChild variant="outline">
