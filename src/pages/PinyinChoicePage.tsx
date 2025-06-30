@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
-import { getVocabularyByLevel } from '@/data';
+import { getVocabularyByLevel, type VocabularyWord } from '@/data';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ArrowRight, Home, CheckCircle2, XCircle } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
@@ -20,8 +20,11 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 
 const PinyinChoicePage = () => {
   const { level } = useParams<{ level: string }>();
-  const vocabulary = useMemo(() => shuffleArray(getVocabularyByLevel(level || '1')), [level]);
+  const fullVocabulary = useMemo(() => getVocabularyByLevel(level || '1'), [level]);
 
+  const [questionCount, setQuestionCount] = useState<number | null>(null);
+  const [vocabulary, setVocabulary] = useState<VocabularyWord[]>([]);
+  
   const [currentIndex, setCurrentIndex] = useState(0);
   const [options, setOptions] = useState<string[]>([]);
   const [selectedPinyin, setSelectedPinyin] = useState<string | null>(null);
@@ -35,7 +38,7 @@ const PinyinChoicePage = () => {
     if (!currentWord) return;
 
     const correctOption = currentWord.pinyin;
-    const incorrectOptions = vocabulary
+    const incorrectOptions = fullVocabulary
       .filter(word => word.pinyin !== correctOption)
       .map(word => word.pinyin);
     
@@ -45,16 +48,29 @@ const PinyinChoicePage = () => {
 
     const finalOptions = shuffleArray([correctOption, ...uniqueIncorrectOptions]);
     setOptions(finalOptions);
-  }, [currentWord, vocabulary]);
+  }, [currentWord, fullVocabulary]);
 
   useEffect(() => {
-    if (vocabulary.length > 0) {
+    if (vocabulary.length > 0 && currentIndex < vocabulary.length) {
       generateOptions();
     }
-  }, [currentIndex, generateOptions, vocabulary.length]);
+  }, [currentIndex, generateOptions, vocabulary]);
+
+  const handleStart = (count: number) => {
+    setQuestionCount(count);
+    const shuffledFullVocab = shuffleArray(fullVocabulary);
+    const slicedVocab = shuffledFullVocab.slice(0, count);
+    setVocabulary(slicedVocab);
+    
+    setCurrentIndex(0);
+    setCorrectAnswers(0);
+    setShowResult(false);
+    setSelectedPinyin(null);
+    setIsCorrect(null);
+  };
 
   const handleAnswer = (pinyin: string) => {
-    if (selectedPinyin) return; // Prevent changing answer
+    if (selectedPinyin) return;
 
     setSelectedPinyin(pinyin);
     const correct = pinyin === currentWord.pinyin;
@@ -74,15 +90,15 @@ const PinyinChoicePage = () => {
     }
   };
   
-  const restart = () => {
+  const resetToLevelSelection = () => {
+    setQuestionCount(null);
+    setVocabulary([]);
     setCurrentIndex(0);
     setCorrectAnswers(0);
-    setSelectedPinyin(null);
-    setIsCorrect(null);
     setShowResult(false);
-  }
+  };
 
-  if (vocabulary.length === 0) {
+  if (fullVocabulary.length === 0) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -96,6 +112,40 @@ const PinyinChoicePage = () => {
               <Home className="mr-2 h-4 w-4" /> Quay lại trang chủ
             </Link>
           </Button>
+        </main>
+      </div>
+    );
+  }
+
+  if (!questionCount) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <Header />
+        <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center text-center">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle className="text-2xl">Chọn số lượng câu hỏi</CardTitle>
+              <CardDescription>Bạn muốn ôn tập bao nhiêu từ cho HSK {level}?</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4">
+              {[50, 100, 150, 200].map(count => (
+                <Button 
+                  key={count} 
+                  onClick={() => handleStart(count)} 
+                  disabled={fullVocabulary.length < count}
+                  size="lg"
+                >
+                  {count} câu
+                  {fullVocabulary.length < count && ` (Không đủ từ)`}
+                </Button>
+              ))}
+              <Button asChild variant="outline">
+                <Link to="/">
+                  <Home className="mr-2 h-4 w-4" /> Quay về trang chủ
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
         </main>
       </div>
     );
@@ -118,7 +168,7 @@ const PinyinChoicePage = () => {
                             Bạn đã trả lời đúng {correctAnswers} trên tổng số {vocabulary.length} câu.
                         </p>
                         <div className="flex gap-4 justify-center">
-                            <Button onClick={restart}>Làm lại</Button>
+                            <Button onClick={resetToLevelSelection}>Làm lại</Button>
                             <Button asChild variant="secondary">
                                 <Link to="/">
                                     <Home className="mr-2 h-4 w-4" /> Về trang chủ
@@ -185,6 +235,14 @@ const PinyinChoicePage = () => {
               </Button>
             </div>
           )}
+
+          <div className="text-center mt-8">
+            <Button asChild variant="secondary">
+              <Link to="/">
+                <Home className="mr-2 h-4 w-4" /> Về trang chủ
+              </Link>
+            </Button>
+          </div>
         </div>
       </main>
     </div>

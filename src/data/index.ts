@@ -17,3 +17,5 @@ const vocabularyData: { [key: string]: VocabularyWord[] } = {
 export const getVocabularyByLevel = (level: string): VocabularyWord[] => {
   return vocabularyData[level] || [];
 };
+
+export type { VocabularyWord };
