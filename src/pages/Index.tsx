@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { BookOpen, CheckSquare, Shuffle, FileQuestion, Mic, Puzzle, ArrowRight, ChevronRight } from "lucide-react";
 import HeroIllustration from "@/components/HeroIllustration";
 import FeatureSection from "@/components/FeatureSection";
-import TestimonialSection from "@/components/TestimonialSection"; // Import the new component
+import TestimonialSection from "@/components/TestimonialSection";
 import CallToActionSection from "@/components/CallToActionSection";
 
 const exerciseTypes = [
@@ -44,7 +44,7 @@ const exerciseTypes = [
     title: "Sắp xếp câu",
     description: "Sắp xếp các từ thành câu hoàn chỉnh",
     icon: <Shuffle />,
-    isAvailable: false,
+    isAvailable: true,
   },
   {
     slug: "pinyin-choice",
@@ -142,7 +142,7 @@ const Index = () => {
           </div>
         </section>
 
-        <TestimonialSection /> {/* New testimonial section */}
+        <TestimonialSection />
 
         <CallToActionSection />
       </main>
