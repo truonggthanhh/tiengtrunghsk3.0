@@ -306,7 +306,6 @@ export const hsk1Vocabulary: VocabularyWord[] = [
     { id: 298, hanzi: "啊", pinyin: "a", meaning: "A (thán từ)" },
     { id: 299, hanzi: "矮", pinyin: "ǎi", meaning: "Thấp, lùn" },
     { id: 300, hanzi: "爱好", pinyin: "àihào", meaning: "Sở thích" },
-    // ... (Adding more words to reach 500)
     { id: 301, hanzi: "安静", pinyin: "ānjìng", meaning: "Yên tĩnh" },
     { id: 302, hanzi: "把", pinyin: "bǎ", meaning: "Đem (giới từ)" },
     { id: 303, hanzi: "班", pinyin: "bān", meaning: "Lớp" },
@@ -506,5 +505,5 @@ export const hsk1Vocabulary: VocabularyWord[] = [
     { id: 497, hanzi: "试", pinyin: "shì", meaning: "Thử" },
     { id: 498, hanzi: "瘦", pinyin: "shòu", meaning: "Gầy" },
     { id: 499, hanzi: "叔叔", pinyin: "shūshu", meaning: "Chú" },
-    { id: 500, hanzi: "舒服", pinyin: "shūfu", meaning: "Thoải mái" },
+    { id: 500, hanzi: "舒服", pinyin: "shūfu", meaning: "Thoải mái" }
 ];
