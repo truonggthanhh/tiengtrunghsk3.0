@@ -14,7 +14,8 @@ import { Button } from "@/components/ui/button";
 import { BookOpen, CheckSquare, Shuffle, FileQuestion, Mic, Puzzle, ArrowRight, ChevronRight } from "lucide-react";
 import HeroIllustration from "@/components/HeroIllustration";
 import FeatureSection from "@/components/FeatureSection";
-import CallToActionSection from "@/components/CallToActionSection"; // Import the new component
+import TestimonialSection from "@/components/TestimonialSection"; // Import the new component
+import CallToActionSection from "@/components/CallToActionSection";
 
 const exerciseTypes = [
   {
@@ -141,7 +142,9 @@ const Index = () => {
           </div>
         </section>
 
-        <CallToActionSection /> {/* New CTA section */}
+        <TestimonialSection /> {/* New testimonial section */}
+
+        <CallToActionSection />
       </main>
       <MadeWithDyad />
     </div>
