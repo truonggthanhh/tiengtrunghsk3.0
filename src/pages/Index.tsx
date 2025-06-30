@@ -120,7 +120,7 @@ const Index = () => {
             {exerciseTypes.map((exercise) => (
               <div key={exercise.slug} className={!exercise.isAvailable ? 'opacity-50' : ''}>
                 <Link to={exercise.isAvailable ? `/hsk/${level}/${exercise.slug}` : '#'} className={!exercise.isAvailable ? 'pointer-events-none' : ''}>
-                  <Card className="flex flex-col text-center h-full hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-in-out group cursor-pointer">
+                  <Card className="flex flex-col text-center h-full hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-in-out group cursor-pointer hover:border-primary">
                     <CardHeader className="items-center flex-grow">
                       <div className="mb-4 bg-primary/10 p-4 rounded-full transition-colors group-hover:bg-primary">
                         {React.cloneElement(exercise.icon, { className: "w-8 h-8 text-primary transition-colors group-hover:text-primary-foreground" })}

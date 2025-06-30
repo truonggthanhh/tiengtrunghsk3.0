@@ -8,7 +8,7 @@ const CallToActionSection: React.FC = () => {
   return (
     <section className="py-16 md:py-20 mb-16">
       <div className="container mx-auto px-4 md:px-8">
-        <Card className="text-center p-8 md:p-12 bg-gradient-to-br from-primary/10 to-accent/10 border-primary/20 shadow-lg">
+        <Card className="text-center p-8 md:p-12 bg-gradient-to-br from-primary/20 to-tertiary/20 border-primary/20 shadow-lg">
           <CardHeader className="pb-6">
             <Sparkles className="w-12 h-12 text-primary mx-auto mb-4" />
             <CardTitle className="text-3xl md:text-4xl font-bold tracking-tight mb-3">
