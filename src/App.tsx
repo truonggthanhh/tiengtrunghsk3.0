@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import { ThemeProvider } from "./components/ThemeProvider";
 import FlashcardPage from "./pages/FlashcardPage";
 import PinyinChoicePage from "./pages/PinyinChoicePage";
+import MeaningChoicePage from "./pages/MeaningChoicePage";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/hsk/:level/flashcard" element={<FlashcardPage />} />
             <Route path="/hsk/:level/pinyin-choice" element={<PinyinChoicePage />} />
+            <Route path="/hsk/:level/meaning-choice" element={<MeaningChoicePage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

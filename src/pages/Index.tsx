@@ -55,7 +55,7 @@ const exerciseTypes = [
     title: "Chọn nghĩa",
     description: "Chọn nghĩa đúng cho từ vựng",
     icon: <Puzzle />,
-    isAvailable: false,
+    isAvailable: true,
   },
 ];
 
