@@ -48,7 +48,7 @@ const exerciseTypes = [
     title: "Chọn phiên âm",
     description: "Chọn pinyin đúng cho chữ Hán",
     icon: <Mic />,
-    isAvailable: false,
+    isAvailable: true,
   },
   {
     slug: "meaning-choice",
