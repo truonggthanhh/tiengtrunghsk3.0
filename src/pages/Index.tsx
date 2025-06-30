@@ -27,7 +27,7 @@ const exerciseTypes = [
     title: "Điền từ",
     description: "Điền từ còn thiếu vào chỗ trống",
     icon: <FileQuestion />,
-    isAvailable: false,
+    isAvailable: true,
   },
   {
     slug: "multiple-choice",
