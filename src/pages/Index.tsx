@@ -13,7 +13,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { BookOpen, CheckSquare, Shuffle, FileQuestion, Mic, Puzzle, ArrowRight, ChevronRight } from "lucide-react";
 import HeroIllustration from "@/components/HeroIllustration";
-import FeatureSection from "@/components/FeatureSection"; // Import the new component
+import FeatureSection from "@/components/FeatureSection";
+import CallToActionSection from "@/components/CallToActionSection"; // Import the new component
 
 const exerciseTypes = [
   {
@@ -89,7 +90,7 @@ const Index = () => {
           </div>
         </section>
 
-        <FeatureSection /> {/* New feature section */}
+        <FeatureSection />
 
         <section className="mb-16">
           <div className="text-center mb-10">
@@ -139,6 +140,8 @@ const Index = () => {
             ))}
           </div>
         </section>
+
+        <CallToActionSection /> {/* New CTA section */}
       </main>
       <MadeWithDyad />
     </div>
