@@ -25,16 +25,16 @@ const exerciseTypes = [
   {
     slug: "fill-in-the-blank",
     title: "Điền từ",
-    description: "Điền từ còn thiếu vào chỗ trống",
+    description: "Điền chữ Hán dựa vào pinyin và nghĩa",
     icon: <FileQuestion />,
     isAvailable: true,
   },
   {
-    slug: "multiple-choice",
-    title: "Trắc nghiệm",
-    description: "Chọn đáp án đúng cho câu hỏi",
+    slug: "sentence-choice",
+    title: "Điền từ vào câu",
+    description: "Chọn từ đúng để hoàn thành câu",
     icon: <CheckSquare />,
-    isAvailable: false,
+    isAvailable: true,
   },
   {
     slug: "sentence-scramble",
