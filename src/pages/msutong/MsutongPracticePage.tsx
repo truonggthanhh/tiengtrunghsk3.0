@@ -62,6 +62,7 @@ const FlashcardPractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ vocabul
 
 const ChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], distractorVocabulary: VocabularyWord[], type: 'pinyin' | 'meaning' }> = ({ practiceVocabulary, distractorVocabulary, type }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [options, setOptions] = useState<string[]>([]); // Changed to useState
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
     const [correctAnswers, setCorrectAnswers] = useState(0);
@@ -69,8 +70,12 @@ const ChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], distracto
 
     const currentWord = useMemo(() => practiceVocabulary[currentIndex], [practiceVocabulary, currentIndex]);
 
-    const options = useMemo(() => {
-        if (!currentWord) return [];
+    // Generate options when currentWord changes
+    useEffect(() => {
+        if (!currentWord) {
+            setOptions([]);
+            return;
+        }
 
         const correctOption = type === 'pinyin' ? currentWord.pinyin : currentWord.meaning;
         const incorrectOptions = distractorVocabulary
@@ -78,8 +83,8 @@ const ChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], distracto
             .map(word => type === 'pinyin' ? word.pinyin : word.meaning);
         
         const uniqueIncorrectOptions = [...new Set(shuffleArray(incorrectOptions))].slice(0, 3);
-        return shuffleArray([correctOption, ...uniqueIncorrectOptions]);
-    }, [currentWord, distractorVocabulary, type]);
+        setOptions(shuffleArray([correctOption, ...uniqueIncorrectOptions]));
+    }, [currentWord, distractorVocabulary, type]); // Dependencies are correct here.
 
     const goToNextWord = useCallback(() => {
         setSelectedAnswer(null);
