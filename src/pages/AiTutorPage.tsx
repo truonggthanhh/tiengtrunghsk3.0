@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Home, Bot, User, Send, KeyRound, AlertTriangle } from 'lucide-react';
-import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
+import { GoogleGenerativeAI, GenerativeModel, ChatSession } from '@google/generative-ai';
 import { cn } from '@/lib/utils';
 
 interface Message {
@@ -20,6 +20,7 @@ const AiTutorPage = () => {
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [tempApiKey, setTempApiKey] = useState('');
   const [model, setModel] = useState<GenerativeModel | null>(null);
+  const [chat, setChat] = useState<ChatSession | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -33,6 +34,13 @@ const AiTutorPage = () => {
     }
   }, []);
 
+  const resetAiState = useCallback(() => {
+    setApiKey(null);
+    setModel(null);
+    setChat(null);
+    localStorage.removeItem('geminiApiKey');
+  }, []);
+
   useEffect(() => {
     if (apiKey) {
       try {
@@ -40,22 +48,29 @@ const AiTutorPage = () => {
         const modelInstance = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         setModel(modelInstance);
         setError(null);
-        
-        setMessages([
-          { role: 'model', text: `你好！我是你的 HSK ${level} 辅导老师“好好”。有什么可以帮你的吗？(Xin chào! Tôi là "HaoHao", gia sư HSK ${level} của bạn. Tôi có thể giúp gì cho bạn?)` }
-        ]);
-
       } catch (e) {
         console.error("AI Initialization Error:", e);
         setError('API Key không hợp lệ hoặc đã xảy ra lỗi. Vui lòng kiểm tra lại.');
-        setApiKey(null);
-        setModel(null);
-        localStorage.removeItem('geminiApiKey');
+        resetAiState();
       }
     } else {
       setModel(null);
     }
-  }, [apiKey, level]);
+  }, [apiKey, resetAiState]);
+
+  useEffect(() => {
+    if (model) {
+      const chatSession = model.startChat({
+        systemInstruction: `You are a friendly and patient Chinese language tutor for HSK level ${level}. Your name is HaoHao. Always respond in Vietnamese. Keep your answers concise and focused on helping the user practice their speaking and grammar. If the user makes a mistake in Chinese, gently correct them, explain why it's a mistake, and provide the correct version.`,
+      });
+      setChat(chatSession);
+      setMessages([
+        { role: 'model', text: `你好！我是你的 HSK ${level} 辅导老师“好好”。有什么可以帮你的吗？(Xin chào! Tôi là "HaoHao", gia sư HSK ${level} của bạn. Tôi có thể giúp gì cho bạn?)` }
+      ]);
+    } else {
+      setChat(null);
+    }
+  }, [model, level]);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -72,14 +87,9 @@ const AiTutorPage = () => {
   };
 
   const handleSendMessage = useCallback(async () => {
-    if (!userInput.trim() || isLoading || !model) return;
+    if (!userInput.trim() || isLoading || !chat) return;
 
     const currentInput = userInput;
-    const currentChatHistory = messages.slice(1).map(msg => ({
-        role: msg.role,
-        parts: [{ text: msg.text }]
-    }));
-
     const newUserMessage: Message = { role: 'user', text: currentInput };
     setMessages(prev => [...prev, newUserMessage]);
     setUserInput('');
@@ -87,33 +97,22 @@ const AiTutorPage = () => {
     setError(null);
 
     try {
-      const chat = model.startChat({
-        history: currentChatHistory,
-        generationConfig: {
-          maxOutputTokens: 500,
-        },
-        systemInstruction: `You are a friendly and patient Chinese language tutor for HSK level ${level}. Your name is HaoHao. Always respond in Vietnamese. Keep your answers concise and focused on helping the user practice their speaking and grammar. If the user makes a mistake in Chinese, gently correct them, explain why it's a mistake, and provide the correct version.`,
-      });
-
       const result = await chat.sendMessage(currentInput);
       const response = result.response;
       const text = response.text();
       
       setMessages(prev => [...prev, { role: 'model', text }]);
     } catch (e: any) {
-      console.error(e);
-      const errorMessage = 'Đã xảy ra lỗi khi giao tiếp với AI. Vui lòng kiểm tra lại API Key và thử lại.';
-      setError(errorMessage);
-      setApiKey(null);
-      setModel(null);
-      localStorage.removeItem('geminiApiKey');
-      setMessages(prev => prev.slice(0, -1));
+      console.error("Send Message Error:", e);
+      setError('Đã xảy ra lỗi khi giao tiếp với AI. Vui lòng kiểm tra lại API Key và thử lại.');
+      resetAiState();
+      setMessages(prev => prev.slice(0, -1)); // Remove user message that failed
     } finally {
       setIsLoading(false);
     }
-  }, [userInput, isLoading, model, messages, level]);
+  }, [userInput, isLoading, chat, resetAiState]);
 
-  if (!model) {
+  if (!chat) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <Header />
