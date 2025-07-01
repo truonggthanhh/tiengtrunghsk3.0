@@ -62,7 +62,6 @@ const FlashcardPractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ vocabul
 
 const ChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], distractorVocabulary: VocabularyWord[], type: 'pinyin' | 'meaning' }> = ({ practiceVocabulary, distractorVocabulary, type }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [options, setOptions] = useState<string[]>([]);
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
     const [correctAnswers, setCorrectAnswers] = useState(0);
@@ -70,14 +69,16 @@ const ChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], distracto
 
     const currentWord = useMemo(() => practiceVocabulary[currentIndex], [practiceVocabulary, currentIndex]);
 
-    const generateOptions = useCallback(() => {
-        if (!currentWord) return;
+    const options = useMemo(() => {
+        if (!currentWord) return [];
+
         const correctOption = type === 'pinyin' ? currentWord.pinyin : currentWord.meaning;
         const incorrectOptions = distractorVocabulary
             .filter(word => (type === 'pinyin' ? word.pinyin : word.meaning) !== correctOption)
             .map(word => type === 'pinyin' ? word.pinyin : word.meaning);
+        
         const uniqueIncorrectOptions = [...new Set(shuffleArray(incorrectOptions))].slice(0, 3);
-        setOptions(shuffleArray([correctOption, ...uniqueIncorrectOptions]));
+        return shuffleArray([correctOption, ...uniqueIncorrectOptions]);
     }, [currentWord, distractorVocabulary, type]);
 
     const goToNextWord = useCallback(() => {
@@ -89,12 +90,6 @@ const ChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], distracto
             setShowResult(true);
         }
     }, [currentIndex, practiceVocabulary.length]);
-
-    useEffect(() => {
-        if (practiceVocabulary.length > 0 && currentIndex < practiceVocabulary.length) {
-            generateOptions();
-        }
-    }, [currentIndex, generateOptions, practiceVocabulary]);
 
     const handleAnswer = (answer: string) => {
         if (selectedAnswer) return;
@@ -336,8 +331,6 @@ const MsutongPracticePage = () => {
   useEffect(() => {
     const vocab = getVocabularyByMsutong(level, lessonIds);
     const fullVocab = getFullMsutongVocabularyByLevel(level);
-    console.log("Loaded practice vocabulary:", vocab); // Debug log
-    console.log("Loaded full vocabulary for distractors:", fullVocab); // Debug log
     setPracticeVocabulary(vocab);
     setDistractorVocabulary(fullVocab);
   }, [level, lessonIds]);
@@ -395,7 +388,7 @@ const MsutongPracticePage = () => {
                     <CardContent className="flex flex-col gap-4">
                         {[10, 20, 50, 100].map(count => (
                             <Button key={count} onClick={() => handleStart(count)} disabled={practiceVocabulary.length < count} size="lg">
-                                {count} câu {practiceVocabulary.length < count && `(Không đủ từ)`}
+                                {count} câu {practiceVocabulary.length < count ? `(Chỉ có ${practiceVocabulary.length} từ)` : ''}
                             </Button>
                         ))}
                         <Button onClick={() => handleStart(practiceVocabulary.length)} size="lg">Tất cả ({practiceVocabulary.length} câu)</Button>

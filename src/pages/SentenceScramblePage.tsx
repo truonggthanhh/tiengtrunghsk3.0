@@ -30,7 +30,10 @@ const SentenceScramblePage = () => {
   
   const allAvailableQuestions = useMemo(() => {
     return fullVocabulary.flatMap(word => 
-      word.examples ? word.examples.map(ex => ({ sentence: ex.hanzi, translation: ex.translation })) : []
+      word.examples ? word.examples.map(ex => ({ 
+          sentence: ex.hanzi, 
+          translation: ex.translation 
+      })) : []
     );
   }, [fullVocabulary]);
 
@@ -38,7 +41,6 @@ const SentenceScramblePage = () => {
   const [questions, setQuestions] = useState<{ sentence: string; translation: string; }[]>([]);
   
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [shuffledChars, setShuffledChars] = useState<CharObject[]>([]);
   const [userAnswer, setUserAnswer] = useState<CharObject[]>([]);
   const [answerStatus, setAnswerStatus] = useState<'correct' | 'incorrect' | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState(0);
@@ -46,22 +48,24 @@ const SentenceScramblePage = () => {
 
   const currentQuestion = useMemo(() => questions[currentIndex], [questions, currentIndex]);
 
-  const generateQuestion = useCallback(() => {
-    if (!currentQuestion) return;
-    
+  // Memoize the initial shuffled characters for the current question
+  const initialShuffledCharsForCurrentQuestion = useMemo(() => {
+    if (!currentQuestion) return [];
     const chars = currentQuestion.sentence.replace(/[，。？！]/g, '').split('');
-    const charObjects = chars.map((char, index) => ({ char, id: index }));
-    
-    setShuffledChars(shuffleArray(charObjects));
-    setUserAnswer([]);
-    setAnswerStatus(null);
+    return shuffleArray(chars.map((char, index) => ({ char, id: index })));
   }, [currentQuestion]);
 
+  // State for characters available to pick
+  const [shuffledChars, setShuffledChars] = useState<CharObject[]>([]);
+
+  // Reset state variables when currentQuestion changes
   useEffect(() => {
-    if (questions.length > 0 && currentIndex < questions.length) {
-      generateQuestion();
+    if (currentQuestion) {
+      setShuffledChars(initialShuffledCharsForCurrentQuestion);
+      setUserAnswer([]);
+      setAnswerStatus(null);
     }
-  }, [currentIndex, generateQuestion, questions]);
+  }, [currentQuestion, initialShuffledCharsForCurrentQuestion]);
 
   const handleStart = (count: number) => {
     setQuestionCount(count);
@@ -83,7 +87,7 @@ const SentenceScramblePage = () => {
   const handleAnswerCharClick = (charObj: CharObject) => {
     if (answerStatus) return;
     setUserAnswer(userAnswer.filter(c => c.id !== charObj.id));
-    setShuffledChars(shuffleArray([...shuffledChars, charObj]));
+    setShuffledChars(shuffleArray([...shuffledChars, charObj])); // Re-shuffle available chars
   };
 
   const handleSubmit = () => {
@@ -260,7 +264,14 @@ const SentenceScramblePage = () => {
                     Câu tiếp theo <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
             )}
-            <Button onClick={generateQuestion} variant="outline" size="lg" disabled={!!answerStatus}>
+            <Button onClick={() => {
+                if (currentQuestion) {
+                    const chars = currentQuestion.sentence.replace(/[，。？！]/g, '').split('');
+                    setShuffledChars(shuffleArray(chars.map((char, index) => ({ char, id: index }))));
+                    setUserAnswer([]);
+                    setAnswerStatus(null);
+                }
+            }} variant="outline" size="lg" disabled={!!answerStatus}>
                 <RefreshCw className="mr-2 h-5 w-5" /> Thử lại
             </Button>
           </div>
