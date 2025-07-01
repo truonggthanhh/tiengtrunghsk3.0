@@ -1,25 +1,25 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef, FormEvent } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Home, KeyRound, AlertTriangle, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { cn } from '@/lib/utils';
+import { Home, KeyRound, AlertTriangle, Send, Loader2, RefreshCw } from 'lucide-react';
+import { GoogleGenerativeAI, ChatSession } from '@google/generative-ai';
+import ChatMessage, { Message } from '@/components/ChatMessage';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
-interface DiagnosticResult {
-  status: 'idle' | 'success' | 'error';
-  message: string;
-}
-
-const AiTutorDiagnosticPage = () => {
+const AiTutorPage = () => {
   const { level } = useParams<{ level: string }>();
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [tempApiKey, setTempApiKey] = useState('');
-  const [isTesting, setIsTesting] = useState(false);
-  const [diagnosticResult, setDiagnosticResult] = useState<DiagnosticResult>({ status: 'idle', message: '' });
-  const [initialError, setInitialError] = useState<string | null>(null);
+  
+  const [chatSession, setChatSession] = useState<ChatSession | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [userInput, setUserInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const storedApiKey = localStorage.getItem('geminiApiKey');
@@ -28,12 +28,89 @@ const AiTutorDiagnosticPage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (apiKey) {
+      initializeChat();
+    }
+  }, [apiKey, level]);
+
+  useEffect(() => {
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.scrollTo({
+        top: scrollAreaRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }, [messages]);
+
+  const initializeChat = () => {
+    try {
+      const genAI = new GoogleGenerativeAI(apiKey!);
+      const systemPrompt = `Bạn là một gia sư tiếng Trung tên là "HaoHao AI". Nhiệm vụ của bạn là giúp người dùng luyện tập cho kỳ thi HSK cấp độ ${level}. Hãy luôn thân thiện, kiên nhẫn và đưa ra những câu trả lời ngắn gọn, dễ hiểu. Bắt đầu cuộc trò chuyện bằng cách chào người dùng và hỏi họ muốn luyện tập kỹ năng gì hôm nay (ví dụ: từ vựng, ngữ pháp, hội thoại). Chỉ trả lời bằng tiếng Việt.`;
+      
+      const model = genAI.getGenerativeModel({ 
+        model: "gemini-1.5-flash",
+        systemInstruction: systemPrompt,
+      });
+
+      const session = model.startChat({
+        history: [],
+        generationConfig: {
+          maxOutputTokens: 1000,
+        },
+      });
+      setChatSession(session);
+      setMessages([]); // Clear previous messages
+      // Start the conversation with a message from the AI
+      setIsLoading(true);
+      session.sendMessage("Bắt đầu").then(result => {
+        setMessages(prev => [...prev, { role: 'model', parts: [{ text: result.response.text() }] }]);
+      }).catch(handleApiError).finally(() => setIsLoading(false));
+
+    } catch (e: any) {
+      handleApiError(e);
+    }
+  };
+
+  const handleApiError = (e: any) => {
+    console.error("API Error:", e);
+    let errorMessage = `Đã xảy ra lỗi khi kết nối với AI. Lỗi gốc: ${e.message || e.toString()}`;
+    if (e.message) {
+      if (e.message.includes('API key not valid')) {
+        errorMessage += '\n\nGợi ý: API Key của bạn không hợp lệ. Vui lòng nhập lại.';
+      } else if (e.message.includes('quota')) {
+        errorMessage += '\n\nGợi ý: Bạn đã hết hạn ngạch sử dụng API. Vui lòng kiểm tra dự án Google Cloud.';
+      } else if (e.message.includes('400')) {
+        errorMessage += '\n\nGợi ý: API "Generative Language API" có thể chưa được bật trong dự án Google Cloud của bạn.';
+      }
+    }
+    setMessages(prev => [...prev, { role: 'error', parts: [{ text: errorMessage }] }]);
+  };
+
+  const handleSendMessage = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!userInput.trim() || isLoading || !chatSession) return;
+
+    const userMessage: Message = { role: 'user', parts: [{ text: userInput }] };
+    setMessages(prev => [...prev, userMessage]);
+    setUserInput('');
+    setIsLoading(true);
+
+    try {
+      const result = await chatSession.sendMessage(userInput);
+      const aiResponse: Message = { role: 'model', parts: [{ text: result.response.text() }] };
+      setMessages(prev => [...prev, aiResponse]);
+    } catch (e: any) {
+      handleApiError(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSaveApiKey = () => {
     if (tempApiKey.trim()) {
-      setApiKey(tempApiKey.trim());
       localStorage.setItem('geminiApiKey', tempApiKey.trim());
-      setInitialError(null);
-      setDiagnosticResult({ status: 'idle', message: '' }); // Reset result when new key is entered
+      setApiKey(tempApiKey.trim());
     }
   };
 
@@ -41,50 +118,10 @@ const AiTutorDiagnosticPage = () => {
     setApiKey(null);
     setTempApiKey('');
     localStorage.removeItem('geminiApiKey');
-    setDiagnosticResult({ status: 'idle', message: '' });
+    setMessages([]);
+    setChatSession(null);
   };
 
-  const handleRunTest = useCallback(async () => {
-    if (!apiKey) return;
-
-    setIsTesting(true);
-    setDiagnosticResult({ status: 'idle', message: '' });
-
-    try {
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      
-      // Perform a lightweight request to validate the key and configuration
-      await model.countTokens("test");
-
-      setDiagnosticResult({
-        status: 'success',
-        message: 'Kết nối thành công! API Key và dự án Google Cloud của bạn đã được cấu hình chính xác. Bây giờ bạn có thể yêu cầu tôi khôi phục lại chức năng chat.'
-      });
-
-    } catch (e: any) {
-      console.error("Diagnostic Error:", e);
-      let errorMessage = `Kết nối thất bại. Lỗi gốc từ Google: ${e.message || e.toString()}`;
-      
-      if (e.message) {
-        if (e.message.includes('API key not valid')) {
-          errorMessage += '\n\nGợi ý: Vui lòng kiểm tra lại xem bạn đã sao chép đúng API Key chưa. Key thường bắt đầu bằng "AIza".';
-        } else if (e.message.includes('quota')) {
-          errorMessage += '\n\nGợi ý: Bạn đã hết hạn ngạch sử dụng API miễn phí. Vui lòng kiểm tra trang tổng quan thanh toán trong dự án Google Cloud của bạn.';
-        } else if (e.message.includes('400')) {
-          errorMessage += '\n\nGợi ý: Lỗi này thường xảy ra khi API "Generative Language API" chưa được bật trong dự án Google Cloud của bạn. Hãy chắc chắn rằng bạn đã kích hoạt nó.';
-        } else if (e.message.includes('permission denied')) {
-            errorMessage += '\n\nGợi ý: API Key của bạn không có quyền truy cập vào mô hình Gemini. Hãy kiểm tra lại các quyền trong dự án Google Cloud.';
-        }
-      }
-
-      setDiagnosticResult({ status: 'error', message: errorMessage });
-    } finally {
-      setIsTesting(false);
-    }
-  }, [apiKey]);
-
-  // UI for entering API Key
   if (!apiKey) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
@@ -97,9 +134,6 @@ const AiTutorDiagnosticPage = () => {
               <CardDescription>
                 Để sử dụng Trợ lý ảo, bạn cần cung cấp API Key của riêng mình.
               </CardDescription>
-              {initialError && (
-                <p className="text-sm text-destructive pt-2 font-semibold">{initialError}</p>
-              )}
             </CardHeader>
             <CardContent className="space-y-4">
               <Input
@@ -108,7 +142,7 @@ const AiTutorDiagnosticPage = () => {
                 value={tempApiKey}
                 onChange={(e) => setTempApiKey(e.target.value)}
               />
-              <Button onClick={handleSaveApiKey} className="w-full">Lưu và Tiếp tục</Button>
+              <Button onClick={handleSaveApiKey} className="w-full">Lưu và Bắt đầu Chat</Button>
               <div className="text-xs text-muted-foreground p-2 border rounded-lg flex items-start gap-2">
                 <AlertTriangle className="w-6 h-6 flex-shrink-0 mt-1" />
                 <div>
@@ -125,50 +159,57 @@ const AiTutorDiagnosticPage = () => {
     );
   }
 
-  // UI for Diagnostic Tool
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
-      <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center text-center">
-        <Card className="w-full max-w-2xl">
-          <CardHeader>
-            <CardTitle className="text-2xl">Công cụ chẩn đoán kết nối AI</CardTitle>
-            <CardDescription>
-              Công cụ này sẽ giúp kiểm tra xem API Key của bạn có hợp lệ và dự án Google Cloud đã được cấu hình đúng hay chưa.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <Button onClick={handleRunTest} disabled={isTesting} size="lg" className="w-full">
-              {isTesting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isTesting ? 'Đang kiểm tra...' : 'Bắt đầu kiểm tra kết nối'}
+      <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
+        <Card className="w-full max-w-3xl h-[80vh] flex flex-col">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle>Trợ lý ảo HSK {level}</CardTitle>
+              <CardDescription>Luyện nói cùng HaoHao AI</CardDescription>
+            </div>
+            <Button onClick={handleResetApiKey} variant="outline" size="sm">
+              <RefreshCw className="mr-2 h-4 w-4" /> Đổi API Key
             </Button>
-
-            {diagnosticResult.status !== 'idle' && (
-              <div className={cn(
-                "p-4 rounded-lg text-left whitespace-pre-wrap",
-                diagnosticResult.status === 'success' && 'bg-green-100 text-green-900 dark:bg-green-900/50 dark:text-green-200',
-                diagnosticResult.status === 'error' && 'bg-red-100 text-red-900 dark:bg-red-900/50 dark:text-red-200'
-              )}>
-                <div className="flex items-start gap-3">
-                  {diagnosticResult.status === 'success' && <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5" />}
-                  {diagnosticResult.status === 'error' && <XCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />}
-                  <p className="font-medium text-sm">{diagnosticResult.message}</p>
+          </CardHeader>
+          <CardContent className="flex-grow overflow-hidden">
+            <ScrollArea className="h-full pr-4" ref={scrollAreaRef}>
+              {messages.map((msg, index) => (
+                <ChatMessage key={index} message={msg} />
+              ))}
+              {isLoading && messages.length > 0 && (
+                <div className="flex justify-start items-start gap-3 my-4">
+                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 </div>
-              </div>
-            )}
+              )}
+            </ScrollArea>
           </CardContent>
-          <CardFooter className="flex-col sm:flex-row gap-2">
-            <Button onClick={handleResetApiKey} variant="outline" className="w-full sm:w-auto">Nhập lại API Key</Button>
-            <Button asChild variant="secondary" className="w-full sm:w-auto">
+          <CardFooter>
+            <form onSubmit={handleSendMessage} className="flex w-full items-center space-x-2">
+              <Input
+                value={userInput}
+                onChange={(e) => setUserInput(e.target.value)}
+                placeholder="Nhập câu trả lời của bạn..."
+                disabled={isLoading}
+              />
+              <Button type="submit" disabled={isLoading || !userInput.trim()}>
+                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                <span className="sr-only">Gửi</span>
+              </Button>
+            </form>
+          </CardFooter>
+        </Card>
+        <div className="text-center mt-4">
+            <Button asChild variant="secondary">
               <Link to="/">
                 <Home className="mr-2 h-4 w-4" /> Về trang chủ
               </Link>
             </Button>
-          </CardFooter>
-        </Card>
+          </div>
       </main>
     </div>
   );
 };
 
-export default AiTutorDiagnosticPage;
+export default AiTutorPage;
