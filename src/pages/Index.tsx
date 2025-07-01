@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { BookOpen, CheckSquare, Shuffle, FileQuestion, Mic, Puzzle, ArrowRight, ChevronRight, AudioLines } from "lucide-react";
+import { BookOpen, CheckSquare, Shuffle, FileQuestion, Mic, Puzzle, ArrowRight, ChevronRight, AudioLines, Bot } from "lucide-react";
 import HeroIllustration from "@/components/HeroIllustration";
 import FeatureSection from "@/components/FeatureSection";
 import TestimonialSection from "@/components/TestimonialSection";
@@ -66,6 +66,13 @@ const exerciseTypes = [
     description: "Luyện phát âm qua nhận dạng giọng nói",
     icon: <AudioLines />,
     isAvailable: true,
+  },
+  {
+    slug: "ai-tutor",
+    title: "Luyện nói cùng Trợ lý ảo",
+    description: "Trò chuyện và nhận phản hồi từ AI",
+    icon: <Bot />,
+    isAvailable: false,
   },
 ];
 
