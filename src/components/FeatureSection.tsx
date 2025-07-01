@@ -9,8 +9,8 @@ interface FeatureItemProps {
 }
 
 const FeatureItem: React.FC<FeatureItemProps> = ({ icon, title, description }) => (
-  <Card className="flex flex-col items-center text-center p-6 h-full">
-    <CardHeader className="pb-4">
+  <Card className="flex flex-col text-center p-6 h-full">
+    <CardHeader className="flex flex-col items-center pb-4">
       <div className="mb-4 bg-primary/10 p-4 rounded-full">
         {React.cloneElement(icon as React.ReactElement, { className: "w-8 h-8 text-primary" })}
       </div>
