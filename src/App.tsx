@@ -15,6 +15,8 @@ import SentenceScramblePage from "./pages/SentenceScramblePage";
 import PronunciationPage from "./pages/PronunciationPage";
 import AiTutorPage from "./pages/AiTutorPage";
 import MsutongPage from "./pages/MsutongPage";
+import MsutongFlashcardPage from "./pages/msutong/MsutongFlashcardPage";
+import MsutongPinyinChoicePage from "./pages/msutong/MsutongPinyinChoicePage";
 
 const queryClient = new QueryClient();
 
@@ -27,7 +29,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/msutong" element={<MsutongPage />} />
+            
+            {/* HSK Routes */}
             <Route path="/hsk/:level/flashcard" element={<FlashcardPage />} />
             <Route path="/hsk/:level/pinyin-choice" element={<PinyinChoicePage />} />
             <Route path="/hsk/:level/meaning-choice" element={<MeaningChoicePage />} />
@@ -36,6 +39,13 @@ const App = () => (
             <Route path="/hsk/:level/sentence-scramble" element={<SentenceScramblePage />} />
             <Route path="/hsk/:level/pronunciation" element={<PronunciationPage />} />
             <Route path="/hsk/:level/ai-tutor" element={<AiTutorPage />} />
+
+            {/* Msutong Routes */}
+            <Route path="/msutong" element={<MsutongPage />} />
+            <Route path="/msutong/:book/:lesson/flashcard" element={<MsutongFlashcardPage />} />
+            <Route path="/msutong/:book/:lesson/pinyin-choice" element={<MsutongPinyinChoicePage />} />
+            {/* Add other Msutong exercise routes here as they are created */}
+
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -18,4 +18,21 @@ export const getVocabularyByLevel = (level: string): VocabularyWord[] => {
   return vocabularyData[level] || [];
 };
 
+// Placeholder data for Msutong textbooks
+const msutongData: { [book: string]: { [lesson: string]: VocabularyWord[] } } = {
+  'boya': {
+    '1': [], // You will add data here later
+    '2': [],
+  },
+  'hanyu': {
+    '1': [],
+    '2': [],
+  }
+};
+
+export const getVocabularyByMsutong = (book: string, lesson: string): VocabularyWord[] => {
+  return msutongData[book]?.[lesson] || [];
+};
+
+
 export type { VocabularyWord };
