@@ -41,7 +41,6 @@ const AiTutorPage = () => {
         setModel(modelInstance);
         setError(null);
         
-        // Initialize with a welcome message
         setMessages([
           { role: 'model', text: `你好！我是你的 HSK ${level} 辅导老师“好好”。有什么可以帮你的吗？(Xin chào! Tôi là "HaoHao", gia sư HSK ${level} của bạn. Tôi có thể giúp gì cho bạn?)` }
         ]);
@@ -64,6 +63,7 @@ const AiTutorPage = () => {
     if (tempApiKey.trim()) {
       localStorage.setItem('geminiApiKey', tempApiKey.trim());
       setApiKey(tempApiKey.trim());
+      setError(null); // Clear previous errors
     }
   };
 
@@ -119,6 +119,9 @@ const AiTutorPage = () => {
               <CardDescription>
                 Để sử dụng Trợ lý ảo, bạn cần cung cấp API Key của riêng mình.
               </CardDescription>
+              {error && (
+                <p className="text-sm text-destructive pt-2 font-semibold">{error}</p>
+              )}
             </CardHeader>
             <CardContent className="space-y-4">
               <Input
