@@ -12,6 +12,7 @@ import MeaningChoicePage from "./pages/MeaningChoicePage";
 import FillInTheBlankPage from "./pages/FillInTheBlankPage";
 import SentenceChoicePage from "./pages/SentenceChoicePage";
 import SentenceScramblePage from "./pages/SentenceScramblePage";
+import PronunciationPage from "./pages/PronunciationPage";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/hsk/:level/fill-in-the-blank" element={<FillInTheBlankPage />} />
             <Route path="/hsk/:level/sentence-choice" element={<SentenceChoicePage />} />
             <Route path="/hsk/:level/sentence-scramble" element={<SentenceScramblePage />} />
+            <Route path="/hsk/:level/pronunciation" element={<PronunciationPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

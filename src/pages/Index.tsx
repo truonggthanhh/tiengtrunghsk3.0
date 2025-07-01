@@ -26,6 +26,20 @@ const exerciseTypes = [
     isAvailable: true,
   },
   {
+    slug: "pinyin-choice",
+    title: "Chọn phiên âm",
+    description: "Chọn pinyin đúng cho chữ Hán",
+    icon: <Mic />,
+    isAvailable: true,
+  },
+  {
+    slug: "meaning-choice",
+    title: "Chọn nghĩa",
+    description: "Chọn nghĩa đúng cho từ vựng",
+    icon: <Puzzle />,
+    isAvailable: true,
+  },
+  {
     slug: "fill-in-the-blank",
     title: "Điền từ",
     description: "Điền chữ Hán dựa vào pinyin và nghĩa",
@@ -47,17 +61,10 @@ const exerciseTypes = [
     isAvailable: true,
   },
   {
-    slug: "pinyin-choice",
-    title: "Chọn phiên âm",
-    description: "Chọn pinyin đúng cho chữ Hán",
+    slug: "pronunciation",
+    title: "Luyện phát âm",
+    description: "Luyện phát âm qua nhận dạng giọng nói",
     icon: <Mic />,
-    isAvailable: true,
-  },
-  {
-    slug: "meaning-choice",
-    title: "Chọn nghĩa",
-    description: "Chọn nghĩa đúng cho từ vựng",
-    icon: <Puzzle />,
     isAvailable: true,
   },
 ];
