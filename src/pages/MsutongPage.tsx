@@ -105,9 +105,19 @@ const MsutongPage = () => {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto mb-8">
               {books.map(book => (
-                <div key={book.slug} onClick={() => handleBookToggle(book.slug)} className={cn("p-4 border rounded-lg cursor-pointer transition-colors", selectedBooks.includes(book.slug) && "border-primary bg-primary/10")}>
-                  <Checkbox id={book.slug} checked={selectedBooks.includes(book.slug)} className="hidden" />
-                  <Label htmlFor={book.slug} className="text-lg font-medium flex items-center justify-center h-full cursor-pointer">{book.name}</Label>
+                <div key={book.slug}>
+                  <Checkbox
+                    id={book.slug}
+                    checked={selectedBooks.includes(book.slug)}
+                    onCheckedChange={() => handleBookToggle(book.slug)}
+                    className="peer hidden"
+                  />
+                  <Label
+                    htmlFor={book.slug}
+                    className="flex h-full w-full cursor-pointer items-center justify-center rounded-lg border p-4 text-lg font-medium transition-colors peer-checked:border-primary peer-checked:bg-primary/10"
+                  >
+                    {book.name}
+                  </Label>
                 </div>
               ))}
             </div>
@@ -127,9 +137,19 @@ const MsutongPage = () => {
             </div>
             <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-10 gap-4 max-w-5xl mx-auto mb-8">
               {lessons.map(lesson => (
-                <div key={lesson} onClick={() => handleLessonToggle(lesson)} className={cn("p-2 border rounded-lg cursor-pointer transition-colors flex items-center justify-center h-16", selectedLessons.includes(lesson) && "border-primary bg-primary/10")}>
-                  <Checkbox id={`lesson-${lesson}`} checked={selectedLessons.includes(lesson)} className="hidden" />
-                  <Label htmlFor={`lesson-${lesson}`} className="text-base font-medium cursor-pointer">Bài {lesson}</Label>
+                <div key={lesson}>
+                  <Checkbox
+                    id={`lesson-${lesson}`}
+                    checked={selectedLessons.includes(lesson)}
+                    onCheckedChange={() => handleLessonToggle(lesson)}
+                    className="peer hidden"
+                  />
+                  <Label
+                    htmlFor={`lesson-${lesson}`}
+                    className="flex h-16 w-full cursor-pointer items-center justify-center rounded-lg border p-2 text-base font-medium transition-colors peer-checked:border-primary peer-checked:bg-primary/10"
+                  >
+                    Bài {lesson}
+                  </Label>
                 </div>
               ))}
             </div>
