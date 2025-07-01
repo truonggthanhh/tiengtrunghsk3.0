@@ -99,20 +99,22 @@ const Index = () => {
         <FeatureSection />
 
         <section ref={levelSectionRef} className="mb-16 scroll-mt-20">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold tracking-tight">Chọn Trình Độ Của Bạn</h2>
-            <p className="text-muted-foreground mt-2">Bắt đầu hành trình của bạn bằng cách chọn cấp độ HSK phù hợp.</p>
+          <div className="w-full max-w-4xl mx-auto bg-card border p-6 md:p-10 rounded-2xl shadow-sm">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold tracking-tight">Chọn Trình Độ Của Bạn</h2>
+              <p className="text-muted-foreground mt-2">Bắt đầu hành trình của bạn bằng cách chọn cấp độ HSK phù hợp.</p>
+            </div>
+            <Tabs defaultValue="1" onValueChange={setLevel} className="w-full">
+              <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 h-auto gap-2 bg-transparent p-0">
+                <TabsTrigger value="1" className="text-base h-12">HSK 1</TabsTrigger>
+                <TabsTrigger value="2" className="text-base h-12">HSK 2</TabsTrigger>
+                <TabsTrigger value="3" className="text-base h-12">HSK 3</TabsTrigger>
+                <TabsTrigger value="4" className="text-base h-12">HSK 4</TabsTrigger>
+                <TabsTrigger value="5" className="text-base h-12">HSK 5</TabsTrigger>
+                <TabsTrigger value="6" className="text-base h-12">HSK 6</TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
-          <Tabs defaultValue="1" onValueChange={setLevel} className="w-full max-w-2xl mx-auto">
-            <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 h-14 p-2">
-              <TabsTrigger value="1" className="text-base">HSK 1</TabsTrigger>
-              <TabsTrigger value="2" className="text-base">HSK 2</TabsTrigger>
-              <TabsTrigger value="3" className="text-base">HSK 3</TabsTrigger>
-              <TabsTrigger value="4" className="text-base">HSK 4</TabsTrigger>
-              <TabsTrigger value="5" className="text-base">HSK 5</TabsTrigger>
-              <TabsTrigger value="6" className="text-base">HSK 6</TabsTrigger>
-            </TabsList>
-          </Tabs>
         </section>
 
         <section>
