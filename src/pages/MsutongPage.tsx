@@ -21,7 +21,7 @@ const books = [
   { slug: 'quyen-4', name: 'Quyển 4' },
 ];
 
-const lessons = Array.from({ length: 30 }, (_, i) => i + 1);
+const lessons = Array.from({ length: 40 }, (_, i) => i + 1);
 
 const exerciseTypes = [
     { slug: "flashcard", title: "Flashcard", description: "Ôn tập từ vựng qua thẻ ghi nhớ", icon: <BookOpen /> },
