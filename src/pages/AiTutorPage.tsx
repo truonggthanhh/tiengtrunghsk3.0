@@ -74,7 +74,13 @@ const AiTutorPage = () => {
   const handleSendMessage = useCallback(async () => {
     if (!userInput.trim() || isLoading || !model) return;
 
-    const newUserMessage: Message = { role: 'user', text: userInput };
+    const currentInput = userInput;
+    const currentChatHistory = messages.slice(1).map(msg => ({
+        role: msg.role,
+        parts: [{ text: msg.text }]
+    }));
+
+    const newUserMessage: Message = { role: 'user', text: currentInput };
     setMessages(prev => [...prev, newUserMessage]);
     setUserInput('');
     setIsLoading(true);
@@ -82,17 +88,14 @@ const AiTutorPage = () => {
 
     try {
       const chat = model.startChat({
-        history: messages.slice(1).map(msg => ({
-          role: msg.role,
-          parts: [{ text: msg.text }]
-        })),
+        history: currentChatHistory,
         generationConfig: {
           maxOutputTokens: 500,
         },
         systemInstruction: `You are a friendly and patient Chinese language tutor for HSK level ${level}. Your name is HaoHao. Always respond in Vietnamese. Keep your answers concise and focused on helping the user practice their speaking and grammar. If the user makes a mistake in Chinese, gently correct them, explain why it's a mistake, and provide the correct version.`,
       });
 
-      const result = await chat.sendMessage(userInput);
+      const result = await chat.sendMessage(currentInput);
       const response = result.response;
       const text = response.text();
       
@@ -104,6 +107,7 @@ const AiTutorPage = () => {
       setApiKey(null);
       setModel(null);
       localStorage.removeItem('geminiApiKey');
+      setMessages(prev => prev.slice(0, -1));
     } finally {
       setIsLoading(false);
     }
