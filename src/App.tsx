@@ -16,6 +16,7 @@ import PronunciationPage from "./pages/PronunciationPage";
 import AiTutorPage from "./pages/AiTutorPage";
 import MsutongPage from "./pages/MsutongPage";
 import MsutongPracticePage from "./pages/msutong/MsutongPracticePage";
+import MsutongAiTutorPage from "./pages/msutong/AiTutorPage";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => (
             {/* Msutong Routes */}
             <Route path="/msutong" element={<MsutongPage />} />
             <Route path="/msutong/practice" element={<MsutongPracticePage />} />
+            <Route path="/msutong/ai-tutor" element={<MsutongAiTutorPage />} />
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

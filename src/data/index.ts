@@ -45,6 +45,26 @@ const msutongVocabularyData: { [level: string]: { [book: string]: MsutongWord[] 
   // Dữ liệu cho các cấp độ khác sẽ được thêm vào đây
 };
 
+export const getFullMsutongVocabularyByLevel = (level: string): MsutongWord[] => {
+  const levelData = msutongVocabularyData[level];
+  if (!levelData) return [];
+  
+  let combinedVocabulary: MsutongWord[] = [];
+  for (const bookSlug in levelData) {
+    combinedVocabulary.push(...levelData[bookSlug]);
+  }
+  
+  const uniqueIds = new Set();
+  return combinedVocabulary.filter(word => {
+    if (uniqueIds.has(word.id)) {
+      return false;
+    } else {
+      uniqueIds.add(word.id);
+      return true;
+    }
+  });
+};
+
 export const getVocabularyByMsutong = (level: string, books: string[], lessons: number[]): VocabularyWord[] => {
   let combinedVocabulary: MsutongWord[] = [];
   const levelData = msutongVocabularyData[level];

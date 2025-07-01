@@ -3,9 +3,8 @@ import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { BookCopy, GraduationCap, ChevronRight, ArrowLeft, BookOpen, Mic, Puzzle, FileQuestion, CheckSquare, Shuffle, AudioLines, Bot } from 'lucide-react';
+import { BookCopy, ChevronRight, ArrowLeft, BookOpen, Mic, Puzzle, FileQuestion, CheckSquare, Shuffle, AudioLines, Bot } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const levels = [
@@ -24,14 +23,14 @@ const books = [
 const lessons = Array.from({ length: 40 }, (_, i) => i + 1);
 
 const exerciseTypes = [
-    { slug: "flashcard", title: "Flashcard", description: "Ôn tập từ vựng qua thẻ ghi nhớ", icon: <BookOpen /> },
-    { slug: "pinyin-choice", title: "Chọn phiên âm", description: "Chọn pinyin đúng cho chữ Hán", icon: <Mic /> },
-    { slug: "meaning-choice", title: "Chọn nghĩa", description: "Chọn nghĩa đúng cho từ vựng", icon: <Puzzle /> },
-    { slug: "fill-in-the-blank", title: "Điền từ", description: "Điền chữ Hán dựa vào pinyin và nghĩa", icon: <FileQuestion /> },
-    { slug: "sentence-choice", title: "Điền từ vào câu", description: "Chọn từ đúng để hoàn thành câu", icon: <CheckSquare /> },
-    { slug: "sentence-scramble", title: "Sắp xếp câu", description: "Sắp xếp các từ thành câu hoàn chỉnh", icon: <Shuffle /> },
-    { slug: "pronunciation", title: "Luyện phát âm", description: "Luyện phát âm qua nhận dạng giọng nói", icon: <AudioLines /> },
-    { slug: "ai-tutor", title: "Luyện nói cùng AI", description: "Trò chuyện và nhận phản hồi từ AI", icon: <Bot /> },
+    { slug: "flashcard", title: "Flashcard", description: "Ôn tập từ vựng qua thẻ ghi nhớ", icon: <BookOpen />, isAvailable: true },
+    { slug: "pinyin-choice", title: "Chọn phiên âm", description: "Chọn pinyin đúng cho chữ Hán", icon: <Mic />, isAvailable: true },
+    { slug: "meaning-choice", title: "Chọn nghĩa", description: "Chọn nghĩa đúng cho từ vựng", icon: <Puzzle />, isAvailable: true },
+    { slug: "fill-in-the-blank", title: "Điền từ", description: "Điền chữ Hán dựa vào pinyin và nghĩa", icon: <FileQuestion />, isAvailable: true },
+    { slug: "pronunciation", title: "Luyện phát âm", description: "Luyện phát âm qua nhận dạng giọng nói", icon: <AudioLines />, isAvailable: true },
+    { slug: "ai-tutor", title: "Luyện nói cùng AI", description: "Trò chuyện và nhận phản hồi từ AI", icon: <Bot />, isAvailable: true },
+    { slug: "sentence-choice", title: "Điền từ vào câu", description: "Chọn từ đúng để hoàn thành câu", icon: <CheckSquare />, isAvailable: false },
+    { slug: "sentence-scramble", title: "Sắp xếp câu", description: "Sắp xếp các từ thành câu hoàn chỉnh", icon: <Shuffle />, isAvailable: false },
 ];
 
 const MsutongPage = () => {
@@ -64,7 +63,7 @@ const MsutongPage = () => {
   const selectionSummary = useMemo(() => {
     const levelName = levels.find(l => l.slug === selectedLevel)?.name;
     const bookNames = selectedBooks.map(slug => books.find(b => b.slug === slug)?.name).join(', ');
-    const lessonNames = selectedLessons.map(l => `Bài ${l}`).join(', ');
+    const lessonNames = selectedLessons.length === lessons.length * books.length ? 'Tất cả các bài' : selectedLessons.map(l => `Bài ${l}`).join(', ');
     return `Đã chọn: ${levelName} > ${bookNames} > ${lessonNames}`;
   }, [selectedLevel, selectedBooks, selectedLessons]);
 
@@ -132,7 +131,7 @@ const MsutongPage = () => {
               <h2 className="text-3xl font-bold tracking-tight">Chọn Bài Học</h2>
               <p className="text-muted-foreground mt-2">Bạn có thể chọn một hoặc nhiều bài.</p>
             </div>
-            <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-10 gap-4 max-w-5xl mx-auto mb-8">
+            <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-10 gap-4 max-w-5xl mx-auto mb-8">
               {lessons.map(lesson => (
                 <Label
                   key={lesson}
@@ -163,13 +162,18 @@ const MsutongPage = () => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
               {exerciseTypes.map((exercise) => (
-                <Link key={exercise.slug} to={`/msutong/practice?${practiceUrlParams}&type=${exercise.slug}`}>
-                  <Card className="flex flex-col text-center h-full hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-in-out group cursor-pointer hover:border-primary">
+                <Link 
+                  key={exercise.slug} 
+                  to={exercise.isAvailable ? `/msutong/${exercise.slug === 'ai-tutor' ? 'ai-tutor' : 'practice'}?${practiceUrlParams}&type=${exercise.slug}` : '#'}
+                  className={cn(!exercise.isAvailable && "pointer-events-none")}
+                >
+                  <Card className={cn("flex flex-col text-center h-full hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-in-out group cursor-pointer hover:border-primary", !exercise.isAvailable && "opacity-50")}>
                     <CardHeader className="items-center flex-grow">
                       <div className="mb-4 bg-primary/10 p-4 rounded-full transition-colors group-hover:bg-primary">
                         {React.cloneElement(exercise.icon, { className: "w-8 h-8 text-primary transition-colors group-hover:text-primary-foreground" })}
                       </div>
                       <CardTitle className="text-xl">{exercise.title}</CardTitle>
+                      <CardDescription>{exercise.isAvailable ? exercise.description : "Sắp ra mắt"}</CardDescription>
                     </CardHeader>
                   </Card>
                 </Link>
