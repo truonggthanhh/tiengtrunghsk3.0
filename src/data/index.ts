@@ -86,6 +86,8 @@ export const getVocabularyByMsutong = (level: string, lessonIds: string[]): Voca
     }
   });
 
+  console.log("Combined vocabulary before unique filter:", combinedVocabulary); // Debug log
+
   // Loại bỏ các từ trùng lặp nếu có
   const uniqueIds = new Set();
   return combinedVocabulary.filter(word => {

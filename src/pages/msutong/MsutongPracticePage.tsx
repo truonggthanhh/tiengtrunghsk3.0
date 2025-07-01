@@ -336,6 +336,8 @@ const MsutongPracticePage = () => {
   useEffect(() => {
     const vocab = getVocabularyByMsutong(level, lessonIds);
     const fullVocab = getFullMsutongVocabularyByLevel(level);
+    console.log("Loaded practice vocabulary:", vocab); // Debug log
+    console.log("Loaded full vocabulary for distractors:", fullVocab); // Debug log
     setPracticeVocabulary(vocab);
     setDistractorVocabulary(fullVocab);
   }, [level, lessonIds]);
