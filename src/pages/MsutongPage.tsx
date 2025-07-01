@@ -20,8 +20,6 @@ const books = [
   { slug: 'quyen-4', name: 'Quyển 4' },
 ];
 
-const lessons = Array.from({ length: 40 }, (_, i) => i + 1);
-
 const exerciseTypes = [
     { slug: "flashcard", title: "Flashcard", description: "Ôn tập từ vựng qua thẻ ghi nhớ", icon: <BookOpen />, isAvailable: true },
     { slug: "pinyin-choice", title: "Chọn phiên âm", description: "Chọn pinyin đúng cho chữ Hán", icon: <Mic />, isAvailable: true },
@@ -37,7 +35,7 @@ const MsutongPage = () => {
   const [step, setStep] = useState<'level' | 'book' | 'lesson' | 'exercise'>('level');
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   const [selectedBooks, setSelectedBooks] = useState<string[]>([]);
-  const [selectedLessons, setSelectedLessons] = useState<number[]>([]);
+  const [selectedLessons, setSelectedLessons] = useState<string[]>([]);
 
   const handleLevelSelect = (levelSlug: string) => {
     setSelectedLevel(levelSlug);
@@ -52,28 +50,47 @@ const MsutongPage = () => {
     );
   };
 
-  const handleLessonToggle = (lessonNumber: number) => {
+  const lessonsToDisplay = useMemo(() => {
+    if (selectedBooks.length === 0) return [];
+    
+    const allLessons: { id: string; lesson: number; bookSlug: string; bookName: string }[] = [];
+    
+    selectedBooks.forEach(bookSlug => {
+      const bookInfo = books.find(b => b.slug === bookSlug);
+      if (bookInfo) {
+        for (let i = 1; i <= 10; i++) {
+          allLessons.push({
+            id: `${bookSlug}-lesson-${(bookInfo.slug.slice(-1) - 1) * 10 + i}`,
+            lesson: (bookInfo.slug.slice(-1) - 1) * 10 + i,
+            bookSlug: bookSlug,
+            bookName: bookInfo.name,
+          });
+        }
+      }
+    });
+    return allLessons.sort((a, b) => a.lesson - b.lesson);
+  }, [selectedBooks]);
+
+  const handleLessonToggle = (lessonId: string) => {
     setSelectedLessons(prev =>
-      prev.includes(lessonNumber)
-        ? prev.filter(l => l !== lessonNumber)
-        : [...prev, lessonNumber]
+      prev.includes(lessonId)
+        ? prev.filter(id => id !== lessonId)
+        : [...prev, lessonId]
     );
   };
 
   const selectionSummary = useMemo(() => {
     const levelName = levels.find(l => l.slug === selectedLevel)?.name;
     const bookNames = selectedBooks.map(slug => books.find(b => b.slug === slug)?.name).join(', ');
-    const lessonNames = selectedLessons.length === lessons.length * books.length ? 'Tất cả các bài' : selectedLessons.map(l => `Bài ${l}`).join(', ');
-    return `Đã chọn: ${levelName} > ${bookNames} > ${lessonNames}`;
+    return `Đã chọn: ${levelName} > ${bookNames} > (${selectedLessons.length} bài)`;
   }, [selectedLevel, selectedBooks, selectedLessons]);
 
   const practiceUrlParams = useMemo(() => {
     const params = new URLSearchParams();
     if (selectedLevel) params.append('level', selectedLevel);
-    if (selectedBooks.length > 0) params.append('books', selectedBooks.join(','));
-    if (selectedLessons.length > 0) params.append('lessons', selectedLessons.join(','));
+    if (selectedLessons.length > 0) params.append('lessonIds', selectedLessons.join(','));
     return params.toString();
-  }, [selectedLevel, selectedBooks, selectedLessons]);
+  }, [selectedLevel, selectedLessons]);
 
   const renderStep = () => {
     switch (step) {
@@ -132,17 +149,18 @@ const MsutongPage = () => {
               <p className="text-muted-foreground mt-2">Bạn có thể chọn một hoặc nhiều bài.</p>
             </div>
             <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-10 gap-4 max-w-5xl mx-auto mb-8">
-              {lessons.map(lesson => (
+              {lessonsToDisplay.map(lesson => (
                 <Label
-                  key={lesson}
-                  htmlFor={`lesson-${lesson}`}
-                  onClick={() => handleLessonToggle(lesson)}
+                  key={lesson.id}
+                  htmlFor={`lesson-${lesson.id}`}
+                  onClick={() => handleLessonToggle(lesson.id)}
                   className={cn(
-                    "flex h-16 w-full cursor-pointer items-center justify-center rounded-lg border p-2 text-base font-medium transition-colors",
-                    selectedLessons.includes(lesson) ? "border-primary bg-primary/10" : "hover:bg-muted/50"
+                    "flex flex-col h-16 w-full cursor-pointer items-center justify-center rounded-lg border p-2 text-base font-medium transition-colors",
+                    selectedLessons.includes(lesson.id) ? "border-primary bg-primary/10" : "hover:bg-muted/50"
                   )}
                 >
-                  Bài {lesson}
+                  <span>Bài {lesson.lesson}</span>
+                  {selectedBooks.length > 1 && <span className="text-xs text-muted-foreground">({lesson.bookName.replace('Quyển ', 'Q')})</span>}
                 </Label>
               ))}
             </div>

@@ -65,15 +65,23 @@ export const getFullMsutongVocabularyByLevel = (level: string): MsutongWord[] =>
   });
 };
 
-export const getVocabularyByMsutong = (level: string, books: string[], lessons: number[]): VocabularyWord[] => {
+export const getVocabularyByMsutong = (level: string, lessonIds: string[]): VocabularyWord[] => {
+  const selections: { bookSlug: string; lessonNumber: number }[] = lessonIds.map(id => {
+    const parts = id.split('-lesson-');
+    return {
+      bookSlug: parts[0],
+      lessonNumber: parseInt(parts[1], 10),
+    };
+  });
+
   let combinedVocabulary: MsutongWord[] = [];
   const levelData = msutongVocabularyData[level];
   if (!levelData) return [];
 
-  books.forEach(bookSlug => {
+  selections.forEach(({ bookSlug, lessonNumber }) => {
     const bookData = levelData[bookSlug];
     if (bookData) {
-      const filteredByLesson = bookData.filter(word => lessons.includes(word.lesson));
+      const filteredByLesson = bookData.filter(word => word.lesson === lessonNumber);
       combinedVocabulary.push(...filteredByLesson);
     }
   });

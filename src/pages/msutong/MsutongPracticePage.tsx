@@ -326,8 +326,7 @@ const MsutongPracticePage = () => {
   const navigate = useNavigate();
 
   const level = searchParams.get('level') || '';
-  const books = searchParams.get('books')?.split(',') || [];
-  const lessons = searchParams.get('lessons')?.split(',').map(Number) || [];
+  const lessonIds = searchParams.get('lessonIds')?.split(',') || [];
   const type = searchParams.get('type');
 
   const [practiceVocabulary, setPracticeVocabulary] = useState<VocabularyWord[]>([]);
@@ -335,11 +334,11 @@ const MsutongPracticePage = () => {
   const [questionCount, setQuestionCount] = useState<number | null>(null);
 
   useEffect(() => {
-    const vocab = getVocabularyByMsutong(level, books, lessons);
+    const vocab = getVocabularyByMsutong(level, lessonIds);
     const fullVocab = getFullMsutongVocabularyByLevel(level);
     setPracticeVocabulary(vocab);
     setDistractorVocabulary(fullVocab);
-  }, [level, books, lessons]);
+  }, [level, lessonIds]);
 
   const handleStart = (count: number) => {
     setPracticeVocabulary(prev => shuffleArray(prev).slice(0, count));
