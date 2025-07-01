@@ -12,7 +12,7 @@ const FeatureItem: React.FC<FeatureItemProps> = ({ icon, title, description }) =
   <Card className="flex flex-col items-center text-center p-6 h-full">
     <CardHeader className="pb-4">
       <div className="mb-4 bg-primary/10 p-3 rounded-full">
-        {React.cloneElement(icon as React.ReactElement, { className: "w-8 h-8 text-primary" })}
+        {React.cloneElement(icon as React.ReactElement, { className: "w-7 h-7 text-primary" })}
       </div>
       <CardTitle className="text-xl">{title}</CardTitle>
     </CardHeader>
