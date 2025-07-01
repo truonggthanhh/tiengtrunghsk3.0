@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import { MadeWithDyad } from "@/components/made-with-dyad";
@@ -64,6 +64,11 @@ const exerciseTypes = [
 
 const Index = () => {
   const [level, setLevel] = useState("1");
+  const levelSectionRef = useRef<HTMLElement>(null);
+
+  const handleStartLearningClick = () => {
+    levelSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -93,7 +98,7 @@ const Index = () => {
 
         <FeatureSection />
 
-        <section className="mb-16">
+        <section ref={levelSectionRef} className="mb-16 scroll-mt-20">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold tracking-tight">Chọn Trình Độ Của Bạn</h2>
             <p className="text-muted-foreground mt-2">Bắt đầu hành trình của bạn bằng cách chọn cấp độ HSK phù hợp.</p>
@@ -144,7 +149,7 @@ const Index = () => {
 
         <TestimonialSection />
 
-        <CallToActionSection />
+        <CallToActionSection onStartClick={handleStartLearningClick} />
       </main>
       <MadeWithDyad />
     </div>

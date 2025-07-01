@@ -1,10 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Sparkles } from 'lucide-react';
 
-const CallToActionSection: React.FC = () => {
+interface CallToActionSectionProps {
+  onStartClick: () => void;
+}
+
+const CallToActionSection: React.FC<CallToActionSectionProps> = ({ onStartClick }) => {
   return (
     <section className="py-16 md:py-20 mb-16">
       <div className="container mx-auto px-4 md:px-8">
@@ -19,10 +22,8 @@ const CallToActionSection: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button size="lg" asChild className="mt-4">
-              <Link to="/hsk/1/flashcard">
-                Bắt đầu học HSK 1 ngay!
-              </Link>
+            <Button size="lg" className="mt-4" onClick={onStartClick}>
+              Bắt đầu học ngay
             </Button>
           </CardContent>
         </Card>
