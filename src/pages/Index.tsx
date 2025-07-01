@@ -106,12 +106,12 @@ const Index = () => {
             </div>
             <Tabs defaultValue="1" onValueChange={setLevel} className="w-full">
               <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 h-auto gap-2 bg-transparent p-0">
-                <TabsTrigger value="1" className="text-base h-12">HSK 1</TabsTrigger>
-                <TabsTrigger value="2" className="text-base h-12">HSK 2</TabsTrigger>
-                <TabsTrigger value="3" className="text-base h-12">HSK 3</TabsTrigger>
-                <TabsTrigger value="4" className="text-base h-12">HSK 4</TabsTrigger>
-                <TabsTrigger value="5" className="text-base h-12">HSK 5</TabsTrigger>
-                <TabsTrigger value="6" className="text-base h-12">HSK 6</TabsTrigger>
+                <TabsTrigger value="1" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground">HSK 1</TabsTrigger>
+                <TabsTrigger value="2" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground">HSK 2</TabsTrigger>
+                <TabsTrigger value="3" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground">HSK 3</TabsTrigger>
+                <TabsTrigger value="4" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground">HSK 4</TabsTrigger>
+                <TabsTrigger value="5" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground">HSK 5</TabsTrigger>
+                <TabsTrigger value="6" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground">HSK 6</TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
