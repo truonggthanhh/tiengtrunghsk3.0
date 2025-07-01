@@ -31,19 +31,54 @@ export const getVocabularyByLevel = (level: string): VocabularyWord[] => {
 };
 
 // Placeholder data for Msutong textbooks
-const msutongData: { [book: string]: { [lesson: string]: VocabularyWord[] } } = {
-  'boya': {
-    '1': [], // You will add data here later
-    '2': [],
+// Cấu trúc dữ liệu giả định: { level: { book: { lesson: VocabularyWord[] } } }
+const msutongData: { [level: string]: { [book: string]: { [lesson: string]: VocabularyWord[] } } } = {
+  'so-cap': {
+    'quyen-1': {
+      '1': [
+        { id: 10001, hanzi: "你好", pinyin: "nǐ hǎo", meaning: "Xin chào" },
+        { id: 10002, hanzi: "谢谢", pinyin: "xièxie", meaning: "Cảm ơn" },
+      ],
+      '2': [
+        { id: 10003, hanzi: "再见", pinyin: "zàijiàn", meaning: "Tạm biệt" },
+      ]
+    },
+    'quyen-2': {
+        '1': [
+            { id: 20001, hanzi: "学校", pinyin: "xuéxiào", meaning: "Trường học" },
+        ]
+    }
   },
-  'hanyu': {
-    '1': [],
-    '2': [],
-  }
+  // Thêm dữ liệu cho trung-cap, cao-cap khi có
 };
 
-export const getVocabularyByMsutong = (book: string, lesson: string): VocabularyWord[] => {
-  return msutongData[book]?.[lesson] || [];
+export const getVocabularyByMsutong = (level: string, books: string[], lessons: number[]): VocabularyWord[] => {
+  let combinedVocabulary: VocabularyWord[] = [];
+  const levelData = msutongData[level];
+  if (!levelData) return [];
+
+  books.forEach(bookSlug => {
+    const bookData = levelData[bookSlug];
+    if (bookData) {
+      lessons.forEach(lessonNum => {
+        const lessonData = bookData[lessonNum.toString()];
+        if (lessonData) {
+          combinedVocabulary.push(...lessonData);
+        }
+      });
+    }
+  });
+
+  // Loại bỏ các từ trùng lặp nếu có
+  const uniqueIds = new Set();
+  return combinedVocabulary.filter(word => {
+    if (uniqueIds.has(word.id)) {
+      return false;
+    } else {
+      uniqueIds.add(word.id);
+      return true;
+    }
+  });
 };
 
 

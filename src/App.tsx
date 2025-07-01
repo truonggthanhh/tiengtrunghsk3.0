@@ -15,8 +15,7 @@ import SentenceScramblePage from "./pages/SentenceScramblePage";
 import PronunciationPage from "./pages/PronunciationPage";
 import AiTutorPage from "./pages/AiTutorPage";
 import MsutongPage from "./pages/MsutongPage";
-import MsutongFlashcardPage from "./pages/msutong/MsutongFlashcardPage";
-import MsutongPinyinChoicePage from "./pages/msutong/MsutongPinyinChoicePage";
+import MsutongPracticePage from "./pages/msutong/MsutongPracticePage";
 
 const queryClient = new QueryClient();
 
@@ -42,9 +41,7 @@ const App = () => (
 
             {/* Msutong Routes */}
             <Route path="/msutong" element={<MsutongPage />} />
-            <Route path="/msutong/:book/:lesson/flashcard" element={<MsutongFlashcardPage />} />
-            <Route path="/msutong/:book/:lesson/pinyin-choice" element={<MsutongPinyinChoicePage />} />
-            {/* Add other Msutong exercise routes here as they are created */}
+            <Route path="/msutong/practice" element={<MsutongPracticePage />} />
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
