@@ -91,10 +91,8 @@ const Index = () => {
               <p className="max-w-xl mx-auto lg:mx-0 text-lg md:text-xl text-muted-foreground mb-8">
                 Nền tảng ôn luyện HSK toàn diện, giúp bạn tự tin vượt qua kỳ thi với điểm số cao nhất.
               </p>
-              <Button size="lg" asChild>
-                <Link to={`/hsk/${level}/flashcard`}>
-                  Bắt đầu học ngay <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
+              <Button size="lg" onClick={handleStartLearningClick}>
+                Bắt đầu học ngay <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
             <div className="hidden lg:block">
