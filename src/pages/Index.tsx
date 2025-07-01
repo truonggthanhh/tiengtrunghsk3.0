@@ -72,7 +72,7 @@ const exerciseTypes = [
     title: "Luyện nói cùng Trợ lý ảo",
     description: "Trò chuyện và nhận phản hồi từ AI",
     icon: <Bot />,
-    isAvailable: false,
+    isAvailable: true,
   },
 ];
 
@@ -92,6 +92,10 @@ const Index = () => {
         <section className="py-16 md:py-20 mb-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="text-center lg:text-left">
+              <div className="inline-flex items-center rounded-lg bg-muted px-3 py-1 text-sm font-medium mb-4">
+                  <Bot className="h-4 w-4 mr-2 text-primary" />
+                  <span>Đặc biệt: Luyện nói với Trợ lý ảo thông minh</span>
+              </div>
               <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 dark:from-blue-300 dark:via-blue-400 dark:to-blue-500">
                 Chinh Phục Tiếng Trung Cùng TIẾNG TRUNG HAOHAO
               </h1>
