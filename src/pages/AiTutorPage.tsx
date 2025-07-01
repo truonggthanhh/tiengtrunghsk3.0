@@ -95,13 +95,10 @@ const AiTutorPage = () => {
       setMessages(prev => [...prev, { role: 'model', text }]);
     } catch (e: any) {
       console.error(e);
-      let errorMessage = 'Đã xảy ra lỗi. Vui lòng thử lại.';
-      if (e.message.includes('API key not valid')) {
-        errorMessage = 'API Key không hợp lệ. Vui lòng nhập lại key mới.';
-        setApiKey(null);
-        localStorage.removeItem('geminiApiKey');
-      }
+      const errorMessage = 'Đã xảy ra lỗi khi giao tiếp với AI. Vui lòng kiểm tra lại API Key và thử lại.';
       setError(errorMessage);
+      setApiKey(null);
+      localStorage.removeItem('geminiApiKey');
     } finally {
       setIsLoading(false);
     }
