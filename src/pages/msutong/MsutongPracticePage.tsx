@@ -62,7 +62,7 @@ const FlashcardPractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ vocabul
 
 const ChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], distractorVocabulary: VocabularyWord[], type: 'pinyin' | 'meaning' }> = ({ practiceVocabulary, distractorVocabulary, type }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [options, setOptions] = useState<string[]>([]); // Changed to useState
+    const [options, setOptions] = useState<string[]>([]);
     const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
     const [correctAnswers, setCorrectAnswers] = useState(0);
@@ -70,7 +70,6 @@ const ChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], distracto
 
     const currentWord = useMemo(() => practiceVocabulary[currentIndex], [practiceVocabulary, currentIndex]);
 
-    // Generate options when currentWord changes
     useEffect(() => {
         if (!currentWord) {
             setOptions([]);
@@ -84,7 +83,7 @@ const ChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], distracto
         
         const uniqueIncorrectOptions = [...new Set(shuffleArray(incorrectOptions))].slice(0, 3);
         setOptions(shuffleArray([correctOption, ...uniqueIncorrectOptions]));
-    }, [currentWord, distractorVocabulary, type]); // Dependencies are correct here.
+    }, [currentWord, distractorVocabulary, type]);
 
     const goToNextWord = useCallback(() => {
         setSelectedAnswer(null);
@@ -330,14 +329,12 @@ const MsutongPracticePage = () => {
   const type = searchParams.get('type');
 
   const [practiceVocabulary, setPracticeVocabulary] = useState<VocabularyWord[]>([]);
-  const [distractorVocabulary, setDistractorVocabulary] = useState<VocabularyWord[]>([]);
+  const fullMsutongVocab = useMemo(() => getFullMsutongVocabularyByLevel(level), [level]);
   const [questionCount, setQuestionCount] = useState<number | null>(null);
 
   useEffect(() => {
     const vocab = getVocabularyByMsutong(level, lessonIds);
-    const fullVocab = getFullMsutongVocabularyByLevel(level);
     setPracticeVocabulary(vocab);
-    setDistractorVocabulary(fullVocab);
   }, [level, lessonIds]);
 
   const handleStart = (count: number) => {
@@ -352,9 +349,9 @@ const MsutongPracticePage = () => {
       case 'flashcard':
         return <FlashcardPractice vocabulary={practiceVocabulary} />;
       case 'pinyin-choice':
-        return <ChoicePractice practiceVocabulary={practiceVocabulary} distractorVocabulary={distractorVocabulary} type="pinyin" />;
+        return <ChoicePractice practiceVocabulary={practiceVocabulary} distractorVocabulary={fullMsutongVocab} type="pinyin" />;
       case 'meaning-choice':
-        return <ChoicePractice practiceVocabulary={practiceVocabulary} distractorVocabulary={distractorVocabulary} type="meaning" />;
+        return <ChoicePractice practiceVocabulary={practiceVocabulary} distractorVocabulary={fullMsutongVocab} type="meaning" />;
       case 'fill-in-the-blank':
         return <FillInTheBlankPractice vocabulary={practiceVocabulary} />;
       case 'pronunciation':

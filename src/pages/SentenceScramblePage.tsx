@@ -48,24 +48,18 @@ const SentenceScramblePage = () => {
 
   const currentQuestion = useMemo(() => questions[currentIndex], [questions, currentIndex]);
 
-  // Memoize the initial shuffled characters for the current question
-  const initialShuffledCharsForCurrentQuestion = useMemo(() => {
-    if (!currentQuestion) return [];
-    const chars = currentQuestion.sentence.replace(/[，。？！]/g, '').split('');
-    return shuffleArray(chars.map((char, index) => ({ char, id: index })));
-  }, [currentQuestion]);
-
   // State for characters available to pick
   const [shuffledChars, setShuffledChars] = useState<CharObject[]>([]);
 
-  // Reset state variables when currentQuestion changes
+  // Reset state variables and generate shuffledChars when currentQuestion changes
   useEffect(() => {
     if (currentQuestion) {
-      setShuffledChars(initialShuffledCharsForCurrentQuestion);
+      const chars = currentQuestion.sentence.replace(/[，。？！]/g, '').split('');
+      setShuffledChars(shuffleArray(chars.map((char, index) => ({ char, id: index }))));
       setUserAnswer([]);
       setAnswerStatus(null);
     }
-  }, [currentQuestion, initialShuffledCharsForCurrentQuestion]);
+  }, [currentQuestion]);
 
   const handleStart = (count: number) => {
     setQuestionCount(count);
