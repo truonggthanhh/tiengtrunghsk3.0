@@ -58,17 +58,26 @@ const MsutongPage = () => {
     selectedBooks.forEach(bookSlug => {
       const bookInfo = books.find(b => b.slug === bookSlug);
       if (bookInfo) {
+        // Generate lessons 1-10 for each selected book
         for (let i = 1; i <= 10; i++) {
           allLessons.push({
-            id: `${bookSlug}-lesson-${(bookInfo.slug.slice(-1) - 1) * 10 + i}`,
-            lesson: (bookInfo.slug.slice(-1) - 1) * 10 + i,
+            id: `${bookSlug}-lesson-${i}`, // ID format: 'quyen-X-lesson-Y'
+            lesson: i, // Lesson number within the book (1-10)
             bookSlug: bookSlug,
             bookName: bookInfo.name,
           });
         }
       }
     });
-    return allLessons.sort((a, b) => a.lesson - b.lesson);
+    // Sort by book number then lesson number for consistent display
+    return allLessons.sort((a, b) => {
+      const bookNumA = parseInt(a.bookSlug.replace('quyen-', ''));
+      const bookNumB = parseInt(b.bookSlug.replace('quyen-', ''));
+      if (bookNumA !== bookNumB) {
+        return bookNumA - bookNumB;
+      }
+      return a.lesson - b.lesson;
+    });
   }, [selectedBooks]);
 
   const handleLessonToggle = (lessonId: string) => {
@@ -89,8 +98,10 @@ const MsutongPage = () => {
     const params = new URLSearchParams();
     if (selectedLevel) params.append('level', selectedLevel);
     if (selectedLessons.length > 0) params.append('lessonIds', selectedLessons.join(','));
+    // Also pass selected books for AI Tutor context if needed
+    if (selectedBooks.length > 0) params.append('books', selectedBooks.map(slug => books.find(b => b.slug === slug)?.name).join(', '));
     return params.toString();
-  }, [selectedLevel, selectedLessons]);
+  }, [selectedLevel, selectedLessons, selectedBooks]);
 
   const renderStep = () => {
     switch (step) {

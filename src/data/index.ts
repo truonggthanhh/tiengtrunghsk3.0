@@ -70,7 +70,7 @@ export const getVocabularyByMsutong = (level: string, lessonIds: string[]): Voca
     const parts = id.split('-lesson-');
     return {
       bookSlug: parts[0],
-      lessonNumber: parseInt(parts[1], 10),
+      lessonNumber: parseInt(parts[1], 10), // This will now correctly be 1-10
     };
   });
 
@@ -81,6 +81,7 @@ export const getVocabularyByMsutong = (level: string, lessonIds: string[]): Voca
   selections.forEach(({ bookSlug, lessonNumber }) => {
     const bookData = levelData[bookSlug];
     if (bookData) {
+      // Filter by the lesson number (which is now 1-10 in the data files)
       const filteredByLesson = bookData.filter(word => word.lesson === lessonNumber);
       combinedVocabulary.push(...filteredByLesson);
     }
