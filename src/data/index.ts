@@ -4,6 +4,7 @@ import { hsk3Vocabulary } from './hsk3';
 import { hsk4Vocabulary } from './hsk4';
 import { hsk5Vocabulary } from './hsk5';
 import { hsk6Vocabulary } from './hsk6';
+import { msutong_so_cap_1_vocab, type MsutongWord } from './msutong/so-cap-1-vocab';
 
 const vocabularyData: { [key: string]: VocabularyWord[] } = {
   '1': hsk1Vocabulary,
@@ -30,42 +31,25 @@ export const getVocabularyByLevel = (level: string): VocabularyWord[] => {
   return combinedVocabulary;
 };
 
-// Placeholder data for Msutong textbooks
-// Cấu trúc dữ liệu giả định: { level: { book: { lesson: VocabularyWord[] } } }
-const msutongData: { [level: string]: { [book: string]: { [lesson: string]: VocabularyWord[] } } } = {
+// Cấu trúc dữ liệu cho giáo trình Msutong
+const msutongVocabularyData: { [level: string]: { [book: string]: MsutongWord[] } } = {
   'so-cap': {
-    'quyen-1': {
-      '1': [
-        { id: 10001, hanzi: "你好", pinyin: "nǐ hǎo", meaning: "Xin chào" },
-        { id: 10002, hanzi: "谢谢", pinyin: "xièxie", meaning: "Cảm ơn" },
-      ],
-      '2': [
-        { id: 10003, hanzi: "再见", pinyin: "zàijiàn", meaning: "Tạm biệt" },
-      ]
-    },
-    'quyen-2': {
-        '1': [
-            { id: 20001, hanzi: "学校", pinyin: "xuéxiào", meaning: "Trường học" },
-        ]
-    }
+    'quyen-1': msutong_so_cap_1_vocab,
+    // Dữ liệu cho các quyển khác sẽ được thêm vào đây
   },
-  // Thêm dữ liệu cho trung-cap, cao-cap khi có
+  // Dữ liệu cho các cấp độ khác sẽ được thêm vào đây
 };
 
 export const getVocabularyByMsutong = (level: string, books: string[], lessons: number[]): VocabularyWord[] => {
-  let combinedVocabulary: VocabularyWord[] = [];
-  const levelData = msutongData[level];
+  let combinedVocabulary: MsutongWord[] = [];
+  const levelData = msutongVocabularyData[level];
   if (!levelData) return [];
 
   books.forEach(bookSlug => {
     const bookData = levelData[bookSlug];
     if (bookData) {
-      lessons.forEach(lessonNum => {
-        const lessonData = bookData[lessonNum.toString()];
-        if (lessonData) {
-          combinedVocabulary.push(...lessonData);
-        }
-      });
+      const filteredByLesson = bookData.filter(word => lessons.includes(word.lesson));
+      combinedVocabulary.push(...filteredByLesson);
     }
   });
 
@@ -82,4 +66,4 @@ export const getVocabularyByMsutong = (level: string, books: string[], lessons: 
 };
 
 
-export type { VocabularyWord };
+export type { VocabularyWord, MsutongWord };
