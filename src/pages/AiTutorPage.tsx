@@ -50,7 +50,7 @@ const AiTutorPage = () => {
         setError(null);
       } catch (e) {
         console.error("AI Initialization Error:", e);
-        setError('API Key không hợp lệ hoặc đã xảy ra lỗi. Vui lòng kiểm tra lại.');
+        setError('API Key không hợp lệ hoặc đã xảy ra lỗi khi khởi tạo. Vui lòng kiểm tra lại.');
         resetAiState();
       }
     } else {
@@ -104,7 +104,21 @@ const AiTutorPage = () => {
       setMessages(prev => [...prev, { role: 'model', text }]);
     } catch (e: any) {
       console.error("Send Message Error:", e);
-      setError('Đã xảy ra lỗi khi giao tiếp với AI. Vui lòng kiểm tra lại API Key và thử lại.');
+      
+      let detailedError = 'Đã xảy ra lỗi khi giao tiếp với AI. Vui lòng kiểm tra lại API Key và thử lại.';
+      if (e.message) {
+          if (e.message.includes('API key not valid')) {
+              detailedError = 'API Key của bạn không hợp lệ. Vui lòng kiểm tra lại hoặc tạo một key mới.';
+          } else if (e.message.includes('quota')) {
+              detailedError = 'Bạn đã hết hạn ngạch sử dụng API. Vui lòng kiểm tra tài khoản Google AI của bạn.';
+          } else if (e.message.includes('400')) {
+              detailedError = 'Yêu cầu không hợp lệ. Có thể do API key chưa được kích hoạt hoặc có vấn đề với tài khoản của bạn.';
+          } else {
+              detailedError = `Lỗi từ AI: ${e.message}`;
+          }
+      }
+      
+      setError(detailedError);
       resetAiState();
       setMessages(prev => prev.slice(0, -1)); // Remove user message that failed
     } finally {
