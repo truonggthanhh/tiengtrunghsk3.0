@@ -5,6 +5,7 @@ import { hsk4Vocabulary } from './hsk4';
 import { hsk5Vocabulary } from './hsk5';
 import { hsk6Vocabulary } from './hsk6';
 import { msutong_so_cap_1_vocab, type MsutongWord } from './msutong/so-cap-1-vocab';
+import { msutong_so_cap_2_vocab } from './msutong/so-cap-2-vocab';
 
 const vocabularyData: { [key: string]: VocabularyWord[] } = {
   '1': hsk1Vocabulary,
@@ -35,6 +36,7 @@ export const getVocabularyByLevel = (level: string): VocabularyWord[] => {
 const msutongVocabularyData: { [level: string]: { [book: string]: MsutongWord[] } } = {
   'so-cap': {
     'quyen-1': msutong_so_cap_1_vocab,
+    'quyen-2': msutong_so_cap_2_vocab,
     // Dữ liệu cho các quyển khác sẽ được thêm vào đây
   },
   // Dữ liệu cho các cấp độ khác sẽ được thêm vào đây
