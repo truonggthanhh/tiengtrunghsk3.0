@@ -78,7 +78,7 @@ const AiTutorPage = () => {
 
     try {
       const chat = model.startChat({
-        history: messages.map(msg => ({
+        history: messages.slice(1).map(msg => ({
           role: msg.role,
           parts: [{ text: msg.text }]
         })),
