@@ -15,7 +15,19 @@ const vocabularyData: { [key: string]: VocabularyWord[] } = {
 };
 
 export const getVocabularyByLevel = (level: string): VocabularyWord[] => {
-  return vocabularyData[level] || [];
+  const levelNum = parseInt(level, 10);
+  if (isNaN(levelNum)) {
+    return [];
+  }
+
+  let combinedVocabulary: VocabularyWord[] = [];
+  for (let i = 1; i <= levelNum; i++) {
+    const levelKey = i.toString();
+    if (vocabularyData[levelKey]) {
+      combinedVocabulary = [...combinedVocabulary, ...vocabularyData[levelKey]];
+    }
+  }
+  return combinedVocabulary;
 };
 
 // Placeholder data for Msutong textbooks
