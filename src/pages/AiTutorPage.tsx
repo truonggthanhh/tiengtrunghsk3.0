@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Home, Bot, User, Send, KeyRound, AlertTriangle } from 'lucide-react';
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
 import { cn } from '@/lib/utils';
@@ -46,10 +46,14 @@ const AiTutorPage = () => {
         ]);
 
       } catch (e) {
-        setError('API Key không hợp lệ. Vui lòng kiểm tra lại.');
+        console.error("AI Initialization Error:", e);
+        setError('API Key không hợp lệ hoặc đã xảy ra lỗi. Vui lòng kiểm tra lại.');
         setApiKey(null);
+        setModel(null);
         localStorage.removeItem('geminiApiKey');
       }
+    } else {
+      setModel(null);
     }
   }, [apiKey, level]);
 
@@ -61,9 +65,9 @@ const AiTutorPage = () => {
 
   const handleSaveApiKey = () => {
     if (tempApiKey.trim()) {
-      localStorage.setItem('geminiApiKey', tempApiKey.trim());
       setApiKey(tempApiKey.trim());
-      setError(null); // Clear previous errors
+      localStorage.setItem('geminiApiKey', tempApiKey.trim());
+      setError(null);
     }
   };
 
@@ -98,13 +102,14 @@ const AiTutorPage = () => {
       const errorMessage = 'Đã xảy ra lỗi khi giao tiếp với AI. Vui lòng kiểm tra lại API Key và thử lại.';
       setError(errorMessage);
       setApiKey(null);
+      setModel(null);
       localStorage.removeItem('geminiApiKey');
     } finally {
       setIsLoading(false);
     }
   }, [userInput, isLoading, model, messages, level]);
 
-  if (!apiKey) {
+  if (!model) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <Header />
@@ -154,7 +159,6 @@ const AiTutorPage = () => {
               <Bot />
               Trợ lý ảo HaoHao - HSK {level}
             </CardTitle>
-            {error && <p className="text-sm text-destructive">{error}</p>}
           </CardHeader>
           <CardContent className="flex-grow p-0">
             <ScrollArea className="h-[calc(100vh-250px)] p-4" ref={scrollAreaRef}>
