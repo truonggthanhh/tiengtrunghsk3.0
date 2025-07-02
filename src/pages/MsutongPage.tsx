@@ -21,14 +21,14 @@ const books = [
 ];
 
 const exerciseTypes = [
-    { slug: "flashcard", title: "Flashcard", description: "Ôn tập từ vựng qua thẻ ghi nhớ", icon: <BookOpen />, isAvailable: true, page: 'practice' },
-    { slug: "pinyin-choice", title: "Chọn phiên âm", description: "Chọn pinyin đúng cho chữ Hán", icon: <Mic />, isAvailable: true, page: 'practice' },
-    { slug: "meaning-choice", title: "Chọn nghĩa", description: "Chọn nghĩa đúng cho từ vựng", icon: <Puzzle />, isAvailable: true, page: 'practice' },
-    { slug: "fill-in-the-blank", title: "Điền từ", description: "Điền chữ Hán dựa vào pinyin và nghĩa", icon: <FileQuestion />, isAvailable: true, page: 'practice' },
-    { slug: "pronunciation", title: "Luyện phát âm", description: "Luyện phát âm qua nhận dạng giọng nói", icon: <AudioLines />, isAvailable: true, page: 'practice' },
-    { slug: "sentence-choice", title: "Điền từ vào câu", description: "Chọn từ đúng để hoàn thành câu", icon: <CheckSquare />, isAvailable: true, page: 'sentence-choice' },
-    { slug: "sentence-scramble", title: "Sắp xếp câu", description: "Sắp xếp các từ thành câu hoàn chỉnh", icon: <Shuffle />, isAvailable: true, page: 'sentence-scramble' },
-    { slug: "ai-tutor", title: "Luyện nói cùng AI", description: "Trò chuyện và nhận phản hồi từ AI", icon: <Bot />, isAvailable: true, page: 'ai-tutor' },
+    { slug: "flashcard", title: "Flashcard", description: "Ôn tập từ vựng qua thẻ ghi nhớ", icon: <BookOpen />, isAvailable: true },
+    { slug: "pinyin-choice", title: "Chọn phiên âm", description: "Chọn pinyin đúng cho chữ Hán", icon: <Mic />, isAvailable: true },
+    { slug: "meaning-choice", title: "Chọn nghĩa", description: "Chọn nghĩa đúng cho từ vựng", icon: <Puzzle />, isAvailable: true },
+    { slug: "fill-in-the-blank", title: "Điền từ", description: "Điền chữ Hán dựa vào pinyin và nghĩa", icon: <FileQuestion />, isAvailable: true },
+    { slug: "pronunciation", title: "Luyện phát âm", description: "Luyện phát âm qua nhận dạng giọng nói", icon: <AudioLines />, isAvailable: true },
+    { slug: "sentence-choice", title: "Điền từ vào câu", description: "Chọn từ đúng để hoàn thành câu", icon: <CheckSquare />, isAvailable: true },
+    { slug: "sentence-scramble", title: "Sắp xếp câu", description: "Sắp xếp các từ thành câu hoàn chỉnh", icon: <Shuffle />, isAvailable: true },
+    { slug: "ai-tutor", title: "Luyện nói cùng AI", description: "Trò chuyện và nhận phản hồi từ AI", icon: <Bot />, isAvailable: true },
 ];
 
 const MsutongPage = () => {
@@ -58,18 +58,16 @@ const MsutongPage = () => {
     selectedBooks.forEach(bookSlug => {
       const bookInfo = books.find(b => b.slug === bookSlug);
       if (bookInfo) {
-        // Generate lessons 1-10 for each selected book
         for (let i = 1; i <= 10; i++) {
           allLessons.push({
-            id: `${bookSlug}-lesson-${i}`, // ID format: 'quyen-X-lesson-Y'
-            lesson: i, // Lesson number within the book (1-10)
+            id: `${bookSlug}-lesson-${i}`,
+            lesson: i,
             bookSlug: bookSlug,
             bookName: bookInfo.name,
           });
         }
       }
     });
-    // Sort by book number then lesson number for consistent display
     return allLessons.sort((a, b) => {
       const bookNumA = parseInt(a.bookSlug.replace('quyen-', ''));
       const bookNumB = parseInt(b.bookSlug.replace('quyen-', ''));
@@ -98,7 +96,6 @@ const MsutongPage = () => {
     const params = new URLSearchParams();
     if (selectedLevel) params.append('level', selectedLevel);
     if (selectedLessons.length > 0) params.append('lessonIds', selectedLessons.join(','));
-    // Also pass selected books for AI Tutor context if needed
     if (selectedBooks.length > 0) params.append('books', selectedBooks.map(slug => books.find(b => b.slug === slug)?.name).join(', '));
     return params.toString();
   }, [selectedLevel, selectedLessons, selectedBooks]);
@@ -193,7 +190,7 @@ const MsutongPage = () => {
               {exerciseTypes.map((exercise) => (
                 <Link 
                   key={exercise.slug} 
-                  to={exercise.isAvailable ? `/msutong/${exercise.page}?${practiceUrlParams}&type=${exercise.slug}` : '#'}
+                  to={exercise.isAvailable ? `/msutong/msutong-${exercise.slug}?${practiceUrlParams}` : '#'}
                   className={cn(!exercise.isAvailable && "pointer-events-none")}
                 >
                   <Card className={cn("flex flex-col text-center h-full hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-in-out group cursor-pointer hover:border-primary", !exercise.isAvailable && "opacity-50")}>

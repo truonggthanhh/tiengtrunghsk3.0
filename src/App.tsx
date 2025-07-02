@@ -18,6 +18,11 @@ import MsutongPage from "./pages/MsutongPage";
 import MsutongAiTutorPage from "./pages/msutong/AiTutorPage";
 import MsutongSentenceChoicePage from "./pages/msutong/SentenceChoicePage";
 import MsutongSentenceScramblePage from "./pages/msutong/SentenceScramblePage";
+import MsutongFlashcardPage from "./pages/msutong/MsutongFlashcardPage";
+import MsutongPinyinChoicePage from "./pages/msutong/MsutongPinyinChoicePage";
+import MsutongMeaningChoicePage from "./pages/msutong/MsutongMeaningChoicePage";
+import MsutongFillInTheBlankPage from "./pages/msutong/MsutongFillInTheBlankPage";
+import MsutongPronunciationPage from "./pages/msutong/MsutongPronunciationPage";
 
 const queryClient = new QueryClient();
 
@@ -43,9 +48,14 @@ const App = () => (
 
             {/* Msutong Routes */}
             <Route path="/msutong" element={<MsutongPage />} />
-            <Route path="/msutong/sentence-choice" element={<MsutongSentenceChoicePage />} />
-            <Route path="/msutong/sentence-scramble" element={<MsutongSentenceScramblePage />} />
-            <Route path="/msutong/ai-tutor" element={<MsutongAiTutorPage />} />
+            <Route path="/msutong/msutong-flashcard" element={<MsutongFlashcardPage />} />
+            <Route path="/msutong/msutong-pinyin-choice" element={<MsutongPinyinChoicePage />} />
+            <Route path="/msutong/msutong-meaning-choice" element={<MsutongMeaningChoicePage />} />
+            <Route path="/msutong/msutong-fill-in-the-blank" element={<MsutongFillInTheBlankPage />} />
+            <Route path="/msutong/msutong-pronunciation" element={<MsutongPronunciationPage />} />
+            <Route path="/msutong/msutong-sentence-choice" element={<MsutongSentenceChoicePage />} />
+            <Route path="/msutong/msutong-sentence-scramble" element={<MsutongSentenceScramblePage />} />
+            <Route path="/msutong/msutong-ai-tutor" element={<MsutongAiTutorPage />} />
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
