@@ -138,11 +138,11 @@ const ChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], distracto
             </div>
             <Card className="mb-8"><CardContent className="p-10 flex items-center justify-center"><h2 className="text-7xl md:text-8xl font-bold">{currentWord?.hanzi}</h2></CardContent></Card>
             <div className={cn("grid gap-4", type === 'pinyin' ? 'grid-cols-2' : 'grid-cols-1 md:grid-cols-2')}>
-                {options.map((option, index) => {
+                {options.map((option) => {
                     const isSelected = selectedAnswer === option;
                     const isTheCorrectAnswer = option === (type === 'pinyin' ? currentWord.pinyin : currentWord.meaning);
                     return (
-                        <Button key={index} onClick={() => handleAnswer(option)} disabled={!!selectedAnswer} className={cn("h-auto min-h-20 text-lg py-4", isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90", selectedAnswer && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90")} variant="outline">
+                        <Button key={option} onClick={() => handleAnswer(option)} disabled={!!selectedAnswer} className={cn("h-auto min-h-20 text-lg py-4", isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90", selectedAnswer && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90")} variant="outline">
                             {option}
                             {isSelected && isCorrect === false && <XCircle className="ml-4 h-6 w-6" />}
                             {selectedAnswer && isTheCorrectAnswer && <CheckCircle2 className="ml-4 h-6 w-6" />}
@@ -430,13 +430,13 @@ const SentenceChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], d
                 </CardContent>
             </Card>
             <div className="grid grid-cols-2 gap-4">
-                {options.map((option, index) => {
+                {options.map((option) => {
                     const isSelected = selectedAnswer === option;
                     const isTheCorrectAnswer = option === currentQuestion.word.hanzi;
                     
                     return (
                         <Button
-                            key={index}
+                            key={option}
                             onClick={() => handleAnswer(option)}
                             disabled={!!selectedAnswer}
                             className={cn(
