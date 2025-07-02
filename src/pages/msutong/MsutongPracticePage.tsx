@@ -549,6 +549,10 @@ const SentenceScramblePractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ 
     };
 
     const goToNextWord = useCallback(() => {
+        // FIX: Explicitly reset state before moving to the next question.
+        setUserAnswer([]);
+        setAnswerStatus(null);
+        
         if (currentIndex < allAvailableQuestions.length - 1) {
             setCurrentIndex(prev => prev + 1);
         } else {
