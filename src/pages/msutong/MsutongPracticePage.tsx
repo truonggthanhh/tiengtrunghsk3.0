@@ -445,38 +445,40 @@ const SentenceChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], d
                     <p className="text-lg text-muted-foreground">{currentQuestion?.translation}</p>
                 </CardContent>
             </Card>
-            <div className="grid grid-cols-2 gap-4">
-                {options.map((option, index) => {
-                    const isSelected = selectedAnswer === option;
-                    const isTheCorrectAnswer = option === currentQuestion.word.hanzi;
-                    
-                    return (
-                        <Button
-                            key={index}
-                            onClick={() => handleAnswer(option)}
-                            disabled={!!selectedAnswer}
-                            className={cn(
-                                "h-20 text-2xl",
-                                isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90",
-                                selectedAnswer && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90"
-                            )}
-                            variant="outline"
-                        >
-                            {option}
-                            {isSelected && isCorrect === false && <XCircle className="ml-4 h-6 w-6" />}
-                            {selectedAnswer && isTheCorrectAnswer && <CheckCircle2 className="ml-4 h-6 w-6" />}
-                        </Button>
-                    )
-                })}
-            </div>
-            {selectedAnswer && isCorrect === false && (
-                <div className="mt-8 text-center">
-                    <Button onClick={goToNextWord} size="lg">
-                        {currentIndex === allAvailableQuestions.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}
-                        <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
+            <div className="min-h-[250px]">
+                <div className="grid grid-cols-2 gap-4">
+                    {options.map((option, index) => {
+                        const isSelected = selectedAnswer === option;
+                        const isTheCorrectAnswer = option === currentQuestion.word.hanzi;
+                        
+                        return (
+                            <Button
+                                key={index}
+                                onClick={() => handleAnswer(option)}
+                                disabled={!!selectedAnswer}
+                                className={cn(
+                                    "h-20 text-2xl",
+                                    isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90",
+                                    selectedAnswer && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90"
+                                )}
+                                variant="outline"
+                            >
+                                {option}
+                                {isSelected && isCorrect === false && <XCircle className="ml-4 h-6 w-6" />}
+                                {selectedAnswer && isTheCorrectAnswer && <CheckCircle2 className="ml-4 h-6 w-6" />}
+                            </Button>
+                        )
+                    })}
                 </div>
-            )}
+                {selectedAnswer && isCorrect === false && (
+                    <div className="mt-8 text-center">
+                        <Button onClick={goToNextWord} size="lg">
+                            {currentIndex === allAvailableQuestions.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}
+                            <ArrowRight className="ml-2 h-5 w-5" />
+                        </Button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
@@ -592,57 +594,58 @@ const SentenceScramblePractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ 
                     <p className="text-xl text-muted-foreground">Nghĩa: "{currentQuestion?.translation}"</p>
                 </CardContent>
             </Card>
+            <div className="min-h-[350px]">
+                <Card className={cn(
+                    "mb-4 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3 border-dashed",
+                    answerStatus === 'correct' && 'border-green-500',
+                    answerStatus === 'incorrect' && 'border-destructive'
+                )}>
+                    {userAnswer.map((charObj) => (
+                        <Button key={charObj.id} variant="secondary" className="text-2xl h-14 px-4" onClick={() => handleAnswerCharClick(charObj)}>
+                            {charObj.char}
+                        </Button>
+                    ))}
+                    {userAnswer.length === 0 && <span className="text-muted-foreground">Câu trả lời của bạn sẽ xuất hiện ở đây</span>}
+                </Card>
 
-            <Card className={cn(
-                "mb-4 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3 border-dashed",
-                answerStatus === 'correct' && 'border-green-500',
-                answerStatus === 'incorrect' && 'border-destructive'
-            )}>
-                {userAnswer.map((charObj) => (
-                    <Button key={charObj.id} variant="secondary" className="text-2xl h-14 px-4" onClick={() => handleAnswerCharClick(charObj)}>
-                        {charObj.char}
-                    </Button>
-                ))}
-                {userAnswer.length === 0 && <span className="text-muted-foreground">Câu trả lời của bạn sẽ xuất hiện ở đây</span>}
-            </Card>
-
-            <div className="mb-8 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3">
-                {shuffledChars.map((charObj) => (
-                    <Button key={charObj.id} variant="outline" className="text-2xl h-14 px-4" onClick={() => handleCharSelect(charObj)}>
-                        {charObj.char}
-                    </Button>
-                ))}
-            </div>
-
-            <div className="flex justify-center gap-4">
-                {answerStatus !== 'correct' && (
-                    <Button onClick={handleSubmit} size="lg" disabled={!!answerStatus || userAnswer.length === 0}>
-                        Kiểm tra
-                    </Button>
-                )}
-                {answerStatus === 'incorrect' && (
-                    <Button onClick={goToNextWord} size="lg">
-                        Câu tiếp theo <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
-                )}
-                <Button onClick={() => {
-                    if (currentQuestion) {
-                        const chars = currentQuestion.sentence.replace(/[，。？！]/g, '').split('');
-                        setShuffledChars(shuffleArray(chars.map((char, index) => ({ char, id: index }))));
-                        setUserAnswer([]);
-                        setAnswerStatus(null);
-                    }
-                }} variant="outline" size="lg" disabled={!!answerStatus}>
-                    <RefreshCw className="mr-2 h-5 w-5" /> Thử lại
-                </Button>
-            </div>
-
-            {answerStatus === 'incorrect' && (
-                <div className="mt-6 text-center p-4 bg-destructive/10 rounded-lg">
-                    <p className="text-destructive mb-2">Sai rồi!</p>
-                    <p className="text-lg">Đáp án đúng là: <span className="font-bold text-2xl">{currentQuestion.sentence}</span></p>
+                <div className="mb-8 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3">
+                    {shuffledChars.map((charObj) => (
+                        <Button key={charObj.id} variant="outline" className="text-2xl h-14 px-4" onClick={() => handleCharSelect(charObj)}>
+                            {charObj.char}
+                        </Button>
+                    ))}
                 </div>
-            )}
+
+                <div className="flex justify-center gap-4">
+                    {answerStatus !== 'correct' && (
+                        <Button onClick={handleSubmit} size="lg" disabled={!!answerStatus || userAnswer.length === 0}>
+                            Kiểm tra
+                        </Button>
+                    )}
+                    {answerStatus === 'incorrect' && (
+                        <Button onClick={goToNextWord} size="lg">
+                            Câu tiếp theo <ArrowRight className="ml-2 h-5 w-5" />
+                        </Button>
+                    )}
+                    <Button onClick={() => {
+                        if (currentQuestion) {
+                            const chars = currentQuestion.sentence.replace(/[，。？！]/g, '').split('');
+                            setShuffledChars(shuffleArray(chars.map((char, index) => ({ char, id: index }))));
+                            setUserAnswer([]);
+                            setAnswerStatus(null);
+                        }
+                    }} variant="outline" size="lg" disabled={!!answerStatus}>
+                        <RefreshCw className="mr-2 h-5 w-5" /> Thử lại
+                    </Button>
+                </div>
+
+                {answerStatus === 'incorrect' && (
+                    <div className="mt-6 text-center p-4 bg-destructive/10 rounded-lg">
+                        <p className="text-destructive mb-2">Sai rồi!</p>
+                        <p className="text-lg">Đáp án đúng là: <span className="font-bold text-2xl">{currentQuestion.sentence}</span></p>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
