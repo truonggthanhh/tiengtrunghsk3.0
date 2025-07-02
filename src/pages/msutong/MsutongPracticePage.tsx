@@ -213,7 +213,12 @@ const FillInTheBlankPractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ vo
                 </div>
                 <Progress value={progressValue} className="w-full" />
             </div>
-            <Card className="mb-8"><CardContent className="p-10 flex flex-col items-center justify-center gap-4"><p className="text-4xl font-semibold">{currentWord?.pinyin}</p><p className="text-2xl text-muted-foreground">{currentWord?.meaning}</p></CardContent></Card>
+            <Card className="mb-8">
+                <CardContent className="p-10 flex flex-col items-center justify-center gap-4 min-h-[150px]"> {/* Added min-h */}
+                    <p className="text-4xl font-semibold">{currentWord?.pinyin}</p>
+                    <p className="text-2xl text-muted-foreground">{currentWord?.meaning}</p>
+                </CardContent>
+            </Card>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <Input value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Nhập chữ Hán..." className={cn("text-center text-3xl h-16", answerStatus === 'correct' && 'border-green-500 focus-visible:ring-green-500', answerStatus === 'incorrect' && 'border-destructive focus-visible:ring-destructive')} disabled={!!answerStatus} />
                 {answerStatus !== 'correct' && (<Button type="submit" className="w-full" size="lg" disabled={!!answerStatus}>Kiểm tra</Button>)}
@@ -476,39 +481,43 @@ const SentenceScramblePractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ 
     }, [vocabulary]);
 
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [userAnswer, setUserAnswer] = useState<CharObject[]>([]);
+    const [selectedChars, setSelectedChars] = useState<CharObject[]>([]); // Characters in the answer area
+    const [availableChars, setAvailableChars] = useState<CharObject[]>([]); // Characters to pick from
     const [answerStatus, setAnswerStatus] = useState<'correct' | 'incorrect' | null>(null);
     const [correctAnswers, setCorrectAnswers] = useState(0);
     const [showResult, setShowResult] = useState(false);
 
     const currentQuestion = useMemo(() => allAvailableQuestions[currentIndex], [allAvailableQuestions, currentIndex]);
 
-    const [shuffledChars, setShuffledChars] = useState<CharObject[]>([]);
-
+    // Reset state variables and generate shuffledChars when currentQuestion changes
     useEffect(() => {
         if (currentQuestion) {
             const chars = currentQuestion.sentence.replace(/[，。？！]/g, '').split('');
-            setShuffledChars(shuffleArray(chars.map((char, index) => ({ char, id: index }))));
-            setUserAnswer([]);
+            setAvailableChars(shuffleArray(chars.map((char, index) => ({ char, id: index }))));
+            setSelectedChars([]);
             setAnswerStatus(null);
         }
     }, [currentQuestion]);
 
     const handleCharSelect = (charObj: CharObject) => {
         if (answerStatus) return;
-        setUserAnswer([...userAnswer, charObj]);
-        setShuffledChars(shuffledChars.filter(c => c.id !== charObj.id));
+        setSelectedChars(prev => [...prev, charObj]);
+        setAvailableChars(prev => prev.filter(c => c.id !== charObj.id));
     };
 
     const handleAnswerCharClick = (charObj: CharObject) => {
         if (answerStatus) return;
-        setUserAnswer(userAnswer.filter(c => c.id !== charObj.id));
-        setShuffledChars(shuffleArray([...shuffledChars, charObj])); // Re-shuffle available chars
+        setSelectedChars(prev => prev.filter(c => c.id !== charObj.id));
+        setAvailableChars(prev => {
+            const newAvailable = [...prev, charObj];
+            // Sort by original ID to maintain a consistent order when returning chars
+            return newAvailable.sort((a, b) => a.id - b.id); 
+        });
     };
 
     const handleSubmit = () => {
         if (answerStatus) return;
-        const userAnswerString = userAnswer.map(c => c.char).join('');
+        const userAnswerString = selectedChars.map(c => c.char).join('');
         const correctAnswerString = currentQuestion.sentence.replace(/[，。？！]/g, '');
         
         if (userAnswerString === correctAnswerString) {
@@ -582,16 +591,16 @@ const SentenceScramblePractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ 
                 answerStatus === 'correct' && 'border-green-500',
                 answerStatus === 'incorrect' && 'border-destructive'
             )}>
-                {userAnswer.map((charObj) => (
+                {selectedChars.map((charObj) => (
                     <Button key={charObj.id} variant="secondary" className="text-2xl h-14 px-4" onClick={() => handleAnswerCharClick(charObj)}>
                         {charObj.char}
                     </Button>
                 ))}
-                {userAnswer.length === 0 && <span className="text-muted-foreground">Câu trả lời của bạn sẽ xuất hiện ở đây</span>}
+                {selectedChars.length === 0 && <span className="text-muted-foreground">Câu trả lời của bạn sẽ xuất hiện ở đây</span>}
             </Card>
 
             <div className="mb-8 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3">
-                {shuffledChars.map((charObj) => (
+                {availableChars.map((charObj) => (
                     <Button key={charObj.id} variant="outline" className="text-2xl h-14 px-4" onClick={() => handleCharSelect(charObj)}>
                         {charObj.char}
                     </Button>
@@ -600,7 +609,7 @@ const SentenceScramblePractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ 
 
             <div className="flex justify-center gap-4">
                 {answerStatus !== 'correct' && (
-                    <Button onClick={handleSubmit} size="lg" disabled={!!answerStatus || userAnswer.length === 0}>
+                    <Button onClick={handleSubmit} size="lg" disabled={!!answerStatus || selectedChars.length === 0}>
                         Kiểm tra
                     </Button>
                 )}
@@ -612,8 +621,8 @@ const SentenceScramblePractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ 
                 <Button onClick={() => {
                     if (currentQuestion) {
                         const chars = currentQuestion.sentence.replace(/[，。？！]/g, '').split('');
-                        setShuffledChars(shuffleArray(chars.map((char, index) => ({ char, id: index }))));
-                        setUserAnswer([]);
+                        setAvailableChars(shuffleArray(chars.map((char, index) => ({ char, id: index }))));
+                        setSelectedChars([]);
                         setAnswerStatus(null);
                     }
                 }} variant="outline" size="lg" disabled={!!answerStatus}>
