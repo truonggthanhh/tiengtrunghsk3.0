@@ -90,7 +90,7 @@ const MsutongReadingComprehensionPage = () => {
         <main className="container mx-auto p-4 md:p-8 text-center">
           <h2 className="text-2xl font-bold mb-4">Không tìm thấy bài đọc hiểu</h2>
           <p className="text-muted-foreground mb-8">
-            Dạng bài tập này đang được phát triển hoặc các bài bạn chọn không có bài đọc hiểu. Vui lòng quay lại sau.
+            Dạng bài tập đọc hiểu chưa có sẵn cho các bài học bạn đã chọn. Vui lòng chọn các bài học khác hoặc quay lại sau.
           </p>
           <Button asChild variant="secondary" className="font-bold">
             <Link to="/msutong">
