@@ -79,21 +79,27 @@ const ChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], distracto
     const generateOptions = useCallback(() => {
         if (!currentWord) return;
 
-        const correctOption = type === 'pinyin' ? currentWord.pinyin : currentWord.meaning;
+        const correctValue = type === 'pinyin' ? currentWord.pinyin : currentWord.meaning;
         
-        // Get all possible distractor values (pinyin/meaning)
-        const allPossibleDistractors = distractorVocabulary
-            .map(word => type === 'pinyin' ? word.pinyin : word.meaning)
-            .filter(value => value !== correctOption); // Exclude the correct answer
-        
-        // Ensure uniqueness among distractors
-        const uniqueDistractors = Array.from(new Set(allPossibleDistractors));
-        
-        // Shuffle and pick 3 unique distractors
-        const shuffledUniqueDistractors = shuffleArray(uniqueDistractors).slice(0, 3);
+        // Collect all possible values from the full vocabulary
+        const allValuesFromDistractors = distractorVocabulary.map(word => type === 'pinyin' ? word.pinyin : word.meaning);
 
-        // Combine correct option with unique distractors and shuffle them
-        const finalOptions = shuffleArray([correctOption, ...shuffledUniqueDistractors]);
+        // Create a set of unique values from all possible options, including the correct one
+        const uniquePossibleValues = new Set(allValuesFromDistractors);
+        uniquePossibleValues.add(correctValue); // Ensure correct option is always present
+
+        // Convert back to array, remove the correct option temporarily to pick distractors
+        let uniqueOptionsArray = Array.from(uniquePossibleValues);
+        const indexToRemove = uniqueOptionsArray.indexOf(correctValue);
+        if (indexToRemove > -1) {
+            uniqueOptionsArray.splice(indexToRemove, 1);
+        }
+
+        // Shuffle and pick 3 unique distractors
+        const shuffledDistractors = shuffleArray(uniqueOptionsArray).slice(0, 3);
+
+        // Combine correct option and shuffled unique distractors, then shuffle final options
+        const finalOptions = shuffleArray([correctValue, ...shuffledDistractors]);
         setOptions(finalOptions);
     }, [currentWord, distractorVocabulary, type]);
 
@@ -112,6 +118,17 @@ const ChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], distracto
             generateOptions();
         }
     }, [currentWord, generateOptions]); // Depend on currentWord and generateOptions
+
+    const handleAnswer = (answer: string) => {
+        if (selectedAnswer) return;
+        setSelectedAnswer(answer);
+        const correct = answer === (type === 'pinyin' ? currentWord.pinyin : currentWord.meaning);
+        setIsCorrect(correct);
+        if (correct) {
+            setCorrectAnswers(prev => prev + 1);
+            setTimeout(() => goToNextWord(), 1200);
+        }
+    };
 
     if (showResult) {
         return (
@@ -138,7 +155,7 @@ const ChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], distracto
                 <Progress value={progressValue} className="w-full" />
             </div>
             <Card className="mb-8"><CardContent className="p-10 flex items-center justify-center min-h-[150px]"><h2 className="text-7xl md:text-8xl font-bold">{currentWord?.hanzi}</h2></CardContent></Card>
-            <div className={cn("grid gap-4", type === 'pinyin' ? 'grid-cols-2' : 'grid-cols-1 md:grid-cols-2')}>
+            <div className={cn("grid gap-4 min-h-[180px]", type === 'pinyin' ? 'grid-cols-2' : 'grid-cols-1 md:grid-cols-2')}>
                 {options.map((option) => {
                     const isSelected = selectedAnswer === option;
                     const isTheCorrectAnswer = option === (type === 'pinyin' ? currentWord.pinyin : currentWord.meaning);
@@ -215,7 +232,7 @@ const FillInTheBlankPractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ vo
                 <Progress value={progressValue} className="w-full" />
             </div>
             <Card className="mb-8">
-                <CardContent className="p-10 flex flex-col items-center justify-center gap-4 min-h-[200px]"> {/* Increased min-h */}
+                <CardContent className="p-10 flex flex-col items-center justify-center gap-4 min-h-[250px]"> {/* Increased min-h */}
                     <p className="text-4xl font-semibold">{currentWord?.pinyin}</p>
                     <p className="text-2xl text-muted-foreground">{currentWord?.meaning}</p>
                 </CardContent>
@@ -352,21 +369,27 @@ const SentenceChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], d
     const generateOptions = useCallback(() => {
         if (!currentQuestion) return;
 
-        const correctOption = currentQuestion.word.hanzi;
+        const correctValue = currentQuestion.word.hanzi;
         
-        // Get all possible distractor values (hanzi)
-        const allPossibleDistractors = distractorVocabulary
-            .map(word => word.hanzi)
-            .filter(value => value !== correctOption); // Exclude the correct answer
-        
-        // Ensure uniqueness among distractors
-        const uniqueDistractors = Array.from(new Set(allPossibleDistractors));
-        
-        // Shuffle and pick 3 unique distractors
-        const shuffledUniqueDistractors = shuffleArray(uniqueDistractors).slice(0, 3);
+        // Collect all possible hanzi values from the full vocabulary
+        const allHanziFromDistractors = distractorVocabulary.map(word => word.hanzi);
 
-        // Combine correct option with unique distractors and shuffle them
-        const finalOptions = shuffleArray([correctOption, ...shuffledUniqueDistractors]);
+        // Create a set of unique hanzi values, including the correct one
+        const uniquePossibleHanzi = new Set(allHanziFromDistractors);
+        uniquePossibleHanzi.add(correctValue); // Ensure correct option is always present
+
+        // Convert back to array, remove the correct option temporarily to pick distractors
+        let uniqueOptionsArray = Array.from(uniquePossibleHanzi);
+        const indexToRemove = uniqueOptionsArray.indexOf(correctValue);
+        if (indexToRemove > -1) {
+            uniqueOptionsArray.splice(indexToRemove, 1);
+        }
+
+        // Shuffle and pick 3 unique distractors
+        const shuffledDistractors = shuffleArray(uniqueOptionsArray).slice(0, 3);
+
+        // Combine correct option and shuffled unique distractors, then shuffle final options
+        const finalOptions = shuffleArray([correctValue, ...shuffledDistractors]);
         setOptions(finalOptions);
     }, [currentQuestion, distractorVocabulary]);
 
@@ -385,6 +408,20 @@ const SentenceChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], d
             generateOptions();
         }
     }, [currentQuestion, generateOptions]); // Depend on currentQuestion and generateOptions
+
+    const handleAnswer = (answer: string) => {
+        if (selectedAnswer) return;
+
+        setSelectedAnswer(answer);
+        const correct = answer === currentQuestion.word.hanzi;
+        setIsCorrect(correct);
+        if (correct) {
+            setCorrectAnswers(prev => prev + 1);
+            setTimeout(() => {
+                goToNextWord();
+            }, 1200);
+        }
+    };
 
     if (allAvailableQuestions.length === 0) {
         return (
@@ -428,7 +465,7 @@ const SentenceChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], d
                     <p className="text-lg text-muted-foreground">{currentQuestion?.translation}</p>
                 </CardContent>
             </Card>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 min-h-[180px]"> {/* Added min-h */}
                 {options.map((option) => {
                     const isSelected = selectedAnswer === option;
                     const isTheCorrectAnswer = option === currentQuestion.word.hanzi;
@@ -576,13 +613,13 @@ const SentenceScramblePractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ 
             </div>
             
             <Card className="mb-8">
-                <CardContent className="p-8 text-center min-h-[120px]"> {/* Increased min-h */}
+                <CardContent className="p-8 text-center min-h-[150px]"> {/* Increased min-h */}
                     <p className="text-xl text-muted-foreground">Nghĩa: "{currentQuestion?.translation}"</p>
                 </CardContent>
             </Card>
 
             <Card className={cn(
-                "mb-4 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3 border-dashed",
+                "mb-4 min-h-[100px] p-4 flex flex-wrap items-center justify-center gap-3 border-dashed", // Increased min-h
                 answerStatus === 'correct' && 'border-green-500',
                 answerStatus === 'incorrect' && 'border-destructive'
             )}>
@@ -594,7 +631,7 @@ const SentenceScramblePractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ 
                 {selectedChars.length === 0 && <span className="text-muted-foreground">Câu trả lời của bạn sẽ xuất hiện ở đây</span>}
             </Card>
 
-            <div className="mb-8 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3">
+            <div className="mb-8 min-h-[100px] p-4 flex flex-wrap items-center justify-center gap-3"> {/* Increased min-h */}
                 {availableChars.map((charObj) => (
                     <Button key={charObj.id} variant="outline" className="text-2xl h-14 px-4" onClick={() => handleCharSelect(charObj)}>
                         {charObj.char}
