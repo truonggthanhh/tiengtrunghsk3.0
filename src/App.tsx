@@ -23,8 +23,9 @@ import MsutongPinyinChoicePage from "./pages/msutong/MsutongPinyinChoicePage";
 import MsutongMeaningChoicePage from "./pages/msutong/MsutongMeaningChoicePage";
 import MsutongFillInTheBlankPage from "./pages/msutong/MsutongFillInTheBlankPage";
 import MsutongPronunciationPage from "./pages/msutong/MsutongPronunciationPage";
-import Login from "./pages/Login"; // Import the new Login page
-import { SessionContextProvider } from "./components/SessionContextProvider"; // Import the new SessionContextProvider
+import Login from "./pages/Login";
+import AdminDashboardPage from "./pages/AdminDashboardPage"; // Import the new AdminDashboardPage
+import { SessionContextProvider } from "./components/SessionContextProvider";
 
 const queryClient = new QueryClient();
 
@@ -35,10 +36,11 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <SessionContextProvider> {/* Wrap the entire app with SessionContextProvider */}
+          <SessionContextProvider>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} /> {/* Add the login route */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/admin" element={<AdminDashboardPage />} /> {/* Add the admin route */}
               
               {/* HSK Routes */}
               <Route path="/hsk/:level/flashcard" element={<FlashcardPage />} />
