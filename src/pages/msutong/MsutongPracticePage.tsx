@@ -214,7 +214,7 @@ const FillInTheBlankPractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ vo
                 <Progress value={progressValue} className="w-full" />
             </div>
             <Card className="mb-8">
-                <CardContent className="p-10 flex flex-col items-center justify-center gap-4 min-h-[150px]"> {/* Added min-h */}
+                <CardContent className="p-10 flex flex-col items-center justify-center gap-4 min-h-[180px]"> {/* Increased min-h */}
                     <p className="text-4xl font-semibold">{currentWord?.pinyin}</p>
                     <p className="text-2xl text-muted-foreground">{currentWord?.meaning}</p>
                 </CardContent>
