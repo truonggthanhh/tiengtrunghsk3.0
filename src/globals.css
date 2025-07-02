@@ -13,7 +13,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 217 91% 59%; /* Vibrant Blue */
+    --primary: 220 90% 60%; /* Vibrant Blue */
     --primary-foreground: 0 0% 100%; /* White */
 
     --secondary: 210 40% 96.1%;
@@ -22,15 +22,15 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 217 91% 90%; /* Very light blue */
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 270 70% 65%; /* Vibrant Purple for accent */
+    --accent-foreground: 0 0% 100%; /* White for contrast */
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 217 91% 59%; /* Match ring to primary */
+    --ring: 220 90% 60%; /* Match ring to primary */
 
     --radius: 0.5rem;
 
@@ -53,7 +53,7 @@
     --info: 180 70% 50%;
     --info-foreground: 0 0% 100%;
 
-    --tertiary: 270 70% 60%;
+    --tertiary: 30 90% 60%; /* Vibrant Orange/Gold for another accent */
     --tertiary-foreground: 0 0% 100%;
   }
 
@@ -67,8 +67,8 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 217 70% 40%; /* Darker vibrant blue for dark mode primary */
-    --primary-foreground: 210 40% 98%; /* Off-white */
+    --primary: 220 80% 50%; /* Darker vibrant blue for dark mode primary */
+    --primary-foreground: 210 40% 98%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -76,7 +76,7 @@
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217 50% 30%; /* Darker, slightly desaturated blue for dark mode accent */
+    --accent: 270 60% 45%; /* Darker vibrant purple for dark mode accent */
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -84,7 +84,7 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 217 70% 40%; /* Match ring to primary */
+    --ring: 220 80% 50%; /* Match ring to primary */
     
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
@@ -105,7 +105,7 @@
     --info: 180 60% 30%;
     --info-foreground: 0 0% 100%;
 
-    --tertiary: 270 50% 35%;
+    --tertiary: 30 80% 45%; /* Darker vibrant orange/gold for dark mode accent */
     --tertiary-foreground: 0 0% 100%;
   }
 }
