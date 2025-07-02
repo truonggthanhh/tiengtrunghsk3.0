@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { BookCopy, ChevronRight, ArrowLeft, BookOpen, Mic, Puzzle, FileQuestion, CheckSquare, Shuffle, AudioLines, Bot } from 'lucide-react';
+import { BookCopy, ChevronRight, ArrowLeft, BookOpen, Mic, Puzzle, FileQuestion, CheckSquare, Shuffle, AudioLines, Bot, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const levels = [
@@ -58,16 +58,18 @@ const MsutongPage = () => {
     selectedBooks.forEach(bookSlug => {
       const bookInfo = books.find(b => b.slug === bookSlug);
       if (bookInfo) {
+        // Generate lessons 1-10 for each selected book
         for (let i = 1; i <= 10; i++) {
           allLessons.push({
-            id: `${bookSlug}-lesson-${i}`,
-            lesson: i,
+            id: `${bookSlug}-lesson-${i}`, // ID format: 'quyen-X-lesson-Y'
+            lesson: i, // Lesson number within the book (1-10)
             bookSlug: bookSlug,
             bookName: bookInfo.name,
           });
         }
       }
     });
+    // Sort by book number then lesson number for consistent display
     return allLessons.sort((a, b) => {
       const bookNumA = parseInt(a.bookSlug.replace('quyen-', ''));
       const bookNumB = parseInt(b.bookSlug.replace('quyen-', ''));
@@ -96,6 +98,7 @@ const MsutongPage = () => {
     const params = new URLSearchParams();
     if (selectedLevel) params.append('level', selectedLevel);
     if (selectedLessons.length > 0) params.append('lessonIds', selectedLessons.join(','));
+    // Also pass selected books for AI Tutor context if needed
     if (selectedBooks.length > 0) params.append('books', selectedBooks.map(slug => books.find(b => b.slug === slug)?.name).join(', '));
     return params.toString();
   }, [selectedLevel, selectedLessons, selectedBooks]);
@@ -115,6 +118,13 @@ const MsutongPage = () => {
                   </CardHeader>
                 </Card>
               ))}
+            </div>
+            <div className="text-center mt-8">
+              <Button asChild variant="secondary">
+                <Link to="/">
+                  <Home className="mr-2 h-4 w-4" /> Quay về trang chủ
+                </Link>
+              </Button>
             </div>
           </div>
         );
