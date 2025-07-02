@@ -23,6 +23,8 @@ import MsutongPinyinChoicePage from "./pages/msutong/MsutongPinyinChoicePage";
 import MsutongMeaningChoicePage from "./pages/msutong/MsutongMeaningChoicePage";
 import MsutongFillInTheBlankPage from "./pages/msutong/MsutongFillInTheBlankPage";
 import MsutongPronunciationPage from "./pages/msutong/MsutongPronunciationPage";
+import Login from "./pages/Login"; // Import the new Login page
+import { SessionContextProvider } from "./components/SessionContextProvider"; // Import the new SessionContextProvider
 
 const queryClient = new QueryClient();
 
@@ -33,33 +35,36 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            
-            {/* HSK Routes */}
-            <Route path="/hsk/:level/flashcard" element={<FlashcardPage />} />
-            <Route path="/hsk/:level/pinyin-choice" element={<PinyinChoicePage />} />
-            <Route path="/hsk/:level/meaning-choice" element={<MeaningChoicePage />} />
-            <Route path="/hsk/:level/fill-in-the-blank" element={<FillInTheBlankPage />} />
-            <Route path="/hsk/:level/sentence-choice" element={<SentenceChoicePage />} />
-            <Route path="/hsk/:level/sentence-scramble" element={<SentenceScramblePage />} />
-            <Route path="/hsk/:level/pronunciation" element={<PronunciationPage />} />
-            <Route path="/hsk/:level/ai-tutor" element={<AiTutorPage />} />
+          <SessionContextProvider> {/* Wrap the entire app with SessionContextProvider */}
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} /> {/* Add the login route */}
+              
+              {/* HSK Routes */}
+              <Route path="/hsk/:level/flashcard" element={<FlashcardPage />} />
+              <Route path="/hsk/:level/pinyin-choice" element={<PinyinChoicePage />} />
+              <Route path="/hsk/:level/meaning-choice" element={<MeaningChoicePage />} />
+              <Route path="/hsk/:level/fill-in-the-blank" element={<FillInTheBlankPage />} />
+              <Route path="/hsk/:level/sentence-choice" element={<SentenceChoicePage />} />
+              <Route path="/hsk/:level/sentence-scramble" element={<SentenceScramblePage />} />
+              <Route path="/hsk/:level/pronunciation" element={<PronunciationPage />} />
+              <Route path="/hsk/:level/ai-tutor" element={<AiTutorPage />} />
 
-            {/* Msutong Routes */}
-            <Route path="/msutong" element={<MsutongPage />} />
-            <Route path="/msutong/msutong-flashcard" element={<MsutongFlashcardPage />} />
-            <Route path="/msutong/msutong-pinyin-choice" element={<MsutongPinyinChoicePage />} />
-            <Route path="/msutong/msutong-meaning-choice" element={<MsutongMeaningChoicePage />} />
-            <Route path="/msutong/msutong-fill-in-the-blank" element={<MsutongFillInTheBlankPage />} />
-            <Route path="/msutong/msutong-pronunciation" element={<MsutongPronunciationPage />} />
-            <Route path="/msutong/msutong-sentence-choice" element={<MsutongSentenceChoicePage />} />
-            <Route path="/msutong/msutong-sentence-scramble" element={<MsutongSentenceScramblePage />} />
-            <Route path="/msutong/msutong-ai-tutor" element={<MsutongAiTutorPage />} />
+              {/* Msutong Routes */}
+              <Route path="/msutong" element={<MsutongPage />} />
+              <Route path="/msutong/msutong-flashcard" element={<MsutongFlashcardPage />} />
+              <Route path="/msutong/msutong-pinyin-choice" element={<MsutongPinyinChoicePage />} />
+              <Route path="/msutong/msutong-meaning-choice" element={<MsutongMeaningChoicePage />} />
+              <Route path="/msutong/msutong-fill-in-the-blank" element={<MsutongFillInTheBlankPage />} />
+              <Route path="/msutong/msutong-pronunciation" element={<MsutongPronunciationPage />} />
+              <Route path="/msutong/msutong-sentence-choice" element={<MsutongSentenceChoicePage />} />
+              <Route path="/msutong/msutong-sentence-scramble" element={<MsutongSentenceScramblePage />} />
+              <Route path="/msutong/msutong-ai-tutor" element={<MsutongAiTutorPage />} />
 
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </SessionContextProvider>
         </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>
