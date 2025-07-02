@@ -23,8 +23,9 @@ import MsutongPinyinChoicePage from "./pages/msutong/MsutongPinyinChoicePage";
 import MsutongMeaningChoicePage from "./pages/msutong/MsutongMeaningChoicePage";
 import MsutongFillInTheBlankPage from "./pages/msutong/MsutongFillInTheBlankPage";
 import MsutongPronunciationPage from "./pages/msutong/MsutongPronunciationPage";
+import MsutongReadingComprehensionPage from "./pages/msutong/MsutongReadingComprehensionPage"; // Import the new Reading Comprehension page
 import Login from "./pages/Login";
-import AdminDashboardPage from "./pages/AdminDashboardPage"; // Import the new AdminDashboardPage
+import AdminDashboardPage from "./pages/AdminDashboardPage"; 
 import { SessionContextProvider } from "./components/SessionContextProvider";
 
 const queryClient = new QueryClient();
@@ -40,7 +41,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/admin" element={<AdminDashboardPage />} /> {/* Add the admin route */}
+              <Route path="/admin" element={<AdminDashboardPage />} /> 
               
               {/* HSK Routes */}
               <Route path="/hsk/:level/flashcard" element={<FlashcardPage />} />
@@ -61,6 +62,7 @@ const App = () => (
               <Route path="/msutong/msutong-pronunciation" element={<MsutongPronunciationPage />} />
               <Route path="/msutong/msutong-sentence-choice" element={<MsutongSentenceChoicePage />} />
               <Route path="/msutong/msutong-sentence-scramble" element={<MsutongSentenceScramblePage />} />
+              <Route path="/msutong/msutong-reading-comprehension" element={<MsutongReadingComprehensionPage />} /> {/* Add the new reading comprehension route */}
               <Route path="/msutong/msutong-ai-tutor" element={<MsutongAiTutorPage />} />
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

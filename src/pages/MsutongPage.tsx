@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { BookCopy, ChevronRight, ArrowLeft, BookOpen, Mic, Puzzle, FileQuestion, CheckSquare, Shuffle, AudioLines, Bot, Home } from 'lucide-react';
+import { BookCopy, ChevronRight, ArrowLeft, BookOpen, Mic, Puzzle, FileQuestion, CheckSquare, Shuffle, AudioLines, Bot, Home, BookText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const levels = [
@@ -28,6 +28,7 @@ const exerciseTypes = [
     { slug: "pronunciation", title: "Luyện phát âm", description: "Luyện phát âm qua nhận dạng giọng nói", icon: <AudioLines />, isAvailable: true },
     { slug: "sentence-choice", title: "Điền từ vào câu", description: "Chọn từ đúng để hoàn thành câu", icon: <CheckSquare />, isAvailable: true },
     { slug: "sentence-scramble", title: "Sắp xếp câu", description: "Sắp xếp các từ thành câu hoàn chỉnh", icon: <Shuffle />, isAvailable: true },
+    { slug: "reading-comprehension", title: "Đọc hiểu", description: "Đọc đoạn văn và trả lời câu hỏi", icon: <BookText />, isAvailable: true },
     { slug: "ai-tutor", title: "Luyện nói cùng AI", description: "Trò chuyện và nhận phản hồi từ AI", icon: <Bot />, isAvailable: true },
 ];
 

@@ -8,6 +8,7 @@ import { msutong_so_cap_1_vocab, type MsutongWord } from './msutong/so-cap-1-voc
 import { msutong_so_cap_2_vocab } from './msutong/so-cap-2-vocab';
 import { msutong_so_cap_3_vocab } from './msutong/so-cap-3-vocab';
 import { msutong_so_cap_4_vocab } from './msutong/so-cap-4-vocab';
+import { msutongReadingComprehension, type ReadingComprehensionPassage } from './msutong/reading-comprehension';
 
 const vocabularyData: { [key: string]: VocabularyWord[] } = {
   '1': hsk1Vocabulary,
@@ -42,6 +43,11 @@ const msutongVocabularyData: { [level: string]: { [book: string]: MsutongWord[] 
     'quyen-3': msutong_so_cap_3_vocab,
     'quyen-4': msutong_so_cap_4_vocab,
   },
+  // Dữ liệu cho các cấp độ khác sẽ được thêm vào đây
+};
+
+const msutongReadingComprehensionData: { [level: string]: ReadingComprehensionPassage[] } = {
+  'so-cap': msutongReadingComprehension,
   // Dữ liệu cho các cấp độ khác sẽ được thêm vào đây
 };
 
@@ -99,5 +105,28 @@ export const getVocabularyByMsutong = (level: string, lessonIds: string[]): Voca
   });
 };
 
+export const getReadingComprehensionByMsutong = (level: string, lessonIds: string[]): ReadingComprehensionPassage[] => {
+  const passagesForLevel = msutongReadingComprehensionData[level];
+  if (!passagesForLevel) return [];
 
-export type { VocabularyWord, MsutongWord };
+  const selectedPassages: ReadingComprehensionPassage[] = [];
+  const uniquePassageIds = new Set<number>();
+
+  lessonIds.forEach(id => {
+    const parts = id.split('-lesson-');
+    const bookSlug = parts[0];
+    const lessonNumber = parseInt(parts[1], 10);
+
+    passagesForLevel.forEach(passage => {
+      if (passage.bookSlug === bookSlug && passage.lesson === lessonNumber && !uniquePassageIds.has(passage.id)) {
+        selectedPassages.push(passage);
+        uniquePassageIds.add(passage.id);
+      }
+    });
+  });
+
+  return selectedPassages;
+};
+
+
+export type { VocabularyWord, MsutongWord, ReadingComprehensionPassage, ReadingComprehensionQuestion };
