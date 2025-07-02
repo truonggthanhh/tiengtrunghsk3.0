@@ -107,7 +107,7 @@ const Index = () => {
                   <Bot className="h-4 w-4 mr-2 text-white" />
                   <span>Đặc biệt: Luyện nói với Trợ lý ảo thông minh</span>
               </div>
-              <h1 className="text-4xl md:text-6xl font-extrabold tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-200">
+              <h1 className="text-4xl md:text-6xl font-extrabold tracking-tighter mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-200 font-sans">
                 Chinh Phục Tiếng Trung Cùng TIẾNG TRUNG HAOHAO
               </h1>
               <p className="max-w-xl mx-auto lg:mx-0 text-lg md:text-xl text-white/90 mb-8">
