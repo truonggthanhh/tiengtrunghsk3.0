@@ -164,13 +164,13 @@ const PronunciationPage = () => {
                   onClick={() => handleStart(count)} 
                   disabled={fullVocabulary.length < count}
                   size="lg"
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold"
                 >
                   {count} từ
                   {fullVocabulary.length < count && ` (Không đủ từ)`}
                 </Button>
               ))}
-              <Button asChild variant="outline" className="hover:bg-accent hover:text-accent-foreground transition-colors">
+              <Button asChild variant="outline" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
                 <Link to="/">
                   <Home className="mr-2 h-4 w-4" /> Quay về trang chủ
                 </Link>
@@ -199,8 +199,8 @@ const PronunciationPage = () => {
                             Bạn đã phát âm đúng {correctAnswers} trên tổng số {vocabulary.length} từ.
                         </p>
                         <div className="flex gap-4 justify-center">
-                            <Button onClick={resetToLevelSelection} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all">Làm lại</Button>
-                            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors">
+                            <Button onClick={resetToLevelSelection} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">Làm lại</Button>
+                            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
                                 <Link to="/">
                                     <Home className="mr-2 h-4 w-4" /> Về trang chủ
                                 </Link>
@@ -241,7 +241,7 @@ const PronunciationPage = () => {
           </Card>
 
           <div className="flex flex-col items-center gap-6">
-            <Button onClick={handleListen} disabled={isListening || !recognition} size="lg" className={cn("w-48 h-16 rounded-full text-primary-foreground transition-all duration-300", isListening ? "bg-destructive hover:bg-destructive/90 animate-pulse" : "bg-primary hover:bg-primary/90 hover:scale-[1.02]")}>
+            <Button onClick={handleListen} disabled={isListening || !recognition} size="lg" className={cn("w-48 h-16 rounded-full text-primary-foreground transition-all duration-300 font-bold", isListening ? "bg-destructive hover:bg-destructive/90 animate-pulse" : "bg-primary hover:bg-primary/90 hover:scale-[1.02]")}>
               {isListening ? <MicOff className="mr-2 h-6 w-6" /> : <Mic className="mr-2 h-6 w-6" />}
               {isListening ? 'Đang nghe...' : 'Bắt đầu nói'}
             </Button>
@@ -258,14 +258,14 @@ const PronunciationPage = () => {
             )}
 
             {feedback === 'incorrect' && (
-              <Button onClick={goToNextWord} className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all">
+              <Button onClick={goToNextWord} className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">
                 Từ tiếp theo <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             )}
           </div>
 
           <div className="text-center mt-12">
-            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors">
+            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
               <Link to="/">
                 <Home className="mr-2 h-4 w-4" /> Về trang chủ
               </Link>

@@ -152,13 +152,13 @@ const SentenceScramblePage = () => {
                     onClick={() => handleStart(count)} 
                     disabled={allAvailableQuestions.length < count}
                     size="lg"
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold"
                   >
                     {count} câu
                     {allAvailableQuestions.length < count && ` (Không đủ câu)`}
                   </Button>
                 ))}
-                <Button asChild variant="outline" className="hover:bg-accent hover:text-accent-foreground transition-colors">
+                <Button asChild variant="outline" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
                   <Link to="/">
                     <Home className="mr-2 h-4 w-4" /> Quay về trang chủ
                   </Link>
@@ -187,8 +187,8 @@ const SentenceScramblePage = () => {
                             Bạn đã trả lời đúng {correctAnswers} trên tổng số {questions.length} câu.
                         </p>
                         <div className="flex gap-4 justify-center">
-                            <Button onClick={resetToLevelSelection} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all">Làm lại</Button>
-                            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors">
+                            <Button onClick={resetToLevelSelection} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">Làm lại</Button>
+                            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
                                 <Link to="/">
                                     <Home className="mr-2 h-4 w-4" /> Về trang chủ
                                 </Link>
@@ -233,7 +233,7 @@ const SentenceScramblePage = () => {
             answerStatus === 'incorrect' && 'border-destructive'
           )}>
             {userAnswer.map((charObj) => (
-              <Button key={charObj.id} variant="secondary" className="text-2xl h-14 px-4 hover:bg-secondary/80 transition-colors" onClick={() => handleAnswerCharClick(charObj)}>
+              <Button key={charObj.id} variant="secondary" className="text-2xl h-14 px-4 hover:bg-secondary/80 transition-colors font-bold" onClick={() => handleAnswerCharClick(charObj)}>
                 {charObj.char}
               </Button>
             ))}
@@ -242,7 +242,7 @@ const SentenceScramblePage = () => {
 
           <div className="mb-8 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3">
             {shuffledChars.map((charObj) => (
-              <Button key={charObj.id} variant="outline" className="text-2xl h-14 px-4 hover:bg-primary/10 hover:text-primary transition-colors" onClick={() => handleCharSelect(charObj)}>
+              <Button key={charObj.id} variant="outline" className="text-2xl h-14 px-4 hover:bg-primary/10 hover:text-primary transition-colors font-bold" onClick={() => handleCharSelect(charObj)}>
                 {charObj.char}
               </Button>
             ))}
@@ -250,12 +250,12 @@ const SentenceScramblePage = () => {
 
           <div className="flex justify-center gap-4">
             {answerStatus !== 'correct' && (
-              <Button onClick={handleSubmit} size="lg" disabled={!!answerStatus || userAnswer.length === 0} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all">
+              <Button onClick={handleSubmit} size="lg" disabled={!!answerStatus || userAnswer.length === 0} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">
                 Kiểm tra
               </Button>
             )}
             {answerStatus === 'incorrect' && (
-                <Button onClick={goToNextWord} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all">
+                <Button onClick={goToNextWord} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">
                     Câu tiếp theo <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
             )}
@@ -266,7 +266,7 @@ const SentenceScramblePage = () => {
                     setUserAnswer([]);
                     setAnswerStatus(null);
                 }
-            }} variant="outline" size="lg" disabled={!!answerStatus} className="hover:bg-accent hover:text-accent-foreground transition-colors">
+            }} variant="outline" size="lg" disabled={!!answerStatus} className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
                 <RefreshCw className="mr-2 h-5 w-5" /> Thử lại
             </Button>
           </div>
@@ -279,7 +279,7 @@ const SentenceScramblePage = () => {
           )}
 
           <div className="text-center mt-12">
-            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors">
+            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
               <Link to="/">
                 <Home className="mr-2 h-4 w-4" /> Về trang chủ
               </Link>

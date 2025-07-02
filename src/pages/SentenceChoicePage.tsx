@@ -144,13 +144,13 @@ const SentenceChoicePage = () => {
                   onClick={() => handleStart(count)} 
                   disabled={allAvailableQuestions.length < count}
                   size="lg"
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold"
                 >
                   {count} câu
                   {allAvailableQuestions.length < count && ` (Không đủ câu)`}
                 </Button>
               ))}
-              <Button asChild variant="outline" className="hover:bg-accent hover:text-accent-foreground transition-colors">
+              <Button asChild variant="outline" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
                 <Link to="/">
                   <Home className="mr-2 h-4 w-4" /> Quay về trang chủ
                 </Link>
@@ -179,8 +179,8 @@ const SentenceChoicePage = () => {
                             Bạn đã trả lời đúng {correctAnswers} trên tổng số {questions.length} câu.
                         </p>
                         <div className="flex gap-4 justify-center">
-                            <Button onClick={resetToLevelSelection} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all">Làm lại</Button>
-                            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors">
+                            <Button onClick={resetToLevelSelection} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">Làm lại</Button>
+                            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
                                 <Link to="/">
                                     <Home className="mr-2 h-4 w-4" /> Về trang chủ
                                 </Link>
@@ -232,7 +232,7 @@ const SentenceChoicePage = () => {
                   onClick={() => handleAnswer(option)}
                   disabled={!!selectedAnswer}
                   className={cn(
-                    "h-20 text-2xl transition-all duration-300",
+                    "h-20 text-2xl transition-all duration-300 font-bold",
                     isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90 text-destructive-foreground",
                     selectedAnswer && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90 text-white",
                     !isSelected && !selectedAnswer && "hover:bg-primary/10 hover:text-primary"
@@ -249,7 +249,7 @@ const SentenceChoicePage = () => {
 
           {selectedAnswer && isCorrect === false && (
             <div className="mt-8 text-center">
-              <Button onClick={goToNextWord} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all">
+              <Button onClick={goToNextWord} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">
                 {currentIndex === questions.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -257,7 +257,7 @@ const SentenceChoicePage = () => {
           )}
 
           <div className="text-center mt-8">
-            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors">
+            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
               <Link to="/">
                 <Home className="mr-2 h-4 w-4" /> Về trang chủ
               </Link>

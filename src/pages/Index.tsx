@@ -113,7 +113,7 @@ const Index = () => {
               <p className="max-w-xl mx-auto lg:mx-0 text-lg md:text-xl text-white/90 mb-8">
                 Nền tảng ôn luyện HSK toàn diện, giúp bạn tự tin vượt qua kỳ thi với điểm số cao nhất.
               </p>
-              <Button size="lg" onClick={handleStartLearningClick} className="bg-white text-primary hover:bg-gray-100 hover:scale-105 transition-all duration-300 ease-in-out shadow-lg">
+              <Button size="lg" onClick={handleStartLearningClick} className="bg-white text-primary hover:bg-gray-100 hover:scale-105 transition-all duration-300 ease-in-out shadow-lg font-bold">
                 Bắt đầu học ngay <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
@@ -143,7 +143,7 @@ const Index = () => {
                 </CardDescription>
               </CardHeader>
               <CardFooter>
-                <div className="w-full text-primary text-lg font-semibold flex items-center justify-center">
+                <div className="w-full text-primary text-lg font-bold flex items-center justify-center">
                   Chọn lộ trình này <ChevronRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </div>
               </CardFooter>
@@ -161,7 +161,7 @@ const Index = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardFooter>
-                  <div className="w-full text-primary text-lg font-semibold flex items-center justify-center">
+                  <div className="w-full text-primary text-lg font-bold flex items-center justify-center">
                     Khám phá ngay <ChevronRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </div>
                 </CardFooter>
@@ -184,12 +184,12 @@ const Index = () => {
                 </div>
                 <Tabs defaultValue="1" onValueChange={setLevel} className="w-full">
                   <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 h-auto gap-2 bg-transparent p-0">
-                    <TabsTrigger value="1" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">HSK 1</TabsTrigger>
-                    <TabsTrigger value="2" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">HSK 2</TabsTrigger>
-                    <TabsTrigger value="3" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">HSK 3</TabsTrigger>
-                    <TabsTrigger value="4" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">HSK 4</TabsTrigger>
-                    <TabsTrigger value="5" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">HSK 5</TabsTrigger>
-                    <TabsTrigger value="6" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">HSK 6</TabsTrigger>
+                    <TabsTrigger value="1" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold">HSK 1</TabsTrigger>
+                    <TabsTrigger value="2" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold">HSK 2</TabsTrigger>
+                    <TabsTrigger value="3" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold">HSK 3</TabsTrigger>
+                    <TabsTrigger value="4" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold">HSK 4</TabsTrigger>
+                    <TabsTrigger value="5" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold">HSK 5</TabsTrigger>
+                    <TabsTrigger value="6" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold">HSK 6</TabsTrigger>
                   </TabsList>
                 </Tabs>
               </div>
@@ -207,7 +207,7 @@ const Index = () => {
                 {exerciseTypes.map((exercise) => (
                   <div key={exercise.slug} className={!exercise.isAvailable ? 'opacity-50' : ''}>
                     <Link to={exercise.isAvailable ? `/hsk/${level}/${exercise.slug}` : '#'} className={!exercise.isAvailable ? 'pointer-events-none' : ''}>
-                      <Card className="flex flex-col text-center h-full hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-in-out group cursor-pointer border-primary/30 hover:border-primary rounded-xl">
+                      <Card className={cn("flex flex-col text-center h-full hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-in-out group cursor-pointer border-primary/30 hover:border-primary rounded-xl", !exercise.isAvailable && "opacity-50")}>
                         <CardHeader className="items-center flex-grow">
                           <div className="mb-4 bg-primary/10 p-4 rounded-full transition-colors group-hover:bg-primary">
                             {React.cloneElement(exercise.icon, { className: "w-8 h-8 text-primary transition-colors group-hover:text-primary-foreground" })}
@@ -216,7 +216,7 @@ const Index = () => {
                           <CardDescription>{exercise.description}</CardDescription>
                         </CardHeader>
                         <CardFooter>
-                          <Button variant="ghost" className="w-full text-primary" disabled={!exercise.isAvailable}>
+                          <Button variant="secondary" className="w-full font-bold" disabled={!exercise.isAvailable}>
                             {exercise.isAvailable ? 'Luyện tập' : 'Sắp ra mắt'}
                             {exercise.isAvailable && <ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />}
                           </Button>

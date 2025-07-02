@@ -167,13 +167,14 @@ const MsutongPronunciationPage = () => {
                   onClick={() => handleStart(count)} 
                   disabled={practiceVocabulary.length < count}
                   size="lg"
+                  className="font-bold"
                 >
                   {count} từ
                   {practiceVocabulary.length < count && ` (Không đủ từ)`}
                 </Button>
               ))}
-              <Button onClick={() => handleStart(practiceVocabulary.length)} size="lg">Tất cả ({practiceVocabulary.length} từ)</Button>
-              <Button asChild variant="outline">
+              <Button onClick={() => handleStart(practiceVocabulary.length)} size="lg" className="font-bold">Tất cả ({practiceVocabulary.length} từ)</Button>
+              <Button asChild variant="outline" className="font-bold">
                 <Link to="/msutong">
                   <Home className="mr-2 h-4 w-4" /> Quay về trang chọn bài
                 </Link>
@@ -202,8 +203,8 @@ const MsutongPronunciationPage = () => {
                             Bạn đã phát âm đúng {correctAnswers} trên tổng số {vocabulary.length} từ.
                         </p>
                         <div className="flex gap-4 justify-center">
-                            <Button onClick={resetToLevelSelection}>Làm lại</Button>
-                            <Button asChild variant="secondary">
+                            <Button onClick={resetToLevelSelection} className="font-bold">Làm lại</Button>
+                            <Button asChild variant="secondary" className="font-bold">
                                 <Link to="/msutong">
                                     <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
                                 </Link>
@@ -230,7 +231,7 @@ const MsutongPronunciationPage = () => {
 
           <div className="mb-4">
             <div className="flex justify-between items-center mb-2 text-muted-foreground">
-              <span>Từ: {currentIndex + 1} / {vocabulary.length}</span>
+              <span>Câu: {currentIndex + 1} / {vocabulary.length}</span>
               <span>Đúng: {correctAnswers}</span>
             </div>
             <Progress value={progressValue} className="w-full" />
@@ -244,7 +245,7 @@ const MsutongPronunciationPage = () => {
           </Card>
 
           <div className="flex flex-col items-center gap-6">
-            <Button onClick={handleListen} disabled={isListening || !recognition} size="lg" className={cn("w-48 h-16", isListening && "animate-pulse")}>
+            <Button onClick={handleListen} disabled={isListening || !recognition} size="lg" className={cn("w-48 h-16 rounded-full font-bold", isListening ? "bg-destructive hover:bg-destructive/90 animate-pulse" : "")}>
               {isListening ? <MicOff className="mr-2 h-6 w-6" /> : <Mic className="mr-2 h-6 w-6" />}
               {isListening ? 'Đang nghe...' : 'Bắt đầu nói'}
             </Button>
@@ -261,14 +262,14 @@ const MsutongPronunciationPage = () => {
             )}
 
             {feedback === 'incorrect' && (
-              <Button onClick={goToNextWord} className="mt-4">
-                Từ tiếp theo <ArrowRight className="ml-2 h-4 w-4" />
+              <Button onClick={goToNextWord} className="mt-4 font-bold">
+                Từ tiếp theo <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             )}
           </div>
 
-          <div className="text-center mt-12">
-            <Button asChild variant="secondary">
+          <div className="text-center mt-8">
+            <Button asChild variant="secondary" className="font-bold">
               <Link to="/msutong">
                 <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
               </Link>

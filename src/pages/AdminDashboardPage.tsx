@@ -120,7 +120,7 @@ const AdminDashboardPage: React.FC = () => {
               <CardDescription>{error}</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button asChild>
+              <Button asChild variant="secondary" className="font-bold">
                 <Link to="/">
                   <Home className="mr-2 h-4 w-4" /> Quay lại trang chủ
                 </Link>
@@ -177,7 +177,7 @@ const AdminDashboardPage: React.FC = () => {
           </CardContent>
         </Card>
         <div className="text-center mt-8">
-          <Button asChild variant="secondary">
+          <Button asChild variant="secondary" className="font-bold">
             <Link to="/">
               <Home className="mr-2 h-4 w-4" /> Quay lại trang chủ
             </Link>

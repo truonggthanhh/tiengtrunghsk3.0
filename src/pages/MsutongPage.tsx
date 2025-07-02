@@ -120,7 +120,7 @@ const MsutongPage = () => {
               ))}
             </div>
             <div className="text-center mt-8">
-              <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors">
+              <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
                 <Link to="/">
                   <Home className="mr-2 h-4 w-4" /> Quay về trang chủ
                 </Link>
@@ -132,7 +132,7 @@ const MsutongPage = () => {
       case 'book':
         return (
           <div className="w-full max-w-4xl mx-auto bg-card p-6 md:p-10 rounded-xl shadow-lg border border-primary/20">
-            <Button variant="ghost" onClick={() => setStep('level')} className="mb-8 text-primary hover:bg-primary/10"><ArrowLeft className="mr-2 h-4 w-4" /> Quay lại</Button>
+            <Button variant="secondary" onClick={() => setStep('level')} className="mb-8 font-bold hover:bg-secondary/80 transition-colors"><ArrowLeft className="mr-2 h-4 w-4" /> Quay lại</Button>
             <div className="text-center mb-10">
               <h2 className="text-3xl font-bold tracking-tight">Chọn Quyển</h2>
               <p className="text-muted-foreground mt-2">Bạn có thể chọn một hoặc nhiều quyển.</p>
@@ -153,7 +153,7 @@ const MsutongPage = () => {
               ))}
             </div>
             <div className="text-center">
-              <Button onClick={() => setStep('lesson')} disabled={selectedBooks.length === 0} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all">Tiếp tục <ChevronRight className="ml-2 h-4 w-4" /></Button>
+              <Button onClick={() => setStep('lesson')} disabled={selectedBooks.length === 0} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">Tiếp tục <ChevronRight className="ml-2 h-4 w-4" /></Button>
             </div>
           </div>
         );
@@ -161,7 +161,7 @@ const MsutongPage = () => {
       case 'lesson':
         return (
           <div className="w-full max-w-5xl mx-auto bg-card p-6 md:p-10 rounded-xl shadow-lg border border-primary/20">
-            <Button variant="ghost" onClick={() => setStep('book')} className="mb-8 text-primary hover:bg-primary/10"><ArrowLeft className="mr-2 h-4 w-4" /> Quay lại</Button>
+            <Button variant="secondary" onClick={() => setStep('book')} className="mb-8 font-bold hover:bg-secondary/80 transition-colors"><ArrowLeft className="mr-2 h-4 w-4" /> Quay lại</Button>
             <div className="text-center mb-10">
               <h2 className="text-3xl font-bold tracking-tight">Chọn Bài Học</h2>
               <p className="text-muted-foreground mt-2">Bạn có thể chọn một hoặc nhiều bài.</p>
@@ -183,7 +183,7 @@ const MsutongPage = () => {
               ))}
             </div>
             <div className="text-center">
-              <Button onClick={() => setStep('exercise')} disabled={selectedLessons.length === 0} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all">Tiếp tục <ChevronRight className="ml-2 h-4 w-4" /></Button>
+              <Button onClick={() => setStep('exercise')} disabled={selectedLessons.length === 0} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">Tiếp tục <ChevronRight className="ml-2 h-4 w-4" /></Button>
             </div>
           </div>
         );
@@ -191,7 +191,7 @@ const MsutongPage = () => {
       case 'exercise':
         return (
           <div className="w-full max-w-5xl mx-auto bg-card p-6 md:p-10 rounded-xl shadow-lg border border-primary/20">
-            <Button variant="ghost" onClick={() => setStep('lesson')} className="mb-8 text-primary hover:bg-primary/10"><ArrowLeft className="mr-2 h-4 w-4" /> Quay lại</Button>
+            <Button variant="secondary" onClick={() => setStep('lesson')} className="mb-8 font-bold hover:bg-secondary/80 transition-colors"><ArrowLeft className="mr-2 h-4 w-4" /> Quay lại</Button>
             <div className="text-center mb-10">
               <h2 className="text-3xl font-bold tracking-tight">Chọn Dạng Bài Tập</h2>
               <p className="text-muted-foreground mt-2">{selectionSummary}</p>
@@ -212,7 +212,7 @@ const MsutongPage = () => {
                       <CardDescription>{exercise.description}</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Button variant="ghost" className="w-full text-primary" disabled={!exercise.isAvailable}>
+                      <Button variant="secondary" className="w-full font-bold" disabled={!exercise.isAvailable}>
                         {exercise.isAvailable ? 'Luyện tập' : 'Sắp ra mắt'}
                         {exercise.isAvailable && <ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />}
                       </Button>

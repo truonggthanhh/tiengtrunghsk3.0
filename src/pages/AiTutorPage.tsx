@@ -177,7 +177,7 @@ const AiTutorPage = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <Input type="password" placeholder="Dán API Key của bạn vào đây" value={tempApiKey} onChange={(e) => setTempApiKey(e.target.value)} className="h-12 text-base border-2" />
-              <Button onClick={handleSaveApiKey} className="w-full bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all">Lưu và Bắt đầu Chat</Button>
+              <Button onClick={handleSaveApiKey} className="w-full bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">Lưu và Bắt đầu Chat</Button>
               <div className="text-xs text-muted-foreground p-2 border rounded-lg flex items-start gap-2 bg-yellow-100/50 border-yellow-300 dark:bg-yellow-900/20 dark:border-yellow-700">
                 <AlertTriangle className="w-6 h-6 flex-shrink-0 mt-1 text-yellow-600 dark:text-yellow-400" />
                 <div>API Key của bạn chỉ được lưu trữ trên trình duyệt này. <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-primary underline ml-1">Lấy API Key tại đây.</a></div>
@@ -223,11 +223,11 @@ const AiTutorPage = () => {
             {chatMode === 'text' ? (
               <form onSubmit={handleFormSubmit} className="flex w-full items-center space-x-2">
                 <Input value={userInput} onChange={(e) => setUserInput(e.target.value)} placeholder="Nhập câu trả lời của bạn..." disabled={isLoading} className="h-12 text-base border-2" />
-                <Button type="submit" disabled={isLoading || !userInput.trim()} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all"><Send className="h-4 w-4" /></Button>
+                <Button type="submit" disabled={isLoading || !userInput.trim()} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold"><Send className="h-4 w-4" /></Button>
               </form>
             ) : (
               <div className="w-full flex justify-center">
-                <Button onClick={handleVoiceButtonClick} disabled={isLoading || isSpeaking} size="lg" className={cn("rounded-full w-20 h-20 text-primary-foreground transition-all duration-300", isListening ? "bg-destructive hover:bg-destructive/90 animate-pulse" : "bg-primary hover:bg-primary/90 hover:scale-[1.02]")}>
+                <Button onClick={handleVoiceButtonClick} disabled={isLoading || isSpeaking} size="lg" className={cn("rounded-full w-20 h-20 text-primary-foreground transition-all duration-300 font-bold", isListening ? "bg-destructive hover:bg-destructive/90 animate-pulse" : "bg-primary hover:bg-primary/90 hover:scale-[1.02]")}>
                   {isListening ? <MicOff className="h-8 w-8" /> : <Mic className="h-8 w-8" />}
                 </Button>
               </div>
@@ -235,8 +235,8 @@ const AiTutorPage = () => {
           </CardFooter>
         </Card>
         <div className="text-center mt-4 flex gap-4">
-          <Button onClick={handleResetApiKey} variant="outline" className="hover:bg-accent hover:text-accent-foreground transition-colors"><RefreshCw className="mr-2 h-4 w-4" /> Đổi API Key</Button>
-          <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors"><Link to="/"><Home className="mr-2 h-4 w-4" /> Về trang chủ</Link></Button>
+          <Button onClick={handleResetApiKey} variant="outline" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold"><RefreshCw className="mr-2 h-4 w-4" /> Đổi API Key</Button>
+          <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold"><Link to="/"><Home className="mr-2 h-4 w-4" /> Về trang chủ</Link></Button>
         </div>
       </main>
     </div>

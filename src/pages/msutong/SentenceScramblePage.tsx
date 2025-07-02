@@ -157,13 +157,14 @@ const MsutongSentenceScramblePage = () => {
                     onClick={() => handleStart(count)} 
                     disabled={allAvailableQuestions.length < count}
                     size="lg"
+                    className="font-bold"
                   >
                     {count} câu
                     {allAvailableQuestions.length < count && ` (Không đủ câu)`}
                   </Button>
                 ))}
-                <Button onClick={() => handleStart(allAvailableQuestions.length)} size="lg">Tất cả ({allAvailableQuestions.length} câu)</Button>
-                <Button asChild variant="outline">
+                <Button onClick={() => handleStart(allAvailableQuestions.length)} size="lg" className="font-bold">Tất cả ({allAvailableQuestions.length} câu)</Button>
+                <Button asChild variant="outline" className="font-bold">
                   <Link to="/msutong">
                     <Home className="mr-2 h-4 w-4" /> Quay về trang chọn bài
                   </Link>
@@ -192,8 +193,8 @@ const MsutongSentenceScramblePage = () => {
                             Bạn đã trả lời đúng {correctAnswers} trên tổng số {questions.length} câu.
                         </p>
                         <div className="flex gap-4 justify-center">
-                            <Button onClick={resetToLevelSelection}>Làm lại</Button>
-                            <Button asChild variant="secondary">
+                            <Button onClick={resetToLevelSelection} className="font-bold">Làm lại</Button>
+                            <Button asChild variant="secondary" className="font-bold">
                                 <Link to="/msutong">
                                     <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
                                 </Link>
@@ -238,7 +239,7 @@ const MsutongSentenceScramblePage = () => {
             answerStatus === 'incorrect' && 'border-destructive'
           )}>
             {userAnswer.map((charObj) => (
-              <Button key={charObj.id} variant="secondary" className="text-2xl h-14 px-4" onClick={() => handleAnswerCharClick(charObj)}>
+              <Button key={charObj.id} variant="secondary" className="text-2xl h-14 px-4 font-bold" onClick={() => handleAnswerCharClick(charObj)}>
                 {charObj.char}
               </Button>
             ))}
@@ -247,7 +248,7 @@ const MsutongSentenceScramblePage = () => {
 
           <div className="mb-8 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3">
             {shuffledChars.map((charObj) => (
-              <Button key={charObj.id} variant="outline" className="text-2xl h-14 px-4" onClick={() => handleCharSelect(charObj)}>
+              <Button key={charObj.id} variant="outline" className="text-2xl h-14 px-4 font-bold" onClick={() => handleCharSelect(charObj)}>
                 {charObj.char}
               </Button>
             ))}
@@ -255,16 +256,16 @@ const MsutongSentenceScramblePage = () => {
 
           <div className="flex justify-center gap-4">
             {answerStatus !== 'correct' && (
-              <Button onClick={handleSubmit} size="lg" disabled={!!answerStatus || userAnswer.length === 0}>
+              <Button onClick={handleSubmit} size="lg" disabled={!!answerStatus || userAnswer.length === 0} className="font-bold">
                 Kiểm tra
               </Button>
             )}
             {answerStatus === 'incorrect' && (
-                <Button onClick={goToNextWord} size="lg">
+                <Button onClick={goToNextWord} size="lg" className="font-bold">
                     Câu tiếp theo <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
             )}
-            <Button onClick={resetCurrentQuestion} variant="outline" size="lg" disabled={!!answerStatus}>
+            <Button onClick={resetCurrentQuestion} variant="outline" size="lg" disabled={!!answerStatus} className="font-bold">
                 <RefreshCw className="mr-2 h-5 w-5" /> Thử lại
             </Button>
           </div>
@@ -277,7 +278,7 @@ const MsutongSentenceScramblePage = () => {
           )}
 
           <div className="text-center mt-12">
-            <Button asChild variant="secondary">
+            <Button asChild variant="secondary" className="font-bold">
               <Link to="/msutong">
                 <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
               </Link>

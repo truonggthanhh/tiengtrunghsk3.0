@@ -116,29 +116,29 @@ const FlashcardPage = () => {
             </div>
             <Progress value={progressValue} className="w-full mb-4 h-2 bg-primary/20" indicatorClassName="bg-primary" />
             <div className="flex justify-between items-center mb-6">
-              <Button variant="outline" onClick={goToPreviousWord} className="hover:bg-primary hover:text-primary-foreground transition-colors">
+              <Button variant="outline" onClick={goToPreviousWord} className="hover:bg-primary hover:text-primary-foreground transition-colors font-bold">
                 <ArrowLeft className="mr-2 h-4 w-4" /> Từ trước
               </Button>
               <span className="text-lg font-medium text-muted-foreground">
                 {currentIndexInBatch + 1} / {currentBatchVocabulary.length}
               </span>
-              <Button variant="outline" onClick={goToNextWord} className="hover:bg-primary hover:text-primary-foreground transition-colors">
+              <Button variant="outline" onClick={goToNextWord} className="hover:bg-primary hover:text-primary-foreground transition-colors font-bold">
                 Từ tiếp theo <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
           </div>
 
           <div className="flex justify-center items-center gap-4 mb-8">
-            <Button variant="secondary" onClick={goToPreviousBatch} disabled={batchIndex === 0} className="hover:bg-accent hover:text-accent-foreground transition-colors">
+            <Button variant="secondary" onClick={goToPreviousBatch} disabled={batchIndex === 0} className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
                 <ChevronsLeft className="mr-2 h-4 w-4" /> Đợt trước
             </Button>
-            <Button variant="secondary" onClick={goToNextBatch} disabled={batchIndex >= totalBatches - 1} className="hover:bg-accent hover:text-accent-foreground transition-colors">
+            <Button variant="secondary" onClick={goToNextBatch} disabled={batchIndex >= totalBatches - 1} className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
                 Đợt tiếp theo <ChevronsRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
           
           <div className="text-center mt-8">
-            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors">
+            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
               <Link to="/">
                 <Home className="mr-2 h-4 w-4" /> Chọn bài tập khác
               </Link>

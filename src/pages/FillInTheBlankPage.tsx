@@ -117,13 +117,13 @@ const FillInTheBlankPage = () => {
                   onClick={() => handleStart(count)} 
                   disabled={fullVocabulary.length < count}
                   size="lg"
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold"
                 >
                   {count} câu
                   {fullVocabulary.length < count && ` (Không đủ từ)`}
                 </Button>
               ))}
-              <Button asChild variant="outline" className="hover:bg-accent hover:text-accent-foreground transition-colors">
+              <Button asChild variant="outline" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
                 <Link to="/">
                   <Home className="mr-2 h-4 w-4" /> Quay về trang chủ
                 </Link>
@@ -152,8 +152,8 @@ const FillInTheBlankPage = () => {
                             Bạn đã trả lời đúng {correctAnswers} trên tổng số {vocabulary.length} câu.
                         </p>
                         <div className="flex gap-4 justify-center">
-                            <Button onClick={resetToLevelSelection} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all">Làm lại</Button>
-                            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors">
+                            <Button onClick={resetToLevelSelection} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">Làm lại</Button>
+                            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
                                 <Link to="/">
                                     <Home className="mr-2 h-4 w-4" /> Về trang chủ
                                 </Link>
@@ -207,7 +207,7 @@ const FillInTheBlankPage = () => {
             />
             
             {answerStatus !== 'correct' && (
-              <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all" size="lg" disabled={!!answerStatus}>
+              <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold" size="lg" disabled={!!answerStatus}>
                 Kiểm tra
               </Button>
             )}
@@ -222,7 +222,7 @@ const FillInTheBlankPage = () => {
 
           {answerStatus && answerStatus !== 'correct' && (
             <div className="mt-8 text-center">
-              <Button onClick={goToNextWord} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all">
+              <Button onClick={goToNextWord} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">
                 {currentIndex === vocabulary.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -230,7 +230,7 @@ const FillInTheBlankPage = () => {
           )}
 
           <div className="text-center mt-8">
-            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors">
+            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
               <Link to="/">
                 <Home className="mr-2 h-4 w-4" /> Về trang chủ
               </Link>

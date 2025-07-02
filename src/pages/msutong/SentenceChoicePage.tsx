@@ -148,13 +148,14 @@ const MsutongSentenceChoicePage = () => {
                   onClick={() => handleStart(count)} 
                   disabled={allAvailableQuestions.length < count}
                   size="lg"
+                  className="font-bold"
                 >
                   {count} câu
                   {allAvailableQuestions.length < count && ` (Không đủ câu)`}
                 </Button>
               ))}
-              <Button onClick={() => handleStart(allAvailableQuestions.length)} size="lg">Tất cả ({allAvailableQuestions.length} câu)</Button>
-              <Button asChild variant="outline">
+              <Button onClick={() => handleStart(allAvailableQuestions.length)} size="lg" className="font-bold">Tất cả ({allAvailableQuestions.length} câu)</Button>
+              <Button asChild variant="outline" className="font-bold">
                 <Link to="/msutong">
                   <Home className="mr-2 h-4 w-4" /> Quay về trang chọn bài
                 </Link>
@@ -183,8 +184,8 @@ const MsutongSentenceChoicePage = () => {
                             Bạn đã trả lời đúng {correctAnswers} trên tổng số {questions.length} câu.
                         </p>
                         <div className="flex gap-4 justify-center">
-                            <Button onClick={resetToLevelSelection}>Làm lại</Button>
-                            <Button asChild variant="secondary">
+                            <Button onClick={resetToLevelSelection} className="font-bold">Làm lại</Button>
+                            <Button asChild variant="secondary" className="font-bold">
                                 <Link to="/msutong">
                                     <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
                                 </Link>
@@ -236,7 +237,7 @@ const MsutongSentenceChoicePage = () => {
                   onClick={() => handleAnswer(option)}
                   disabled={!!selectedAnswer}
                   className={cn(
-                    "h-20 text-2xl",
+                    "h-20 text-2xl font-bold",
                     isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90",
                     selectedAnswer && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90"
                   )}
@@ -252,7 +253,7 @@ const MsutongSentenceChoicePage = () => {
 
           {selectedAnswer && isCorrect === false && (
             <div className="mt-8 text-center">
-              <Button onClick={goToNextWord} size="lg">
+              <Button onClick={goToNextWord} size="lg" className="font-bold">
                 {currentIndex === questions.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -260,7 +261,7 @@ const MsutongSentenceChoicePage = () => {
           )}
 
           <div className="text-center mt-8">
-            <Button asChild variant="secondary">
+            <Button asChild variant="secondary" className="font-bold">
               <Link to="/msutong">
                 <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
               </Link>

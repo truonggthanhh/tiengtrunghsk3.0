@@ -119,29 +119,29 @@ const MsutongFlashcardPage = () => {
             </div>
             <Progress value={progressValue} className="w-full mb-4" />
             <div className="flex justify-between items-center mb-6">
-              <Button variant="outline" onClick={goToPreviousWord}>
+              <Button variant="outline" onClick={goToPreviousWord} className="font-bold">
                 <ArrowLeft className="mr-2 h-4 w-4" /> Từ trước
               </Button>
               <span className="text-lg font-medium text-muted-foreground">
                 {currentIndexInBatch + 1} / {currentBatchVocabulary.length}
               </span>
-              <Button variant="outline" onClick={goToNextWord}>
+              <Button variant="outline" onClick={goToNextWord} className="font-bold">
                 Từ tiếp theo <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
           </div>
 
           <div className="flex justify-center items-center gap-4 mb-8">
-            <Button variant="secondary" onClick={goToPreviousBatch} disabled={batchIndex === 0}>
+            <Button variant="secondary" onClick={goToPreviousBatch} disabled={batchIndex === 0} className="font-bold">
                 <ChevronsLeft className="mr-2 h-4 w-4" /> Đợt trước
             </Button>
-            <Button variant="secondary" onClick={goToNextBatch} disabled={batchIndex >= totalBatches - 1}>
+            <Button variant="secondary" onClick={goToNextBatch} disabled={batchIndex >= totalBatches - 1} className="font-bold">
                 Đợt tiếp theo <ChevronsRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
           
           <div className="text-center mt-8">
-            <Button asChild variant="secondary">
+            <Button asChild variant="secondary" className="font-bold">
               <Link to="/msutong">
                 <Home className="mr-2 h-4 w-4" /> Chọn bài tập khác
               </Link>

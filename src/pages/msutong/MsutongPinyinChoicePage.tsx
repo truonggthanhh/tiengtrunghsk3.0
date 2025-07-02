@@ -138,13 +138,14 @@ const MsutongPinyinChoicePage = () => {
                   onClick={() => handleStart(count)} 
                   disabled={practiceVocabulary.length < count}
                   size="lg"
+                  className="font-bold"
                 >
                   {count} câu
                   {practiceVocabulary.length < count && ` (Không đủ từ)`}
                 </Button>
               ))}
-              <Button onClick={() => handleStart(practiceVocabulary.length)} size="lg">Tất cả ({practiceVocabulary.length} từ)</Button>
-              <Button asChild variant="outline">
+              <Button onClick={() => handleStart(practiceVocabulary.length)} size="lg" className="font-bold">Tất cả ({practiceVocabulary.length} từ)</Button>
+              <Button asChild variant="outline" className="font-bold">
                 <Link to="/msutong">
                   <Home className="mr-2 h-4 w-4" /> Quay về trang chọn bài
                 </Link>
@@ -173,8 +174,8 @@ const MsutongPinyinChoicePage = () => {
                             Bạn đã trả lời đúng {correctAnswers} trên tổng số {vocabulary.length} câu.
                         </p>
                         <div className="flex gap-4 justify-center">
-                            <Button onClick={resetToLevelSelection}>Làm lại</Button>
-                            <Button asChild variant="secondary">
+                            <Button onClick={resetToLevelSelection} className="font-bold">Làm lại</Button>
+                            <Button asChild variant="secondary" className="font-bold">
                                 <Link to="/msutong">
                                     <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
                                 </Link>
@@ -224,7 +225,7 @@ const MsutongPinyinChoicePage = () => {
                   onClick={() => handleAnswer(pinyin)}
                   disabled={!!selectedPinyin}
                   className={cn(
-                    "h-20 text-2xl",
+                    "h-20 text-2xl font-bold",
                     isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90",
                     selectedPinyin && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90"
                   )}
@@ -240,7 +241,7 @@ const MsutongPinyinChoicePage = () => {
 
           {selectedPinyin && isCorrect === false && (
             <div className="mt-8 text-center">
-              <Button onClick={goToNextWord} size="lg">
+              <Button onClick={goToNextWord} size="lg" className="font-bold">
                 {currentIndex === vocabulary.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -248,7 +249,7 @@ const MsutongPinyinChoicePage = () => {
           )}
 
           <div className="text-center mt-8">
-            <Button asChild variant="secondary">
+            <Button asChild variant="secondary" className="font-bold">
               <Link to="/msutong">
                 <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
               </Link>
