@@ -129,10 +129,10 @@ const SentenceChoicePage = () => {
 
   if (!questionCount) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
         <Header />
         <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center text-center">
-          <Card className="w-full max-w-md">
+          <Card className="w-full max-w-md p-6 md:p-8 rounded-xl shadow-lg border border-primary/20">
             <CardHeader>
               <CardTitle className="text-2xl">Chọn số lượng câu hỏi</CardTitle>
               <CardDescription>Bạn muốn ôn tập bao nhiêu câu cho HSK {level}?</CardDescription>
@@ -144,12 +144,13 @@ const SentenceChoicePage = () => {
                   onClick={() => handleStart(count)} 
                   disabled={allAvailableQuestions.length < count}
                   size="lg"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all"
                 >
                   {count} câu
                   {allAvailableQuestions.length < count && ` (Không đủ câu)`}
                 </Button>
               ))}
-              <Button asChild variant="outline">
+              <Button asChild variant="outline" className="hover:bg-accent hover:text-accent-foreground transition-colors">
                 <Link to="/">
                   <Home className="mr-2 h-4 w-4" /> Quay về trang chủ
                 </Link>
@@ -163,10 +164,10 @@ const SentenceChoicePage = () => {
 
   if (showResult) {
     return (
-        <div className="min-h-screen bg-background flex flex-col">
+        <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
             <Header />
             <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center text-center">
-                <Card className="w-full max-w-md">
+                <Card className="w-full max-w-md p-6 md:p-8 rounded-xl shadow-lg border border-primary/20">
                     <CardHeader>
                         <CardTitle className="text-2xl">Kết quả</CardTitle>
                     </CardHeader>
@@ -178,8 +179,8 @@ const SentenceChoicePage = () => {
                             Bạn đã trả lời đúng {correctAnswers} trên tổng số {questions.length} câu.
                         </p>
                         <div className="flex gap-4 justify-center">
-                            <Button onClick={resetToLevelSelection}>Làm lại</Button>
-                            <Button asChild variant="secondary">
+                            <Button onClick={resetToLevelSelection} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all">Làm lại</Button>
+                            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors">
                                 <Link to="/">
                                     <Home className="mr-2 h-4 w-4" /> Về trang chủ
                                 </Link>
@@ -196,10 +197,10 @@ const SentenceChoicePage = () => {
   const questionSentence = currentQuestion?.sentence.replace(currentQuestion.word.hanzi, '___');
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
       <Header />
       <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
-        <div className="w-full max-w-2xl">
+        <div className="w-full max-w-2xl bg-card p-6 md:p-8 rounded-xl shadow-lg border border-primary/20">
           <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold">Điền Từ Vào Câu HSK {level}</h1>
             <p className="text-muted-foreground">Chọn từ đúng để hoàn thành câu sau.</p>
@@ -210,10 +211,10 @@ const SentenceChoicePage = () => {
               <span>Câu: {currentIndex + 1} / {questions.length}</span>
               <span>Đúng: {correctAnswers}</span>
             </div>
-            <Progress value={progressValue} className="w-full" />
+            <Progress value={progressValue} className="w-full h-2 bg-primary/20" indicatorClassName="bg-primary" />
           </div>
           
-          <Card className="mb-8">
+          <Card className="mb-8 shadow-md">
             <CardContent className="p-10 flex flex-col items-center justify-center text-center gap-4">
               <h2 className="text-4xl md:text-5xl font-bold tracking-wider">{questionSentence}</h2>
               <p className="text-lg text-muted-foreground">{currentQuestion?.translation}</p>
@@ -231,9 +232,10 @@ const SentenceChoicePage = () => {
                   onClick={() => handleAnswer(option)}
                   disabled={!!selectedAnswer}
                   className={cn(
-                    "h-20 text-2xl",
-                    isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90",
-                    selectedAnswer && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90"
+                    "h-20 text-2xl transition-all duration-300",
+                    isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90 text-destructive-foreground",
+                    selectedAnswer && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90 text-white",
+                    !isSelected && !selectedAnswer && "hover:bg-primary/10 hover:text-primary"
                   )}
                   variant="outline"
                 >
@@ -247,7 +249,7 @@ const SentenceChoicePage = () => {
 
           {selectedAnswer && isCorrect === false && (
             <div className="mt-8 text-center">
-              <Button onClick={goToNextWord} size="lg">
+              <Button onClick={goToNextWord} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all">
                 {currentIndex === questions.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -255,7 +257,7 @@ const SentenceChoicePage = () => {
           )}
 
           <div className="text-center mt-8">
-            <Button asChild variant="secondary">
+            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors">
               <Link to="/">
                 <Home className="mr-2 h-4 w-4" /> Về trang chủ
               </Link>

@@ -93,10 +93,10 @@ const FlashcardPage = () => {
   const progressValue = ((currentIndexInBatch + 1) / currentBatchVocabulary.length) * 100;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
       <Header />
       <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
-        <div className="w-full max-w-2xl">
+        <div className="w-full max-w-2xl bg-card p-6 md:p-8 rounded-xl shadow-lg border border-primary/20">
           <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold">Flashcards HSK {level}</h1>
             <p className="text-muted-foreground">Nhấn vào thẻ để xem nghĩa, hoặc dùng phím mũi tên để chuyển từ.</p>
@@ -114,31 +114,31 @@ const FlashcardPage = () => {
                 <span className="text-sm text-muted-foreground">Tiến độ đợt này</span>
                 <span className="text-sm font-semibold">Đợt {batchIndex + 1} / {totalBatches}</span>
             </div>
-            <Progress value={progressValue} className="w-full mb-4" />
+            <Progress value={progressValue} className="w-full mb-4 h-2 bg-primary/20" indicatorClassName="bg-primary" />
             <div className="flex justify-between items-center mb-6">
-              <Button variant="outline" onClick={goToPreviousWord}>
+              <Button variant="outline" onClick={goToPreviousWord} className="hover:bg-primary hover:text-primary-foreground transition-colors">
                 <ArrowLeft className="mr-2 h-4 w-4" /> Từ trước
               </Button>
               <span className="text-lg font-medium text-muted-foreground">
                 {currentIndexInBatch + 1} / {currentBatchVocabulary.length}
               </span>
-              <Button variant="outline" onClick={goToNextWord}>
+              <Button variant="outline" onClick={goToNextWord} className="hover:bg-primary hover:text-primary-foreground transition-colors">
                 Từ tiếp theo <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
           </div>
 
           <div className="flex justify-center items-center gap-4 mb-8">
-            <Button variant="secondary" onClick={goToPreviousBatch} disabled={batchIndex === 0}>
+            <Button variant="secondary" onClick={goToPreviousBatch} disabled={batchIndex === 0} className="hover:bg-accent hover:text-accent-foreground transition-colors">
                 <ChevronsLeft className="mr-2 h-4 w-4" /> Đợt trước
             </Button>
-            <Button variant="secondary" onClick={goToNextBatch} disabled={batchIndex >= totalBatches - 1}>
+            <Button variant="secondary" onClick={goToNextBatch} disabled={batchIndex >= totalBatches - 1} className="hover:bg-accent hover:text-accent-foreground transition-colors">
                 Đợt tiếp theo <ChevronsRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
           
           <div className="text-center mt-8">
-            <Button asChild variant="secondary">
+            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors">
               <Link to="/">
                 <Home className="mr-2 h-4 w-4" /> Chọn bài tập khác
               </Link>

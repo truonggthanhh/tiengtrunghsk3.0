@@ -122,10 +122,10 @@ const MeaningChoicePage = () => {
 
   if (!questionCount) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
         <Header />
         <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center text-center">
-          <Card className="w-full max-w-md">
+          <Card className="w-full max-w-md p-6 md:p-8 rounded-xl shadow-lg border border-primary/20">
             <CardHeader>
               <CardTitle className="text-2xl">Chọn số lượng câu hỏi</CardTitle>
               <CardDescription>Bạn muốn ôn tập bao nhiêu từ cho HSK {level}?</CardDescription>
@@ -137,12 +137,13 @@ const MeaningChoicePage = () => {
                   onClick={() => handleStart(count)} 
                   disabled={fullVocabulary.length < count}
                   size="lg"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all"
                 >
                   {count} câu
                   {fullVocabulary.length < count && ` (Không đủ từ)`}
                 </Button>
               ))}
-              <Button asChild variant="outline">
+              <Button asChild variant="outline" className="hover:bg-accent hover:text-accent-foreground transition-colors">
                 <Link to="/">
                   <Home className="mr-2 h-4 w-4" /> Quay về trang chủ
                 </Link>
@@ -156,10 +157,10 @@ const MeaningChoicePage = () => {
 
   if (showResult) {
     return (
-        <div className="min-h-screen bg-background flex flex-col">
+        <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
             <Header />
             <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center text-center">
-                <Card className="w-full max-w-md">
+                <Card className="w-full max-w-md p-6 md:p-8 rounded-xl shadow-lg border border-primary/20">
                     <CardHeader>
                         <CardTitle className="text-2xl">Kết quả</CardTitle>
                     </CardHeader>
@@ -171,8 +172,8 @@ const MeaningChoicePage = () => {
                             Bạn đã trả lời đúng {correctAnswers} trên tổng số {vocabulary.length} câu.
                         </p>
                         <div className="flex gap-4 justify-center">
-                            <Button onClick={resetToLevelSelection}>Làm lại</Button>
-                            <Button asChild variant="secondary">
+                            <Button onClick={resetToLevelSelection} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all">Làm lại</Button>
+                            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors">
                                 <Link to="/">
                                     <Home className="mr-2 h-4 w-4" /> Về trang chủ
                                 </Link>
@@ -188,10 +189,10 @@ const MeaningChoicePage = () => {
   const progressValue = ((currentIndex + 1) / vocabulary.length) * 100;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
       <Header />
       <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
-        <div className="w-full max-w-2xl">
+        <div className="w-full max-w-2xl bg-card p-6 md:p-8 rounded-xl shadow-lg border border-primary/20">
           <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold">Chọn Nghĩa HSK {level}</h1>
             <p className="text-muted-foreground">Chọn nghĩa đúng cho từ vựng sau.</p>
@@ -202,10 +203,10 @@ const MeaningChoicePage = () => {
               <span>Câu: {currentIndex + 1} / {vocabulary.length}</span>
               <span>Đúng: {correctAnswers}</span>
             </div>
-            <Progress value={progressValue} className="w-full" />
+            <Progress value={progressValue} className="w-full h-2 bg-primary/20" indicatorClassName="bg-primary" />
           </div>
           
-          <Card className="mb-8">
+          <Card className="mb-8 shadow-md">
             <CardContent className="p-10 flex items-center justify-center">
               <h2 className="text-7xl md:text-8xl font-bold">{currentWord?.hanzi}</h2>
             </CardContent>
@@ -222,9 +223,10 @@ const MeaningChoicePage = () => {
                   onClick={() => handleAnswer(meaning)}
                   disabled={!!selectedMeaning}
                   className={cn(
-                    "h-auto min-h-20 text-lg py-4",
-                    isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90",
-                    selectedMeaning && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90"
+                    "h-auto min-h-20 text-lg py-4 transition-all duration-300",
+                    isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90 text-destructive-foreground",
+                    selectedMeaning && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90 text-white",
+                    !isSelected && !selectedMeaning && "hover:bg-primary/10 hover:text-primary"
                   )}
                   variant="outline"
                 >
@@ -238,7 +240,7 @@ const MeaningChoicePage = () => {
 
           {selectedMeaning && isCorrect === false && (
             <div className="mt-8 text-center">
-              <Button onClick={goToNextWord} size="lg">
+              <Button onClick={goToNextWord} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all">
                 {currentIndex === vocabulary.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -246,7 +248,7 @@ const MeaningChoicePage = () => {
           )}
 
           <div className="text-center mt-8">
-            <Button asChild variant="secondary">
+            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors">
               <Link to="/">
                 <Home className="mr-2 h-4 w-4" /> Về trang chủ
               </Link>

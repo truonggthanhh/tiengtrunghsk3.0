@@ -137,10 +137,10 @@ const SentenceScramblePage = () => {
 
   if (!questionCount) {
     return (
-        <div className="min-h-screen bg-background flex flex-col">
+        <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
           <Header />
           <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center text-center">
-            <Card className="w-full max-w-md">
+            <Card className="w-full max-w-md p-6 md:p-8 rounded-xl shadow-lg border border-primary/20">
               <CardHeader>
                 <CardTitle className="text-2xl">Chọn số lượng câu hỏi</CardTitle>
                 <CardDescription>Bạn muốn ôn tập bao nhiêu câu cho HSK {level}?</CardDescription>
@@ -152,12 +152,13 @@ const SentenceScramblePage = () => {
                     onClick={() => handleStart(count)} 
                     disabled={allAvailableQuestions.length < count}
                     size="lg"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all"
                   >
                     {count} câu
                     {allAvailableQuestions.length < count && ` (Không đủ câu)`}
                   </Button>
                 ))}
-                <Button asChild variant="outline">
+                <Button asChild variant="outline" className="hover:bg-accent hover:text-accent-foreground transition-colors">
                   <Link to="/">
                     <Home className="mr-2 h-4 w-4" /> Quay về trang chủ
                   </Link>
@@ -171,10 +172,10 @@ const SentenceScramblePage = () => {
 
   if (showResult) {
     return (
-        <div className="min-h-screen bg-background flex flex-col">
+        <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
             <Header />
             <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center text-center">
-                <Card className="w-full max-w-md">
+                <Card className="w-full max-w-md p-6 md:p-8 rounded-xl shadow-lg border border-primary/20">
                     <CardHeader>
                         <CardTitle className="text-2xl">Kết quả</CardTitle>
                     </CardHeader>
@@ -186,8 +187,8 @@ const SentenceScramblePage = () => {
                             Bạn đã trả lời đúng {correctAnswers} trên tổng số {questions.length} câu.
                         </p>
                         <div className="flex gap-4 justify-center">
-                            <Button onClick={resetToLevelSelection}>Làm lại</Button>
-                            <Button asChild variant="secondary">
+                            <Button onClick={resetToLevelSelection} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all">Làm lại</Button>
+                            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors">
                                 <Link to="/">
                                     <Home className="mr-2 h-4 w-4" /> Về trang chủ
                                 </Link>
@@ -203,10 +204,10 @@ const SentenceScramblePage = () => {
   const progressValue = ((currentIndex + 1) / questions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
       <Header />
       <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
-        <div className="w-full max-w-3xl">
+        <div className="w-full max-w-3xl bg-card p-6 md:p-8 rounded-xl shadow-lg border border-primary/20">
           <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold">Sắp Xếp Câu HSK {level}</h1>
             <p className="text-muted-foreground">Sắp xếp các từ sau thành một câu hoàn chỉnh.</p>
@@ -217,22 +218,22 @@ const SentenceScramblePage = () => {
               <span>Câu: {currentIndex + 1} / {questions.length}</span>
               <span>Đúng: {correctAnswers}</span>
             </div>
-            <Progress value={progressValue} className="w-full" />
+            <Progress value={progressValue} className="w-full h-2 bg-primary/20" indicatorClassName="bg-primary" />
           </div>
           
-          <Card className="mb-8">
+          <Card className="mb-8 shadow-md">
             <CardContent className="p-8 text-center">
               <p className="text-xl text-muted-foreground">Nghĩa: "{currentQuestion?.translation}"</p>
             </CardContent>
           </Card>
 
           <Card className={cn(
-            "mb-4 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3 border-dashed",
+            "mb-4 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3 border-dashed border-2",
             answerStatus === 'correct' && 'border-green-500',
             answerStatus === 'incorrect' && 'border-destructive'
           )}>
             {userAnswer.map((charObj) => (
-              <Button key={charObj.id} variant="secondary" className="text-2xl h-14 px-4" onClick={() => handleAnswerCharClick(charObj)}>
+              <Button key={charObj.id} variant="secondary" className="text-2xl h-14 px-4 hover:bg-secondary/80 transition-colors" onClick={() => handleAnswerCharClick(charObj)}>
                 {charObj.char}
               </Button>
             ))}
@@ -241,7 +242,7 @@ const SentenceScramblePage = () => {
 
           <div className="mb-8 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3">
             {shuffledChars.map((charObj) => (
-              <Button key={charObj.id} variant="outline" className="text-2xl h-14 px-4" onClick={() => handleCharSelect(charObj)}>
+              <Button key={charObj.id} variant="outline" className="text-2xl h-14 px-4 hover:bg-primary/10 hover:text-primary transition-colors" onClick={() => handleCharSelect(charObj)}>
                 {charObj.char}
               </Button>
             ))}
@@ -249,12 +250,12 @@ const SentenceScramblePage = () => {
 
           <div className="flex justify-center gap-4">
             {answerStatus !== 'correct' && (
-              <Button onClick={handleSubmit} size="lg" disabled={!!answerStatus || userAnswer.length === 0}>
+              <Button onClick={handleSubmit} size="lg" disabled={!!answerStatus || userAnswer.length === 0} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all">
                 Kiểm tra
               </Button>
             )}
             {answerStatus === 'incorrect' && (
-                <Button onClick={goToNextWord} size="lg">
+                <Button onClick={goToNextWord} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all">
                     Câu tiếp theo <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
             )}
@@ -265,20 +266,20 @@ const SentenceScramblePage = () => {
                     setUserAnswer([]);
                     setAnswerStatus(null);
                 }
-            }} variant="outline" size="lg" disabled={!!answerStatus}>
+            }} variant="outline" size="lg" disabled={!!answerStatus} className="hover:bg-accent hover:text-accent-foreground transition-colors">
                 <RefreshCw className="mr-2 h-5 w-5" /> Thử lại
             </Button>
           </div>
 
           {answerStatus === 'incorrect' && (
-            <div className="mt-6 text-center p-4 bg-destructive/10 rounded-lg">
-              <p className="text-destructive mb-2">Sai rồi!</p>
-              <p className="text-lg">Đáp án đúng là: <span className="font-bold text-2xl">{currentQuestion.sentence}</span></p>
+            <div className="mt-6 text-center p-4 bg-destructive/10 rounded-lg border border-destructive">
+              <p className="text-destructive mb-2 font-semibold">Sai rồi!</p>
+              <p className="text-lg">Đáp án đúng là: <span className="font-bold text-2xl text-primary">{currentQuestion.sentence}</span></p>
             </div>
           )}
 
           <div className="text-center mt-12">
-            <Button asChild variant="secondary">
+            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors">
               <Link to="/">
                 <Home className="mr-2 h-4 w-4" /> Về trang chủ
               </Link>
