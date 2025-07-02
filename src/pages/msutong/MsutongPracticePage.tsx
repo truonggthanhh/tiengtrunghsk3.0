@@ -145,22 +145,24 @@ const ChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], distracto
                 <Progress value={progressValue} className="w-full" />
             </div>
             <Card className="mb-8"><CardContent className="p-10 flex items-center justify-center"><h2 className="text-7xl md:text-8xl font-bold">{currentWord?.hanzi}</h2></CardContent></Card>
-            <div className={cn("grid gap-4", type === 'pinyin' ? 'grid-cols-2' : 'grid-cols-1 md:grid-cols-2')}>
-                {options.map((option, index) => {
-                    const isSelected = selectedAnswer === option;
-                    const isTheCorrectAnswer = option === (type === 'pinyin' ? currentWord.pinyin : currentWord.meaning);
-                    return (
-                        <Button key={index} onClick={() => handleAnswer(option)} disabled={!!selectedAnswer} className={cn("h-auto min-h-20 text-lg py-4", isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90", selectedAnswer && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90")} variant="outline">
-                            {option}
-                            {isSelected && isCorrect === false && <XCircle className="ml-4 h-6 w-6" />}
-                            {selectedAnswer && isTheCorrectAnswer && <CheckCircle2 className="ml-4 h-6 w-6" />}
-                        </Button>
-                    );
-                })}
+            <div className="min-h-[16rem]">
+                <div className={cn("grid gap-4", type === 'pinyin' ? 'grid-cols-2' : 'grid-cols-1 md:grid-cols-2')}>
+                    {options.map((option, index) => {
+                        const isSelected = selectedAnswer === option;
+                        const isTheCorrectAnswer = option === (type === 'pinyin' ? currentWord.pinyin : currentWord.meaning);
+                        return (
+                            <Button key={index} onClick={() => handleAnswer(option)} disabled={!!selectedAnswer} className={cn("h-auto min-h-20 text-lg py-4", isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90", selectedAnswer && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90")} variant="outline">
+                                {option}
+                                {isSelected && isCorrect === false && <XCircle className="ml-4 h-6 w-6" />}
+                                {selectedAnswer && isTheCorrectAnswer && <CheckCircle2 className="ml-4 h-6 w-6" />}
+                            </Button>
+                        );
+                    })}
+                </div>
+                {selectedAnswer && isCorrect === false && (
+                    <div className="mt-8 text-center"><Button onClick={goToNextWord} size="lg">{currentIndex === practiceVocabulary.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}<ArrowRight className="ml-2 h-5 w-5" /></Button></div>
+                )}
             </div>
-            {selectedAnswer && isCorrect === false && (
-                <div className="mt-8 text-center"><Button onClick={goToNextWord} size="lg">{currentIndex === practiceVocabulary.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}<ArrowRight className="ml-2 h-5 w-5" /></Button></div>
-            )}
         </div>
     );
 };
@@ -227,12 +229,14 @@ const FillInTheBlankPractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ vo
                     <p className="text-2xl text-muted-foreground">{currentWord?.meaning}</p>
                 </CardContent>
             </Card>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <Input value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Nhập chữ Hán..." className={cn("text-center text-3xl h-16", answerStatus === 'correct' && 'border-green-500 focus-visible:ring-green-500', answerStatus === 'incorrect' && 'border-destructive focus-visible:ring-destructive')} disabled={!!answerStatus} />
-                {answerStatus !== 'correct' && (<Button type="submit" className="w-full" size="lg" disabled={!!answerStatus}>Kiểm tra</Button>)}
-            </form>
-            {answerStatus === 'incorrect' && (<div className="mt-6 text-center p-4 bg-destructive/10 rounded-lg"><p className="text-destructive mb-2">Sai rồi!</p><p className="text-lg">Đáp án đúng là: <span className="font-bold text-2xl">{currentWord.hanzi}</span></p></div>)}
-            {answerStatus && answerStatus !== 'correct' && (<div className="mt-8 text-center"><Button onClick={goToNextWord} size="lg">{currentIndex === vocabulary.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}<ArrowRight className="ml-2 h-5 w-5" /></Button></div>)}
+            <div className="min-h-[12rem]">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <Input value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Nhập chữ Hán..." className={cn("text-center text-3xl h-16", answerStatus === 'correct' && 'border-green-500 focus-visible:ring-green-500', answerStatus === 'incorrect' && 'border-destructive focus-visible:ring-destructive')} disabled={!!answerStatus} />
+                    {answerStatus !== 'correct' && (<Button type="submit" className="w-full" size="lg" disabled={!!answerStatus}>Kiểm tra</Button>)}
+                </form>
+                {answerStatus === 'incorrect' && (<div className="mt-6 text-center p-4 bg-destructive/10 rounded-lg"><p className="text-destructive mb-2">Sai rồi!</p><p className="text-lg">Đáp án đúng là: <span className="font-bold text-2xl">{currentWord.hanzi}</span></p></div>)}
+                {answerStatus && answerStatus !== 'correct' && (<div className="mt-8 text-center"><Button onClick={goToNextWord} size="lg">{currentIndex === vocabulary.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}<ArrowRight className="ml-2 h-5 w-5" /></Button></div>)}
+            </div>
         </div>
     );
 };
@@ -327,7 +331,7 @@ const PronunciationPractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ voc
                 <Progress value={progressValue} className="w-full" />
             </div>
             <Card className="mb-8"><CardContent className="p-10 flex flex-col items-center justify-center gap-4 min-h-[200px]"><h2 className="text-7xl md:text-8xl font-bold">{currentWord?.hanzi}</h2><p className="text-3xl md:text-4xl text-muted-foreground">{currentWord?.pinyin}</p></CardContent></Card>
-            <div className="flex flex-col items-center gap-6">
+            <div className="flex flex-col items-center gap-6 min-h-[8rem]">
                 <Button onClick={handleListen} disabled={isListening || !recognition} size="lg" className={cn("w-48 h-16", isListening && "animate-pulse")}>{isListening ? <MicOff className="mr-2 h-6 w-6" /> : <Mic className="mr-2 h-6 w-6" />}{isListening ? 'Đang nghe...' : 'Bắt đầu nói'}</Button>
                 {feedbackMessage && (<div className={cn("mt-4 text-center p-4 rounded-lg w-full", feedback === 'correct' && 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300', feedback === 'incorrect' && 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300', feedback === 'info' && 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300')}><p className="font-medium">{feedbackMessage}</p></div>)}
                 {feedback === 'incorrect' && (<Button onClick={goToNextWord} className="mt-4">Từ tiếp theo <ArrowRight className="ml-2 h-4 w-4" /></Button>)}
@@ -445,7 +449,7 @@ const SentenceChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], d
                     <p className="text-lg text-muted-foreground">{currentQuestion?.translation}</p>
                 </CardContent>
             </Card>
-            <div className="min-h-[250px]">
+            <div className="min-h-[16rem]">
                 <div className="grid grid-cols-2 gap-4">
                     {options.map((option, index) => {
                         const isSelected = selectedAnswer === option;
@@ -594,7 +598,7 @@ const SentenceScramblePractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ 
                     <p className="text-xl text-muted-foreground">Nghĩa: "{currentQuestion?.translation}"</p>
                 </CardContent>
             </Card>
-            <div className="min-h-[350px]">
+            <div className="min-h-[15rem]">
                 <Card className={cn(
                     "mb-4 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3 border-dashed",
                     answerStatus === 'correct' && 'border-green-500',
@@ -615,7 +619,8 @@ const SentenceScramblePractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ 
                         </Button>
                     ))}
                 </div>
-
+            </div>
+            <div className="min-h-[9rem]">
                 <div className="flex justify-center gap-4">
                     {answerStatus !== 'correct' && (
                         <Button onClick={handleSubmit} size="lg" disabled={!!answerStatus || userAnswer.length === 0}>
