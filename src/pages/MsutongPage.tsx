@@ -21,14 +21,14 @@ const books = [
 ];
 
 const exerciseTypes = [
-    { slug: "flashcard", title: "Flashcard", description: "Ôn tập từ vựng qua thẻ ghi nhớ", icon: <BookOpen />, isAvailable: true },
-    { slug: "pinyin-choice", title: "Chọn phiên âm", description: "Chọn pinyin đúng cho chữ Hán", icon: <Mic />, isAvailable: true },
-    { slug: "meaning-choice", title: "Chọn nghĩa", description: "Chọn nghĩa đúng cho từ vựng", icon: <Puzzle />, isAvailable: true },
-    { slug: "fill-in-the-blank", title: "Điền từ", description: "Điền chữ Hán dựa vào pinyin và nghĩa", icon: <FileQuestion />, isAvailable: true },
-    { slug: "pronunciation", title: "Luyện phát âm", description: "Luyện phát âm qua nhận dạng giọng nói", icon: <AudioLines />, isAvailable: true },
-    { slug: "ai-tutor", title: "Luyện nói cùng AI", description: "Trò chuyện và nhận phản hồi từ AI", icon: <Bot />, isAvailable: true },
-    { slug: "sentence-choice", title: "Điền từ vào câu", description: "Chọn từ đúng để hoàn thành câu", icon: <CheckSquare />, isAvailable: true },
-    { slug: "sentence-scramble", title: "Sắp xếp câu", description: "Sắp xếp các từ thành câu hoàn chỉnh", icon: <Shuffle />, isAvailable: true },
+    { slug: "flashcard", title: "Flashcard", description: "Ôn tập từ vựng qua thẻ ghi nhớ", icon: <BookOpen />, isAvailable: true, page: 'practice' },
+    { slug: "pinyin-choice", title: "Chọn phiên âm", description: "Chọn pinyin đúng cho chữ Hán", icon: <Mic />, isAvailable: true, page: 'practice' },
+    { slug: "meaning-choice", title: "Chọn nghĩa", description: "Chọn nghĩa đúng cho từ vựng", icon: <Puzzle />, isAvailable: true, page: 'practice' },
+    { slug: "fill-in-the-blank", title: "Điền từ", description: "Điền chữ Hán dựa vào pinyin và nghĩa", icon: <FileQuestion />, isAvailable: true, page: 'practice' },
+    { slug: "pronunciation", title: "Luyện phát âm", description: "Luyện phát âm qua nhận dạng giọng nói", icon: <AudioLines />, isAvailable: true, page: 'practice' },
+    { slug: "sentence-choice", title: "Điền từ vào câu", description: "Chọn từ đúng để hoàn thành câu", icon: <CheckSquare />, isAvailable: true, page: 'sentence-choice' },
+    { slug: "sentence-scramble", title: "Sắp xếp câu", description: "Sắp xếp các từ thành câu hoàn chỉnh", icon: <Shuffle />, isAvailable: true, page: 'sentence-scramble' },
+    { slug: "ai-tutor", title: "Luyện nói cùng AI", description: "Trò chuyện và nhận phản hồi từ AI", icon: <Bot />, isAvailable: true, page: 'ai-tutor' },
 ];
 
 const MsutongPage = () => {
@@ -193,7 +193,7 @@ const MsutongPage = () => {
               {exerciseTypes.map((exercise) => (
                 <Link 
                   key={exercise.slug} 
-                  to={exercise.isAvailable ? `/msutong/${exercise.slug === 'ai-tutor' ? 'ai-tutor' : 'practice'}?${practiceUrlParams}&type=${exercise.slug}` : '#'}
+                  to={exercise.isAvailable ? `/msutong/${exercise.page}?${practiceUrlParams}&type=${exercise.slug}` : '#'}
                   className={cn(!exercise.isAvailable && "pointer-events-none")}
                 >
                   <Card className={cn("flex flex-col text-center h-full hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-in-out group cursor-pointer hover:border-primary", !exercise.isAvailable && "opacity-50")}>
