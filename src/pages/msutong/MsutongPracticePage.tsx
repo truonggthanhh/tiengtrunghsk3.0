@@ -76,19 +76,25 @@ const ChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], distracto
 
     const currentWord = useMemo(() => practiceVocabulary[currentIndex], [practiceVocabulary, currentIndex]);
 
-    useEffect(() => {
-        if (!currentWord) {
-            setOptions([]);
-            return;
-        }
+    const generateOptions = useCallback(() => {
+        if (!currentWord) return;
 
         const correctOption = type === 'pinyin' ? currentWord.pinyin : currentWord.meaning;
-        const incorrectOptions = distractorVocabulary
-            .filter(word => (type === 'pinyin' ? word.pinyin : word.meaning) !== correctOption)
-            .map(word => type === 'pinyin' ? word.pinyin : word.meaning);
         
-        const uniqueIncorrectOptions = [...new Set(shuffleArray(incorrectOptions))].slice(0, 3);
-        setOptions(shuffleArray([correctOption, ...uniqueIncorrectOptions]));
+        // Get all possible distractor values (pinyin/meaning)
+        const allPossibleDistractors = distractorVocabulary
+            .map(word => type === 'pinyin' ? word.pinyin : word.meaning)
+            .filter(value => value !== correctOption); // Exclude the correct answer
+        
+        // Ensure uniqueness among distractors
+        const uniqueDistractors = Array.from(new Set(allPossibleDistractors));
+        
+        // Shuffle and pick 3 unique distractors
+        const shuffledUniqueDistractors = shuffleArray(uniqueDistractors).slice(0, 3);
+
+        // Combine correct option with unique distractors and shuffle them
+        const finalOptions = shuffleArray([correctOption, ...shuffledUniqueDistractors]);
+        setOptions(finalOptions);
     }, [currentWord, distractorVocabulary, type]);
 
     const goToNextWord = useCallback(() => {
@@ -101,16 +107,11 @@ const ChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], distracto
         }
     }, [currentIndex, practiceVocabulary.length]);
 
-    const handleAnswer = (answer: string) => {
-        if (selectedAnswer) return;
-        setSelectedAnswer(answer);
-        const correct = answer === (type === 'pinyin' ? currentWord.pinyin : currentWord.meaning);
-        setIsCorrect(correct);
-        if (correct) {
-            setCorrectAnswers(prev => prev + 1);
-            setTimeout(() => goToNextWord(), 1200);
+    useEffect(() => {
+        if (currentWord) { // Only generate options if currentWord is defined
+            generateOptions();
         }
-    };
+    }, [currentWord, generateOptions]); // Depend on currentWord and generateOptions
 
     if (showResult) {
         return (
@@ -136,7 +137,7 @@ const ChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], distracto
                 </div>
                 <Progress value={progressValue} className="w-full" />
             </div>
-            <Card className="mb-8"><CardContent className="p-10 flex items-center justify-center"><h2 className="text-7xl md:text-8xl font-bold">{currentWord?.hanzi}</h2></CardContent></Card>
+            <Card className="mb-8"><CardContent className="p-10 flex items-center justify-center min-h-[150px]"><h2 className="text-7xl md:text-8xl font-bold">{currentWord?.hanzi}</h2></CardContent></Card>
             <div className={cn("grid gap-4", type === 'pinyin' ? 'grid-cols-2' : 'grid-cols-1 md:grid-cols-2')}>
                 {options.map((option) => {
                     const isSelected = selectedAnswer === option;
@@ -214,7 +215,7 @@ const FillInTheBlankPractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ vo
                 <Progress value={progressValue} className="w-full" />
             </div>
             <Card className="mb-8">
-                <CardContent className="p-10 flex flex-col items-center justify-center gap-4 min-h-[180px]"> {/* Increased min-h */}
+                <CardContent className="p-10 flex flex-col items-center justify-center gap-4 min-h-[200px]"> {/* Increased min-h */}
                     <p className="text-4xl font-semibold">{currentWord?.pinyin}</p>
                     <p className="text-2xl text-muted-foreground">{currentWord?.meaning}</p>
                 </CardContent>
@@ -318,7 +319,7 @@ const PronunciationPractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ voc
                 </div>
                 <Progress value={progressValue} className="w-full" />
             </div>
-            <Card className="mb-8"><CardContent className="p-10 flex flex-col items-center justify-center gap-4"><h2 className="text-7xl md:text-8xl font-bold">{currentWord?.hanzi}</h2><p className="text-3xl md:text-4xl text-muted-foreground">{currentWord?.pinyin}</p></CardContent></Card>
+            <Card className="mb-8"><CardContent className="p-10 flex flex-col items-center justify-center gap-4 min-h-[200px]"><h2 className="text-7xl md:text-8xl font-bold">{currentWord?.hanzi}</h2><p className="text-3xl md:text-4xl text-muted-foreground">{currentWord?.pinyin}</p></CardContent></Card>
             <div className="flex flex-col items-center gap-6">
                 <Button onClick={handleListen} disabled={isListening || !recognition} size="lg" className={cn("w-48 h-16", isListening && "animate-pulse")}>{isListening ? <MicOff className="mr-2 h-6 w-6" /> : <Mic className="mr-2 h-6 w-6" />}{isListening ? 'Đang nghe...' : 'Bắt đầu nói'}</Button>
                 {feedbackMessage && (<div className={cn("mt-4 text-center p-4 rounded-lg w-full", feedback === 'correct' && 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300', feedback === 'incorrect' && 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300', feedback === 'info' && 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300')}><p className="font-medium">{feedbackMessage}</p></div>)}
@@ -352,13 +353,20 @@ const SentenceChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], d
         if (!currentQuestion) return;
 
         const correctOption = currentQuestion.word.hanzi;
-        const incorrectOptions = distractorVocabulary
-            .filter(word => word.hanzi !== correctOption)
-            .map(word => word.hanzi);
         
-        const shuffledIncorrect = shuffleArray(incorrectOptions).slice(0, 3);
+        // Get all possible distractor values (hanzi)
+        const allPossibleDistractors = distractorVocabulary
+            .map(word => word.hanzi)
+            .filter(value => value !== correctOption); // Exclude the correct answer
         
-        const finalOptions = shuffleArray([correctOption, ...shuffledIncorrect]);
+        // Ensure uniqueness among distractors
+        const uniqueDistractors = Array.from(new Set(allPossibleDistractors));
+        
+        // Shuffle and pick 3 unique distractors
+        const shuffledUniqueDistractors = shuffleArray(uniqueDistractors).slice(0, 3);
+
+        // Combine correct option with unique distractors and shuffle them
+        const finalOptions = shuffleArray([correctOption, ...shuffledUniqueDistractors]);
         setOptions(finalOptions);
     }, [currentQuestion, distractorVocabulary]);
 
@@ -373,24 +381,10 @@ const SentenceChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], d
     }, [currentIndex, allAvailableQuestions.length]);
 
     useEffect(() => {
-        if (allAvailableQuestions.length > 0 && currentIndex < allAvailableQuestions.length) {
+        if (currentQuestion) { // Only generate options if currentQuestion is defined
             generateOptions();
         }
-    }, [currentIndex, generateOptions, allAvailableQuestions]);
-
-    const handleAnswer = (answer: string) => {
-        if (selectedAnswer) return;
-
-        setSelectedAnswer(answer);
-        const correct = answer === currentQuestion.word.hanzi;
-        setIsCorrect(correct);
-        if (correct) {
-            setCorrectAnswers(prev => prev + 1);
-            setTimeout(() => {
-                goToNextWord();
-            }, 1200);
-        }
-    };
+    }, [currentQuestion, generateOptions]); // Depend on currentQuestion and generateOptions
 
     if (allAvailableQuestions.length === 0) {
         return (
@@ -429,7 +423,7 @@ const SentenceChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], d
                 <Progress value={progressValue} className="w-full" />
             </div>
             <Card className="mb-8">
-                <CardContent className="p-10 flex flex-col items-center justify-center text-center gap-4">
+                <CardContent className="p-10 flex flex-col items-center justify-center text-center gap-4 min-h-[200px]"> {/* Increased min-h */}
                     <h2 className="text-4xl md:text-5xl font-bold tracking-wider">{questionSentence}</h2>
                     <p className="text-lg text-muted-foreground">{currentQuestion?.translation}</p>
                 </CardContent>
@@ -493,6 +487,7 @@ const SentenceScramblePractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ 
     useEffect(() => {
         if (currentQuestion) {
             const chars = currentQuestion.sentence.replace(/[，。？！]/g, '').split('');
+            // Assign unique IDs based on original index to maintain order when returning
             setAvailableChars(shuffleArray(chars.map((char, index) => ({ char, id: index }))));
             setSelectedChars([]);
             setAnswerStatus(null);
@@ -581,7 +576,7 @@ const SentenceScramblePractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ 
             </div>
             
             <Card className="mb-8">
-                <CardContent className="p-8 text-center">
+                <CardContent className="p-8 text-center min-h-[120px]"> {/* Increased min-h */}
                     <p className="text-xl text-muted-foreground">Nghĩa: "{currentQuestion?.translation}"</p>
                 </CardContent>
             </Card>
