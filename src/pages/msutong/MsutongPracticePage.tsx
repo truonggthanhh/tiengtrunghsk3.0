@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from "@/components/ui/progress";
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, ArrowRight, Home, ChevronsLeft, ChevronsRight, CheckCircle2, XCircle, RefreshCw, Mic, MicOff } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Home, CheckCircle2, XCircle, RefreshCw, Mic, MicOff } from 'lucide-react';
 import { getVocabularyByMsutong, getFullMsutongVocabularyByLevel, VocabularyWord } from '@/data';
 import Flashcard from '@/components/Flashcard';
 import { cn } from '@/lib/utils';
@@ -18,6 +18,12 @@ const shuffleArray = <T,>(array: T[]): T[] => {
   }
   return newArray;
 };
+
+// Type for character with unique id for Sentence Scramble
+interface CharObject {
+  char: string;
+  id: number;
+}
 
 // --- Practice Components ---
 
@@ -317,6 +323,314 @@ const PronunciationPractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ voc
     );
 };
 
+const SentenceChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], distractorVocabulary: VocabularyWord[] }> = ({ practiceVocabulary, distractorVocabulary }) => {
+    const allAvailableQuestions = useMemo(() => {
+        return practiceVocabulary.flatMap(word => 
+            word.examples ? word.examples.map(ex => ({ 
+                word: word, 
+                sentence: ex.hanzi, 
+                translation: ex.translation 
+            })) : []
+        );
+    }, [practiceVocabulary]);
+
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [options, setOptions] = useState<string[]>([]);
+    const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+    const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+    const [correctAnswers, setCorrectAnswers] = useState(0);
+    const [showResult, setShowResult] = useState(false);
+
+    const currentQuestion = useMemo(() => allAvailableQuestions[currentIndex], [allAvailableQuestions, currentIndex]);
+
+    const generateOptions = useCallback(() => {
+        if (!currentQuestion) return;
+
+        const correctOption = currentQuestion.word.hanzi;
+        const incorrectOptions = distractorVocabulary
+            .filter(word => word.hanzi !== correctOption)
+            .map(word => word.hanzi);
+        
+        const shuffledIncorrect = shuffleArray(incorrectOptions).slice(0, 3);
+        
+        const finalOptions = shuffleArray([correctOption, ...shuffledIncorrect]);
+        setOptions(finalOptions);
+    }, [currentQuestion, distractorVocabulary]);
+
+    const goToNextWord = useCallback(() => {
+        setSelectedAnswer(null);
+        setIsCorrect(null);
+        if (currentIndex < allAvailableQuestions.length - 1) {
+            setCurrentIndex(prev => prev + 1);
+        } else {
+            setShowResult(true);
+        }
+    }, [currentIndex, allAvailableQuestions.length]);
+
+    useEffect(() => {
+        if (allAvailableQuestions.length > 0 && currentIndex < allAvailableQuestions.length) {
+            generateOptions();
+        }
+    }, [currentIndex, generateOptions, allAvailableQuestions]);
+
+    const handleAnswer = (answer: string) => {
+        if (selectedAnswer) return;
+
+        setSelectedAnswer(answer);
+        const correct = answer === currentQuestion.word.hanzi;
+        setIsCorrect(correct);
+        if (correct) {
+            setCorrectAnswers(prev => prev + 1);
+            setTimeout(() => {
+                goToNextWord();
+            }, 1200);
+        }
+    };
+
+    if (allAvailableQuestions.length === 0) {
+        return (
+            <div className="text-center">
+                <h2 className="text-2xl font-bold mb-4">Không tìm thấy câu ví dụ</h2>
+                <p className="text-muted-foreground mb-8">
+                    Dạng bài tập này yêu cầu từ vựng có câu ví dụ. Vui lòng chọn bài học khác.
+                </p>
+            </div>
+        );
+    }
+
+    if (showResult) {
+        return (
+            <Card className="w-full max-w-md text-center">
+                <CardHeader><CardTitle className="text-2xl">Kết quả</CardTitle></CardHeader>
+                <CardContent>
+                    <p className="text-4xl font-bold mb-4">{correctAnswers} / {allAvailableQuestions.length}</p>
+                    <p className="text-muted-foreground mb-6">Bạn đã trả lời đúng {correctAnswers} trên tổng số {allAvailableQuestions.length} câu.</p>
+                    <Button onClick={() => window.location.reload()}>Làm lại</Button>
+                </CardContent>
+            </Card>
+        );
+    }
+
+    const progressValue = ((currentIndex + 1) / allAvailableQuestions.length) * 100;
+    const questionSentence = currentQuestion?.sentence.replace(currentQuestion.word.hanzi, '___');
+
+    return (
+        <div className="w-full max-w-2xl">
+            <div className="mb-4">
+                <div className="flex justify-between items-center mb-2 text-muted-foreground">
+                    <span>Câu: {currentIndex + 1} / {allAvailableQuestions.length}</span>
+                    <span>Đúng: {correctAnswers}</span>
+                </div>
+                <Progress value={progressValue} className="w-full" />
+            </div>
+            <Card className="mb-8">
+                <CardContent className="p-10 flex flex-col items-center justify-center text-center gap-4">
+                    <h2 className="text-4xl md:text-5xl font-bold tracking-wider">{questionSentence}</h2>
+                    <p className="text-lg text-muted-foreground">{currentQuestion?.translation}</p>
+                </CardContent>
+            </Card>
+            <div className="grid grid-cols-2 gap-4">
+                {options.map((option, index) => {
+                    const isSelected = selectedAnswer === option;
+                    const isTheCorrectAnswer = option === currentQuestion.word.hanzi;
+                    
+                    return (
+                        <Button
+                            key={index}
+                            onClick={() => handleAnswer(option)}
+                            disabled={!!selectedAnswer}
+                            className={cn(
+                                "h-20 text-2xl",
+                                isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90",
+                                selectedAnswer && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90"
+                            )}
+                            variant="outline"
+                        >
+                            {option}
+                            {isSelected && isCorrect === false && <XCircle className="ml-4 h-6 w-6" />}
+                            {selectedAnswer && isTheCorrectAnswer && <CheckCircle2 className="ml-4 h-6 w-6" />}
+                        </Button>
+                    )
+                })}
+            </div>
+            {selectedAnswer && isCorrect === false && (
+                <div className="mt-8 text-center">
+                    <Button onClick={goToNextWord} size="lg">
+                        {currentIndex === allAvailableQuestions.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                </div>
+            )}
+        </div>
+    );
+};
+
+const SentenceScramblePractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ vocabulary }) => {
+    const allAvailableQuestions = useMemo(() => {
+        return vocabulary.flatMap(word => 
+            word.examples ? word.examples.map(ex => ({ 
+                sentence: ex.hanzi, 
+                translation: ex.translation 
+            })) : []
+        );
+    }, [vocabulary]);
+
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [userAnswer, setUserAnswer] = useState<CharObject[]>([]);
+    const [answerStatus, setAnswerStatus] = useState<'correct' | 'incorrect' | null>(null);
+    const [correctAnswers, setCorrectAnswers] = useState(0);
+    const [showResult, setShowResult] = useState(false);
+
+    const currentQuestion = useMemo(() => allAvailableQuestions[currentIndex], [allAvailableQuestions, currentIndex]);
+
+    const [shuffledChars, setShuffledChars] = useState<CharObject[]>([]);
+
+    useEffect(() => {
+        if (currentQuestion) {
+            const chars = currentQuestion.sentence.replace(/[，。？！]/g, '').split('');
+            setShuffledChars(shuffleArray(chars.map((char, index) => ({ char, id: index }))));
+            setUserAnswer([]);
+            setAnswerStatus(null);
+        }
+    }, [currentQuestion]);
+
+    const handleCharSelect = (charObj: CharObject) => {
+        if (answerStatus) return;
+        setUserAnswer([...userAnswer, charObj]);
+        setShuffledChars(shuffledChars.filter(c => c.id !== charObj.id));
+    };
+
+    const handleAnswerCharClick = (charObj: CharObject) => {
+        if (answerStatus) return;
+        setUserAnswer(userAnswer.filter(c => c.id !== charObj.id));
+        setShuffledChars(shuffleArray([...shuffledChars, charObj])); // Re-shuffle available chars
+    };
+
+    const handleSubmit = () => {
+        if (answerStatus) return;
+        const userAnswerString = userAnswer.map(c => c.char).join('');
+        const correctAnswerString = currentQuestion.sentence.replace(/[，。？！]/g, '');
+        
+        if (userAnswerString === correctAnswerString) {
+            setAnswerStatus('correct');
+            setCorrectAnswers(prev => prev + 1);
+            setTimeout(() => {
+                goToNextWord();
+            }, 1500);
+        } else {
+            setAnswerStatus('incorrect');
+        }
+    };
+
+    const goToNextWord = useCallback(() => {
+        if (currentIndex < allAvailableQuestions.length - 1) {
+            setCurrentIndex(prev => prev + 1);
+        } else {
+            setShowResult(true);
+        }
+    }, [currentIndex, allAvailableQuestions.length]);
+
+    if (allAvailableQuestions.length === 0) {
+        return (
+            <div className="text-center">
+                <h2 className="text-2xl font-bold mb-4">Không tìm thấy câu ví dụ</h2>
+                <p className="text-muted-foreground mb-8">
+                    Dạng bài tập này yêu cầu từ vựng có câu ví dụ. Vui lòng chọn bài học khác.
+                </p>
+            </div>
+        );
+    }
+
+    if (showResult) {
+        return (
+            <Card className="w-full max-w-md text-center">
+                <CardHeader><CardTitle className="text-2xl">Kết quả</CardTitle></CardHeader>
+                <CardContent>
+                    <p className="text-4xl font-bold mb-4">{correctAnswers} / {allAvailableQuestions.length}</p>
+                    <p className="text-muted-foreground mb-6">Bạn đã trả lời đúng {correctAnswers} trên tổng số {allAvailableQuestions.length} câu.</p>
+                    <Button onClick={() => window.location.reload()}>Làm lại</Button>
+                </CardContent>
+            </Card>
+        );
+    }
+
+    const progressValue = ((currentIndex + 1) / allAvailableQuestions.length) * 100;
+
+    return (
+        <div className="w-full max-w-3xl">
+            <div className="mb-6 text-center">
+                <h1 className="text-3xl font-bold">Sắp Xếp Câu</h1>
+                <p className="text-muted-foreground">Sắp xếp các từ sau thành một câu hoàn chỉnh.</p>
+            </div>
+
+            <div className="mb-4">
+                <div className="flex justify-between items-center mb-2 text-muted-foreground">
+                    <span>Câu: {currentIndex + 1} / {allAvailableQuestions.length}</span>
+                    <span>Đúng: {correctAnswers}</span>
+                </div>
+                <Progress value={progressValue} className="w-full" />
+            </div>
+            
+            <Card className="mb-8">
+                <CardContent className="p-8 text-center">
+                    <p className="text-xl text-muted-foreground">Nghĩa: "{currentQuestion?.translation}"</p>
+                </CardContent>
+            </Card>
+
+            <Card className={cn(
+                "mb-4 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3 border-dashed",
+                answerStatus === 'correct' && 'border-green-500',
+                answerStatus === 'incorrect' && 'border-destructive'
+            )}>
+                {userAnswer.map((charObj) => (
+                    <Button key={charObj.id} variant="secondary" className="text-2xl h-14 px-4" onClick={() => handleAnswerCharClick(charObj)}>
+                        {charObj.char}
+                    </Button>
+                ))}
+                {userAnswer.length === 0 && <span className="text-muted-foreground">Câu trả lời của bạn sẽ xuất hiện ở đây</span>}
+            </Card>
+
+            <div className="mb-8 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3">
+                {shuffledChars.map((charObj) => (
+                    <Button key={charObj.id} variant="outline" className="text-2xl h-14 px-4" onClick={() => handleCharSelect(charObj)}>
+                        {charObj.char}
+                    </Button>
+                ))}
+            </div>
+
+            <div className="flex justify-center gap-4">
+                {answerStatus !== 'correct' && (
+                    <Button onClick={handleSubmit} size="lg" disabled={!!answerStatus || userAnswer.length === 0}>
+                        Kiểm tra
+                    </Button>
+                )}
+                {answerStatus === 'incorrect' && (
+                    <Button onClick={goToNextWord} size="lg">
+                        Câu tiếp theo <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                )}
+                <Button onClick={() => {
+                    if (currentQuestion) {
+                        const chars = currentQuestion.sentence.replace(/[，。？！]/g, '').split('');
+                        setShuffledChars(shuffleArray(chars.map((char, index) => ({ char, id: index }))));
+                        setUserAnswer([]);
+                        setAnswerStatus(null);
+                    }
+                }} variant="outline" size="lg" disabled={!!answerStatus}>
+                    <RefreshCw className="mr-2 h-5 w-5" /> Thử lại
+                </Button>
+            </div>
+
+            {answerStatus === 'incorrect' && (
+                <div className="mt-6 text-center p-4 bg-destructive/10 rounded-lg">
+                    <p className="text-destructive mb-2">Sai rồi!</p>
+                    <p className="text-lg">Đáp án đúng là: <span className="font-bold text-2xl">{currentQuestion.sentence}</span></p>
+                </div>
+            )}
+        </div>
+    );
+};
+
 
 // --- Main Page Component ---
 
@@ -343,7 +657,14 @@ const MsutongPracticePage = () => {
   };
 
   const renderExercise = () => {
-    if (practiceVocabulary.length === 0) return null;
+    if (practiceVocabulary.length === 0) {
+        return (
+            <div className="text-center">
+                <h2 className="text-2xl font-bold mb-4">Không tìm thấy từ vựng</h2>
+                <p className="text-muted-foreground mb-8">Dữ liệu cho lựa chọn của bạn đang được cập nhật. Vui lòng quay lại sau.</p>
+            </div>
+        );
+    }
     
     switch (type) {
       case 'flashcard':
@@ -356,6 +677,10 @@ const MsutongPracticePage = () => {
         return <FillInTheBlankPractice vocabulary={practiceVocabulary} />;
       case 'pronunciation':
         return <PronunciationPractice vocabulary={practiceVocabulary} />;
+      case 'sentence-choice':
+        return <SentenceChoicePractice practiceVocabulary={practiceVocabulary} distractorVocabulary={fullMsutongVocab} />;
+      case 'sentence-scramble':
+        return <SentenceScramblePractice vocabulary={practiceVocabulary} />;
       default:
         return <p>Dạng bài tập "{type}" chưa được hỗ trợ.</p>;
     }
@@ -367,6 +692,8 @@ const MsutongPracticePage = () => {
     'meaning-choice': 'Chọn Nghĩa',
     'fill-in-the-blank': 'Điền Từ',
     'pronunciation': 'Luyện Phát Âm',
+    'sentence-choice': 'Điền Từ Vào Câu',
+    'sentence-scramble': 'Sắp Xếp Câu',
   };
 
   const descriptionMap: { [key: string]: string } = {
@@ -375,8 +702,11 @@ const MsutongPracticePage = () => {
     'meaning-choice': 'Chọn nghĩa đúng cho từ vựng sau.',
     'fill-in-the-blank': 'Dựa vào phiên âm và nghĩa, hãy điền chữ Hán tương ứng.',
     'pronunciation': 'Nhấn nút và phát âm chữ Hán hiển thị bên dưới.',
+    'sentence-choice': 'Chọn từ đúng để hoàn thành câu sau.',
+    'sentence-scramble': 'Sắp xếp các từ sau thành một câu hoàn chỉnh.',
   };
 
+  // Only show question count selection for non-flashcard exercises
   if (practiceVocabulary.length > 0 && questionCount === null && type !== 'flashcard') {
     return (
         <div className="min-h-screen bg-background flex flex-col">
@@ -411,12 +741,7 @@ const MsutongPracticePage = () => {
                 <p className="text-muted-foreground">{descriptionMap[type || '']}</p>
             </div>
             <div className="flex items-center justify-center">
-                {practiceVocabulary.length > 0 ? renderExercise() : (
-                    <div className="text-center">
-                        <h2 className="text-2xl font-bold mb-4">Không tìm thấy từ vựng</h2>
-                        <p className="text-muted-foreground mb-8">Dữ liệu cho lựa chọn của bạn đang được cập nhật. Vui lòng quay lại sau.</p>
-                    </div>
-                )}
+                {renderExercise()}
             </div>
             <div className="text-center mt-12">
                 <Button asChild variant="secondary" onClick={() => navigate('/msutong')}>

@@ -27,8 +27,8 @@ const exerciseTypes = [
     { slug: "fill-in-the-blank", title: "Điền từ", description: "Điền chữ Hán dựa vào pinyin và nghĩa", icon: <FileQuestion />, isAvailable: true },
     { slug: "pronunciation", title: "Luyện phát âm", description: "Luyện phát âm qua nhận dạng giọng nói", icon: <AudioLines />, isAvailable: true },
     { slug: "ai-tutor", title: "Luyện nói cùng AI", description: "Trò chuyện và nhận phản hồi từ AI", icon: <Bot />, isAvailable: true },
-    { slug: "sentence-choice", title: "Điền từ vào câu", description: "Chọn từ đúng để hoàn thành câu", icon: <CheckSquare />, isAvailable: false },
-    { slug: "sentence-scramble", title: "Sắp xếp câu", description: "Sắp xếp các từ thành câu hoàn chỉnh", icon: <Shuffle />, isAvailable: false },
+    { slug: "sentence-choice", title: "Điền từ vào câu", description: "Chọn từ đúng để hoàn thành câu", icon: <CheckSquare />, isAvailable: true },
+    { slug: "sentence-scramble", title: "Sắp xếp câu", description: "Sắp xếp các từ thành câu hoàn chỉnh", icon: <Shuffle />, isAvailable: true },
 ];
 
 const MsutongPage = () => {
