@@ -348,7 +348,7 @@ const SentenceChoicePractice: React.FC<{ practiceVocabulary: VocabularyWord[], d
                 sentence: ex.hanzi, 
                 translation: ex.translation 
             })) : []
-        );
+        ).filter(q => q.sentence && q.word);
     }, [practiceVocabulary]);
 
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -494,7 +494,7 @@ const SentenceScramblePractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ 
                 sentence: ex.hanzi, 
                 translation: ex.translation 
             })) : []
-        );
+        ).filter(q => q.sentence);
     }, [vocabulary]);
 
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -507,7 +507,7 @@ const SentenceScramblePractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ 
 
     const [shuffledChars, setShuffledChars] = useState<CharObject[]>([]);
 
-    useEffect(() => {
+    const resetCurrentQuestion = useCallback(() => {
         if (currentQuestion) {
             const chars = currentQuestion.sentence.replace(/[，。？！]/g, '').split('');
             setShuffledChars(shuffleArray(chars.map((char, index) => ({ char, id: index }))));
@@ -515,6 +515,10 @@ const SentenceScramblePractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ 
             setAnswerStatus(null);
         }
     }, [currentQuestion]);
+
+    useEffect(() => {
+        resetCurrentQuestion();
+    }, [currentQuestion, resetCurrentQuestion]);
 
     const handleCharSelect = (charObj: CharObject) => {
         if (answerStatus) return;
@@ -580,11 +584,6 @@ const SentenceScramblePractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ 
 
     return (
         <div className="w-full max-w-3xl">
-            <div className="mb-6 text-center">
-                <h1 className="text-3xl font-bold">Sắp Xếp Câu</h1>
-                <p className="text-muted-foreground">Sắp xếp các từ sau thành một câu hoàn chỉnh.</p>
-            </div>
-
             <div className="mb-4">
                 <div className="flex justify-between items-center mb-2 text-muted-foreground">
                     <span>Câu: {currentIndex + 1} / {allAvailableQuestions.length}</span>
@@ -594,33 +593,33 @@ const SentenceScramblePractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ 
             </div>
             
             <Card className="mb-8">
-                <CardContent className="p-8 text-center min-h-[120px]">
+                <CardContent className="p-8 text-center min-h-[80px] flex items-center justify-center">
                     <p className="text-xl text-muted-foreground">Nghĩa: "{currentQuestion?.translation}"</p>
                 </CardContent>
             </Card>
-            <div className="min-h-[15rem]">
-                <Card className={cn(
-                    "mb-4 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3 border-dashed",
-                    answerStatus === 'correct' && 'border-green-500',
-                    answerStatus === 'incorrect' && 'border-destructive'
-                )}>
-                    {userAnswer.map((charObj) => (
-                        <Button key={charObj.id} variant="secondary" className="text-2xl h-14 px-4" onClick={() => handleAnswerCharClick(charObj)}>
-                            {charObj.char}
-                        </Button>
-                    ))}
-                    {userAnswer.length === 0 && <span className="text-muted-foreground">Câu trả lời của bạn sẽ xuất hiện ở đây</span>}
-                </Card>
+            
+            <Card className={cn(
+                "mb-4 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3 border-dashed",
+                answerStatus === 'correct' && 'border-green-500',
+                answerStatus === 'incorrect' && 'border-destructive'
+            )}>
+                {userAnswer.map((charObj) => (
+                    <Button key={charObj.id} variant="secondary" className="text-2xl h-14 px-4" onClick={() => handleAnswerCharClick(charObj)}>
+                        {charObj.char}
+                    </Button>
+                ))}
+                {userAnswer.length === 0 && <span className="text-muted-foreground">Câu trả lời của bạn sẽ xuất hiện ở đây</span>}
+            </Card>
 
-                <div className="mb-8 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3">
-                    {shuffledChars.map((charObj) => (
-                        <Button key={charObj.id} variant="outline" className="text-2xl h-14 px-4" onClick={() => handleCharSelect(charObj)}>
-                            {charObj.char}
-                        </Button>
-                    ))}
-                </div>
+            <div className="mb-8 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3">
+                {shuffledChars.map((charObj) => (
+                    <Button key={charObj.id} variant="outline" className="text-2xl h-14 px-4" onClick={() => handleCharSelect(charObj)}>
+                        {charObj.char}
+                    </Button>
+                ))}
             </div>
-            <div className="min-h-[9rem]">
+
+            <div className="min-h-[9rem] flex flex-col items-center justify-start">
                 <div className="flex justify-center gap-4">
                     {answerStatus !== 'correct' && (
                         <Button onClick={handleSubmit} size="lg" disabled={!!answerStatus || userAnswer.length === 0}>
@@ -632,20 +631,13 @@ const SentenceScramblePractice: React.FC<{ vocabulary: VocabularyWord[] }> = ({ 
                             Câu tiếp theo <ArrowRight className="ml-2 h-5 w-5" />
                         </Button>
                     )}
-                    <Button onClick={() => {
-                        if (currentQuestion) {
-                            const chars = currentQuestion.sentence.replace(/[，。？！]/g, '').split('');
-                            setShuffledChars(shuffleArray(chars.map((char, index) => ({ char, id: index }))));
-                            setUserAnswer([]);
-                            setAnswerStatus(null);
-                        }
-                    }} variant="outline" size="lg" disabled={!!answerStatus}>
+                    <Button onClick={resetCurrentQuestion} variant="outline" size="lg" disabled={!!answerStatus}>
                         <RefreshCw className="mr-2 h-5 w-5" /> Thử lại
                     </Button>
                 </div>
 
                 {answerStatus === 'incorrect' && (
-                    <div className="mt-6 text-center p-4 bg-destructive/10 rounded-lg">
+                    <div className="mt-6 text-center p-4 bg-destructive/10 rounded-lg w-full">
                         <p className="text-destructive mb-2">Sai rồi!</p>
                         <p className="text-lg">Đáp án đúng là: <span className="font-bold text-2xl">{currentQuestion.sentence}</span></p>
                     </div>
