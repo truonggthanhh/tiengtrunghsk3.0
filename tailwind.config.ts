@@ -19,7 +19,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Montserrat", "sans-serif"], // Set Montserrat as the default sans-serif font
+        sans: ["Plus Jakarta Sans", "sans-serif"], // Set Plus Jakarta Sans as the default sans-serif font
       },
       colors: {
         border: "hsl(var(--border))",
