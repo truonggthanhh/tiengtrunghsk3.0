@@ -44,13 +44,15 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     );
   }, [singleCharVocabulary, searchTerm]);
 
-  const initializeWriter = useCallback((word: VocabularyWord) => {
+  const initializeWriter = useCallback(async (word: VocabularyWord) => {
     if (!hanziWriterContainerRef.current) return;
 
     setIsLoading(true);
     setError(null);
 
     if (writerRef.current) {
+      // Clean up the previous instance before creating a new one
+      writerRef.current.target.destroy();
       writerRef.current = null;
     }
     hanziWriterContainerRef.current.innerHTML = '';
@@ -64,7 +66,8 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     };
 
     try {
-      const writer = HanziWriter.create(hanziWriterContainerRef.current, word.hanzi, {
+      // HanziWriter.create returns a Promise, so we must await it.
+      const writer = await HanziWriter.create(hanziWriterContainerRef.current, word.hanzi, {
         width: 250,
         height: 250,
         padding: 5,
@@ -80,39 +83,15 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         quizColor: staticColors.strokeColor,
         highlightColor: staticColors.highlightColor,
         mistakeColor: staticColors.mistakeColor,
-        charDataLoader: (char, onComplete, onError) => {
-          fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`)
-            .then(response => {
-              if (!response.ok) {
-                if (response.status === 404) throw new Error(`Dữ liệu cho chữ "${char}" không tìm thấy.`);
-                throw new Error(`Lỗi mạng: ${response.statusText}`);
-              }
-              return response.json();
-            })
-            .then(charData => onComplete(charData))
-            .catch(err => {
-              console.error(`Failed to load character data for "${char}":`, err);
-              const errorMessage = err.message || `Không thể tải dữ liệu cho chữ "${char}".`;
-              setError(errorMessage);
-              toast.error("Lỗi tải dữ liệu chữ Hán", { description: errorMessage });
-              setIsLoading(false);
-              onError(err);
-            });
-        },
       });
       writerRef.current = writer;
-
-      // Use the ready() callback to ensure data is loaded before animating
-      writer.ready(() => {
-        setIsLoading(false);
-        writer.animateCharacter();
-      });
-
+      writer.animateCharacter();
     } catch (e: any) {
       console.error("Error creating HanziWriter:", e);
-      const errorMessage = `Lỗi khởi tạo: ${e.message || e.toString()}.`;
+      const errorMessage = `Không thể tải dữ liệu cho chữ "${word.hanzi}". Vui lòng thử lại.`;
       setError(errorMessage);
-      toast.error("Lỗi khởi tạo", { description: "Không thể tạo công cụ viết chữ Hán." });
+      toast.error("Lỗi tải dữ liệu chữ Hán", { description: errorMessage });
+    } finally {
       setIsLoading(false);
     }
   }, []);
