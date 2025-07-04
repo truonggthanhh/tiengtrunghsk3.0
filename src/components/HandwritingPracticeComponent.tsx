@@ -49,41 +49,31 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
 
     // Clear previous writer instance
     if (writerRef.current) {
-      writerRef.current.hideCharacter(); // Hide current character
-      writerRef.current.cancelQuiz(); // Cancel any active quiz
-      writerRef.current = null; // Dereference to allow garbage collection
-      hanziWriterContainerRef.current.innerHTML = ''; // Clear the SVG
+      writerRef.current.hideCharacter();
+      writerRef.current.cancelQuiz();
+      writerRef.current = null;
+      hanziWriterContainerRef.current.innerHTML = '';
     }
 
     try {
-      writerRef.current = HanziWriter.create(hanziWriterContainerRef.current, hanzi, {
+      // Pre-load the character data before creating the writer
+      const characterData = await HanziWriter.loadCharacterData(hanzi);
+      
+      writerRef.current = HanziWriter.create(hanziWriterContainerRef.current, characterData, {
         width: 250,
         height: 250,
         padding: 5,
-        strokeAnimationSpeed: 1, // Slower animation for better visibility
+        strokeAnimationSpeed: 1,
         delayBetweenStrokes: 500,
         delayBetweenLoops: 1000,
         showOutline: true,
-        showCharacter: false, // Start hidden, will show with animation or quiz
-        charDataLoader: (charToLoad, onComplete) => { // Modified here
-          HanziWriter.loadCharacterData(charToLoad)
-            .then(characterData => {
-              onComplete(characterData);
-            })
-            .catch(err => {
-              console.error(`Error loading character data for "${charToLoad}":`, err);
-              setError(`Không thể tải dữ liệu cho chữ "${charToLoad}". Vui lòng thử chữ khác.`);
-              toast.error(`Lỗi: Không thể tải chữ "${charToLoad}"`, { description: err.message || 'Dữ liệu không khả dụng.' });
-              onComplete(null); // Pass null to indicate failure
-            });
-        },
+        showCharacter: false,
         highlightOnComplete: true,
         drawingColor: 'hsl(var(--primary))',
         outlineColor: 'hsl(var(--muted-foreground))',
         radicalColor: 'hsl(var(--accent))',
         strokeColor: 'hsl(var(--primary))',
         quizColor: 'hsl(var(--primary))',
-        // Colors for quiz feedback
         highlightColor: 'hsl(var(--success))',
         mistakeColor: 'hsl(var(--destructive))',
       });
@@ -102,9 +92,9 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
       });
 
     } catch (err: any) {
-      console.error("Error creating HanziWriter instance:", err);
-      setError(`Không thể khởi tạo công cụ luyện viết cho chữ "${hanzi}".`);
-      toast.error(`Lỗi: Không thể khởi tạo công cụ`, { description: err.message || 'Lỗi không xác định.' });
+      console.error(`Error loading or creating HanziWriter for "${hanzi}":`, err);
+      setError(`Không thể tải dữ liệu cho chữ "${hanzi}". Vui lòng thử chữ khác.`);
+      toast.error(`Lỗi: Không thể tải chữ "${hanzi}"`, { description: err.message || 'Dữ liệu không khả dụng.' });
     } finally {
       setIsLoading(false);
     }
