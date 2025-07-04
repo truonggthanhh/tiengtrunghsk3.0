@@ -50,62 +50,71 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     setIsLoading(true);
     setError(null);
 
+    // Clear previous writer instance and its DOM elements
     if (writerRef.current) {
       writerRef.current = null;
     }
     hanziWriterContainerRef.current.innerHTML = '';
 
-    // Helper to get the final computed RGB color from a CSS variable
-    const getRgbColor = (variableName: string) => {
-      const tempElem = document.createElement('div');
-      tempElem.style.color = `hsl(var(${variableName}))`;
-      document.body.appendChild(tempElem);
-      const computedColor = getComputedStyle(tempElem).color;
-      document.body.removeChild(tempElem);
-      return computedColor;
-    };
+    // Tạm thời sử dụng mã màu hex cứng để kiểm tra
+    const primaryColor = '#3B82F6'; // Blue
+    const mutedForeground = '#6B7280'; // Gray
+    const accentColor = '#8B5CF6'; // Purple
+    const successColor = '#22C55E'; // Green
+    const destructiveColor = '#EF4444'; // Red
 
-    writerRef.current = HanziWriter.create(hanziWriterContainerRef.current, word.hanzi, {
-      width: 250,
-      height: 250,
-      padding: 5,
-      strokeAnimationSpeed: 1,
-      delayBetweenStrokes: 500,
-      showOutline: true,
-      showCharacter: true, // Đã sửa thành TRUE để hiển thị chữ Hán
-      highlightOnComplete: true,
-      // Resolve CSS variables to actual RGB colors that the library can parse
-      drawingColor: getRgbColor('--primary'),
-      outlineColor: getRgbColor('--muted-foreground'),
-      radicalColor: getRgbColor('--accent'),
-      strokeColor: getRgbColor('--primary'),
-      quizColor: getRgbColor('--primary'),
-      highlightColor: getRgbColor('--success'),
-      mistakeColor: getRgbColor('--destructive'),
-      charDataLoader: (char, onComplete, onError) => {
-        fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            return response.json();
-          })
-          .then(charData => {
-            setIsLoading(false);
-            onComplete(charData);
-          })
-          .catch(err => {
-            console.error(`Failed to load character data for "${char}":`, err);
-            setError(`Không thể tải dữ liệu cho chữ "${char}". Vui lòng thử lại.`);
-            toast.error("Lỗi tải dữ liệu chữ Hán", { description: `Không tìm thấy dữ liệu cho chữ "${char}".` });
-            setIsLoading(false);
-            onError(err);
-          });
-      },
-    });
+    try {
+      writerRef.current = HanziWriter.create(hanziWriterContainerRef.current, word.hanzi, {
+        width: 250,
+        height: 250,
+        padding: 5,
+        strokeAnimationSpeed: 1,
+        delayBetweenStrokes: 500,
+        showOutline: true,
+        showCharacter: true,
+        highlightOnComplete: true,
+        drawingColor: primaryColor,
+        outlineColor: mutedForeground,
+        radicalColor: accentColor,
+        strokeColor: primaryColor,
+        quizColor: primaryColor,
+        highlightColor: successColor,
+        mistakeColor: destructiveColor,
+        charDataLoader: (char, onComplete, onError) => {
+          fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`)
+            .then(response => {
+              if (!response.ok) {
+                // Check for 404 specifically
+                if (response.status === 404) {
+                  throw new Error(`Dữ liệu cho chữ "${char}" không tìm thấy trên máy chủ.`);
+                }
+                throw new Error(`Lỗi mạng khi tải dữ liệu cho chữ "${char}": ${response.statusText}`);
+              }
+              return response.json();
+            })
+            .then(charData => {
+              setIsLoading(false);
+              onComplete(charData);
+            })
+            .catch(err => {
+              console.error(`Failed to load character data for "${char}":`, err);
+              const errorMessage = err.message || `Không thể tải dữ liệu cho chữ "${char}". Vui lòng thử lại.`;
+              setError(errorMessage);
+              toast.error("Lỗi tải dữ liệu chữ Hán", { description: errorMessage });
+              setIsLoading(false);
+              onError(err);
+            });
+        },
+      });
 
-    if (writerRef.current) {
-        writerRef.current.animateCharacter();
+      if (writerRef.current) {
+          writerRef.current.animateCharacter();
+      }
+    } catch (e: any) {
+      console.error("Error creating HanziWriter:", e);
+      setError(`Lỗi khởi tạo công cụ viết: ${e.message || e.toString()}. Vui lòng thử lại.`);
+      toast.error("Lỗi khởi tạo", { description: `Không thể tạo công cụ viết chữ Hán.` });
+      setIsLoading(false);
     }
   }, []);
 
@@ -205,7 +214,8 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
                       <Button onClick={() => initializeWriter(selectedWord)} variant="ghost" className="mt-2">Thử lại</Button>
                     </div>
                   ) : (
-                    <div id="hanzi-writer-container" ref={hanziWriterContainerRef} className="w-[250px] h-[250px] border rounded-md overflow-hidden"></div>
+                    // Add a key to force re-render of the HanziWriter container when selectedWord changes
+                    <div key={selectedWord.hanzi} id="hanzi-writer-container" ref={hanziWriterContainerRef} className="w-[250px] h-[250px] border rounded-md overflow-hidden"></div>
                   )}
                   <div className="text-center">
                     <p className="text-4xl font-semibold">{selectedWord.pinyin}</p>
