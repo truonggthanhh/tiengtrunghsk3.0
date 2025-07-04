@@ -55,17 +55,16 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     }
     hanziWriterContainerRef.current.innerHTML = '';
 
-    // Using hardcoded, static colors to ensure compatibility with HanziWriter
     const staticColors = {
-      strokeColor: '#3B82F6',      // A vibrant blue
-      outlineColor: '#94A3B8',     // A light grey
-      radicalColor: '#8B5CF6',     // A purple
-      highlightColor: '#22C55E',   // A green
-      mistakeColor: '#EF4444',     // A red
+      strokeColor: '#3B82F6',
+      outlineColor: '#94A3B8',
+      radicalColor: '#8B5CF6',
+      highlightColor: '#22C55E',
+      mistakeColor: '#EF4444',
     };
 
     try {
-      writerRef.current = HanziWriter.create(hanziWriterContainerRef.current, word.hanzi, {
+      const writer = HanziWriter.create(hanziWriterContainerRef.current, word.hanzi, {
         width: 250,
         height: 250,
         padding: 5,
@@ -85,17 +84,12 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
           fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`)
             .then(response => {
               if (!response.ok) {
-                if (response.status === 404) {
-                  throw new Error(`Dữ liệu cho chữ "${char}" không tìm thấy.`);
-                }
+                if (response.status === 404) throw new Error(`Dữ liệu cho chữ "${char}" không tìm thấy.`);
                 throw new Error(`Lỗi mạng: ${response.statusText}`);
               }
               return response.json();
             })
-            .then(charData => {
-              setIsLoading(false);
-              onComplete(charData);
-            })
+            .then(charData => onComplete(charData))
             .catch(err => {
               console.error(`Failed to load character data for "${char}":`, err);
               const errorMessage = err.message || `Không thể tải dữ liệu cho chữ "${char}".`;
@@ -106,10 +100,14 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
             });
         },
       });
+      writerRef.current = writer;
 
-      if (writerRef.current) {
-          writerRef.current.animateCharacter();
-      }
+      // Use the ready() callback to ensure data is loaded before animating
+      writer.ready(() => {
+        setIsLoading(false);
+        writer.animateCharacter();
+      });
+
     } catch (e: any) {
       console.error("Error creating HanziWriter:", e);
       const errorMessage = `Lỗi khởi tạo: ${e.message || e.toString()}.`;
