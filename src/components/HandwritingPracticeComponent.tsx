@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import HanziWriter from 'hanzi-writer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -30,6 +30,7 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isWriterInitialized, setIsWriterInitialized] = useState(false);
 
   const singleCharVocabulary = useMemo(() => {
     return vocabulary.filter(word => word.hanzi && word.pinyin && word.hanzi.length === 1);
@@ -44,36 +45,24 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     );
   }, [singleCharVocabulary, searchTerm]);
 
-  const initializeWriter = useCallback(async (word: VocabularyWord) => {
-    if (!hanziWriterContainerRef.current) return;
-
-    setIsLoading(true);
-    setError(null);
-
-    if (writerRef.current) {
-      // Correctly call destroy() on the writer instance itself
-      writerRef.current.destroy();
-      writerRef.current = null;
-    }
-    hanziWriterContainerRef.current.innerHTML = '';
-
-    const staticColors = {
-      strokeColor: '#3B82F6',
-      outlineColor: '#94A3B8',
-      radicalColor: '#8B5CF6',
-      highlightColor: '#22C55E',
-      mistakeColor: '#EF4444',
-    };
-
-    try {
-      const writer = await HanziWriter.create(hanziWriterContainerRef.current, word.hanzi, {
+  // Effect to initialize the writer once on component mount
+  useEffect(() => {
+    if (hanziWriterContainerRef.current && !writerRef.current) {
+      const staticColors = {
+        strokeColor: '#3B82F6',
+        outlineColor: '#94A3B8',
+        radicalColor: '#8B5CF6',
+        highlightColor: '#22C55E',
+        mistakeColor: '#EF4444',
+      };
+      const writer = HanziWriter.create(hanziWriterContainerRef.current, {
         width: 250,
         height: 250,
         padding: 5,
+        showCharacter: false, // Don't show a character initially
         strokeAnimationSpeed: 1,
         delayBetweenStrokes: 500,
         showOutline: true,
-        showCharacter: true,
         highlightOnComplete: true,
         strokeColor: staticColors.strokeColor,
         outlineColor: staticColors.outlineColor,
@@ -84,22 +73,29 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         mistakeColor: staticColors.mistakeColor,
       });
       writerRef.current = writer;
-      writer.animateCharacter();
-    } catch (e: any) {
-      console.error("Error creating HanziWriter:", e);
-      const errorMessage = `Không thể tải dữ liệu cho chữ "${word.hanzi}". Vui lòng thử lại.`;
-      setError(errorMessage);
-      toast.error("Lỗi tải dữ liệu chữ Hán", { description: errorMessage });
-    } finally {
-      setIsLoading(false);
+      setIsWriterInitialized(true);
     }
   }, []);
 
+  // Effect to update the character when a new word is selected
   useEffect(() => {
-    if (selectedWord) {
-      initializeWriter(selectedWord);
+    if (selectedWord && writerRef.current && isWriterInitialized) {
+      setIsLoading(true);
+      setError(null);
+      writerRef.current.setCharacter(selectedWord.hanzi)
+        .then(() => {
+          setIsLoading(false);
+          writerRef.current?.animateCharacter();
+        })
+        .catch((err) => {
+          console.error("Error setting character:", err);
+          const errorMessage = `Không thể tải dữ liệu cho chữ "${selectedWord.hanzi}".`;
+          setError(errorMessage);
+          toast.error("Lỗi tải dữ liệu", { description: errorMessage });
+          setIsLoading(false);
+        });
     }
-  }, [selectedWord, initializeWriter]);
+  }, [selectedWord, isWriterInitialized]);
 
   const handlePlayAnimation = () => {
     if (writerRef.current) writerRef.current.animateCharacter();
@@ -184,19 +180,18 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
               <Card className="mb-8 shadow-md">
                 <CardContent className="p-6 flex flex-col items-center justify-center gap-4">
                   <div className="w-[250px] h-[250px] border rounded-md overflow-hidden flex items-center justify-center">
-                    {isLoading ? (
+                    {isLoading && (
                       <div className="flex flex-col items-center text-muted-foreground">
                         <Loader2 className="h-8 w-8 animate-spin mb-2" />
                         <span>Đang tải...</span>
                       </div>
-                    ) : error ? (
+                    )}
+                    {error && !isLoading && (
                       <div className="text-destructive text-center p-4">
                         <p>{error}</p>
-                        <Button onClick={() => initializeWriter(selectedWord)} variant="ghost" className="mt-2">Thử lại</Button>
                       </div>
-                    ) : (
-                      <div key={selectedWord.hanzi} id="hanzi-writer-container" ref={hanziWriterContainerRef}></div>
                     )}
+                    <div id="hanzi-writer-container" ref={hanziWriterContainerRef}></div>
                   </div>
                   <div className="text-center">
                     <p className="text-4xl font-semibold">{selectedWord.pinyin}</p>
