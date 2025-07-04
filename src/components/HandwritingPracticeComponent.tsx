@@ -8,7 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import type { VocabularyWord } from '@/data';
-import { Link } from 'react-router-dom'; // Thêm dòng này
+import { Link } from 'react-router-dom';
 
 interface HandwritingPracticeProps {
   vocabulary: VocabularyWord[];
@@ -56,9 +56,6 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     }
 
     try {
-      // Load character data explicitly
-      const characterData = await HanziWriter.loadCharacterData(hanzi);
-
       writerRef.current = HanziWriter.create(hanziWriterContainerRef.current, hanzi, {
         width: 250,
         height: 250,
@@ -68,9 +65,17 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         delayBetweenLoops: 1000,
         showOutline: true,
         showCharacter: false, // Start hidden, will show with animation or quiz
-        charDataLoader: (char, onComplete) => {
-          // Use the pre-loaded characterData
-          onComplete(characterData);
+        charDataLoader: (charToLoad, onComplete) => { // Modified here
+          HanziWriter.loadCharacterData(charToLoad)
+            .then(characterData => {
+              onComplete(characterData);
+            })
+            .catch(err => {
+              console.error(`Error loading character data for "${charToLoad}":`, err);
+              setError(`Không thể tải dữ liệu cho chữ "${charToLoad}". Vui lòng thử chữ khác.`);
+              toast.error(`Lỗi: Không thể tải chữ "${charToLoad}"`, { description: err.message || 'Dữ liệu không khả dụng.' });
+              onComplete(null); // Pass null to indicate failure
+            });
         },
         highlightOnComplete: true,
         drawingColor: 'hsl(var(--primary))',
@@ -97,9 +102,9 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
       });
 
     } catch (err: any) {
-      console.error("Error loading HanziWriter:", err);
-      setError(`Không thể tải dữ liệu cho chữ "${hanzi}". Vui lòng thử chữ khác.`);
-      toast.error(`Lỗi: Không thể tải chữ "${hanzi}"`, { description: err.message || 'Dữ liệu không khả dụng.' });
+      console.error("Error creating HanziWriter instance:", err);
+      setError(`Không thể khởi tạo công cụ luyện viết cho chữ "${hanzi}".`);
+      toast.error(`Lỗi: Không thể khởi tạo công cụ`, { description: err.message || 'Lỗi không xác định.' });
     } finally {
       setIsLoading(false);
     }
