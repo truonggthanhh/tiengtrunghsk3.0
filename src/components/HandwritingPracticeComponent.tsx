@@ -37,67 +37,70 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   const displayVocabulary = useMemo(() => {
-    // Filter out words without hanzi or pinyin, or if hanzi is not a single character
     return vocabulary.filter(word => word.hanzi && word.pinyin && word.hanzi.length === 1);
   }, [vocabulary]);
 
-  const initializeWriter = useCallback(async (hanzi: string) => {
+  const initializeWriter = useCallback((hanzi: string) => {
     if (!hanziWriterContainerRef.current) return;
 
     setIsLoading(true);
     setError(null);
 
-    // Clear previous writer instance
     if (writerRef.current) {
-      writerRef.current.hideCharacter();
-      writerRef.current.cancelQuiz();
       writerRef.current = null;
       hanziWriterContainerRef.current.innerHTML = '';
     }
 
-    try {
-      // Pre-load the character data before creating the writer
-      const characterData = await HanziWriter.loadCharacterData(hanzi);
-      
-      writerRef.current = HanziWriter.create(hanziWriterContainerRef.current, characterData, {
-        width: 250,
-        height: 250,
-        padding: 5,
-        strokeAnimationSpeed: 1,
-        delayBetweenStrokes: 500,
-        delayBetweenLoops: 1000,
-        showOutline: true,
-        showCharacter: false,
-        highlightOnComplete: true,
-        drawingColor: 'hsl(var(--primary))',
-        outlineColor: 'hsl(var(--muted-foreground))',
-        radicalColor: 'hsl(var(--accent))',
-        strokeColor: 'hsl(var(--primary))',
-        quizColor: 'hsl(var(--primary))',
-        highlightColor: 'hsl(var(--success))',
-        mistakeColor: 'hsl(var(--destructive))',
-      });
+    writerRef.current = HanziWriter.create(hanziWriterContainerRef.current, hanzi, {
+      width: 250,
+      height: 250,
+      padding: 5,
+      charDataLoader: (char, onComplete) => {
+        const dataUrl = `/node_modules/hanzi-writer-data/data/${char}.json`;
+        fetch(dataUrl)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`Không tìm thấy dữ liệu cho chữ "${char}"`);
+            }
+            return response.json();
+          })
+          .then(charData => {
+            onComplete(charData);
+            setIsLoading(false);
+          })
+          .catch(err => {
+            console.error(`Failed to load character data for "${char}":`, err);
+            setError(err.message);
+            toast.error("Lỗi tải dữ liệu chữ Hán", { description: err.message });
+            setIsLoading(false);
+            onComplete(null);
+          });
+      },
+      strokeAnimationSpeed: 1,
+      delayBetweenStrokes: 500,
+      showOutline: true,
+      showCharacter: false,
+      highlightOnComplete: true,
+      drawingColor: 'hsl(var(--primary))',
+      outlineColor: 'hsl(var(--muted-foreground))',
+      radicalColor: 'hsl(var(--accent))',
+      strokeColor: 'hsl(var(--primary))',
+      quizColor: 'hsl(var(--primary))',
+      highlightColor: 'hsl(var(--success))',
+      mistakeColor: 'hsl(var(--destructive))',
+    });
 
-      // Start animation by default
-      writerRef.current.animateCharacter({
-        onComplete: () => {
-          if (writerRef.current) {
-            writerRef.current.quiz({
-              onCorrectStroke: () => toast.success('Nét đúng!', { duration: 500 }),
-              onMistake: () => toast.error('Nét sai!', { duration: 500 }),
-              onComplete: () => toast.success('Hoàn thành chữ!', { duration: 1500 }),
-            });
-          }
+    writerRef.current.animateCharacter({
+      onComplete: () => {
+        if (writerRef.current) {
+          writerRef.current.quiz({
+            onCorrectStroke: () => toast.success('Nét đúng!', { duration: 500 }),
+            onMistake: () => toast.error('Nét sai!', { duration: 500 }),
+            onComplete: () => toast.success('Hoàn thành chữ!', { duration: 1500 }),
+          });
         }
-      });
-
-    } catch (err: any) {
-      console.error(`Error loading or creating HanziWriter for "${hanzi}":`, err);
-      setError(`Không thể tải dữ liệu cho chữ "${hanzi}". Vui lòng thử chữ khác.`);
-      toast.error(`Lỗi: Không thể tải chữ "${hanzi}"`, { description: err.message || 'Dữ liệu không khả dụng.' });
-    } finally {
-      setIsLoading(false);
-    }
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -144,7 +147,7 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
   const handleClearCanvas = () => {
     if (writerRef.current) {
       writerRef.current.cancelQuiz();
-      writerRef.current.showCharacter(); // Show the character outline
+      writerRef.current.showCharacter();
       writerRef.current.quiz({
         onCorrectStroke: () => toast.success('Nét đúng!', { duration: 500 }),
         onMistake: () => toast.error('Nét sai!', { duration: 500 }),
@@ -169,7 +172,6 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     e.preventDefault();
     const hanzi = userInputHanzi.trim();
     if (hanzi.length === 1) {
-      // Check if the character exists in the full vocabulary for pinyin/meaning
       const foundWord = [...displayVocabulary, ...fullVocabularyForSuggestions].find(word => word.hanzi === hanzi);
       if (foundWord) {
         setCurrentHanzi(foundWord.hanzi);
@@ -177,7 +179,6 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         setCurrentMeaning(foundWord.meaning);
         initializeWriter(foundWord.hanzi);
       } else {
-        // If not found in vocabulary, just use the hanzi and try to load
         setCurrentHanzi(hanzi);
         setCurrentPinyin('Không rõ');
         setCurrentMeaning('Không rõ');
