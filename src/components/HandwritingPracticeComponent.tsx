@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import type { VocabularyWord } from '@/data';
+import { Link } from 'react-router-dom'; // Thêm dòng này
 
 interface HandwritingPracticeProps {
   vocabulary: VocabularyWord[];
