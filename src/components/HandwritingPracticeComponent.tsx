@@ -55,11 +55,14 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     }
     hanziWriterContainerRef.current.innerHTML = '';
 
-    // Helper to get computed CSS variables and format them for HanziWriter
-    const getCssColor = (variableName: string) => {
-      const colorValue = getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
-      // The value from CSS is in the format "H S% L%", we need "H, S%, L%" for hsl()
-      return `hsl(${colorValue})`;
+    // Helper to get the final computed RGB color from a CSS variable
+    const getRgbColor = (variableName: string) => {
+      const tempElem = document.createElement('div');
+      tempElem.style.color = `hsl(var(${variableName}))`;
+      document.body.appendChild(tempElem);
+      const computedColor = getComputedStyle(tempElem).color;
+      document.body.removeChild(tempElem);
+      return computedColor;
     };
 
     writerRef.current = HanziWriter.create(hanziWriterContainerRef.current, word.hanzi, {
@@ -71,14 +74,14 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
       showOutline: true,
       showCharacter: false,
       highlightOnComplete: true,
-      // Resolve CSS variables to actual colors
-      drawingColor: getCssColor('--primary'),
-      outlineColor: getCssColor('--muted-foreground'),
-      radicalColor: getCssColor('--accent'),
-      strokeColor: getCssColor('--primary'),
-      quizColor: getCssColor('--primary'),
-      highlightColor: getCssColor('--success'),
-      mistakeColor: getCssColor('--destructive'),
+      // Resolve CSS variables to actual RGB colors that the library can parse
+      drawingColor: getRgbColor('--primary'),
+      outlineColor: getRgbColor('--muted-foreground'),
+      radicalColor: getRgbColor('--accent'),
+      strokeColor: getRgbColor('--primary'),
+      quizColor: getRgbColor('--primary'),
+      highlightColor: getRgbColor('--success'),
+      mistakeColor: getRgbColor('--destructive'),
       charDataLoader: (char, onComplete, onError) => {
         fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`)
           .then(response => {
