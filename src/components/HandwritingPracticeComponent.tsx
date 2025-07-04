@@ -40,7 +40,7 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     return vocabulary.filter(word => word.hanzi && word.pinyin && word.hanzi.length === 1);
   }, [vocabulary]);
 
-  const initializeWriter = useCallback((hanzi: string) => {
+  const initializeWriter = useCallback(async (hanzi: string) => {
     if (!hanziWriterContainerRef.current) return;
 
     setIsLoading(true);
@@ -51,56 +51,49 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
       hanziWriterContainerRef.current.innerHTML = '';
     }
 
-    writerRef.current = HanziWriter.create(hanziWriterContainerRef.current, hanzi, {
-      width: 250,
-      height: 250,
-      padding: 5,
-      charDataLoader: (char, onComplete) => {
-        const dataUrl = `/node_modules/hanzi-writer-data/data/${char}.json`;
-        fetch(dataUrl)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error(`Không tìm thấy dữ liệu cho chữ "${char}"`);
-            }
-            return response.json();
-          })
-          .then(charData => {
-            onComplete(charData);
-            setIsLoading(false);
-          })
-          .catch(err => {
-            console.error(`Failed to load character data for "${char}":`, err);
-            setError(err.message);
-            toast.error("Lỗi tải dữ liệu chữ Hán", { description: err.message });
-            setIsLoading(false);
-            onComplete(null);
-          });
-      },
-      strokeAnimationSpeed: 1,
-      delayBetweenStrokes: 500,
-      showOutline: true,
-      showCharacter: false,
-      highlightOnComplete: true,
-      drawingColor: 'hsl(var(--primary))',
-      outlineColor: 'hsl(var(--muted-foreground))',
-      radicalColor: 'hsl(var(--accent))',
-      strokeColor: 'hsl(var(--primary))',
-      quizColor: 'hsl(var(--primary))',
-      highlightColor: 'hsl(var(--success))',
-      mistakeColor: 'hsl(var(--destructive))',
-    });
+    try {
+      // Use dynamic import to load character data from local files
+      // The /* @vite-ignore */ comment tells Vite to allow this dynamic path
+      const charDataModule = await import(/* @vite-ignore */ `/node_modules/hanzi-writer-data/data/${hanzi}.json`);
+      const charData = charDataModule.default;
 
-    writerRef.current.animateCharacter({
-      onComplete: () => {
-        if (writerRef.current) {
-          writerRef.current.quiz({
-            onCorrectStroke: () => toast.success('Nét đúng!', { duration: 500 }),
-            onMistake: () => toast.error('Nét sai!', { duration: 500 }),
-            onComplete: () => toast.success('Hoàn thành chữ!', { duration: 1500 }),
-          });
+      writerRef.current = HanziWriter.create(hanziWriterContainerRef.current, charData, {
+        width: 250,
+        height: 250,
+        padding: 5,
+        strokeAnimationSpeed: 1,
+        delayBetweenStrokes: 500,
+        showOutline: true,
+        showCharacter: false,
+        highlightOnComplete: true,
+        drawingColor: 'hsl(var(--primary))',
+        outlineColor: 'hsl(var(--muted-foreground))',
+        radicalColor: 'hsl(var(--accent))',
+        strokeColor: 'hsl(var(--primary))',
+        quizColor: 'hsl(var(--primary))',
+        highlightColor: 'hsl(var(--success))',
+        mistakeColor: 'hsl(var(--destructive))',
+      });
+
+      setIsLoading(false);
+
+      writerRef.current.animateCharacter({
+        onComplete: () => {
+          if (writerRef.current) {
+            writerRef.current.quiz({
+              onCorrectStroke: () => toast.success('Nét đúng!', { duration: 500 }),
+              onMistake: () => toast.error('Nét sai!', { duration: 500 }),
+              onComplete: () => toast.success('Hoàn thành chữ!', { duration: 1500 }),
+            });
+          }
         }
-      }
-    });
+      });
+    } catch (err) {
+      console.error(`Failed to load character data for "${hanzi}":`, err);
+      setError(`Không thể tải dữ liệu cho chữ "${hanzi}". Có thể chữ này không có trong bộ dữ liệu.`);
+      toast.error("Lỗi tải dữ liệu chữ Hán", { description: `Không tìm thấy dữ liệu cho chữ "${hanzi}".` });
+      setIsLoading(false);
+    }
   }, []);
 
   useEffect(() => {
