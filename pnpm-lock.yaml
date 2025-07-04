@@ -122,6 +122,12 @@ importers:
       embla-carousel-react:
         specifier: ^8.3.0
         version: 8.6.0(react@18.3.1)
+      hanzi-writer:
+        specifier: ^3.7.2
+        version: 3.7.2
+      hanzi-writer-data:
+        specifier: ^2.0.1
+        version: 2.0.1
       input-otp:
         specifier: ^1.2.4
         version: 1.4.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1857,6 +1863,12 @@ packages:
 
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
+
+  hanzi-writer-data@2.0.1:
+    resolution: {integrity: sha512-nbQwM+MaryGoq7pBMIZLCd3lFq03nXuJuwku1+6UbjL58uU+9OULVcMkoNvNuJSoIV7f1bbPRfD4D/LQa5S7qg==}
+
+  hanzi-writer@3.7.2:
+    resolution: {integrity: sha512-9v8V45rY4leG62qmq+c9MzjT4mPrVbFATv5tWWw3NucaxOO4bM/CiJ8qfPt/NOQuvWYhOhuHu6TzfjZ0ibY6jg==}
 
   has-flag@4.0.0:
     resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
@@ -4153,6 +4165,10 @@ snapshots:
   globals@15.15.0: {}
 
   graphemer@1.4.0: {}
+
+  hanzi-writer-data@2.0.1: {}
+
+  hanzi-writer@3.7.2: {}
 
   has-flag@4.0.0: {}
 

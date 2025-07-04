@@ -23,7 +23,9 @@ import MsutongPinyinChoicePage from "./pages/msutong/MsutongPinyinChoicePage";
 import MsutongMeaningChoicePage from "./pages/msutong/MsutongMeaningChoicePage";
 import MsutongFillInTheBlankPage from "./pages/msutong/MsutongFillInTheBlankPage";
 import MsutongPronunciationPage from "./pages/msutong/MsutongPronunciationPage";
-import MsutongReadingComprehensionPage from "./pages/msutong/MsutongReadingComprehensionPage"; // Import the new Reading Comprehension page
+import MsutongReadingComprehensionPage from "./pages/msutong/MsutongReadingComprehensionPage";
+import HandwritingPage from "./pages/HandwritingPage"; // Import new HSK handwriting page
+import MsutongHandwritingPage from "./pages/msutong/MsutongHandwritingPage"; // Import new Msutong handwriting page
 import Login from "./pages/Login";
 import AdminDashboardPage from "./pages/AdminDashboardPage"; 
 import { SessionContextProvider } from "./components/SessionContextProvider";
@@ -51,6 +53,7 @@ const App = () => (
               <Route path="/hsk/:level/sentence-choice" element={<SentenceChoicePage />} />
               <Route path="/hsk/:level/sentence-scramble" element={<SentenceScramblePage />} />
               <Route path="/hsk/:level/pronunciation" element={<PronunciationPage />} />
+              <Route path="/hsk/:level/handwriting-practice" element={<HandwritingPage />} /> {/* New HSK Handwriting Route */}
               <Route path="/hsk/:level/ai-tutor" element={<AiTutorPage />} />
 
               {/* Msutong Routes */}
@@ -62,7 +65,8 @@ const App = () => (
               <Route path="/msutong/msutong-pronunciation" element={<MsutongPronunciationPage />} />
               <Route path="/msutong/msutong-sentence-choice" element={<MsutongSentenceChoicePage />} />
               <Route path="/msutong/msutong-sentence-scramble" element={<MsutongSentenceScramblePage />} />
-              <Route path="/msutong/msutong-reading-comprehension" element={<MsutongReadingComprehensionPage />} /> {/* Add the new reading comprehension route */}
+              <Route path="/msutong/msutong-reading-comprehension" element={<MsutongReadingComprehensionPage />} />
+              <Route path="/msutong/msutong-handwriting-practice" element={<MsutongHandwritingPage />} /> {/* New Msutong Handwriting Route */}
               <Route path="/msutong/msutong-ai-tutor" element={<MsutongAiTutorPage />} />
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

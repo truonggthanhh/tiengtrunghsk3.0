@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { BookOpen, CheckSquare, Shuffle, FileQuestion, Mic, Puzzle, ArrowRight, ChevronRight, AudioLines, Bot, GraduationCap, BookCopy } from "lucide-react";
+import { BookOpen, CheckSquare, Shuffle, FileQuestion, Mic, Puzzle, ArrowRight, ChevronRight, AudioLines, Bot, GraduationCap, BookCopy, PenTool } from "lucide-react";
 import HeroIllustration from "@/components/HeroIllustration";
 import FeatureSection from "@/components/FeatureSection";
 import TestimonialSection from "@/components/TestimonialSection";
@@ -65,6 +65,13 @@ const exerciseTypes = [
     title: "Luyện phát âm",
     description: "Luyện phát âm qua nhận dạng giọng nói",
     icon: <AudioLines />,
+    isAvailable: true,
+  },
+  {
+    slug: "handwriting-practice",
+    title: "Luyện viết chữ Hán",
+    description: "Xem thứ tự nét và luyện viết chữ Hán",
+    icon: <PenTool />,
     isAvailable: true,
   },
   {
