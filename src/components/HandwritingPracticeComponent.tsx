@@ -3,16 +3,15 @@ import HanziWriter from 'hanzi-writer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, ArrowRight, Home, Play, RotateCcw, Eraser, PenTool, Search } from 'lucide-react';
-import { Progress } from "@/components/ui/progress";
-import { cn } from '@/lib/utils';
+import { ArrowLeft, Home, Play, RotateCcw, Eraser, PenTool, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import type { VocabularyWord } from '@/data';
 import { Link } from 'react-router-dom';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface HandwritingPracticeProps {
   vocabulary: VocabularyWord[];
-  fullVocabularyForSuggestions?: VocabularyWord[]; // Used for random suggestions if needed
+  fullVocabularyForSuggestions?: VocabularyWord[];
   title: string;
   description: string;
   homeLink: string;
@@ -20,7 +19,6 @@ interface HandwritingPracticeProps {
 
 const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
   vocabulary,
-  fullVocabularyForSuggestions = [],
   title,
   description,
   homeLink,
@@ -28,19 +26,25 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
   const writerRef = useRef<HanziWriter | null>(null);
   const hanziWriterContainerRef = useRef<HTMLDivElement>(null);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [currentHanzi, setCurrentHanzi] = useState('');
-  const [currentPinyin, setCurrentPinyin] = useState('');
-  const [currentMeaning, setCurrentMeaning] = useState('');
-  const [userInputHanzi, setUserInputHanzi] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  const [selectedWord, setSelectedWord] = useState<VocabularyWord | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const displayVocabulary = useMemo(() => {
+  const singleCharVocabulary = useMemo(() => {
     return vocabulary.filter(word => word.hanzi && word.pinyin && word.hanzi.length === 1);
   }, [vocabulary]);
 
-  const initializeWriter = useCallback(async (hanzi: string) => {
+  const filteredVocabulary = useMemo(() => {
+    if (!searchTerm) return singleCharVocabulary;
+    return singleCharVocabulary.filter(word => 
+      word.hanzi.includes(searchTerm) || 
+      word.pinyin.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      word.meaning.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [singleCharVocabulary, searchTerm]);
+
+  const initializeWriter = useCallback(async (word: VocabularyWord) => {
     if (!hanziWriterContainerRef.current) return;
 
     setIsLoading(true);
@@ -52,8 +56,7 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     }
 
     try {
-      // Correctly use dynamic import to let Vite handle module resolution
-      const charDataModule = await import(`hanzi-writer-data/data/${hanzi}.json`);
+      const charDataModule = await import(`hanzi-writer-data/data/${word.hanzi}.json`);
       const charData = charDataModule.default;
 
       writerRef.current = HanziWriter.create(hanziWriterContainerRef.current, charData, {
@@ -75,114 +78,56 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
       });
 
       setIsLoading(false);
-
-      writerRef.current.animateCharacter({
-        onComplete: () => {
-          if (writerRef.current) {
-            writerRef.current.quiz({
-              onCorrectStroke: () => toast.success('Nét đúng!', { duration: 500 }),
-              onMistake: () => toast.error('Nét sai!', { duration: 500 }),
-              onComplete: () => toast.success('Hoàn thành chữ!', { duration: 1500 }),
-            });
-          }
-        }
-      });
+      writerRef.current.animateCharacter();
     } catch (err) {
-      console.error(`Failed to load character data for "${hanzi}":`, err);
-      setError(`Không thể tải dữ liệu cho chữ "${hanzi}". Có thể chữ này không có trong bộ dữ liệu.`);
-      toast.error("Lỗi tải dữ liệu chữ Hán", { description: `Không tìm thấy dữ liệu cho chữ "${hanzi}".` });
+      console.error(`Failed to load character data for "${word.hanzi}":`, err);
+      setError(`Không thể tải dữ liệu cho chữ "${word.hanzi}".`);
+      toast.error("Lỗi tải dữ liệu chữ Hán", { description: `Không tìm thấy dữ liệu cho chữ "${word.hanzi}".` });
       setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    if (displayVocabulary.length > 0) {
-      const word = displayVocabulary[currentIndex];
-      setCurrentHanzi(word.hanzi);
-      setCurrentPinyin(word.pinyin);
-      setCurrentMeaning(word.meaning);
-      initializeWriter(word.hanzi);
-    } else {
-      setIsLoading(false);
-      setError("Không có từ vựng nào để luyện tập.");
+    if (selectedWord) {
+      initializeWriter(selectedWord);
     }
-  }, [currentIndex, displayVocabulary, initializeWriter]);
+  }, [selectedWord, initializeWriter]);
 
   const handlePlayAnimation = () => {
-    if (writerRef.current) {
-      writerRef.current.cancelQuiz();
-      writerRef.current.animateCharacter({
-        onComplete: () => {
-          if (writerRef.current) {
-            writerRef.current.quiz({
-              onCorrectStroke: () => toast.success('Nét đúng!', { duration: 500 }),
-              onMistake: () => toast.error('Nét sai!', { duration: 500 }),
-              onComplete: () => toast.success('Hoàn thành chữ!', { duration: 1500 }),
-            });
-          }
-        }
-      });
-    }
+    if (writerRef.current) writerRef.current.animateCharacter();
   };
 
   const handleStartQuiz = () => {
-    if (writerRef.current) {
-      writerRef.current.cancelQuiz();
-      writerRef.current.quiz({
-        onCorrectStroke: () => toast.success('Nét đúng!', { duration: 500 }),
-        onMistake: () => toast.error('Nét sai!', { duration: 500 }),
-        onComplete: () => toast.success('Hoàn thành chữ!', { duration: 1500 }),
-      });
-    }
+    if (writerRef.current) writerRef.current.quiz();
   };
 
   const handleClearCanvas = () => {
-    if (writerRef.current) {
-      writerRef.current.cancelQuiz();
-      writerRef.current.showCharacter();
-      writerRef.current.quiz({
-        onCorrectStroke: () => toast.success('Nét đúng!', { duration: 500 }),
-        onMistake: () => toast.error('Nét sai!', { duration: 500 }),
-        onComplete: () => toast.success('Hoàn thành chữ!', { duration: 1500 }),
-      });
-    }
+    if (writerRef.current) writerRef.current.cancelQuiz();
   };
 
-  const goToNextWord = () => {
-    if (displayVocabulary.length === 0) return;
-    const nextIndex = (currentIndex + 1) % displayVocabulary.length;
-    setCurrentIndex(nextIndex);
-  };
-
-  const goToPreviousWord = () => {
-    if (displayVocabulary.length === 0) return;
-    const prevIndex = (currentIndex - 1 + displayVocabulary.length) % displayVocabulary.length;
-    setCurrentIndex(prevIndex);
-  };
-
-  const handleUserInputSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const hanzi = userInputHanzi.trim();
-    if (hanzi.length === 1) {
-      const foundWord = [...displayVocabulary, ...fullVocabularyForSuggestions].find(word => word.hanzi === hanzi);
-      if (foundWord) {
-        setCurrentHanzi(foundWord.hanzi);
-        setCurrentPinyin(foundWord.pinyin);
-        setCurrentMeaning(foundWord.meaning);
-        initializeWriter(foundWord.hanzi);
-      } else {
-        setCurrentHanzi(hanzi);
-        setCurrentPinyin('Không rõ');
-        setCurrentMeaning('Không rõ');
-        initializeWriter(hanzi);
-      }
-      setUserInputHanzi('');
-    } else {
-      toast.error('Vui lòng nhập một chữ Hán duy nhất.');
-    }
-  };
-
-  const progressValue = displayVocabulary.length > 0 ? ((currentIndex + 1) / displayVocabulary.length) * 100 : 0;
+  if (singleCharVocabulary.length === 0 && !selectedWord) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
+          <Card className="w-full max-w-md text-center">
+            <CardHeader>
+              <CardTitle>Không có từ để luyện viết</CardTitle>
+              <CardDescription>
+                Không tìm thấy từ vựng có một ký tự trong các bài học bạn đã chọn. Vui lòng chọn các bài khác.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button asChild>
+                <Link to={homeLink}>
+                  <Home className="mr-2 h-4 w-4" /> Quay lại
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
@@ -195,80 +140,78 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
             <p className="text-muted-foreground">{description}</p>
           </div>
 
-          <form onSubmit={handleUserInputSubmit} className="flex w-full items-center space-x-2 mb-6">
-            <Input
-              value={userInputHanzi}
-              onChange={(e) => setUserInputHanzi(e.target.value)}
-              placeholder="Nhập chữ Hán để luyện tập..."
-              className="h-12 text-base border-2 text-center"
-              disabled={isLoading}
-            />
-            <Button type="submit" disabled={isLoading || userInputHanzi.trim().length !== 1} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">
-              <Search className="h-4 w-4" />
-            </Button>
-          </form>
-
-          {displayVocabulary.length > 0 && (
-            <div className="mb-4">
-              <div className="flex justify-between items-center mb-2 text-muted-foreground">
-                <span>Từ: {currentIndex + 1} / {displayVocabulary.length}</span>
+          {!selectedWord ? (
+            <>
+              <div className="relative mb-4">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Tìm chữ Hán, pinyin, hoặc nghĩa..."
+                  className="h-12 text-base pl-10"
+                />
               </div>
-              <Progress value={progressValue} className="w-full h-2 bg-primary/20" indicatorClassName="bg-primary" />
-            </div>
+              <ScrollArea className="h-80 border rounded-md p-4">
+                <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
+                  {filteredVocabulary.map(word => (
+                    <Button
+                      key={word.id}
+                      onClick={() => setSelectedWord(word)}
+                      variant="outline"
+                      className="text-2xl h-14 w-14"
+                    >
+                      {word.hanzi}
+                    </Button>
+                  ))}
+                </div>
+              </ScrollArea>
+            </>
+          ) : (
+            <>
+              <div className="flex justify-start mb-4">
+                <Button onClick={() => setSelectedWord(null)} variant="outline" className="font-bold">
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Quay lại danh sách
+                </Button>
+              </div>
+              <Card className="mb-8 shadow-md">
+                <CardContent className="p-6 flex flex-col items-center justify-center gap-4">
+                  {isLoading ? (
+                    <div className="w-[250px] h-[250px] flex items-center justify-center text-muted-foreground">Đang tải...</div>
+                  ) : error ? (
+                    <div className="w-[250px] h-[250px] flex flex-col items-center justify-center text-destructive text-center">
+                      <p>{error}</p>
+                      <Button onClick={() => initializeWriter(selectedWord)} variant="ghost" className="mt-2">Thử lại</Button>
+                    </div>
+                  ) : (
+                    <div id="hanzi-writer-container" ref={hanziWriterContainerRef} className="w-[250px] h-[250px] border rounded-md overflow-hidden"></div>
+                  )}
+                  <div className="text-center">
+                    <p className="text-4xl font-semibold">{selectedWord.pinyin}</p>
+                    <p className="text-2xl text-muted-foreground">{selectedWord.meaning}</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <div className="flex justify-center gap-4 mb-8 flex-wrap">
+                <Button onClick={handlePlayAnimation} disabled={isLoading || !writerRef.current} variant="outline" className="font-bold hover:bg-primary/10 hover:text-primary">
+                  <Play className="mr-2 h-4 w-4" /> Xem nét
+                </Button>
+                <Button onClick={handleStartQuiz} disabled={isLoading || !writerRef.current} variant="outline" className="font-bold hover:bg-primary/10 hover:text-primary">
+                  <PenTool className="mr-2 h-4 w-4" /> Luyện viết
+                </Button>
+                <Button onClick={handleClearCanvas} disabled={isLoading || !writerRef.current} variant="outline" className="font-bold hover:bg-primary/10 hover:text-primary">
+                  <Eraser className="mr-2 h-4 w-4" /> Xóa
+                </Button>
+                <Button onClick={handlePlayAnimation} disabled={isLoading || !writerRef.current} variant="outline" className="font-bold hover:bg-primary/10 hover:text-primary">
+                  <RotateCcw className="mr-2 h-4 w-4" /> Phát lại
+                </Button>
+              </div>
+            </>
           )}
 
-          <Card className="mb-8 shadow-md">
-            <CardContent className="p-6 flex flex-col items-center justify-center gap-4">
-              {isLoading ? (
-                <div className="w-[250px] h-[250px] flex items-center justify-center text-muted-foreground">
-                  Đang tải...
-                </div>
-              ) : error ? (
-                <div className="w-[250px] h-[250px] flex flex-col items-center justify-center text-destructive text-center">
-                  <p>{error}</p>
-                  <Button onClick={() => initializeWriter(currentHanzi)} variant="ghost" className="mt-2">Thử lại</Button>
-                </div>
-              ) : (
-                <div id="hanzi-writer-container" ref={hanziWriterContainerRef} className="w-[250px] h-[250px] border rounded-md overflow-hidden"></div>
-              )}
-              
-              <div className="text-center">
-                <p className="text-4xl font-semibold">{currentPinyin}</p>
-                <p className="text-2xl text-muted-foreground">{currentMeaning}</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="flex justify-center gap-4 mb-8 flex-wrap">
-            <Button onClick={handlePlayAnimation} disabled={isLoading || !writerRef.current} variant="outline" className="font-bold hover:bg-primary/10 hover:text-primary">
-              <Play className="mr-2 h-4 w-4" /> Xem nét
-            </Button>
-            <Button onClick={handleStartQuiz} disabled={isLoading || !writerRef.current} variant="outline" className="font-bold hover:bg-primary/10 hover:text-primary">
-              <PenTool className="mr-2 h-4 w-4" /> Luyện viết
-            </Button>
-            <Button onClick={handleClearCanvas} disabled={isLoading || !writerRef.current} variant="outline" className="font-bold hover:bg-primary/10 hover:text-primary">
-              <Eraser className="mr-2 h-4 w-4" /> Xóa
-            </Button>
-            <Button onClick={handlePlayAnimation} disabled={isLoading || !writerRef.current} variant="outline" className="font-bold hover:bg-primary/10 hover:text-primary">
-              <RotateCcw className="mr-2 h-4 w-4" /> Phát lại
-            </Button>
-          </div>
-
-          {displayVocabulary.length > 0 && (
-            <div className="flex justify-between items-center mb-8">
-              <Button variant="outline" onClick={goToPreviousWord} className="font-bold hover:bg-accent hover:text-accent-foreground transition-colors">
-                <ArrowLeft className="mr-2 h-4 w-4" /> Từ trước
-              </Button>
-              <Button variant="outline" onClick={goToNextWord} className="font-bold hover:bg-accent hover:text-accent-foreground transition-colors">
-                Từ tiếp theo <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-          )}
-          
           <div className="text-center mt-8">
             <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
               <Link to={homeLink}>
-                <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
+                <Home className="mr-2 h-4 w-4" /> Về trang chủ
               </Link>
             </Button>
           </div>
