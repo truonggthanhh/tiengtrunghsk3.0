@@ -55,6 +55,13 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     }
     hanziWriterContainerRef.current.innerHTML = '';
 
+    // Helper to get computed CSS variables and format them for HanziWriter
+    const getCssColor = (variableName: string) => {
+      const colorValue = getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+      // The value from CSS is in the format "H S% L%", we need "H, S%, L%" for hsl()
+      return `hsl(${colorValue})`;
+    };
+
     writerRef.current = HanziWriter.create(hanziWriterContainerRef.current, word.hanzi, {
       width: 250,
       height: 250,
@@ -64,13 +71,14 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
       showOutline: true,
       showCharacter: false,
       highlightOnComplete: true,
-      drawingColor: 'hsl(var(--primary))',
-      outlineColor: 'hsl(var(--muted-foreground))',
-      radicalColor: 'hsl(var(--accent))',
-      strokeColor: 'hsl(var(--primary))',
-      quizColor: 'hsl(var(--primary))',
-      highlightColor: 'hsl(var(--success))',
-      mistakeColor: 'hsl(var(--destructive))',
+      // Resolve CSS variables to actual colors
+      drawingColor: getCssColor('--primary'),
+      outlineColor: getCssColor('--muted-foreground'),
+      radicalColor: getCssColor('--accent'),
+      strokeColor: getCssColor('--primary'),
+      quizColor: getCssColor('--primary'),
+      highlightColor: getCssColor('--success'),
+      mistakeColor: getCssColor('--destructive'),
       charDataLoader: (char, onComplete, onError) => {
         fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`)
           .then(response => {
