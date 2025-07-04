@@ -44,7 +44,7 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     );
   }, [singleCharVocabulary, searchTerm]);
 
-  const initializeWriter = useCallback(async (word: VocabularyWord) => {
+  const initializeWriter = useCallback((word: VocabularyWord) => {
     if (!hanziWriterContainerRef.current) return;
 
     setIsLoading(true);
@@ -52,38 +52,49 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
 
     if (writerRef.current) {
       writerRef.current = null;
-      hanziWriterContainerRef.current.innerHTML = '';
     }
+    hanziWriterContainerRef.current.innerHTML = '';
 
-    try {
-      const charDataModule = await import(`hanzi-writer-data/data/${word.hanzi}.json`);
-      const charData = charDataModule.default;
+    writerRef.current = HanziWriter.create(hanziWriterContainerRef.current, word.hanzi, {
+      width: 250,
+      height: 250,
+      padding: 5,
+      strokeAnimationSpeed: 1,
+      delayBetweenStrokes: 500,
+      showOutline: true,
+      showCharacter: false,
+      highlightOnComplete: true,
+      drawingColor: 'hsl(var(--primary))',
+      outlineColor: 'hsl(var(--muted-foreground))',
+      radicalColor: 'hsl(var(--accent))',
+      strokeColor: 'hsl(var(--primary))',
+      quizColor: 'hsl(var(--primary))',
+      highlightColor: 'hsl(var(--success))',
+      mistakeColor: 'hsl(var(--destructive))',
+      charDataLoader: (char, onComplete, onError) => {
+        fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(charData => {
+            setIsLoading(false);
+            onComplete(charData);
+          })
+          .catch(err => {
+            console.error(`Failed to load character data for "${char}":`, err);
+            setError(`Không thể tải dữ liệu cho chữ "${char}". Vui lòng thử lại.`);
+            toast.error("Lỗi tải dữ liệu chữ Hán", { description: `Không tìm thấy dữ liệu cho chữ "${char}".` });
+            setIsLoading(false);
+            onError(err);
+          });
+      },
+    });
 
-      writerRef.current = HanziWriter.create(hanziWriterContainerRef.current, charData, {
-        width: 250,
-        height: 250,
-        padding: 5,
-        strokeAnimationSpeed: 1,
-        delayBetweenStrokes: 500,
-        showOutline: true,
-        showCharacter: false,
-        highlightOnComplete: true,
-        drawingColor: 'hsl(var(--primary))',
-        outlineColor: 'hsl(var(--muted-foreground))',
-        radicalColor: 'hsl(var(--accent))',
-        strokeColor: 'hsl(var(--primary))',
-        quizColor: 'hsl(var(--primary))',
-        highlightColor: 'hsl(var(--success))',
-        mistakeColor: 'hsl(var(--destructive))',
-      });
-
-      setIsLoading(false);
-      writerRef.current.animateCharacter();
-    } catch (err) {
-      console.error(`Failed to load character data for "${word.hanzi}":`, err);
-      setError(`Không thể tải dữ liệu cho chữ "${word.hanzi}".`);
-      toast.error("Lỗi tải dữ liệu chữ Hán", { description: `Không tìm thấy dữ liệu cho chữ "${word.hanzi}".` });
-      setIsLoading(false);
+    if (writerRef.current) {
+        writerRef.current.animateCharacter();
     }
   }, []);
 
