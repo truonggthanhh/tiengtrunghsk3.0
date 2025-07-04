@@ -17,13 +17,30 @@ interface HandwritingPracticeProps {
   homeLink: string;
 }
 
-// Helper function to get the final computed RGB color from a CSS variable name
-const getCssVariableValue = (variableName: string): string => {
+// Definitive helper function to get the final computed RGB color from a CSS variable name
+const getResolvedCssVariable = (variableName: string, defaultColor: string): string => {
   if (typeof window === 'undefined') {
-    return '#000000'; // Fallback for non-browser environments
+    return defaultColor;
   }
-  // We get the root element (:root) which holds the variable definitions
-  return getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+  try {
+    // Create a temporary, hidden element
+    const tempEl = document.createElement('div');
+    // Apply the variable to a color property. Note the hsl() wrapper is needed here.
+    tempEl.style.color = `hsl(var(${variableName}))`;
+    tempEl.style.display = 'none';
+    document.body.appendChild(tempEl);
+    
+    // Get the computed color which will be in rgb() or rgba() format
+    const computedColor = window.getComputedStyle(tempEl).color;
+    
+    // Clean up the temporary element
+    document.body.removeChild(tempEl);
+    
+    return computedColor || defaultColor;
+  } catch (error) {
+    console.error(`Could not resolve CSS variable ${variableName}:`, error);
+    return defaultColor;
+  }
 };
 
 
@@ -65,6 +82,15 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     }
     hanziWriterContainerRef.current.innerHTML = '';
 
+    // Resolve all colors *before* creating the writer
+    const colors = {
+        strokeColor: getResolvedCssVariable('--primary', '#3B82F6'),
+        outlineColor: getResolvedCssVariable('--muted-foreground', '#6B7280'),
+        radicalColor: getResolvedCssVariable('--accent', '#8B5CF6'),
+        highlightColor: getResolvedCssVariable('--success', '#22C55E'),
+        mistakeColor: getResolvedCssVariable('--destructive', '#EF4444'),
+    };
+
     try {
       writerRef.current = HanziWriter.create(hanziWriterContainerRef.current, word.hanzi, {
         width: 250,
@@ -75,14 +101,13 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         showOutline: true,
         showCharacter: true,
         highlightOnComplete: true,
-        // Use the helper function to get concrete color values
-        drawingColor: getCssVariableValue('--primary'),
-        outlineColor: getCssVariableValue('--muted-foreground'),
-        radicalColor: getCssVariableValue('--accent'),
-        strokeColor: getCssVariableValue('--primary'),
-        quizColor: getCssVariableValue('--primary'),
-        highlightColor: getCssVariableValue('--success'),
-        mistakeColor: getCssVariableValue('--destructive'),
+        strokeColor: colors.strokeColor,
+        outlineColor: colors.outlineColor,
+        radicalColor: colors.radicalColor,
+        drawingColor: colors.strokeColor, // Use strokeColor for drawing
+        quizColor: colors.strokeColor, // Use strokeColor for quiz
+        highlightColor: colors.highlightColor,
+        mistakeColor: colors.mistakeColor,
         charDataLoader: (char, onComplete, onError) => {
           fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`)
             .then(response => {
