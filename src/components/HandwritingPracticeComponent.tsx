@@ -17,33 +17,6 @@ interface HandwritingPracticeProps {
   homeLink: string;
 }
 
-// Definitive helper function to get the final computed RGB color from a CSS variable name
-const getResolvedCssVariable = (variableName: string, defaultColor: string): string => {
-  if (typeof window === 'undefined') {
-    return defaultColor;
-  }
-  try {
-    // Create a temporary, hidden element
-    const tempEl = document.createElement('div');
-    // Apply the variable to a color property. Note the hsl() wrapper is needed here.
-    tempEl.style.color = `hsl(var(${variableName}))`;
-    tempEl.style.display = 'none';
-    document.body.appendChild(tempEl);
-    
-    // Get the computed color which will be in rgb() or rgba() format
-    const computedColor = window.getComputedStyle(tempEl).color;
-    
-    // Clean up the temporary element
-    document.body.removeChild(tempEl);
-    
-    return computedColor || defaultColor;
-  } catch (error) {
-    console.error(`Could not resolve CSS variable ${variableName}:`, error);
-    return defaultColor;
-  }
-};
-
-
 const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
   vocabulary,
   title,
@@ -82,13 +55,13 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     }
     hanziWriterContainerRef.current.innerHTML = '';
 
-    // Resolve all colors *before* creating the writer
-    const colors = {
-        strokeColor: getResolvedCssVariable('--primary', '#3B82F6'),
-        outlineColor: getResolvedCssVariable('--muted-foreground', '#6B7280'),
-        radicalColor: getResolvedCssVariable('--accent', '#8B5CF6'),
-        highlightColor: getResolvedCssVariable('--success', '#22C55E'),
-        mistakeColor: getResolvedCssVariable('--destructive', '#EF4444'),
+    // Using hardcoded, static colors to ensure compatibility with HanziWriter
+    const staticColors = {
+      strokeColor: '#3B82F6',      // A vibrant blue
+      outlineColor: '#94A3B8',     // A light grey
+      radicalColor: '#8B5CF6',     // A purple
+      highlightColor: '#22C55E',   // A green
+      mistakeColor: '#EF4444',     // A red
     };
 
     try {
@@ -101,13 +74,13 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         showOutline: true,
         showCharacter: true,
         highlightOnComplete: true,
-        strokeColor: colors.strokeColor,
-        outlineColor: colors.outlineColor,
-        radicalColor: colors.radicalColor,
-        drawingColor: colors.strokeColor, // Use strokeColor for drawing
-        quizColor: colors.strokeColor, // Use strokeColor for quiz
-        highlightColor: colors.highlightColor,
-        mistakeColor: colors.mistakeColor,
+        strokeColor: staticColors.strokeColor,
+        outlineColor: staticColors.outlineColor,
+        radicalColor: staticColors.radicalColor,
+        drawingColor: staticColors.strokeColor,
+        quizColor: staticColors.strokeColor,
+        highlightColor: staticColors.highlightColor,
+        mistakeColor: staticColors.mistakeColor,
         charDataLoader: (char, onComplete, onError) => {
           fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`)
             .then(response => {
