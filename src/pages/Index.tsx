@@ -16,7 +16,7 @@ import HeroIllustration from "@/components/HeroIllustration";
 import FeatureSection from "@/components/FeatureSection";
 import TestimonialSection from "@/components/TestimonialSection";
 import CallToActionSection from "@/components/CallToActionSection";
-import { cn } from "@/lib/utils"; // Thêm dòng này
+import { cn } from "@/lib/utils";
 
 const exerciseTypes = [
   {
@@ -149,7 +149,6 @@ const Index = () => {
                 <CardDescription className="mt-2 text-base">
                   Luyện tập theo cấu trúc HSK 3.0 mới nhất, bao gồm 6 cấp độ từ cơ bản đến nâng cao, giúp bạn chinh phục kỳ thi một cách toàn diện.
                 </CardDescription>
-              </CardDescription>
               </CardHeader>
               <CardFooter>
                 <div className="w-full text-primary text-lg font-bold flex items-center justify-center">
