@@ -51,8 +51,8 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     setError(null);
 
     if (writerRef.current) {
-      // Clean up the previous instance before creating a new one
-      writerRef.current.target.destroy();
+      // Correctly call destroy() on the writer instance itself
+      writerRef.current.destroy();
       writerRef.current = null;
     }
     hanziWriterContainerRef.current.innerHTML = '';
@@ -66,7 +66,6 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     };
 
     try {
-      // HanziWriter.create returns a Promise, so we must await it.
       const writer = await HanziWriter.create(hanziWriterContainerRef.current, word.hanzi, {
         width: 250,
         height: 250,
