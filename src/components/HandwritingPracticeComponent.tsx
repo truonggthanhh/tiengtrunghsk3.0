@@ -72,7 +72,7 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
       strokeAnimationSpeed: 1,
       delayBetweenStrokes: 500,
       showOutline: true,
-      showCharacter: false,
+      showCharacter: true, // Đã sửa thành TRUE để hiển thị chữ Hán
       highlightOnComplete: true,
       // Resolve CSS variables to actual RGB colors that the library can parse
       drawingColor: getRgbColor('--primary'),
