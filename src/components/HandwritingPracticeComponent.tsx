@@ -3,7 +3,7 @@ import HanziWriter from 'hanzi-writer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Home, Play, RotateCcw, Eraser, PenTool, Search } from 'lucide-react';
+import { ArrowLeft, Home, Play, RotateCcw, Eraser, PenTool, Search, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import type { VocabularyWord } from '@/data';
 import { Link } from 'react-router-dom';
@@ -16,6 +16,16 @@ interface HandwritingPracticeProps {
   description: string;
   homeLink: string;
 }
+
+// Helper function to get the final computed RGB color from a CSS variable name
+const getCssVariableValue = (variableName: string): string => {
+  if (typeof window === 'undefined') {
+    return '#000000'; // Fallback for non-browser environments
+  }
+  // We get the root element (:root) which holds the variable definitions
+  return getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+};
+
 
 const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
   vocabulary,
@@ -50,18 +60,10 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     setIsLoading(true);
     setError(null);
 
-    // Clear previous writer instance and its DOM elements
     if (writerRef.current) {
       writerRef.current = null;
     }
     hanziWriterContainerRef.current.innerHTML = '';
-
-    // Tạm thời sử dụng mã màu hex cứng để kiểm tra
-    const primaryColor = '#3B82F6'; // Blue
-    const mutedForeground = '#6B7280'; // Gray
-    const accentColor = '#8B5CF6'; // Purple
-    const successColor = '#22C55E'; // Green
-    const destructiveColor = '#EF4444'; // Red
 
     try {
       writerRef.current = HanziWriter.create(hanziWriterContainerRef.current, word.hanzi, {
@@ -73,22 +75,22 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         showOutline: true,
         showCharacter: true,
         highlightOnComplete: true,
-        drawingColor: primaryColor,
-        outlineColor: mutedForeground,
-        radicalColor: accentColor,
-        strokeColor: primaryColor,
-        quizColor: primaryColor,
-        highlightColor: successColor,
-        mistakeColor: destructiveColor,
+        // Use the helper function to get concrete color values
+        drawingColor: getCssVariableValue('--primary'),
+        outlineColor: getCssVariableValue('--muted-foreground'),
+        radicalColor: getCssVariableValue('--accent'),
+        strokeColor: getCssVariableValue('--primary'),
+        quizColor: getCssVariableValue('--primary'),
+        highlightColor: getCssVariableValue('--success'),
+        mistakeColor: getCssVariableValue('--destructive'),
         charDataLoader: (char, onComplete, onError) => {
           fetch(`https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/${char}.json`)
             .then(response => {
               if (!response.ok) {
-                // Check for 404 specifically
                 if (response.status === 404) {
-                  throw new Error(`Dữ liệu cho chữ "${char}" không tìm thấy trên máy chủ.`);
+                  throw new Error(`Dữ liệu cho chữ "${char}" không tìm thấy.`);
                 }
-                throw new Error(`Lỗi mạng khi tải dữ liệu cho chữ "${char}": ${response.statusText}`);
+                throw new Error(`Lỗi mạng: ${response.statusText}`);
               }
               return response.json();
             })
@@ -98,7 +100,7 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
             })
             .catch(err => {
               console.error(`Failed to load character data for "${char}":`, err);
-              const errorMessage = err.message || `Không thể tải dữ liệu cho chữ "${char}". Vui lòng thử lại.`;
+              const errorMessage = err.message || `Không thể tải dữ liệu cho chữ "${char}".`;
               setError(errorMessage);
               toast.error("Lỗi tải dữ liệu chữ Hán", { description: errorMessage });
               setIsLoading(false);
@@ -112,8 +114,9 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
       }
     } catch (e: any) {
       console.error("Error creating HanziWriter:", e);
-      setError(`Lỗi khởi tạo công cụ viết: ${e.message || e.toString()}. Vui lòng thử lại.`);
-      toast.error("Lỗi khởi tạo", { description: `Không thể tạo công cụ viết chữ Hán.` });
+      const errorMessage = `Lỗi khởi tạo: ${e.message || e.toString()}.`;
+      setError(errorMessage);
+      toast.error("Lỗi khởi tạo", { description: "Không thể tạo công cụ viết chữ Hán." });
       setIsLoading(false);
     }
   }, []);
@@ -206,17 +209,21 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
               </div>
               <Card className="mb-8 shadow-md">
                 <CardContent className="p-6 flex flex-col items-center justify-center gap-4">
-                  {isLoading ? (
-                    <div className="w-[250px] h-[250px] flex items-center justify-center text-muted-foreground">Đang tải...</div>
-                  ) : error ? (
-                    <div className="w-[250px] h-[250px] flex flex-col items-center justify-center text-destructive text-center">
-                      <p>{error}</p>
-                      <Button onClick={() => initializeWriter(selectedWord)} variant="ghost" className="mt-2">Thử lại</Button>
-                    </div>
-                  ) : (
-                    // Add a key to force re-render of the HanziWriter container when selectedWord changes
-                    <div key={selectedWord.hanzi} id="hanzi-writer-container" ref={hanziWriterContainerRef} className="w-[250px] h-[250px] border rounded-md overflow-hidden"></div>
-                  )}
+                  <div className="w-[250px] h-[250px] border rounded-md overflow-hidden flex items-center justify-center">
+                    {isLoading ? (
+                      <div className="flex flex-col items-center text-muted-foreground">
+                        <Loader2 className="h-8 w-8 animate-spin mb-2" />
+                        <span>Đang tải...</span>
+                      </div>
+                    ) : error ? (
+                      <div className="text-destructive text-center p-4">
+                        <p>{error}</p>
+                        <Button onClick={() => initializeWriter(selectedWord)} variant="ghost" className="mt-2">Thử lại</Button>
+                      </div>
+                    ) : (
+                      <div key={selectedWord.hanzi} id="hanzi-writer-container" ref={hanziWriterContainerRef}></div>
+                    )}
+                  </div>
                   <div className="text-center">
                     <p className="text-4xl font-semibold">{selectedWord.pinyin}</p>
                     <p className="text-2xl text-muted-foreground">{selectedWord.meaning}</p>
@@ -224,16 +231,16 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
                 </CardContent>
               </Card>
               <div className="flex justify-center gap-4 mb-8 flex-wrap">
-                <Button onClick={handlePlayAnimation} disabled={isLoading || !writerRef.current} variant="outline" className="font-bold hover:bg-primary/10 hover:text-primary">
+                <Button onClick={handlePlayAnimation} disabled={isLoading || !!error} variant="outline" className="font-bold hover:bg-primary/10 hover:text-primary">
                   <Play className="mr-2 h-4 w-4" /> Xem nét
                 </Button>
-                <Button onClick={handleStartQuiz} disabled={isLoading || !writerRef.current} variant="outline" className="font-bold hover:bg-primary/10 hover:text-primary">
+                <Button onClick={handleStartQuiz} disabled={isLoading || !!error} variant="outline" className="font-bold hover:bg-primary/10 hover:text-primary">
                   <PenTool className="mr-2 h-4 w-4" /> Luyện viết
                 </Button>
-                <Button onClick={handleClearCanvas} disabled={isLoading || !writerRef.current} variant="outline" className="font-bold hover:bg-primary/10 hover:text-primary">
+                <Button onClick={handleClearCanvas} disabled={isLoading || !!error} variant="outline" className="font-bold hover:bg-primary/10 hover:text-primary">
                   <Eraser className="mr-2 h-4 w-4" /> Xóa
                 </Button>
-                <Button onClick={handlePlayAnimation} disabled={isLoading || !writerRef.current} variant="outline" className="font-bold hover:bg-primary/10 hover:text-primary">
+                <Button onClick={handlePlayAnimation} disabled={isLoading || !!error} variant="outline" className="font-bold hover:bg-primary/10 hover:text-primary">
                   <RotateCcw className="mr-2 h-4 w-4" /> Phát lại
                 </Button>
               </div>
