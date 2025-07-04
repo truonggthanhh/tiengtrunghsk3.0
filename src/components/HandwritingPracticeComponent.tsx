@@ -52,9 +52,8 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     }
 
     try {
-      // Use dynamic import to load character data from local files
-      // The /* @vite-ignore */ comment tells Vite to allow this dynamic path
-      const charDataModule = await import(/* @vite-ignore */ `/node_modules/hanzi-writer-data/data/${hanzi}.json`);
+      // Correctly use dynamic import to let Vite handle module resolution
+      const charDataModule = await import(`hanzi-writer-data/data/${hanzi}.json`);
       const charData = charDataModule.default;
 
       writerRef.current = HanziWriter.create(hanziWriterContainerRef.current, charData, {
