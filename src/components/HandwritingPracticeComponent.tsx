@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import HanziWriter from 'hanzi-writer';
-import hanziData from 'hanzi-writer-data';
+import * as hanziData from 'hanzi-writer-data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -75,7 +75,7 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         mistakeColor: staticColors.mistakeColor,
         // Sử dụng dữ liệu cục bộ thay vì tải từ CDN
         charDataLoader: (char, onComplete) => {
-          const charData = hanziData[char];
+          const charData = (hanziData as any)[char];
           if (charData) {
             onComplete(charData);
           } else {
