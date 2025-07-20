@@ -44,6 +44,13 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     );
   }, [singleCharVocabulary, searchTerm]);
 
+  // Khởi tạo selectedWord với chữ Hán đầu tiên có một ký tự
+  useEffect(() => {
+    if (singleCharVocabulary.length > 0 && selectedWord === null) {
+      setSelectedWord(singleCharVocabulary[0]);
+    }
+  }, [singleCharVocabulary, selectedWord]);
+
   // Hook quản lý toàn bộ vòng đời của HanziWriter
   useEffect(() => {
     if (hanziWriterContainerRef.current) {
@@ -56,12 +63,11 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         delayBetweenStrokes: 500,
         showOutline: true,
         highlightOnComplete: true,
-        // SỬA LỖI CỐT LÕI: Sử dụng charDataLoader để tải dữ liệu động
+        // SỬA LỖI CỐT LÕI: Sử dụng charDataLoader để tải dữ liệu động từ đường dẫn chính xác
         charDataLoader: (char, onComplete) => {
-          import('hanzi-writer-data')
-            .then(hanziDataModule => {
-              const data = hanziDataModule as any;
-              const charData = data[char];
+          import(`hanzi-writer-data/dist/${char}`) // Sửa đường dẫn tải dữ liệu
+            .then(module => {
+              const charData = module; // Không cần .default vì đây là import JSON trực tiếp
               if (charData) {
                 onComplete(charData);
               } else {
@@ -70,7 +76,7 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
               }
             })
             .catch(err => {
-              console.error("Failed to dynamically load hanzi-writer-data", err);
+              console.error(`Failed to dynamically load data for character "${char}"`, err);
               onComplete(undefined, err);
             });
         },
