@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import HanziWriter from 'hanzi-writer';
-import * as hanziData from 'hanzi-writer-data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -73,17 +72,22 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         quizColor: staticColors.strokeColor,
         highlightColor: staticColors.highlightColor,
         mistakeColor: staticColors.mistakeColor,
-        // Sử dụng dữ liệu cục bộ thay vì tải từ CDN
         charDataLoader: (char, onComplete) => {
-          // SỬA LỖI: Truy cập trực tiếp vào đối tượng dữ liệu, không qua .default
-          const charData = (hanziData as any)[char];
-          if (charData) {
-            onComplete(charData);
-          } else {
-            // Xử lý trường hợp không tìm thấy dữ liệu cho ký tự
-            const err = new Error(`Không tìm thấy dữ liệu cục bộ cho chữ "${char}".`);
-            onComplete(undefined, err);
-          }
+          import('hanzi-writer-data')
+            .then(hanziDataModule => {
+              const data = (hanziDataModule.default || hanziDataModule) as any;
+              const charData = data[char];
+              if (charData) {
+                onComplete(charData);
+              } else {
+                const err = new Error(`Không tìm thấy dữ liệu cục bộ cho chữ "${char}".`);
+                onComplete(undefined, err);
+              }
+            })
+            .catch(err => {
+              console.error("Failed to dynamically load hanzi-writer-data", err);
+              onComplete(undefined, err);
+            });
         },
       });
       writerRef.current = writer;
