@@ -30,6 +30,7 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [writerReady, setWriterReady] = useState(false); // State để theo dõi writer đã sẵn sàng chưa
 
   const singleCharVocabulary = useMemo(() => {
     return vocabulary.filter(word => word.hanzi && word.pinyin && word.hanzi.length === 1);
@@ -44,14 +45,14 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     );
   }, [singleCharVocabulary, searchTerm]);
 
-  // Khởi tạo selectedWord với chữ Hán đầu tiên có một ký tự
+  // Khởi tạo selectedWord với chữ Hán đầu tiên
   useEffect(() => {
     if (singleCharVocabulary.length > 0 && selectedWord === null) {
       setSelectedWord(singleCharVocabulary[0]);
     }
   }, [singleCharVocabulary, selectedWord]);
 
-  // Hook quản lý toàn bộ vòng đời của HanziWriter
+  // Effect để tạo instance HanziWriter một lần khi component mount
   useEffect(() => {
     if (hanziWriterContainerRef.current) {
       const writer = HanziWriter.create(hanziWriterContainerRef.current, {
@@ -63,17 +64,10 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         delayBetweenStrokes: 500,
         showOutline: true,
         highlightOnComplete: true,
-        // SỬA LỖI CỐT LÕI: Sử dụng charDataLoader để tải dữ liệu động từ đường dẫn chính xác
         charDataLoader: (char, onComplete) => {
-          import(`hanzi-writer-data/dist/${char}`) // Sửa đường dẫn tải dữ liệu
+          import(`hanzi-writer-data/dist/${char}`)
             .then(module => {
-              const charData = module; // Không cần .default vì đây là import JSON trực tiếp
-              if (charData) {
-                onComplete(charData);
-              } else {
-                const err = new Error(`Không tìm thấy dữ liệu cho chữ "${char}".`);
-                onComplete(undefined, err);
-              }
+              onComplete(module);
             })
             .catch(err => {
               console.error(`Failed to dynamically load data for character "${char}"`, err);
@@ -82,20 +76,22 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         },
       });
       writerRef.current = writer;
+      setWriterReady(true); // Báo hiệu rằng writer đã sẵn sàng
     }
 
-    // Hàm dọn dẹp để hủy instance khi component bị gỡ bỏ
+    // Dọn dẹp khi component unmount
     return () => {
       writerRef.current = null;
+      setWriterReady(false);
       if (hanziWriterContainerRef.current) {
         hanziWriterContainerRef.current.innerHTML = '';
       }
     };
-  }, []); // Mảng rỗng đảm bảo hook này chỉ chạy một lần khi mount
+  }, []); // Mảng rỗng đảm bảo chỉ chạy một lần
 
-  // Hook riêng để xử lý việc thay đổi ký tự
+  // Effect để cập nhật chữ Hán, phụ thuộc vào selectedWord VÀ writerReady
   useEffect(() => {
-    if (selectedWord && writerRef.current) {
+    if (selectedWord && writerReady && writerRef.current) {
       setIsLoading(true);
       setError(null);
       writerRef.current.setCharacter(selectedWord.hanzi)
@@ -111,7 +107,7 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
           setIsLoading(false);
         });
     }
-  }, [selectedWord]);
+  }, [selectedWord, writerReady]); // Phụ thuộc vào cả hai
 
   const handlePlayAnimation = () => {
     if (writerRef.current) writerRef.current.animateCharacter();
