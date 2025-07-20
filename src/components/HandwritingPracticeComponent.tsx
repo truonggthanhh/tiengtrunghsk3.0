@@ -30,7 +30,6 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isWriterInitialized, setIsWriterInitialized] = useState(false);
 
   const singleCharVocabulary = useMemo(() => {
     return vocabulary.filter(word => word.hanzi && word.pinyin && word.hanzi.length === 1);
@@ -45,17 +44,9 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     );
   }, [singleCharVocabulary, searchTerm]);
 
-  // Effect to initialize the writer once on component mount
+  // Hook quản lý toàn bộ vòng đời của HanziWriter
   useEffect(() => {
-    if (hanziWriterContainerRef.current && !writerRef.current) {
-      const staticColors = {
-        strokeColor: '#3B82F6',
-        outlineColor: '#94A3B8',
-        radicalColor: '#8B5CF6',
-        highlightColor: '#22C55E',
-        mistakeColor: '#EF4444',
-      };
-      
+    if (hanziWriterContainerRef.current) {
       const writer = HanziWriter.create(hanziWriterContainerRef.current, {
         width: 250,
         height: 250,
@@ -65,22 +56,16 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         delayBetweenStrokes: 500,
         showOutline: true,
         highlightOnComplete: true,
-        strokeColor: staticColors.strokeColor,
-        outlineColor: staticColors.outlineColor,
-        radicalColor: staticColors.radicalColor,
-        drawingColor: staticColors.strokeColor,
-        quizColor: staticColors.strokeColor,
-        highlightColor: staticColors.highlightColor,
-        mistakeColor: staticColors.mistakeColor,
+        // SỬA LỖI CỐT LÕI: Sử dụng charDataLoader để tải dữ liệu động
         charDataLoader: (char, onComplete) => {
           import('hanzi-writer-data')
             .then(hanziDataModule => {
-              const data = (hanziDataModule.default || hanziDataModule) as any;
+              const data = hanziDataModule as any;
               const charData = data[char];
               if (charData) {
                 onComplete(charData);
               } else {
-                const err = new Error(`Không tìm thấy dữ liệu cục bộ cho chữ "${char}".`);
+                const err = new Error(`Không tìm thấy dữ liệu cho chữ "${char}".`);
                 onComplete(undefined, err);
               }
             })
@@ -91,13 +76,20 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         },
       });
       writerRef.current = writer;
-      setIsWriterInitialized(true);
     }
-  }, []);
 
-  // Effect to update the character when a new word is selected
+    // Hàm dọn dẹp để hủy instance khi component bị gỡ bỏ
+    return () => {
+      writerRef.current = null;
+      if (hanziWriterContainerRef.current) {
+        hanziWriterContainerRef.current.innerHTML = '';
+      }
+    };
+  }, []); // Mảng rỗng đảm bảo hook này chỉ chạy một lần khi mount
+
+  // Hook riêng để xử lý việc thay đổi ký tự
   useEffect(() => {
-    if (selectedWord && writerRef.current && isWriterInitialized) {
+    if (selectedWord && writerRef.current) {
       setIsLoading(true);
       setError(null);
       writerRef.current.setCharacter(selectedWord.hanzi)
@@ -107,13 +99,13 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         })
         .catch((err) => {
           console.error("Error setting character:", err);
-          const errorMessage = `Không thể tải dữ liệu cho chữ "${selectedWord.hanzi}". Chữ này có thể không được hỗ trợ trong gói dữ liệu.`;
+          const errorMessage = `Không thể tải dữ liệu cho chữ "${selectedWord.hanzi}". Chữ này có thể không được hỗ trợ.`;
           setError(errorMessage);
           toast.error("Lỗi tải dữ liệu", { description: errorMessage });
           setIsLoading(false);
         });
     }
-  }, [selectedWord, isWriterInitialized]);
+  }, [selectedWord]);
 
   const handlePlayAnimation = () => {
     if (writerRef.current) writerRef.current.animateCharacter();
