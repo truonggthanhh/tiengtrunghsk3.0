@@ -55,6 +55,8 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         highlightColor: '#22C55E',
         mistakeColor: '#EF4444',
       };
+      // Khởi tạo HanziWriter mà không có charDataLoader tùy chỉnh.
+      // Thư viện sẽ tự động sử dụng CDN mặc định của nó.
       const writer = HanziWriter.create(hanziWriterContainerRef.current, {
         width: 250,
         height: 250,
@@ -71,27 +73,6 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         quizColor: staticColors.strokeColor,
         highlightColor: staticColors.highlightColor,
         mistakeColor: staticColors.mistakeColor,
-        // --- GIẢI PHÁP DỨT ĐIỂM ---
-        // Chỉ cho HanziWriter cách tải dữ liệu từ CDN
-        charDataLoader: (char, onComplete) => {
-          const target = `https://cdn.jsdelivr.net/npm/hanzi-writer-data/${char}.json`;
-          fetch(target)
-            .then(response => {
-              if (!response.ok) {
-                // Ném lỗi nếu không tìm thấy dữ liệu (ví dụ: chữ không tồn tại)
-                throw new Error(`Không tìm thấy dữ liệu cho chữ "${char}" trên CDN.`);
-              }
-              return response.json();
-            })
-            .then(data => {
-              onComplete(data); // Cung cấp dữ liệu đã tải cho HanziWriter
-            })
-            .catch(err => {
-              // Ghi lại lỗi và để HanziWriter xử lý
-              console.error(err);
-              // Không cần gọi onComplete(null) vì promise rejection sẽ được xử lý bởi .setCharacter()
-            });
-        },
       });
       writerRef.current = writer;
       setIsWriterInitialized(true);
@@ -110,7 +91,7 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         })
         .catch((err) => {
           console.error("Error setting character:", err);
-          const errorMessage = `Không thể tải dữ liệu cho chữ "${selectedWord.hanzi}". Vui lòng thử lại.`;
+          const errorMessage = `Không thể tải dữ liệu cho chữ "${selectedWord.hanzi}". Chữ này có thể không được hỗ trợ.`;
           setError(errorMessage);
           toast.error("Lỗi tải dữ liệu", { description: errorMessage });
           setIsLoading(false);
