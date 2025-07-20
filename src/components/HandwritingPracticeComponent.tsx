@@ -30,7 +30,6 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [writerReady, setWriterReady] = useState(false); // State để theo dõi writer đã sẵn sàng chưa
 
   const singleCharVocabulary = useMemo(() => {
     return vocabulary.filter(word => word.hanzi && word.pinyin && word.hanzi.length === 1);
@@ -45,17 +44,28 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     );
   }, [singleCharVocabulary, searchTerm]);
 
-  // Khởi tạo selectedWord với chữ Hán đầu tiên
+  // Initialize with the first word if available
   useEffect(() => {
-    if (singleCharVocabulary.length > 0 && selectedWord === null) {
+    if (singleCharVocabulary.length > 0 && !selectedWord) {
       setSelectedWord(singleCharVocabulary[0]);
     }
   }, [singleCharVocabulary, selectedWord]);
 
-  // Effect để tạo instance HanziWriter một lần khi component mount
+  // This effect handles the entire lifecycle of the HanziWriter instance.
+  // It runs ONLY when selectedWord changes.
   useEffect(() => {
+    // Clean up previous writer instance if it exists
+    writerRef.current = null;
     if (hanziWriterContainerRef.current) {
-      const writer = HanziWriter.create(hanziWriterContainerRef.current, {
+      hanziWriterContainerRef.current.innerHTML = '';
+    }
+
+    // If a word is selected and the container is ready, create a new writer
+    if (selectedWord && hanziWriterContainerRef.current) {
+      setIsLoading(true);
+      setError(null);
+
+      const writer = HanziWriter.create(hanziWriterContainerRef.current, selectedWord.hanzi, {
         width: 250,
         height: 250,
         padding: 5,
@@ -71,43 +81,27 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
             })
             .catch(err => {
               console.error(`Failed to dynamically load data for character "${char}"`, err);
+              const errorMessage = `Không thể tải dữ liệu cho chữ "${selectedWord.hanzi}". Chữ này có thể không được hỗ trợ.`;
+              setError(errorMessage);
+              toast.error("Lỗi tải dữ liệu", { description: errorMessage });
+              setIsLoading(false);
               onComplete(undefined, err);
             });
         },
       });
+
       writerRef.current = writer;
-      setWriterReady(true); // Báo hiệu rằng writer đã sẵn sàng
+      
+      // Animate the character once it's loaded
+      writer.showCharacter().then(() => {
+        setIsLoading(false);
+        writer.animateCharacter();
+      }).catch(() => {
+        // Error is already handled in charDataLoader, but this prevents unhandled promise rejections
+        setIsLoading(false);
+      });
     }
-
-    // Dọn dẹp khi component unmount
-    return () => {
-      writerRef.current = null;
-      setWriterReady(false);
-      if (hanziWriterContainerRef.current) {
-        hanziWriterContainerRef.current.innerHTML = '';
-      }
-    };
-  }, []); // Mảng rỗng đảm bảo chỉ chạy một lần
-
-  // Effect để cập nhật chữ Hán, phụ thuộc vào selectedWord VÀ writerReady
-  useEffect(() => {
-    if (selectedWord && writerReady && writerRef.current) {
-      setIsLoading(true);
-      setError(null);
-      writerRef.current.setCharacter(selectedWord.hanzi)
-        .then(() => {
-          setIsLoading(false);
-          writerRef.current?.animateCharacter();
-        })
-        .catch((err) => {
-          console.error("Error setting character:", err);
-          const errorMessage = `Không thể tải dữ liệu cho chữ "${selectedWord.hanzi}". Chữ này có thể không được hỗ trợ.`;
-          setError(errorMessage);
-          toast.error("Lỗi tải dữ liệu", { description: errorMessage });
-          setIsLoading(false);
-        });
-    }
-  }, [selectedWord, writerReady]); // Phụ thuộc vào cả hai
+  }, [selectedWord]);
 
   const handlePlayAnimation = () => {
     if (writerRef.current) writerRef.current.animateCharacter();
