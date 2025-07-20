@@ -44,12 +44,6 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
   }, [singleCharVocabulary, searchTerm]);
 
   React.useEffect(() => {
-    if (singleCharVocabulary.length > 0 && !selectedWord) {
-      setSelectedWord(singleCharVocabulary[0]);
-    }
-  }, [singleCharVocabulary, selectedWord]);
-
-  React.useEffect(() => {
     if (selectedWord) {
       setIsLoading(true);
       setError(null);
