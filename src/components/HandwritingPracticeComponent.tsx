@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import HanziWriter from 'hanzi-writer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, Home, Play, RotateCcw, Eraser, PenTool, Search, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
 import type { VocabularyWord } from '@/data';
 import { Link } from 'react-router-dom';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import HanziWriterWrapper from './HanziWriterWrapper';
 
 interface HandwritingPracticeProps {
   vocabulary: VocabularyWord[];
@@ -24,10 +24,9 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
   homeLink,
 }) => {
   const writerRef = useRef<HanziWriter | null>(null);
-  const hanziWriterContainerRef = useRef<HTMLDivElement>(null);
 
   const [selectedWord, setSelectedWord] = useState<VocabularyWord | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -44,62 +43,16 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     );
   }, [singleCharVocabulary, searchTerm]);
 
-  // Initialize with the first word if available
-  useEffect(() => {
+  React.useEffect(() => {
     if (singleCharVocabulary.length > 0 && !selectedWord) {
       setSelectedWord(singleCharVocabulary[0]);
     }
   }, [singleCharVocabulary, selectedWord]);
 
-  // This effect handles the entire lifecycle of the HanziWriter instance.
-  // It runs ONLY when selectedWord changes.
-  useEffect(() => {
-    // Clean up previous writer instance if it exists
-    writerRef.current = null;
-    if (hanziWriterContainerRef.current) {
-      hanziWriterContainerRef.current.innerHTML = '';
-    }
-
-    // If a word is selected and the container is ready, create a new writer
-    if (selectedWord && hanziWriterContainerRef.current) {
+  React.useEffect(() => {
+    if (selectedWord) {
       setIsLoading(true);
       setError(null);
-
-      const writer = HanziWriter.create(hanziWriterContainerRef.current, selectedWord.hanzi, {
-        width: 250,
-        height: 250,
-        padding: 5,
-        showCharacter: false,
-        strokeAnimationSpeed: 1,
-        delayBetweenStrokes: 500,
-        showOutline: true,
-        highlightOnComplete: true,
-        charDataLoader: (char, onComplete) => {
-          import(`hanzi-writer-data/dist/${char}`)
-            .then(module => {
-              onComplete(module);
-            })
-            .catch(err => {
-              console.error(`Failed to dynamically load data for character "${char}"`, err);
-              const errorMessage = `Không thể tải dữ liệu cho chữ "${selectedWord.hanzi}". Chữ này có thể không được hỗ trợ.`;
-              setError(errorMessage);
-              toast.error("Lỗi tải dữ liệu", { description: errorMessage });
-              setIsLoading(false);
-              onComplete(undefined, err);
-            });
-        },
-      });
-
-      writerRef.current = writer;
-      
-      // Animate the character once it's loaded
-      writer.showCharacter().then(() => {
-        setIsLoading(false);
-        writer.animateCharacter();
-      }).catch(() => {
-        // Error is already handled in charDataLoader, but this prevents unhandled promise rejections
-        setIsLoading(false);
-      });
     }
   }, [selectedWord]);
 
@@ -115,7 +68,7 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
     if (writerRef.current) writerRef.current.cancelQuiz();
   };
 
-  if (singleCharVocabulary.length === 0 && !selectedWord) {
+  if (singleCharVocabulary.length === 0) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
@@ -189,7 +142,7 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
                     {isLoading && (
                       <div className="flex flex-col items-center text-muted-foreground">
                         <Loader2 className="h-8 w-8 animate-spin mb-2" />
-                        <span>Đang tải...</span>
+                        <span>Đang tải dữ liệu chữ...</span>
                       </div>
                     )}
                     {error && !isLoading && (
@@ -197,7 +150,15 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
                         <p>{error}</p>
                       </div>
                     )}
-                    <div id="hanzi-writer-container" ref={hanziWriterContainerRef}></div>
+                    <HanziWriterWrapper
+                      character={selectedWord.hanzi}
+                      writerRef={writerRef}
+                      onWriterLoaded={() => setIsLoading(false)}
+                      onWriterError={(errorMsg) => {
+                        setError(errorMsg);
+                        setIsLoading(false);
+                      }}
+                    />
                   </div>
                   <div className="text-center">
                     <p className="text-4xl font-semibold">{selectedWord.pinyin}</p>
