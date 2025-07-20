@@ -75,8 +75,8 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         mistakeColor: staticColors.mistakeColor,
         // Sử dụng dữ liệu cục bộ thay vì tải từ CDN
         charDataLoader: (char, onComplete) => {
-          // SỬA LỖI: Truy cập vào .default để lấy dữ liệu
-          const charData = (hanziData.default as any)[char];
+          // SỬA LỖI: Truy cập trực tiếp vào đối tượng dữ liệu, không qua .default
+          const charData = (hanziData as any)[char];
           if (charData) {
             onComplete(charData);
           } else {
