@@ -59,7 +59,7 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         width: 250,
         height: 250,
         padding: 5,
-        showCharacter: false, // Don't show a character initially
+        showCharacter: false,
         strokeAnimationSpeed: 1,
         delayBetweenStrokes: 500,
         showOutline: true,
@@ -71,6 +71,27 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         quizColor: staticColors.strokeColor,
         highlightColor: staticColors.highlightColor,
         mistakeColor: staticColors.mistakeColor,
+        // --- GIẢI PHÁP DỨT ĐIỂM ---
+        // Chỉ cho HanziWriter cách tải dữ liệu từ CDN
+        charDataLoader: (char, onComplete) => {
+          const target = `https://cdn.jsdelivr.net/npm/hanzi-writer-data/${char}.json`;
+          fetch(target)
+            .then(response => {
+              if (!response.ok) {
+                // Ném lỗi nếu không tìm thấy dữ liệu (ví dụ: chữ không tồn tại)
+                throw new Error(`Không tìm thấy dữ liệu cho chữ "${char}" trên CDN.`);
+              }
+              return response.json();
+            })
+            .then(data => {
+              onComplete(data); // Cung cấp dữ liệu đã tải cho HanziWriter
+            })
+            .catch(err => {
+              // Ghi lại lỗi và để HanziWriter xử lý
+              console.error(err);
+              // Không cần gọi onComplete(null) vì promise rejection sẽ được xử lý bởi .setCharacter()
+            });
+        },
       });
       writerRef.current = writer;
       setIsWriterInitialized(true);
@@ -89,7 +110,7 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
         })
         .catch((err) => {
           console.error("Error setting character:", err);
-          const errorMessage = `Không thể tải dữ liệu cho chữ "${selectedWord.hanzi}".`;
+          const errorMessage = `Không thể tải dữ liệu cho chữ "${selectedWord.hanzi}". Vui lòng thử lại.`;
           setError(errorMessage);
           toast.error("Lỗi tải dữ liệu", { description: errorMessage });
           setIsLoading(false);
