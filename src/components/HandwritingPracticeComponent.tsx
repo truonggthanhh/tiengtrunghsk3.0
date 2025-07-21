@@ -115,10 +115,10 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
                       key={word.id}
                       onClick={() => setSelectedWord(word)}
                       variant="outline"
-                      className="h-20 flex flex-col justify-center items-center p-1"
+                      className="h-20 flex flex-col justify-center items-center p-1 group" // Added group class
                     >
-                      <span className="text-3xl font-bold">{word.hanzi}</span>
-                      <span className="text-xs text-muted-foreground mt-1">{word.pinyin}</span>
+                      <span className="text-3xl font-bold group-hover:text-white">{word.hanzi}</span> {/* Added group-hover:text-white */}
+                      <span className="text-xs text-muted-foreground mt-1 group-hover:text-white">{word.pinyin}</span> {/* Added group-hover:text-white */}
                     </Button>
                   ))}
                 </div>
