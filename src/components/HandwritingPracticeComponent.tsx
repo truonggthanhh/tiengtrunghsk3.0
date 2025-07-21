@@ -109,15 +109,16 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
                 />
               </div>
               <ScrollArea className="h-80 border rounded-md p-4">
-                <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
+                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3">
                   {filteredVocabulary.map(word => (
                     <Button
                       key={word.id}
                       onClick={() => setSelectedWord(word)}
                       variant="outline"
-                      className="text-2xl h-14 w-14"
+                      className="h-20 flex flex-col justify-center items-center p-1"
                     >
-                      {word.hanzi}
+                      <span className="text-3xl font-bold">{word.hanzi}</span>
+                      <span className="text-xs text-muted-foreground mt-1">{word.pinyin}</span>
                     </Button>
                   ))}
                 </div>
