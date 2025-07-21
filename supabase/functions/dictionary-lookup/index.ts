@@ -34,27 +34,33 @@ serve(async (req) => {
     let results: SearchResult[] = [];
 
     if (direction === 'han-viet') {
-      // The API expects the term to be URL encoded
       const response = await fetch(`${DICTIONARY_API_URL}&param=${encodeURIComponent(term)}`);
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
-      }
-      const htmlResponse = await response.text();
       
-      // This API returns a simple string format: "han|pinyin|viet\n"
-      // We need to parse it manually.
-      const lines = htmlResponse.trim().split('\n');
-      results = lines.map(line => {
-        const parts = line.split('|');
-        return {
-          han: parts[0] || '',
-          pinyin: parts[1] || '',
-          viet: parts[2] || '',
-        };
-      }).filter(r => r.han && r.viet); // Filter out any empty results
+      // If the API call fails, log it but return empty results for a better user experience
+      if (!response.ok) {
+        console.error(`API request failed for term "${term}" with status ${response.status}`);
+        return new Response(JSON.stringify([]), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      
+      const textResponse = await response.text();
+      
+      // More robust parsing: check if the response is in the expected format
+      if (textResponse && textResponse.includes('|')) {
+        const lines = textResponse.trim().split('\n');
+        results = lines.map(line => {
+          const parts = line.split('|');
+          return {
+            han: parts[0] || '',
+            pinyin: parts[1] || '',
+            viet: parts[2] || '',
+          };
+        }).filter(r => r.han && r.viet);
+      }
+      // If not in the expected format, results will remain an empty array.
     } else {
-      // Viet-Han search can be implemented here if an API is available
-      // For now, we'll return an empty array for this direction.
+      // Viet-Han is not implemented
       results = [];
     }
 

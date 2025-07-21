@@ -1,11 +1,18 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Input } from '@/components/ui/input';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Search, Loader2, AlertTriangle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import SearchResultCard from './SearchResultCard';
 import { ScrollArea } from './ui/scroll-area';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface SearchResult {
   han: string;
@@ -38,7 +45,6 @@ const DictionarySearch: React.FC = () => {
 
       if (funcError) throw funcError;
       
-      // The API for Viet-Han is not implemented in the edge function yet
       if (dir === 'viet-han') {
         setResults([]);
       } else {
@@ -54,15 +60,10 @@ const DictionarySearch: React.FC = () => {
     }
   }, []);
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      fetchResults(searchTerm, direction);
-    }, 500); // Debounce for 500ms
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [searchTerm, direction, fetchResults]);
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    fetchResults(searchTerm, direction);
+  };
 
   return (
     <Card className="w-full max-w-4xl mx-auto shadow-lg border-primary/20">
@@ -71,7 +72,7 @@ const DictionarySearch: React.FC = () => {
         <CardDescription>Tra cứu Hán-Việt nhanh chóng và tiện lợi.</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="relative flex-grow">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
@@ -82,18 +83,24 @@ const DictionarySearch: React.FC = () => {
               className="h-12 text-lg pl-10"
             />
           </div>
-          <ToggleGroup
-            type="single"
+          <Select
             value={direction}
             onValueChange={(value: 'han-viet' | 'viet-han') => {
               if (value) setDirection(value);
             }}
-            className="border rounded-md"
           >
-            <ToggleGroupItem value="han-viet" className="h-12 text-base font-semibold">Hán-Việt</ToggleGroupItem>
-            <ToggleGroupItem value="viet-han" className="h-12 text-base font-semibold" disabled>Việt-Hán (Sắp có)</ToggleGroupItem>
-          </ToggleGroup>
-        </div>
+            <SelectTrigger className="w-full sm:w-[180px] h-12 text-base font-semibold">
+              <SelectValue placeholder="Chọn chiều tra cứu" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="han-viet" className="text-base">Hán-Việt</SelectItem>
+              <SelectItem value="viet-han" className="text-base" disabled>Việt-Hán (Sắp có)</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button type="submit" className="h-12 text-base font-semibold">
+            Tìm kiếm
+          </Button>
+        </form>
 
         <ScrollArea className="h-80 w-full border rounded-md p-4">
           {isLoading && (
