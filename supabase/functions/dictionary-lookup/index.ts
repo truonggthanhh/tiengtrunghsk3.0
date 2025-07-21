@@ -36,18 +36,18 @@ serve(async (req) => {
     if (direction === 'han-viet') {
       const response = await fetch(`${DICTIONARY_API_URL}&param=${encodeURIComponent(term)}`);
       
-      // If the API call fails, log it but return empty results for a better user experience
+      // THE FIX: If the upstream API fails, we throw an error.
+      // This will be caught by our main try/catch block and return a proper 500 error to the client.
       if (!response.ok) {
-        console.error(`API request failed for term "${term}" with status ${response.status}`);
-        return new Response(JSON.stringify([]), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        console.error(`Upstream API request failed for term "${term}" with status ${response.status}`);
+        throw new Error(`Upstream API request failed with status ${response.status}`);
       }
       
       const textResponse = await response.text();
       
-      // More robust parsing: check if the response is in the expected format
-      if (textResponse && textResponse.includes('|')) {
+      // The API returns an empty string for no results, which is valid.
+      // We only parse if there's content and it's in the expected format.
+      if (textResponse && textResponse.trim() !== '' && textResponse.includes('|')) {
         const lines = textResponse.trim().split('\n');
         results = lines.map(line => {
           const parts = line.split('|');
@@ -58,7 +58,6 @@ serve(async (req) => {
           };
         }).filter(r => r.han && r.viet);
       }
-      // If not in the expected format, results will remain an empty array.
     } else {
       // Viet-Han is not implemented
       results = [];
@@ -69,8 +68,9 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    console.error(error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    // Now, both our internal errors and upstream API errors will be caught here.
+    console.error("Error in dictionary-lookup function:", error.message);
+    return new Response(JSON.stringify({ error: "An error occurred during the dictionary lookup." }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
