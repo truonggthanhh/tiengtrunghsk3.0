@@ -16,6 +16,7 @@ import HeroIllustration from "@/components/HeroIllustration";
 import FeatureSection from "@/components/FeatureSection";
 import TestimonialSection from "@/components/TestimonialSection";
 import CallToActionSection from "@/components/CallToActionSection";
+import DictionarySearch from "@/components/DictionarySearch"; // Import the new component
 import { cn } from "@/lib/utils";
 
 const exerciseTypes = [
@@ -129,6 +130,11 @@ const Index = () => {
               <HeroIllustration />
             </div>
           </div>
+        </section>
+
+        {/* Dictionary Search Section */}
+        <section className="py-16 md:py-20 mb-16">
+          <DictionarySearch />
         </section>
 
         {/* Topic Selection Section */}
