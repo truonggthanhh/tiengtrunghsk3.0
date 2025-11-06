@@ -62,31 +62,25 @@ const DictionarySearch: React.FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto shadow-2xl border-primary/30 bg-gradient-to-br from-card via-card to-primary/5 backdrop-blur-sm overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-50" />
-      <CardHeader className="text-center relative z-10">
-        <div className="flex items-center justify-center mb-2">
-          <div className="bg-primary/10 p-3 rounded-full">
-            <Search className="h-6 w-6 text-primary" />
-          </div>
-        </div>
-        <CardTitle className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-          Tra Cứu Từ Điển
+    <Card className="w-full max-w-5xl mx-auto shadow-xl border-gray-200">
+      <CardHeader className="text-center pb-6">
+        <CardTitle className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+          Tra Cứu Từ Điển Hán-Việt
         </CardTitle>
-        <CardDescription className="text-base">
-          Tra cứu Hán-Việt nhanh chóng và tiện lợi
+        <CardDescription className="text-base text-muted-foreground">
+          Tra cứu nhanh chóng và chính xác
         </CardDescription>
       </CardHeader>
-      <CardContent className="relative z-10">
+      <CardContent>
         <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="relative flex-grow group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+          <div className="relative flex-grow">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="text"
               placeholder={direction === 'han-viet' ? "Nhập chữ Hán hoặc pinyin..." : "Nhập từ tiếng Việt..."}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="h-12 text-lg pl-10 border-2 focus:border-primary/50 transition-all duration-300"
+              className="h-14 text-lg pl-12 border-gray-300 focus:border-primary rounded-xl"
             />
           </div>
           <Select
@@ -95,7 +89,7 @@ const DictionarySearch: React.FC = () => {
               if (value) setDirection(value);
             }}
           >
-            <SelectTrigger className="w-full sm:w-[180px] h-12 text-base font-semibold border-2 hover:border-primary/50 transition-all duration-300">
+            <SelectTrigger className="w-full sm:w-[180px] h-14 text-base font-medium border-gray-300 rounded-xl">
               <SelectValue placeholder="Chọn chiều tra cứu" />
             </SelectTrigger>
             <SelectContent>
@@ -105,57 +99,42 @@ const DictionarySearch: React.FC = () => {
           </Select>
           <Button
             type="submit"
-            className="h-12 text-base font-semibold bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+            className="h-14 text-base font-semibold bg-primary hover:bg-primary/90 px-8 rounded-xl"
           >
             <Search className="h-5 w-5 mr-2" />
             Tìm kiếm
           </Button>
         </form>
 
-        <ScrollArea className="h-80 w-full border-2 rounded-lg p-4 bg-background/50 backdrop-blur-sm">
+        <ScrollArea className="h-96 w-full border border-gray-200 rounded-xl p-4 bg-gray-50/50">
           {isLoading && (
-            <div className="flex flex-col items-center justify-center h-full text-muted-foreground animate-in fade-in duration-300">
-              <div className="relative">
-                <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                <div className="absolute inset-0 h-12 w-12 animate-ping opacity-20 bg-primary rounded-full" />
-              </div>
-              <span className="mt-4 text-lg font-medium">Đang tìm kiếm...</span>
+            <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+              <Loader2 className="h-12 w-12 animate-spin text-primary mb-3" />
+              <span className="text-base font-medium">Đang tìm kiếm...</span>
             </div>
           )}
           {error && !isLoading && (
-            <div className="flex flex-col items-center justify-center h-full text-destructive animate-in fade-in duration-300">
-              <div className="bg-destructive/10 p-4 rounded-full mb-4">
-                <AlertTriangle className="h-10 w-10" />
-              </div>
+            <div className="flex flex-col items-center justify-center h-full text-destructive">
+              <AlertTriangle className="h-12 w-12 mb-3" />
               <span className="text-center font-medium">{error}</span>
             </div>
           )}
           {!isLoading && !error && results.length > 0 && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="space-y-3">
               {results.map((result, index) => (
-                <div
-                  key={`${result.han}-${index}`}
-                  className="animate-in fade-in slide-in-from-bottom-2 duration-300"
-                  style={{ animationDelay: `${index * 50}ms` }}
-                >
-                  <SearchResultCard result={result} />
-                </div>
+                <SearchResultCard key={`${result.han}-${index}`} result={result} />
               ))}
             </div>
           )}
           {!isLoading && !error && results.length === 0 && hasSearched && (
-            <div className="flex flex-col items-center justify-center h-full text-muted-foreground animate-in fade-in duration-300">
-              <div className="bg-muted/30 p-4 rounded-full mb-4">
-                <Search className="h-10 w-10" />
-              </div>
+            <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+              <Search className="h-12 w-12 mb-3 text-gray-400" />
               <span className="text-center font-medium">Không tìm thấy kết quả nào cho "{searchTerm}"</span>
             </div>
           )}
           {!isLoading && !error && !hasSearched && (
             <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-              <div className="bg-primary/10 p-4 rounded-full mb-4">
-                <Search className="h-10 w-10 text-primary" />
-              </div>
+              <Search className="h-12 w-12 mb-3 text-primary" />
               <span className="text-center font-medium">Nhập từ khóa để bắt đầu tra cứu</span>
             </div>
           )}
