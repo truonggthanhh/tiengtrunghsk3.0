@@ -108,54 +108,61 @@ const Index = () => {
       <Header />
       <main className="container mx-auto p-4 md:p-8">
         
-        {/* Hero Section */}
-        <section className="relative py-16 md:py-24 mb-16 bg-gradient-to-br from-primary via-primary to-accent rounded-2xl shadow-2xl text-white overflow-hidden">
-          {/* Animated background elements */}
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-0 left-0 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer" />
-          </div>
+        {/* Hero Section - Clean Professional Style */}
+        <section className="relative py-20 md:py-32 mb-20 bg-primary text-white overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]" />
 
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center px-4 md:px-8">
-            <div className="text-center lg:text-left space-y-6 animate-in fade-in slide-in-from-left duration-700">
-              <div className="inline-flex items-center rounded-full bg-white/20 px-5 py-2 text-sm font-medium backdrop-blur-sm border border-white/30 hover:bg-white/30 transition-all duration-300 shadow-lg">
-                <Bot className="h-5 w-5 mr-2 text-white animate-bounce" />
-                <span>Đặc biệt: Luyện nói với Trợ lý ảo thông minh</span>
+          <div className="container mx-auto px-4 md:px-8 relative z-10">
+            <div className="max-w-4xl mx-auto text-center space-y-8">
+              <div className="inline-flex items-center rounded-full bg-white/10 px-6 py-2.5 text-sm font-medium backdrop-blur-sm border border-white/20">
+                <Bot className="h-4 w-4 mr-2" />
+                <span>Học tiếng Trung với công nghệ AI hiện đại</span>
               </div>
 
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter leading-tight">
-                <span className="block bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-gray-100 drop-shadow-lg">
-                  Chinh Phục
-                </span>
-                <span className="block bg-clip-text text-transparent bg-gradient-to-r from-yellow-200 via-white to-yellow-200 drop-shadow-lg animate-in slide-in-from-right duration-1000">
-                  Tiếng Trung
-                </span>
-                <span className="block text-white/95 drop-shadow-lg">
-                  Cùng HAOHAO
-                </span>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight">
+                Nền Tảng Học Tiếng Trung<br />
+                và Luyện Thi HSK
               </h1>
 
-              <p className="max-w-xl mx-auto lg:mx-0 text-lg md:text-xl text-white/90 leading-relaxed drop-shadow-md">
-                Nền tảng ôn luyện HSK toàn diện với AI, giúp bạn tự tin vượt qua kỳ thi với điểm số cao nhất.
+              <p className="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto leading-relaxed">
+                Phương pháp học hiệu quả, lộ trình rõ ràng, giúp bạn chinh phục HSK một cách tự tin
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                 <Button
                   size="lg"
                   onClick={handleStartLearningClick}
-                  className="bg-white text-primary hover:bg-gray-100 hover:scale-110 transition-all duration-300 shadow-2xl font-bold text-lg px-8 py-6 group"
+                  className="bg-white text-primary hover:bg-gray-50 font-bold text-lg px-10 py-7 rounded-full shadow-xl hover:shadow-2xl transition-all"
                 >
                   Bắt đầu học ngay
-                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </div>
             </div>
+          </div>
+        </section>
 
-            <div className="hidden lg:block animate-in fade-in slide-in-from-right duration-1000">
-              <div className="relative">
-                <div className="absolute inset-0 bg-white/10 rounded-full blur-2xl animate-pulse" />
-                <HeroIllustration />
+        {/* Statistics Section */}
+        <section className="mb-20 -mt-10">
+          <div className="container mx-auto px-4 md:px-8">
+            <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-8 md:p-12">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+                <div className="text-center">
+                  <div className="text-4xl md:text-5xl font-bold text-primary mb-2">6</div>
+                  <div className="text-sm md:text-base text-muted-foreground font-medium">Cấp độ HSK</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl md:text-5xl font-bold text-primary mb-2">5000+</div>
+                  <div className="text-sm md:text-base text-muted-foreground font-medium">Từ vựng</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl md:text-5xl font-bold text-primary mb-2">9</div>
+                  <div className="text-sm md:text-base text-muted-foreground font-medium">Dạng bài tập</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl md:text-5xl font-bold text-primary mb-2">100%</div>
+                  <div className="text-sm md:text-base text-muted-foreground font-medium">Miễn phí</div>
+                </div>
               </div>
             </div>
           </div>
