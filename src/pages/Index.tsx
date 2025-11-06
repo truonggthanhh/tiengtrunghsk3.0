@@ -173,58 +173,55 @@ const Index = () => {
           <DictionarySearch />
         </section>
 
-        {/* Topic Selection Section */}
-        <section ref={topicSectionRef} className="relative py-16 md:py-20 text-center scroll-mt-20 bg-gradient-to-br from-secondary/50 to-tertiary/20 rounded-2xl mb-16 shadow-xl overflow-hidden">
-          <div className="absolute inset-0 bg-grid-white/5 bg-[size:20px_20px]" />
-          <div className="relative z-10 px-4">
-            <div className="mb-12 animate-in fade-in slide-in-from-top duration-500">
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+        {/* Topic Selection Section - Clean Design */}
+        <section ref={topicSectionRef} className="py-20 text-center scroll-mt-20 mb-20">
+          <div className="max-w-6xl mx-auto">
+            <div className="mb-12">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-foreground">
                 Chọn Lộ Trình Học Của Bạn
               </h2>
-              <p className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground">
+              <p className="max-w-2xl mx-auto text-lg text-muted-foreground">
                 Bắt đầu với lộ trình HSK 3.0 tiêu chuẩn hoặc ôn tập theo các giáo trình phổ biến
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card
-                className="relative flex flex-col text-center h-full hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 ease-out group cursor-pointer border-2 border-primary/30 hover:border-primary rounded-2xl overflow-hidden bg-gradient-to-br from-card to-primary/5 animate-in fade-in slide-in-from-left duration-700"
+                className="flex flex-col text-center h-full hover:shadow-xl transition-shadow cursor-pointer border-2 border-gray-200 hover:border-primary bg-white p-8"
                 onClick={handleSelectHsk}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/10 to-primary/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                <CardHeader className="items-center flex-grow relative z-10">
-                  <div className="mb-6 bg-gradient-to-br from-primary/20 to-primary/10 p-6 rounded-full transition-all duration-300 group-hover:scale-110 group-hover:rotate-12 shadow-lg">
-                    <GraduationCap className="w-12 h-12 text-primary transition-all duration-300 group-hover:text-accent" />
+                <CardHeader className="items-center flex-grow space-y-4 pb-6">
+                  <div className="bg-red-50 p-6 rounded-2xl">
+                    <GraduationCap className="w-16 h-16 text-primary" />
                   </div>
-                  <CardTitle className="text-2xl md:text-3xl font-bold mb-3">Luyện thi HSK 3.0</CardTitle>
-                  <CardDescription className="mt-2 text-base md:text-lg leading-relaxed">
-                    Luyện tập theo cấu trúc HSK 3.0 mới nhất, bao gồm 6 cấp độ từ cơ bản đến nâng cao, giúp bạn chinh phục kỳ thi một cách toàn diện.
+                  <CardTitle className="text-2xl md:text-3xl font-bold">Luyện thi HSK 3.0</CardTitle>
+                  <CardDescription className="text-base leading-relaxed">
+                    Luyện tập theo cấu trúc HSK 3.0 mới nhất, bao gồm 6 cấp độ từ cơ bản đến nâng cao
                   </CardDescription>
                 </CardHeader>
-                <CardFooter>
-                  <div className="w-full text-primary text-lg font-bold flex items-center justify-center group-hover:text-accent transition-colors">
+                <CardFooter className="pt-4">
+                  <Button className="w-full bg-primary hover:bg-primary/90 text-white font-semibold rounded-xl h-12">
                     Chọn lộ trình này
-                    <ChevronRight className="ml-2 h-6 w-6 transition-transform group-hover:translate-x-2" />
-                  </div>
+                    <ChevronRight className="ml-2 h-5 w-5" />
+                  </Button>
                 </CardFooter>
               </Card>
 
-              <Link to="/msutong">
-                <Card className="relative flex flex-col text-center h-full hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 ease-out group cursor-pointer border-2 border-primary/30 hover:border-accent rounded-2xl overflow-hidden bg-gradient-to-br from-card to-accent/5 animate-in fade-in slide-in-from-right duration-700">
-                  <div className="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/10 to-accent/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                  <CardHeader className="items-center flex-grow relative z-10">
-                    <div className="mb-6 bg-gradient-to-br from-accent/20 to-accent/10 p-6 rounded-full transition-all duration-300 group-hover:scale-110 group-hover:rotate-12 shadow-lg">
-                      <BookCopy className="w-12 h-12 text-accent transition-all duration-300 group-hover:text-primary" />
+              <Link to="/msutong" className="block">
+                <Card className="flex flex-col text-center h-full hover:shadow-xl transition-shadow cursor-pointer border-2 border-gray-200 hover:border-accent bg-white p-8">
+                  <CardHeader className="items-center flex-grow space-y-4 pb-6">
+                    <div className="bg-cyan-50 p-6 rounded-2xl">
+                      <BookCopy className="w-16 h-16 text-accent" />
                     </div>
-                    <CardTitle className="text-2xl md:text-3xl font-bold mb-3">Giáo trình Msutong</CardTitle>
-                    <CardDescription className="mt-2 text-base md:text-lg leading-relaxed">
-                      Ôn tập từ vựng và ngữ pháp theo từng bài học trong các bộ giáo trình phổ biến như Boya, Hán Ngữ...
+                    <CardTitle className="text-2xl md:text-3xl font-bold">Giáo trình Msutong</CardTitle>
+                    <CardDescription className="text-base leading-relaxed">
+                      Ôn tập từ vựng và ngữ pháp theo từng bài học trong các bộ giáo trình phổ biến
                     </CardDescription>
                   </CardHeader>
-                  <CardFooter>
-                    <div className="w-full text-accent text-lg font-bold flex items-center justify-center group-hover:text-primary transition-colors">
+                  <CardFooter className="pt-4">
+                    <Button className="w-full bg-accent hover:bg-accent/90 text-white font-semibold rounded-xl h-12">
                       Khám phá ngay
-                      <ChevronRight className="ml-2 h-6 w-6 transition-transform group-hover:translate-x-2" />
-                    </div>
+                      <ChevronRight className="ml-2 h-5 w-5" />
+                    </Button>
                   </CardFooter>
                 </Card>
               </Link>
@@ -237,71 +234,67 @@ const Index = () => {
             {/* Feature Section */}
             <FeatureSection />
 
-            {/* HSK Level Selection */}
-            <section ref={levelSectionRef} className="mb-16 scroll-mt-20 bg-gradient-to-br from-accent/20 to-primary/20 rounded-xl shadow-md p-8">
-              <div className="w-full max-w-4xl mx-auto bg-card border p-6 md:p-10 rounded-2xl shadow-sm">
+            {/* HSK Level Selection - Clean Tabs */}
+            <section ref={levelSectionRef} className="mb-20 scroll-mt-20">
+              <div className="w-full max-w-5xl mx-auto bg-white border-2 border-gray-200 p-8 md:p-10 rounded-2xl shadow-lg">
                 <div className="text-center mb-8">
-                  <h2 className="text-3xl font-bold tracking-tight">Chọn Trình Độ Của Bạn</h2>
-                  <p className="text-muted-foreground mt-2">Bắt đầu hành trình của bạn bằng cách chọn cấp độ HSK phù hợp.</p>
+                  <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">Chọn Trình Độ Của Bạn</h2>
+                  <p className="text-muted-foreground mt-3 text-base">Bắt đầu hành trình của bạn bằng cách chọn cấp độ HSK phù hợp</p>
                 </div>
                 <Tabs defaultValue="1" onValueChange={setLevel} className="w-full">
-                  <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 h-auto gap-2 bg-transparent p-0">
-                    <TabsTrigger value="1" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold">HSK 1</TabsTrigger>
-                    <TabsTrigger value="2" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold">HSK 2</TabsTrigger>
-                    <TabsTrigger value="3" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold">HSK 3</TabsTrigger>
-                    <TabsTrigger value="4" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold">HSK 4</TabsTrigger>
-                    <TabsTrigger value="5" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold">HSK 5</TabsTrigger>
-                    <TabsTrigger value="6" className="text-base h-12 transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold">HSK 6</TabsTrigger>
+                  <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 h-auto gap-3 bg-gray-100 p-2 rounded-xl">
+                    <TabsTrigger value="1" className="text-base h-11 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white font-semibold">HSK 1</TabsTrigger>
+                    <TabsTrigger value="2" className="text-base h-11 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white font-semibold">HSK 2</TabsTrigger>
+                    <TabsTrigger value="3" className="text-base h-11 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white font-semibold">HSK 3</TabsTrigger>
+                    <TabsTrigger value="4" className="text-base h-11 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white font-semibold">HSK 4</TabsTrigger>
+                    <TabsTrigger value="5" className="text-base h-11 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white font-semibold">HSK 5</TabsTrigger>
+                    <TabsTrigger value="6" className="text-base h-11 rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white font-semibold">HSK 6</TabsTrigger>
                   </TabsList>
                 </Tabs>
               </div>
             </section>
 
-            {/* Exercise Types Section */}
-            <section className="mb-16 bg-gradient-to-br from-background via-secondary/20 to-primary/10 rounded-2xl shadow-xl p-8 md:p-12 overflow-hidden relative">
-              <div className="absolute inset-0 bg-grid-white/5 bg-[size:30px_30px]" />
-              <div className="relative z-10">
-                <div className="text-center mb-12 animate-in fade-in slide-in-from-top duration-500">
-                  <h2 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent mb-3">
-                    Các Dạng Bài Tập cho HSK {level}
-                  </h2>
-                  <p className="text-muted-foreground text-lg mt-2">Luyện tập đa dạng để nắm vững kiến thức</p>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                  {exerciseTypes.map((exercise, index) => (
-                    <div
-                      key={exercise.slug}
-                      className={cn(!exercise.isAvailable && 'opacity-50', 'animate-in fade-in slide-in-from-bottom-4 duration-500')}
-                      style={{ animationDelay: `${index * 100}ms` }}
-                    >
-                      <Link to={exercise.isAvailable ? `/hsk/${level}/${exercise.slug}` : '#'} className={!exercise.isAvailable ? 'pointer-events-none' : ''}>
-                        <Card className={cn(
-                          "relative flex flex-col text-center h-full hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 ease-out group cursor-pointer border-2 rounded-2xl overflow-hidden bg-gradient-to-br from-card to-primary/5",
-                          exercise.isAvailable ? "border-primary/30 hover:border-primary" : "border-muted/30"
-                        )}>
-                          <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/10 to-primary/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                          <CardHeader className="items-center flex-grow relative z-10 p-6">
-                            <div className="mb-4 bg-gradient-to-br from-primary/20 to-primary/10 p-5 rounded-full transition-all duration-300 group-hover:scale-110 group-hover:rotate-12 shadow-lg">
-                              {React.cloneElement(exercise.icon, { className: "w-10 h-10 text-primary transition-all duration-300" })}
-                            </div>
-                            <CardTitle className="text-xl md:text-2xl font-bold mb-2">{exercise.title}</CardTitle>
-                            <CardDescription className="text-base leading-relaxed">{exercise.description}</CardDescription>
-                          </CardHeader>
-                          <CardFooter className="relative z-10">
-                            <Button
-                              variant="secondary"
-                              className="w-full font-bold text-base py-5 transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground"
-                              disabled={!exercise.isAvailable}
-                            >
-                              {exercise.isAvailable ? 'Luyện tập' : 'Sắp ra mắt'}
-                              {exercise.isAvailable && <ChevronRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-2" />}
-                            </Button>
-                          </CardFooter>
-                        </Card>
-                      </Link>
-                    </div>
-                  ))}
-                </div>
+            {/* Exercise Types Section - Clean Grid */}
+            <section className="mb-20">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-3">
+                  Các Dạng Bài Tập cho HSK {level}
+                </h2>
+                <p className="text-muted-foreground text-lg">Luyện tập đa dạng để nắm vững kiến thức</p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {exerciseTypes.map((exercise) => (
+                  <Link
+                    key={exercise.slug}
+                    to={exercise.isAvailable ? `/hsk/${level}/${exercise.slug}` : '#'}
+                    className={!exercise.isAvailable ? 'pointer-events-none' : ''}
+                  >
+                    <Card className={cn(
+                      "flex flex-col text-center h-full hover:shadow-xl transition-shadow cursor-pointer border-2 bg-white p-6",
+                      exercise.isAvailable ? "border-gray-200 hover:border-primary" : "border-gray-200 opacity-60"
+                    )}>
+                      <CardHeader className="items-center flex-grow space-y-4 pb-4">
+                        <div className="bg-red-50 p-4 rounded-xl">
+                          {React.cloneElement(exercise.icon, { className: "w-10 h-10 text-primary" })}
+                        </div>
+                        <CardTitle className="text-xl font-bold">{exercise.title}</CardTitle>
+                        <CardDescription className="text-sm leading-relaxed">{exercise.description}</CardDescription>
+                      </CardHeader>
+                      <CardFooter className="pt-4">
+                        <Button
+                          variant={exercise.isAvailable ? "default" : "secondary"}
+                          className={cn(
+                            "w-full font-semibold rounded-xl h-11",
+                            exercise.isAvailable && "bg-primary hover:bg-primary/90"
+                          )}
+                          disabled={!exercise.isAvailable}
+                        >
+                          {exercise.isAvailable ? 'Bắt đầu luyện tập' : 'Sắp ra mắt'}
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  </Link>
+                ))}
               </div>
             </section>
 
