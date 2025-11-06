@@ -9,15 +9,16 @@ interface FeatureItemProps {
 }
 
 const FeatureItem: React.FC<FeatureItemProps> = ({ icon, title, description }) => (
-  <Card className="flex flex-col text-center p-6 h-full">
-    <CardHeader className="flex flex-col items-center pb-4">
-      <div className="mb-4 bg-primary/10 p-4 rounded-full">
-        {React.cloneElement(icon as React.ReactElement, { className: "w-8 h-8 text-primary" })}
+  <Card className="relative flex flex-col text-center p-6 h-full border-2 border-primary/20 hover:border-primary/50 hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 group overflow-hidden bg-gradient-to-br from-card to-primary/5">
+    <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/10 to-primary/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+    <CardHeader className="flex flex-col items-center pb-4 relative z-10">
+      <div className="mb-4 bg-gradient-to-br from-primary/20 to-primary/10 p-5 rounded-full transition-all duration-300 group-hover:scale-110 group-hover:rotate-12 shadow-lg">
+        {React.cloneElement(icon as React.ReactElement, { className: "w-10 h-10 text-primary transition-all duration-300" })}
       </div>
-      <CardTitle className="text-xl">{title}</CardTitle>
+      <CardTitle className="text-xl md:text-2xl font-bold">{title}</CardTitle>
     </CardHeader>
-    <CardContent className="flex-grow">
-      <p className="text-muted-foreground">{description}</p>
+    <CardContent className="flex-grow relative z-10">
+      <p className="text-muted-foreground text-base leading-relaxed">{description}</p>
     </CardContent>
   </Card>
 );
@@ -47,19 +48,26 @@ const FeatureSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-16 md:py-20 bg-gradient-to-br from-secondary/50 to-accent/50 rounded-lg mb-16">
-      <div className="container mx-auto px-4 md:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+    <section className="relative py-16 md:py-20 bg-gradient-to-br from-secondary/50 via-accent/30 to-primary/20 rounded-2xl mb-16 shadow-xl overflow-hidden">
+      <div className="absolute inset-0 bg-grid-white/5 bg-[size:25px_25px]" />
+      <div className="container mx-auto px-4 md:px-8 relative z-10">
+        <div className="text-center mb-12 animate-in fade-in slide-in-from-top duration-500">
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
             Tại Sao Chọn TIẾNG TRUNG HAOHAO?
           </h2>
-          <p className="max-w-2xl mx-auto text-lg text-muted-foreground">
-            Chúng tôi mang đến một phương pháp học tiếng Trung hiệu quả và thú vị, giúp bạn đạt được mục tiêu HSK của mình.
+          <p className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground leading-relaxed">
+            Chúng tôi mang đến một phương pháp học tiếng Trung hiệu quả và thú vị, giúp bạn đạt được mục tiêu HSK của mình
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {features.map((feature, index) => (
-            <FeatureItem key={index} {...feature} />
+            <div
+              key={index}
+              className="animate-in fade-in slide-in-from-bottom-4 duration-500"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              <FeatureItem {...feature} />
+            </div>
           ))}
         </div>
       </div>
