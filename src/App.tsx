@@ -29,6 +29,7 @@ import MsutongHandwritingPage from "./pages/msutong/MsutongHandwritingPage"; // 
 import Login from "./pages/Login";
 import AdminDashboardPage from "./pages/AdminDashboardPage"; 
 import { SessionContextProvider } from "./components/SessionContextProvider";
+import { PinyinProvider } from "./contexts/PinyinContext";
 
 const queryClient = new QueryClient();
 
@@ -40,7 +41,8 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <SessionContextProvider>
-            <Routes>
+            <PinyinProvider>
+              <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
               <Route path="/admin" element={<AdminDashboardPage />} /> 
@@ -71,7 +73,8 @@ const App = () => (
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
-            </Routes>
+              </Routes>
+            </PinyinProvider>
           </SessionContextProvider>
         </BrowserRouter>
       </TooltipProvider>

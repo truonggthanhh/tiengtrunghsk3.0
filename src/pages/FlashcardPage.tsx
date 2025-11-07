@@ -6,13 +6,15 @@ import { getVocabularyByLevel } from '@/data';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, Home, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
+import { usePinyin } from '@/contexts/PinyinContext';
 
 const BATCH_SIZE = 10;
 
 const FlashcardPage = () => {
   const { level } = useParams<{ level: string }>();
   const fullVocabulary = useMemo(() => getVocabularyByLevel(level || '1'), [level]);
-  
+  const { showPinyin } = usePinyin();
+
   const [batchIndex, setBatchIndex] = useState(0);
   const [currentIndexInBatch, setCurrentIndexInBatch] = useState(0);
 
@@ -102,11 +104,12 @@ const FlashcardPage = () => {
             <p className="text-muted-foreground">Nhấn vào thẻ để xem nghĩa, hoặc dùng phím mũi tên để chuyển từ.</p>
           </div>
           
-          <Flashcard 
+          <Flashcard
             key={currentWord.id}
             hanzi={currentWord.hanzi}
             pinyin={currentWord.pinyin}
             meaning={currentWord.meaning}
+            showPinyin={showPinyin}
           />
 
           <div className="mt-8">

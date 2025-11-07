@@ -4,12 +4,14 @@ import { useSession } from "@/components/SessionContextProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { LogOut, UserCog } from "lucide-react";
+import { LogOut, UserCog, Languages } from "lucide-react";
 import { toast } from "sonner";
+import { usePinyin } from "@/contexts/PinyinContext";
 
 const Header = () => {
   const { session, isLoading } = useSession();
   const [isAdmin, setIsAdmin] = useState(false);
+  const { showPinyin, togglePinyin } = usePinyin();
 
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -54,6 +56,17 @@ const Header = () => {
           TIẾNG TRUNG HAOHAO
         </Link>
         <div className="flex items-center gap-3">
+          {/* Pinyin Toggle Button */}
+          <Button
+            variant={showPinyin ? "default" : "outline"}
+            size="sm"
+            onClick={togglePinyin}
+            className={`flex items-center gap-2 ${showPinyin ? 'bg-gradient-spring text-white hover:bg-gradient-spring/90 border-0' : 'hover:bg-gray-100'}`}
+          >
+            <Languages className="h-4 w-4" />
+            <span className="hidden sm:inline">{showPinyin ? 'Có Pinyin' : 'Không Pinyin'}</span>
+          </Button>
+
           {isAdmin && (
             <Button asChild variant="ghost" size="sm" className="hover:bg-gray-100">
               <Link to="/admin" className="flex items-center gap-2">
