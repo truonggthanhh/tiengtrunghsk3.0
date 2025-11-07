@@ -26,6 +26,8 @@ const exerciseTypes = [
     description: "Ôn tập từ vựng qua thẻ ghi nhớ",
     icon: <BookOpen />,
     isAvailable: true,
+    gradient: "bg-gradient-colorful",
+    shadowColor: "shadow-purple",
   },
   {
     slug: "pinyin-choice",
@@ -33,6 +35,8 @@ const exerciseTypes = [
     description: "Chọn pinyin đúng cho chữ Hán",
     icon: <Mic />,
     isAvailable: true,
+    gradient: "bg-gradient-sunset",
+    shadowColor: "shadow-pink",
   },
   {
     slug: "meaning-choice",
@@ -40,6 +44,8 @@ const exerciseTypes = [
     description: "Chọn nghĩa đúng cho từ vựng",
     icon: <Puzzle />,
     isAvailable: true,
+    gradient: "bg-gradient-spring",
+    shadowColor: "shadow-cyan",
   },
   {
     slug: "fill-in-the-blank",
@@ -47,6 +53,8 @@ const exerciseTypes = [
     description: "Điền chữ Hán dựa vào pinyin và nghĩa",
     icon: <FileQuestion />,
     isAvailable: true,
+    gradient: "bg-gradient-fire",
+    shadowColor: "shadow-orange",
   },
   {
     slug: "sentence-choice",
@@ -54,6 +62,8 @@ const exerciseTypes = [
     description: "Chọn từ đúng để hoàn thành câu",
     icon: <CheckSquare />,
     isAvailable: true,
+    gradient: "bg-gradient-ocean",
+    shadowColor: "shadow-cyan",
   },
   {
     slug: "sentence-scramble",
@@ -61,6 +71,8 @@ const exerciseTypes = [
     description: "Sắp xếp các từ thành câu hoàn chỉnh",
     icon: <Shuffle />,
     isAvailable: true,
+    gradient: "bg-gradient-vivid",
+    shadowColor: "shadow-pink",
   },
   {
     slug: "pronunciation",
@@ -68,6 +80,8 @@ const exerciseTypes = [
     description: "Luyện phát âm qua nhận dạng giọng nói",
     icon: <AudioLines />,
     isAvailable: true,
+    gradient: "bg-gradient-tropical",
+    shadowColor: "shadow-purple",
   },
   {
     slug: "handwriting-practice",
@@ -75,6 +89,8 @@ const exerciseTypes = [
     description: "Xem thứ tự nét và luyện viết chữ Hán",
     icon: <PenTool />,
     isAvailable: true,
+    gradient: "bg-gradient-colorful",
+    shadowColor: "shadow-purple",
   },
   {
     slug: "ai-tutor",
@@ -82,6 +98,8 @@ const exerciseTypes = [
     description: "Trò chuyện và nhận phản hồi từ AI",
     icon: <Bot />,
     isAvailable: true,
+    gradient: "bg-gradient-sunset",
+    shadowColor: "shadow-orange",
   },
 ];
 
@@ -108,23 +126,24 @@ const Index = () => {
       <Header />
       <main className="container mx-auto p-4 md:p-8">
         
-        {/* Hero Section - Clean Professional Style */}
-        <section className="relative py-20 md:py-32 mb-20 bg-primary text-white overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]" />
+        {/* Hero Section - Colorful Animated Gradient */}
+        <section className="relative py-20 md:py-32 mb-20 bg-gradient-tropical animate-gradient text-white overflow-hidden rounded-3xl">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.15),transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_70%,rgba(255,255,255,0.1),transparent_50%)]" />
 
           <div className="container mx-auto px-4 md:px-8 relative z-10">
             <div className="max-w-4xl mx-auto text-center space-y-8">
-              <div className="inline-flex items-center rounded-full bg-white/10 px-6 py-2.5 text-sm font-medium backdrop-blur-sm border border-white/20">
+              <div className="inline-flex items-center rounded-full bg-white/20 px-6 py-2.5 text-sm font-medium backdrop-blur-md border border-white/30 animate-pulse-glow">
                 <Bot className="h-4 w-4 mr-2" />
                 <span>Học tiếng Trung với công nghệ AI hiện đại</span>
               </div>
 
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight drop-shadow-2xl">
                 Nền Tảng Học Tiếng Trung<br />
                 và Luyện Thi HSK
               </h1>
 
-              <p className="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-xl md:text-2xl text-white/95 max-w-2xl mx-auto leading-relaxed drop-shadow-lg">
                 Phương pháp học hiệu quả, lộ trình rõ ràng, giúp bạn chinh phục HSK một cách tự tin
               </p>
 
@@ -132,7 +151,7 @@ const Index = () => {
                 <Button
                   size="lg"
                   onClick={handleStartLearningClick}
-                  className="bg-white text-primary hover:bg-gray-50 font-bold text-lg px-10 py-7 rounded-full shadow-xl hover:shadow-2xl transition-all"
+                  className="bg-white text-purple-600 hover:bg-gray-50 font-bold text-lg px-10 py-7 rounded-full shadow-2xl hover:shadow-purple hover:scale-105 transition-all"
                 >
                   Bắt đầu học ngay
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -142,27 +161,25 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Statistics Section */}
+        {/* Statistics Section - Colorful Cards */}
         <section className="mb-20 -mt-10">
           <div className="container mx-auto px-4 md:px-8">
-            <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-8 md:p-12">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-                <div className="text-center">
-                  <div className="text-4xl md:text-5xl font-bold text-primary mb-2">6</div>
-                  <div className="text-sm md:text-base text-muted-foreground font-medium">Cấp độ HSK</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-4xl md:text-5xl font-bold text-primary mb-2">5000+</div>
-                  <div className="text-sm md:text-base text-muted-foreground font-medium">Từ vựng</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-4xl md:text-5xl font-bold text-primary mb-2">9</div>
-                  <div className="text-sm md:text-base text-muted-foreground font-medium">Dạng bài tập</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-4xl md:text-5xl font-bold text-primary mb-2">100%</div>
-                  <div className="text-sm md:text-base text-muted-foreground font-medium">Miễn phí</div>
-                </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              <div className="bg-gradient-colorful text-white rounded-2xl shadow-purple p-6 md:p-8 text-center hover-scale">
+                <div className="text-4xl md:text-5xl font-bold mb-2">6</div>
+                <div className="text-sm md:text-base font-medium">Cấp độ HSK</div>
+              </div>
+              <div className="bg-gradient-sunset text-white rounded-2xl shadow-pink p-6 md:p-8 text-center hover-scale">
+                <div className="text-4xl md:text-5xl font-bold mb-2">5000+</div>
+                <div className="text-sm md:text-base font-medium">Từ vựng</div>
+              </div>
+              <div className="bg-gradient-spring text-white rounded-2xl shadow-cyan p-6 md:p-8 text-center hover-scale">
+                <div className="text-4xl md:text-5xl font-bold mb-2">9</div>
+                <div className="text-sm md:text-base font-medium">Dạng bài tập</div>
+              </div>
+              <div className="bg-gradient-fire text-white rounded-2xl shadow-orange p-6 md:p-8 text-center hover-scale">
+                <div className="text-4xl md:text-5xl font-bold mb-2">100%</div>
+                <div className="text-sm md:text-base font-medium">Miễn phí</div>
               </div>
             </div>
           </div>
@@ -186,20 +203,21 @@ const Index = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card
-                className="flex flex-col text-center h-full hover:shadow-xl transition-shadow cursor-pointer border-2 border-gray-200 hover:border-primary bg-white p-8"
+                className="flex flex-col text-center h-full cursor-pointer border-0 bg-gradient-vivid text-white p-8 hover-scale shadow-pink overflow-hidden relative group"
                 onClick={handleSelectHsk}
               >
-                <CardHeader className="items-center flex-grow space-y-4 pb-6">
-                  <div className="bg-red-50 p-6 rounded-2xl">
-                    <GraduationCap className="w-16 h-16 text-primary" />
+                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                <CardHeader className="items-center flex-grow space-y-4 pb-6 relative z-10">
+                  <div className="bg-white/20 p-6 rounded-2xl backdrop-blur-sm animate-float">
+                    <GraduationCap className="w-16 h-16 text-white" />
                   </div>
-                  <CardTitle className="text-2xl md:text-3xl font-bold">Luyện thi HSK 3.0</CardTitle>
-                  <CardDescription className="text-base leading-relaxed">
+                  <CardTitle className="text-2xl md:text-3xl font-bold text-white">Luyện thi HSK 3.0</CardTitle>
+                  <CardDescription className="text-base leading-relaxed text-white/90">
                     Luyện tập theo cấu trúc HSK 3.0 mới nhất, bao gồm 6 cấp độ từ cơ bản đến nâng cao
                   </CardDescription>
                 </CardHeader>
-                <CardFooter className="pt-4">
-                  <Button className="w-full bg-primary hover:bg-primary/90 text-white font-semibold rounded-xl h-12">
+                <CardFooter className="pt-4 relative z-10">
+                  <Button className="w-full bg-white text-pink-600 hover:bg-gray-50 font-semibold rounded-xl h-12 shadow-lg">
                     Chọn lộ trình này
                     <ChevronRight className="ml-2 h-5 w-5" />
                   </Button>
@@ -207,18 +225,19 @@ const Index = () => {
               </Card>
 
               <Link to="/msutong" className="block">
-                <Card className="flex flex-col text-center h-full hover:shadow-xl transition-shadow cursor-pointer border-2 border-gray-200 hover:border-accent bg-white p-8">
-                  <CardHeader className="items-center flex-grow space-y-4 pb-6">
-                    <div className="bg-cyan-50 p-6 rounded-2xl">
-                      <BookCopy className="w-16 h-16 text-accent" />
+                <Card className="flex flex-col text-center h-full cursor-pointer border-0 bg-gradient-ocean text-white p-8 hover-scale shadow-cyan overflow-hidden relative group">
+                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                  <CardHeader className="items-center flex-grow space-y-4 pb-6 relative z-10">
+                    <div className="bg-white/20 p-6 rounded-2xl backdrop-blur-sm animate-float" style={{animationDelay: '0.5s'}}>
+                      <BookCopy className="w-16 h-16 text-white" />
                     </div>
-                    <CardTitle className="text-2xl md:text-3xl font-bold">Giáo trình Msutong</CardTitle>
-                    <CardDescription className="text-base leading-relaxed">
+                    <CardTitle className="text-2xl md:text-3xl font-bold text-white">Giáo trình Msutong</CardTitle>
+                    <CardDescription className="text-base leading-relaxed text-white/90">
                       Ôn tập từ vựng và ngữ pháp theo từng bài học trong các bộ giáo trình phổ biến
                     </CardDescription>
                   </CardHeader>
-                  <CardFooter className="pt-4">
-                    <Button className="w-full bg-accent hover:bg-accent/90 text-white font-semibold rounded-xl h-12">
+                  <CardFooter className="pt-4 relative z-10">
+                    <Button className="w-full bg-white text-cyan-600 hover:bg-gray-50 font-semibold rounded-xl h-12 shadow-lg">
                       Khám phá ngay
                       <ChevronRight className="ml-2 h-5 w-5" />
                     </Button>
@@ -263,29 +282,30 @@ const Index = () => {
                 <p className="text-muted-foreground text-lg">Luyện tập đa dạng để nắm vững kiến thức</p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {exerciseTypes.map((exercise) => (
+                {exerciseTypes.map((exercise, index) => (
                   <Link
                     key={exercise.slug}
                     to={exercise.isAvailable ? `/hsk/${level}/${exercise.slug}` : '#'}
                     className={!exercise.isAvailable ? 'pointer-events-none' : ''}
                   >
                     <Card className={cn(
-                      "flex flex-col text-center h-full hover:shadow-xl transition-shadow cursor-pointer border-2 bg-white p-6",
-                      exercise.isAvailable ? "border-gray-200 hover:border-primary" : "border-gray-200 opacity-60"
+                      "flex flex-col text-center h-full cursor-pointer border-0 text-white p-6 hover-scale overflow-hidden relative group",
+                      exercise.isAvailable ? `${exercise.gradient} ${exercise.shadowColor}` : "bg-gray-300 opacity-60"
                     )}>
-                      <CardHeader className="items-center flex-grow space-y-4 pb-4">
-                        <div className="bg-red-50 p-4 rounded-xl">
-                          {React.cloneElement(exercise.icon, { className: "w-10 h-10 text-primary" })}
+                      <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                      <CardHeader className="items-center flex-grow space-y-4 pb-4 relative z-10">
+                        <div className="bg-white/20 p-4 rounded-xl backdrop-blur-sm animate-float" style={{animationDelay: `${index * 0.1}s`}}>
+                          {React.cloneElement(exercise.icon, { className: "w-10 h-10 text-white" })}
                         </div>
-                        <CardTitle className="text-xl font-bold">{exercise.title}</CardTitle>
-                        <CardDescription className="text-sm leading-relaxed">{exercise.description}</CardDescription>
+                        <CardTitle className="text-xl font-bold text-white">{exercise.title}</CardTitle>
+                        <CardDescription className="text-sm leading-relaxed text-white/90">{exercise.description}</CardDescription>
                       </CardHeader>
-                      <CardFooter className="pt-4">
+                      <CardFooter className="pt-4 relative z-10">
                         <Button
                           variant={exercise.isAvailable ? "default" : "secondary"}
                           className={cn(
-                            "w-full font-semibold rounded-xl h-11",
-                            exercise.isAvailable && "bg-primary hover:bg-primary/90"
+                            "w-full font-semibold rounded-xl h-11 shadow-lg",
+                            exercise.isAvailable && "bg-white text-purple-600 hover:bg-gray-50"
                           )}
                           disabled={!exercise.isAvailable}
                         >

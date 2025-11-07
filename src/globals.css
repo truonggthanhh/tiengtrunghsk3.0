@@ -202,4 +202,105 @@
   .text-gradient-primary {
     @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
   }
+
+  /* Colorful gradient backgrounds */
+  .bg-gradient-colorful {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .bg-gradient-sunset {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  }
+
+  .bg-gradient-ocean {
+    background: linear-gradient(135deg, #2E3192 0%, #1BFFFF 100%);
+  }
+
+  .bg-gradient-fire {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  }
+
+  .bg-gradient-spring {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  }
+
+  .bg-gradient-tropical {
+    background: linear-gradient(135deg, #fa8bff 0%, #2bd2ff 90%, #2bff88 100%);
+  }
+
+  .bg-gradient-vivid {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #ffc371 100%);
+  }
+
+  /* Animated gradient */
+  @keyframes gradient-shift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient-shift 6s ease infinite;
+  }
+
+  /* Floating animation */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* Pulse glow */
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(102, 126, 234, 0.8);
+    }
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* Scale on hover */
+  .hover-scale {
+    transition: transform 0.3s ease;
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.05);
+  }
+
+  /* Colorful card shadows */
+  .shadow-purple {
+    box-shadow: 0 10px 40px -10px rgba(102, 126, 234, 0.5);
+  }
+
+  .shadow-pink {
+    box-shadow: 0 10px 40px -10px rgba(250, 112, 154, 0.5);
+  }
+
+  .shadow-cyan {
+    box-shadow: 0 10px 40px -10px rgba(75, 172, 254, 0.5);
+  }
+
+  .shadow-orange {
+    box-shadow: 0 10px 40px -10px rgba(255, 195, 113, 0.5);
+  }
 }
