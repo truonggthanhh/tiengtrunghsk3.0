@@ -133,15 +133,20 @@ const AdminDashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-cyan-50 flex flex-col">
       <Header />
       <main className="container mx-auto p-4 md:p-8 flex-grow">
-        <Card className="w-full max-w-4xl mx-auto">
-          <CardHeader>
-            <CardTitle className="text-3xl font-bold flex items-center gap-2">
-              <UserCog className="h-7 w-7" /> Bảng Điều Khiển Quản Trị
+        <Card className="w-full max-w-4xl mx-auto border-0 shadow-2xl bg-white/90 backdrop-blur-lg">
+          <CardHeader className="bg-gradient-vivid text-white rounded-t-xl">
+            <CardTitle className="text-3xl font-bold flex items-center gap-3">
+              <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+                <UserCog className="h-7 w-7" />
+              </div>
+              Bảng Điều Khiển Quản Trị
             </CardTitle>
-            <CardDescription>Quản lý người dùng và quyền truy cập.</CardDescription>
+            <CardDescription className="text-white/90 text-base">
+              Quản lý người dùng và quyền truy cập hệ thống.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -177,7 +182,7 @@ const AdminDashboardPage: React.FC = () => {
           </CardContent>
         </Card>
         <div className="text-center mt-8">
-          <Button asChild variant="secondary" className="font-bold">
+          <Button asChild className="font-bold bg-gradient-spring text-white hover:bg-gradient-spring/90 border-0 shadow-cyan">
             <Link to="/">
               <Home className="mr-2 h-4 w-4" /> Quay lại trang chủ
             </Link>

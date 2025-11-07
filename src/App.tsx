@@ -27,7 +27,8 @@ import MsutongReadingComprehensionPage from "./pages/msutong/MsutongReadingCompr
 import HandwritingPage from "./pages/HandwritingPage"; // Import new HSK handwriting page
 import MsutongHandwritingPage from "./pages/msutong/MsutongHandwritingPage"; // Import new Msutong handwriting page
 import Login from "./pages/Login";
-import AdminDashboardPage from "./pages/AdminDashboardPage"; 
+import AdminDashboardPage from "./pages/AdminDashboardPage";
+import ProfilePage from "./pages/ProfilePage";
 import { SessionContextProvider } from "./components/SessionContextProvider";
 import { PinyinProvider } from "./contexts/PinyinContext";
 
@@ -45,6 +46,7 @@ const App = () => (
               <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/profile" element={<ProfilePage />} />
               <Route path="/admin" element={<AdminDashboardPage />} /> 
               
               {/* HSK Routes */}
