@@ -70,7 +70,51 @@ const Login: React.FC = () => {
                 }}
                 theme="light"
                 redirectTo={window.location.origin + '/'}
+                localization={{
+                  variables: {
+                    sign_in: {
+                      email_label: 'Email',
+                      password_label: 'Mật khẩu',
+                      email_input_placeholder: 'Nhập email của bạn',
+                      password_input_placeholder: 'Nhập mật khẩu',
+                      button_label: 'Đăng nhập',
+                      loading_button_label: 'Đang đăng nhập...',
+                      social_provider_text: 'Đăng nhập với {{provider}}',
+                      link_text: 'Đã có tài khoản? Đăng nhập',
+                    },
+                    sign_up: {
+                      email_label: 'Email',
+                      password_label: 'Mật khẩu',
+                      email_input_placeholder: 'Nhập email của bạn',
+                      password_input_placeholder: 'Tạo mật khẩu',
+                      button_label: 'Đăng ký',
+                      loading_button_label: 'Đang đăng ký...',
+                      social_provider_text: 'Đăng ký với {{provider}}',
+                      link_text: 'Chưa có tài khoản? Đăng ký',
+                    },
+                    forgotten_password: {
+                      email_label: 'Email',
+                      password_label: 'Mật khẩu',
+                      email_input_placeholder: 'Nhập email của bạn',
+                      button_label: 'Gửi hướng dẫn đặt lại mật khẩu',
+                      loading_button_label: 'Đang gửi...',
+                      link_text: 'Quên mật khẩu?',
+                      confirmation_text: 'Kiểm tra email của bạn để đặt lại mật khẩu',
+                    },
+                  },
+                }}
               />
+
+              <div className="mt-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl">
+                <p className="text-sm font-semibold text-purple-900 mb-2 text-center">
+                  💡 Hướng dẫn đăng nhập
+                </p>
+                <ul className="text-xs text-purple-800 space-y-1">
+                  <li>✅ <strong>Email/Password:</strong> Đăng nhập hoặc đăng ký bằng email (mật khẩu tối thiểu 6 ký tự)</li>
+                  <li>🔐 <strong>Google OAuth:</strong> Click "Continue with Google" (nếu Google provider đã enable)</li>
+                  <li className="text-orange-700 font-medium">⚠️ Nếu Google báo lỗi, vui lòng dùng Email/Password</li>
+                </ul>
+              </div>
             </CardContent>
           </Card>
 
