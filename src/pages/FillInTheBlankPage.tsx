@@ -190,13 +190,8 @@ const FillInTheBlankPage = () => {
           
           <Card className="mb-8 shadow-md bg-gradient-fire text-white">
             <CardContent className="p-10 flex flex-col items-center justify-center gap-4">
-              {(showPinyin || answerStatus) && (
-                <p className="text-4xl font-semibold text-white">{currentWord?.pinyin}</p>
-              )}
+              <p className="text-4xl font-semibold text-white">{currentWord?.pinyin}</p>
               <p className="text-2xl text-white/90">{currentWord?.meaning}</p>
-              {!showPinyin && !answerStatus && (
-                <p className="text-sm text-white/70 italic">Pinyin toggle tắt - chỉ hiển thị nghĩa</p>
-              )}
             </CardContent>
           </Card>
 

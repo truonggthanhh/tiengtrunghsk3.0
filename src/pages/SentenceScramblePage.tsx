@@ -4,10 +4,11 @@ import Header from '@/components/Header';
 import { getVocabularyByLevel } from '@/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowRight, Home, RefreshCw } from 'lucide-react';
+import { ArrowRight, Home, RefreshCw, Lightbulb } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { usePinyin } from '@/contexts/PinyinContext';
+import { pinyin } from 'pinyin-pro';
 
 // Helper function to shuffle an array
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -19,9 +20,10 @@ const shuffleArray = <T,>(array: T[]): T[] => {
   return newArray;
 };
 
-// Type for character with unique id
+// Type for character with unique id and pinyin
 interface CharObject {
   char: string;
+  pinyin: string;
   id: number;
 }
 
@@ -47,6 +49,7 @@ const SentenceScramblePage = () => {
   const [answerStatus, setAnswerStatus] = useState<'correct' | 'incorrect' | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [showResult, setShowResult] = useState(false);
+  const [showHint, setShowHint] = useState(false);
 
   const currentQuestion = useMemo(() => questions[currentIndex], [questions, currentIndex]);
 
@@ -57,9 +60,15 @@ const SentenceScramblePage = () => {
   useEffect(() => {
     if (currentQuestion) {
       const chars = currentQuestion.sentence.replace(/[，。？！]/g, '').split('');
-      setShuffledChars(shuffleArray(chars.map((char, index) => ({ char, id: index }))));
+      const charsWithPinyin = chars.map((char, index) => ({
+        char,
+        pinyin: pinyin(char, { toneType: 'symbol' }),
+        id: index
+      }));
+      setShuffledChars(shuffleArray(charsWithPinyin));
       setUserAnswer([]);
       setAnswerStatus(null);
+      setShowHint(false);
     }
   }, [currentQuestion]);
 
@@ -224,8 +233,14 @@ const SentenceScramblePage = () => {
           </div>
           
           <Card className="mb-8 shadow-md bg-gradient-spring text-white">
-            <CardContent className="p-8 text-center">
-              <p className="text-xl text-white/90">Nghĩa: "{currentQuestion?.translation}"</p>
+            <CardContent className="p-8 text-center space-y-4">
+              <p className="text-lg text-white/90 font-medium">Sắp xếp các từ thành câu hoàn chỉnh</p>
+              {(showHint || answerStatus) && (
+                <div className="pt-4 border-t border-white/20">
+                  <p className="text-sm text-white/70 mb-2">Nghĩa:</p>
+                  <p className="text-xl text-white font-semibold">"{currentQuestion?.translation}"</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -235,8 +250,14 @@ const SentenceScramblePage = () => {
             answerStatus === 'incorrect' && 'border-destructive'
           )}>
             {userAnswer.map((charObj) => (
-              <Button key={charObj.id} variant="secondary" className="text-2xl h-14 px-4 hover:bg-secondary/80 transition-colors font-bold" onClick={() => handleAnswerCharClick(charObj)}>
-                {charObj.char}
+              <Button
+                key={charObj.id}
+                variant="secondary"
+                className="flex flex-col h-auto py-2 px-3 hover:bg-secondary/80 transition-colors font-bold gap-1"
+                onClick={() => handleAnswerCharClick(charObj)}
+              >
+                <span className="text-2xl">{charObj.char}</span>
+                {showPinyin && <span className="text-xs text-muted-foreground">{charObj.pinyin}</span>}
               </Button>
             ))}
             {userAnswer.length === 0 && <span className="text-muted-foreground">Câu trả lời của bạn sẽ xuất hiện ở đây</span>}
@@ -244,13 +265,19 @@ const SentenceScramblePage = () => {
 
           <div className="mb-8 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3">
             {shuffledChars.map((charObj) => (
-              <Button key={charObj.id} variant="outline" className="text-2xl h-14 px-4 hover:bg-primary/10 hover:text-primary transition-colors font-bold" onClick={() => handleCharSelect(charObj)}>
-                {charObj.char}
+              <Button
+                key={charObj.id}
+                variant="outline"
+                className="flex flex-col h-auto py-2 px-3 hover:bg-primary/10 hover:text-primary transition-colors font-bold gap-1"
+                onClick={() => handleCharSelect(charObj)}
+              >
+                <span className="text-2xl">{charObj.char}</span>
+                {showPinyin && <span className="text-xs text-muted-foreground">{charObj.pinyin}</span>}
               </Button>
             ))}
           </div>
 
-          <div className="flex justify-center gap-4">
+          <div className="flex justify-center gap-4 flex-wrap">
             {answerStatus !== 'correct' && (
               <Button onClick={handleSubmit} size="lg" disabled={!!answerStatus || userAnswer.length === 0} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">
                 Kiểm tra
@@ -261,12 +288,29 @@ const SentenceScramblePage = () => {
                     Câu tiếp theo <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
             )}
+            {!answerStatus && (
+              <Button
+                onClick={() => setShowHint(true)}
+                variant="secondary"
+                size="lg"
+                disabled={showHint}
+                className="hover:bg-secondary/80 transition-colors font-bold"
+              >
+                <Lightbulb className="mr-2 h-5 w-5" /> Gợi ý đáp án
+              </Button>
+            )}
             <Button onClick={() => {
                 if (currentQuestion) {
                     const chars = currentQuestion.sentence.replace(/[，。？！]/g, '').split('');
-                    setShuffledChars(shuffleArray(chars.map((char, index) => ({ char, id: index }))));
+                    const charsWithPinyin = chars.map((char, index) => ({
+                      char,
+                      pinyin: pinyin(char, { toneType: 'symbol' }),
+                      id: index
+                    }));
+                    setShuffledChars(shuffleArray(charsWithPinyin));
                     setUserAnswer([]);
                     setAnswerStatus(null);
+                    setShowHint(false);
                 }
             }} variant="outline" size="lg" disabled={!!answerStatus} className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
                 <RefreshCw className="mr-2 h-5 w-5" /> Thử lại
