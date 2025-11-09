@@ -8,6 +8,7 @@ import type { VocabularyWord } from '@/data';
 import { Link } from 'react-router-dom';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import HanziWriterWrapper from './HanziWriterWrapper';
+import { usePinyin } from '@/contexts/PinyinContext';
 
 interface HandwritingPracticeProps {
   vocabulary: VocabularyWord[];
@@ -23,6 +24,7 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
   description,
   homeLink,
 }) => {
+  const { showPinyin } = usePinyin();
   const writerRef = useRef<HanziWriter | null>(null);
 
   const [selectedWord, setSelectedWord] = useState<VocabularyWord | null>(null);
@@ -131,9 +133,9 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
                   <ArrowLeft className="mr-2 h-4 w-4" /> Quay lại danh sách
                 </Button>
               </div>
-              <Card className="mb-8 shadow-md">
+              <Card className="mb-8 shadow-md bg-gradient-ocean text-white">
                 <CardContent className="p-6 flex flex-col items-center justify-center gap-4">
-                  <div className="w-[250px] h-[250px] border rounded-md overflow-hidden flex items-center justify-center">
+                  <div className="w-[250px] h-[250px] border border-white/20 rounded-md overflow-hidden flex items-center justify-center bg-white">
                     {isLoading && (
                       <div className="flex flex-col items-center text-muted-foreground">
                         <Loader2 className="h-8 w-8 animate-spin mb-2" />
@@ -155,9 +157,11 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
                       }}
                     />
                   </div>
-                  <div className="text-center">
-                    <p className="text-4xl font-semibold">{selectedWord.pinyin}</p>
-                    <p className="text-2xl text-muted-foreground">{selectedWord.meaning}</p>
+                  <div className="text-center space-y-2">
+                    {showPinyin && (
+                      <p className="text-4xl font-semibold text-white/90">{selectedWord.pinyin}</p>
+                    )}
+                    <p className="text-2xl text-white/90">{selectedWord.meaning}</p>
                   </div>
                 </CardContent>
               </Card>
