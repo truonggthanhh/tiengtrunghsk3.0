@@ -5,6 +5,7 @@ export interface VocabularyWord {
   meaning: string;
   examples?: {
     hanzi: string;
+    pinyin?: string;  // Added pinyin support for examples
     translation: string;
   }[];
 }
