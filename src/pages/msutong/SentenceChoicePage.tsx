@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { ArrowRight, Home, CheckCircle2, XCircle } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
+import { usePinyin } from '@/contexts/PinyinContext';
 
 const shuffleArray = <T,>(array: T[]): T[] => {
   const newArray = [...array];
@@ -18,6 +19,7 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 };
 
 const MsutongSentenceChoicePage = () => {
+  const { showPinyin } = usePinyin();
   const [searchParams] = useSearchParams();
   const level = searchParams.get('level') || 'so-cap';
   const lessonIds = searchParams.get('lessonIds')?.split(',') || [];
@@ -219,10 +221,15 @@ const MsutongSentenceChoicePage = () => {
             <Progress value={progressValue} className="w-full" />
           </div>
           
-          <Card className="mb-8">
+          <Card className="mb-8 shadow-md bg-gradient-ocean text-white">
             <CardContent className="p-10 flex flex-col items-center justify-center text-center gap-4">
               <h2 className="text-4xl md:text-5xl font-bold tracking-wider">{questionSentence}</h2>
-              <p className="text-lg text-muted-foreground">{currentQuestion?.translation}</p>
+              <p className="text-lg text-white/90">{currentQuestion?.translation}</p>
+              {(showPinyin || selectedAnswer) && (
+                <p className="text-2xl font-medium text-white/90">
+                  Từ cần điền: {currentQuestion?.word.pinyin}
+                </p>
+              )}
             </CardContent>
           </Card>
 

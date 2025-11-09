@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { ArrowRight, Home, RefreshCw } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
+import { usePinyin } from '@/contexts/PinyinContext';
 
 const shuffleArray = <T,>(array: T[]): T[] => {
   const newArray = [...array];
@@ -23,6 +24,7 @@ interface CharObject {
 }
 
 const MsutongSentenceScramblePage = () => {
+  const { showPinyin } = usePinyin();
   const [searchParams] = useSearchParams();
   const level = searchParams.get('level') || 'so-cap';
   const lessonIds = searchParams.get('lessonIds')?.split(',') || [];
@@ -227,9 +229,9 @@ const MsutongSentenceScramblePage = () => {
             <Progress value={progressValue} className="w-full" />
           </div>
           
-          <Card className="mb-8">
+          <Card className="mb-8 shadow-md bg-gradient-spring text-white">
             <CardContent className="p-8 text-center">
-              <p className="text-xl text-muted-foreground">Nghĩa: "{currentQuestion?.translation}"</p>
+              <p className="text-xl text-white/90">Nghĩa: "{currentQuestion?.translation}"</p>
             </CardContent>
           </Card>
 
@@ -271,10 +273,16 @@ const MsutongSentenceScramblePage = () => {
           </div>
 
           {answerStatus === 'incorrect' && (
-            <div className="mt-6 text-center p-4 bg-destructive/10 rounded-lg">
-              <p className="text-destructive mb-2">Sai rồi!</p>
-              <p className="text-lg">Đáp án đúng là: <span className="font-bold text-2xl">{currentQuestion.sentence}</span></p>
-            </div>
+            <Card className="mt-6 shadow-md bg-gradient-tropical text-white">
+              <CardContent className="p-6 text-center space-y-2">
+                <p className="text-white font-semibold text-lg">Sai rồi!</p>
+                <p className="text-2xl md:text-3xl font-bold">{currentQuestion.sentence}</p>
+                {showPinyin && (currentQuestion as any).pinyin && (
+                  <p className="text-xl font-medium text-white/90">{(currentQuestion as any).pinyin}</p>
+                )}
+                <p className="text-lg text-white/90">Nghĩa: {currentQuestion.translation}</p>
+              </CardContent>
+            </Card>
           )}
 
           <div className="text-center mt-12">
