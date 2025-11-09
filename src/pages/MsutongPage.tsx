@@ -133,7 +133,7 @@ const MsutongPage = () => {
       
       case 'book':
         return (
-          <div className="w-full max-w-4xl mx-auto bg-card p-6 md:p-10 rounded-xl shadow-lg border border-primary/20">
+          <div className="w-full max-w-4xl mx-auto bg-card p-6 md:p-10 rounded-xl shadow-lg border">
             <Button variant="secondary" onClick={() => setStep('level')} className="mb-8 font-bold hover:bg-secondary/80 transition-colors"><ArrowLeft className="mr-2 h-4 w-4" /> Quay lại</Button>
             <div className="text-center mb-10">
               <h2 className="text-3xl font-bold tracking-tight">Chọn Quyển</h2>
@@ -162,7 +162,7 @@ const MsutongPage = () => {
 
       case 'lesson':
         return (
-          <div className="w-full max-w-5xl mx-auto bg-card p-6 md:p-10 rounded-xl shadow-lg border border-primary/20">
+          <div className="w-full max-w-5xl mx-auto bg-card p-6 md:p-10 rounded-xl shadow-lg border">
             <Button variant="secondary" onClick={() => setStep('book')} className="mb-8 font-bold hover:bg-secondary/80 transition-colors"><ArrowLeft className="mr-2 h-4 w-4" /> Quay lại</Button>
             <div className="text-center mb-10">
               <h2 className="text-3xl font-bold tracking-tight">Chọn Bài Học</h2>
@@ -192,7 +192,7 @@ const MsutongPage = () => {
 
       case 'exercise':
         return (
-          <div className="w-full max-w-5xl mx-auto bg-card p-6 md:p-10 rounded-xl shadow-lg border border-primary/20">
+          <div className="w-full max-w-5xl mx-auto bg-card p-6 md:p-10 rounded-xl shadow-lg border">
             <Button variant="secondary" onClick={() => setStep('lesson')} className="mb-8 font-bold hover:bg-secondary/80 transition-colors"><ArrowLeft className="mr-2 h-4 w-4" /> Quay lại</Button>
             <div className="text-center mb-10">
               <h2 className="text-3xl font-bold tracking-tight">Chọn Dạng Bài Tập</h2>
@@ -229,7 +229,7 @@ const MsutongPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
       <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
         {renderStep()}

@@ -95,10 +95,10 @@ const FlashcardPage = () => {
   const progressValue = ((currentIndexInBatch + 1) / currentBatchVocabulary.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
       <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
-        <div className="w-full max-w-2xl bg-card p-6 md:p-8 rounded-xl shadow-lg border border-primary/20">
+        <div className="w-full max-w-2xl bg-card p-6 md:p-8 rounded-xl shadow-lg border">
           <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold">Flashcards HSK {level}</h1>
             <p className="text-muted-foreground">Nhấn vào thẻ để xem nghĩa, hoặc dùng phím mũi tên để chuyển từ.</p>

@@ -140,10 +140,10 @@ const SentenceChoicePage = () => {
 
   if (!questionCount) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
+      <div className="min-h-screen bg-background flex flex-col">
         <Header />
         <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center text-center">
-          <Card className="w-full max-w-md p-6 md:p-8 rounded-xl shadow-lg border border-primary/20">
+          <Card className="w-full max-w-md p-6 md:p-8 rounded-xl shadow-lg border">
             <CardHeader>
               <CardTitle className="text-2xl">Chọn số lượng câu hỏi</CardTitle>
               <CardDescription>Bạn muốn ôn tập bao nhiêu câu cho HSK {level}?</CardDescription>
@@ -175,10 +175,10 @@ const SentenceChoicePage = () => {
 
   if (showResult) {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
+        <div className="min-h-screen bg-background flex flex-col">
             <Header />
             <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center text-center">
-                <Card className="w-full max-w-md p-6 md:p-8 rounded-xl shadow-lg border border-primary/20">
+                <Card className="w-full max-w-md p-6 md:p-8 rounded-xl shadow-lg border">
                     <CardHeader>
                         <CardTitle className="text-2xl">Kết quả</CardTitle>
                     </CardHeader>
@@ -208,10 +208,10 @@ const SentenceChoicePage = () => {
   const questionSentence = currentQuestion?.sentence.replace(currentQuestion.word.hanzi, '___');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
       <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
-        <div className="w-full max-w-2xl bg-card p-6 md:p-8 rounded-xl shadow-lg border border-primary/20">
+        <div className="w-full max-w-2xl bg-card p-6 md:p-8 rounded-xl shadow-lg border">
           <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold">Điền Từ Vào Câu HSK {level}</h1>
             <p className="text-muted-foreground">Chọn từ đúng để hoàn thành câu sau.</p>
