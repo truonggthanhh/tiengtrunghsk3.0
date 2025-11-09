@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { ArrowRight, Home, CheckCircle2, XCircle } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
+import { usePinyin } from '@/contexts/PinyinContext';
 
 // Helper function to shuffle an array
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -21,6 +22,7 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 const MeaningChoicePage = () => {
   const { level } = useParams<{ level: string }>();
   const fullVocabulary = useMemo(() => getVocabularyByLevel(level || '1'), [level]);
+  const { showPinyin } = usePinyin();
 
   const [questionCount, setQuestionCount] = useState<number | null>(null);
   const [vocabulary, setVocabulary] = useState<VocabularyWord[]>([]);
@@ -206,9 +208,12 @@ const MeaningChoicePage = () => {
             <Progress value={progressValue} className="w-full h-2 bg-primary/20" indicatorClassName="bg-primary" />
           </div>
           
-          <Card className="mb-8 shadow-md">
-            <CardContent className="p-10 flex items-center justify-center">
+          <Card className="mb-8 shadow-md bg-gradient-sunset text-white">
+            <CardContent className="p-10 flex flex-col items-center justify-center space-y-4">
               <h2 className="text-7xl md:text-8xl font-bold">{currentWord?.hanzi}</h2>
+              {showPinyin && (
+                <p className="text-2xl md:text-3xl font-medium text-white/90">{currentWord?.pinyin}</p>
+              )}
             </CardContent>
           </Card>
 

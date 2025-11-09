@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { ArrowRight, Home } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
+import { usePinyin } from '@/contexts/PinyinContext';
 
 // Helper function to shuffle an array
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -22,6 +23,7 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 const FillInTheBlankPage = () => {
   const { level } = useParams<{ level: string }>();
   const fullVocabulary = useMemo(() => getVocabularyByLevel(level || '1'), [level]);
+  const { showPinyin } = usePinyin();
 
   const [questionCount, setQuestionCount] = useState<number | null>(null);
   const [vocabulary, setVocabulary] = useState<VocabularyWord[]>([]);
@@ -186,10 +188,15 @@ const FillInTheBlankPage = () => {
             <Progress value={progressValue} className="w-full h-2 bg-primary/20" indicatorClassName="bg-primary" />
           </div>
           
-          <Card className="mb-8 shadow-md">
+          <Card className="mb-8 shadow-md bg-gradient-fire text-white">
             <CardContent className="p-10 flex flex-col items-center justify-center gap-4">
-              <p className="text-4xl font-semibold">{currentWord?.pinyin}</p>
-              <p className="text-2xl text-muted-foreground">{currentWord?.meaning}</p>
+              {(showPinyin || answerStatus) && (
+                <p className="text-4xl font-semibold text-white">{currentWord?.pinyin}</p>
+              )}
+              <p className="text-2xl text-white/90">{currentWord?.meaning}</p>
+              {!showPinyin && !answerStatus && (
+                <p className="text-sm text-white/70 italic">Pinyin toggle tắt - chỉ hiển thị nghĩa</p>
+              )}
             </CardContent>
           </Card>
 

@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { ArrowRight, Home, Mic, MicOff } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
+import { usePinyin } from '@/contexts/PinyinContext';
 
 const shuffleArray = <T,>(array: T[]): T[] => {
   const newArray = [...array];
@@ -24,6 +25,7 @@ interface CustomSpeechRecognition extends SpeechRecognition {
 }
 
 const PronunciationPage = () => {
+  const { showPinyin } = usePinyin();
   const { level } = useParams<{ level: string }>();
   const fullVocabulary = useMemo(() => getVocabularyByLevel(level || '1'), [level]);
 
@@ -233,10 +235,12 @@ const PronunciationPage = () => {
             <Progress value={progressValue} className="w-full h-2 bg-primary/20" indicatorClassName="bg-primary" />
           </div>
           
-          <Card className="mb-8 shadow-md">
-            <CardContent className="p-10 flex flex-col items-center justify-center gap-4">
+          <Card className="mb-8 shadow-md bg-gradient-vivid text-white">
+            <CardContent className="p-10 flex flex-col items-center justify-center space-y-4">
               <h2 className="text-7xl md:text-8xl font-bold">{currentWord?.hanzi}</h2>
-              <p className="text-3xl md:text-4xl text-muted-foreground">{currentWord?.pinyin}</p>
+              {(showPinyin || feedback !== null) && (
+                <p className="text-3xl md:text-4xl font-medium text-white/90">{currentWord?.pinyin}</p>
+              )}
             </CardContent>
           </Card>
 
