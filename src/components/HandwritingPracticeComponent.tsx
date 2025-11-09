@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import HanziWriterWrapper from './HanziWriterWrapper';
 import { usePinyin } from '@/contexts/PinyinContext';
+import { pinyin } from 'pinyin-pro';
 
 interface HandwritingPracticeProps {
   vocabulary: VocabularyWord[];
@@ -21,6 +22,7 @@ interface HandwritingPracticeProps {
 // Extended character info for handwriting practice
 interface CharacterInfo {
   character: string; // Single character
+  pinyinChar: string; // Pinyin for this single character
   pinyin: string; // Pinyin for the whole word
   meaning: string; // Meaning of the whole word
   originalWord: string; // Original word this character comes from
@@ -58,6 +60,7 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
           if (!charMap.has(key)) {
             charMap.set(key, {
               character: char,
+              pinyinChar: pinyin(char, { toneType: 'symbol' }), // Get pinyin for this specific character
               pinyin: word.pinyin,
               meaning: word.meaning,
               originalWord: word.hanzi,
@@ -156,11 +159,12 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
                       key={`${charInfo.character}-${charInfo.wordId}-${index}`}
                       onClick={() => setSelectedChar(charInfo)}
                       variant="outline"
-                      className="h-20 flex flex-col justify-center items-center p-1 group"
-                      title={`${charInfo.character} (từ "${charInfo.originalWord}" - ${charInfo.meaning})`}
+                      className="h-24 flex flex-col justify-center items-center p-2 group gap-1"
+                      title={`${charInfo.character} - ${charInfo.pinyinChar} (từ "${charInfo.originalWord}" - ${charInfo.meaning})`}
                     >
-                      <span className="text-3xl font-bold">{charInfo.character}</span>
-                      <span className="text-xs text-muted-foreground mt-1 truncate w-full text-center">
+                      <span className="text-3xl font-bold leading-none">{charInfo.character}</span>
+                      <span className="text-sm text-primary font-medium leading-none">{charInfo.pinyinChar}</span>
+                      <span className="text-xs text-muted-foreground truncate w-full text-center leading-none">
                         {charInfo.originalWord}
                       </span>
                     </Button>
