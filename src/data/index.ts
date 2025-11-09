@@ -4,19 +4,28 @@ import { hsk3Vocabulary } from './hsk3';
 import { hsk4Vocabulary } from './hsk4';
 import { hsk5Vocabulary } from './hsk5';
 import { hsk6Vocabulary } from './hsk6';
+import { hsk2ExtendedVocabulary } from './hsk2-extended';
+import { hsk3ExtendedVocabulary } from './hsk3-extended';
+import { hsk4ExtendedVocabulary } from './hsk4-extended';
+import { hsk5ExtendedVocabulary } from './hsk5-extended';
+import { hsk6ExtendedVocabulary } from './hsk6-extended';
 import { msutong_so_cap_1_vocab, type MsutongWord } from './msutong/so-cap-1-vocab';
 import { msutong_so_cap_2_vocab } from './msutong/so-cap-2-vocab';
 import { msutong_so_cap_3_vocab } from './msutong/so-cap-3-vocab';
 import { msutong_so_cap_4_vocab } from './msutong/so-cap-4-vocab';
+import { soCap1ExtendedVocabulary } from './msutong/so-cap-1-extended';
+import { soCap2ExtendedVocabulary } from './msutong/so-cap-2-extended';
+import { soCap3ExtendedVocabulary } from './msutong/so-cap-3-extended';
+import { soCap4ExtendedVocabulary } from './msutong/so-cap-4-extended';
 import { msutongReadingComprehension, type ReadingComprehensionPassage } from './msutong/reading-comprehension';
 
 const vocabularyData: { [key: string]: VocabularyWord[] } = {
   '1': hsk1Vocabulary,
-  '2': hsk2Vocabulary,
-  '3': hsk3Vocabulary,
-  '4': hsk4Vocabulary,
-  '5': hsk5Vocabulary,
-  '6': hsk6Vocabulary,
+  '2': [...hsk2Vocabulary, ...hsk2ExtendedVocabulary],
+  '3': [...hsk3Vocabulary, ...hsk3ExtendedVocabulary],
+  '4': [...hsk4Vocabulary, ...hsk4ExtendedVocabulary],
+  '5': [...hsk5Vocabulary, ...hsk5ExtendedVocabulary],
+  '6': [...hsk6Vocabulary, ...hsk6ExtendedVocabulary],
 };
 
 export const getVocabularyByLevel = (level: string): VocabularyWord[] => {
@@ -38,10 +47,10 @@ export const getVocabularyByLevel = (level: string): VocabularyWord[] => {
 // Cấu trúc dữ liệu cho giáo trình Msutong
 const msutongVocabularyData: { [level: string]: { [book: string]: MsutongWord[] } } = {
   'so-cap': {
-    'quyen-1': msutong_so_cap_1_vocab,
-    'quyen-2': msutong_so_cap_2_vocab,
-    'quyen-3': msutong_so_cap_3_vocab,
-    'quyen-4': msutong_so_cap_4_vocab,
+    'quyen-1': [...msutong_so_cap_1_vocab, ...soCap1ExtendedVocabulary],
+    'quyen-2': [...msutong_so_cap_2_vocab, ...soCap2ExtendedVocabulary],
+    'quyen-3': [...msutong_so_cap_3_vocab, ...soCap3ExtendedVocabulary],
+    'quyen-4': [...msutong_so_cap_4_vocab, ...soCap4ExtendedVocabulary],
   },
   // Dữ liệu cho các cấp độ khác sẽ được thêm vào đây
 };
