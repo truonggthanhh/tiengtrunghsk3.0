@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { ArrowRight, Home, CheckCircle2, XCircle, BookText } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
+import { usePinyin } from '@/contexts/PinyinContext';
 
 const shuffleArray = <T,>(array: T[]): T[] => {
   const newArray = [...array];
@@ -18,6 +19,7 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 };
 
 const MsutongReadingComprehensionPage = () => {
+  const { showPinyin } = usePinyin();
   const [searchParams] = useSearchParams();
   const level = searchParams.get('level') || 'so-cap';
   const lessonIds = searchParams.get('lessonIds')?.split(',') || [];
@@ -112,10 +114,10 @@ const MsutongReadingComprehensionPage = () => {
 
   if (showResult) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-cyan-50 flex flex-col">
         <Header />
         <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center text-center">
-          <Card className="w-full max-w-md p-6 md:p-8 rounded-xl shadow-lg border border-primary/20">
+          <Card className="w-full max-w-md p-6 md:p-8 rounded-xl shadow-2xl border-0 bg-white/90 backdrop-blur-lg">
             <CardHeader>
               <CardTitle className="text-2xl">Kết quả</CardTitle>
             </CardHeader>
@@ -127,8 +129,8 @@ const MsutongReadingComprehensionPage = () => {
                 Bạn đã trả lời đúng {score} trên tổng số {currentPassage.questions.length} câu hỏi.
               </p>
               <div className="flex gap-4 justify-center">
-                <Button onClick={resetExercise} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">Làm lại</Button>
-                <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
+                <Button onClick={resetExercise} className="bg-gradient-spring text-white hover:bg-gradient-spring/90 hover:scale-[1.02] transition-all font-bold border-0 shadow-cyan">Làm lại</Button>
+                <Button asChild className="bg-gradient-sunset text-white hover:bg-gradient-sunset/90 hover:scale-[1.02] transition-all font-bold border-0 shadow-pink">
                   <Link to="/msutong">
                     <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
                   </Link>
@@ -145,10 +147,10 @@ const MsutongReadingComprehensionPage = () => {
   const progressValue = ((currentQuestionIndex + 1) / currentPassage.questions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-cyan-50 flex flex-col">
       <Header />
       <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
-        <div className="w-full max-w-3xl bg-card p-6 md:p-8 rounded-xl shadow-lg border border-primary/20">
+        <div className="w-full max-w-3xl bg-white/90 backdrop-blur-lg p-6 md:p-8 rounded-xl shadow-2xl border-0">
           <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold flex items-center justify-center gap-2">
               <BookText className="h-7 w-7 text-primary" /> Đọc hiểu (Msutong)
@@ -160,17 +162,22 @@ const MsutongReadingComprehensionPage = () => {
 
           {!hasStartedQuestions ? (
             <>
-              <Card className="mb-8 shadow-md">
+              <Card className="mb-8 shadow-md bg-gradient-ocean text-white border-0">
                 <CardHeader>
-                  <CardTitle className="text-2xl">{currentPassage.title}</CardTitle>
-                  <CardDescription className="text-muted-foreground">Đọc kỹ đoạn văn sau:</CardDescription>
+                  <CardTitle className="text-2xl text-white">{currentPassage.title}</CardTitle>
+                  <CardDescription className="text-white/90">Đọc kỹ đoạn văn sau:</CardDescription>
+                  {showPinyin && (
+                    <p className="text-sm text-white/70 italic mt-2">
+                      💡 Bài đọc hiểu tập trung vào kỹ năng đọc - Pinyin không được cung cấp
+                    </p>
+                  )}
                 </CardHeader>
-                <CardContent className="text-lg leading-relaxed whitespace-pre-wrap">
+                <CardContent className="text-lg leading-relaxed whitespace-pre-wrap text-white">
                   {currentPassage.passage}
                 </CardContent>
               </Card>
               <div className="text-center">
-                <Button onClick={() => setHasStartedQuestions(true)} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">
+                <Button onClick={() => setHasStartedQuestions(true)} size="lg" className="bg-gradient-vivid text-white hover:bg-gradient-vivid/90 hover:scale-[1.02] transition-all font-bold border-0 shadow-purple">
                   Bắt đầu làm bài <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </div>
@@ -185,9 +192,9 @@ const MsutongReadingComprehensionPage = () => {
                 <Progress value={progressValue} className="w-full h-2 bg-primary/20" indicatorClassName="bg-primary" />
               </div>
 
-              <Card className="mb-8 shadow-md">
+              <Card className="mb-8 shadow-md bg-gradient-fire text-white border-0">
                 <CardHeader>
-                  <CardTitle className="text-2xl">{currentQuestion.questionText}</CardTitle>
+                  <CardTitle className="text-2xl text-white">{currentQuestion.questionText}</CardTitle>
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 gap-4">
                   {currentQuestion.options.map((option, index) => {
@@ -201,9 +208,9 @@ const MsutongReadingComprehensionPage = () => {
                         disabled={selectedOptionIndex !== null}
                         className={cn(
                           "h-auto min-h-16 text-lg py-3 text-left justify-start whitespace-normal break-words transition-all duration-300 font-bold",
-                          isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90 text-destructive-foreground",
-                          selectedOptionIndex !== null && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90 text-white",
-                          selectedOptionIndex === null && "hover:bg-primary/10 hover:text-primary"
+                          isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90 text-destructive-foreground border-0",
+                          selectedOptionIndex !== null && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90 text-white border-0",
+                          selectedOptionIndex === null && "bg-white text-gray-800 hover:bg-gradient-vivid hover:text-white border-2 border-white"
                         )}
                         variant="outline"
                       >
@@ -217,22 +224,22 @@ const MsutongReadingComprehensionPage = () => {
               </Card>
 
               {selectedOptionIndex !== null && isCorrect === false && (
-                <div className="mt-6 text-center p-4 bg-destructive/10 rounded-lg border border-destructive">
-                  <p className="text-destructive mb-2 font-semibold">Sai rồi!</p>
-                  <p className="text-lg">
-                    Đáp án đúng là: <span className="font-bold text-primary">
+                <div className="mt-6 text-center p-4 bg-gradient-tropical text-white rounded-lg border-0 shadow-orange">
+                  <p className="text-white mb-2 font-semibold">Sai rồi!</p>
+                  <p className="text-lg text-white">
+                    Đáp án đúng là: <span className="font-bold text-yellow-200">
                       {currentQuestion.options[currentQuestion.correctAnswerIndex]}
                     </span>
                   </p>
                   {currentQuestion.explanation && (
-                    <p className="text-sm text-muted-foreground mt-2">Giải thích: {currentQuestion.explanation}</p>
+                    <p className="text-sm text-white/90 mt-2">Giải thích: {currentQuestion.explanation}</p>
                   )}
                 </div>
               )}
 
               {selectedOptionIndex !== null && isCorrect === false && (
                 <div className="mt-8 text-center">
-                  <Button onClick={goToNextQuestion} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">
+                  <Button onClick={goToNextQuestion} size="lg" className="bg-gradient-colorful text-white hover:bg-gradient-colorful/90 hover:scale-[1.02] transition-all font-bold border-0 shadow-purple">
                     {currentQuestionIndex === currentPassage.questions.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
@@ -242,7 +249,7 @@ const MsutongReadingComprehensionPage = () => {
           )}
 
           <div className="text-center mt-8">
-            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
+            <Button asChild className="bg-gradient-spring text-white hover:bg-gradient-spring/90 hover:scale-[1.02] transition-all font-bold border-0 shadow-cyan">
               <Link to="/msutong">
                 <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
               </Link>

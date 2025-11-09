@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { ArrowRight, Home } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
+import { usePinyin } from '@/contexts/PinyinContext';
 
 const shuffleArray = <T,>(array: T[]): T[] => {
   const newArray = [...array];
@@ -19,6 +20,7 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 };
 
 const MsutongFillInTheBlankPage = () => {
+  const { showPinyin } = usePinyin();
   const [searchParams] = useSearchParams();
   const level = searchParams.get('level') || 'so-cap';
   const lessonIds = searchParams.get('lessonIds')?.split(',') || [];
@@ -189,10 +191,14 @@ const MsutongFillInTheBlankPage = () => {
             <Progress value={progressValue} className="w-full" />
           </div>
           
-          <Card className="mb-8">
+          <Card className="mb-8 bg-gradient-fire text-white border-0">
             <CardContent className="p-10 flex flex-col items-center justify-center gap-4">
-              <p className="text-4xl font-semibold">{currentWord?.pinyin}</p>
-              <p className="text-2xl text-muted-foreground">{currentWord?.meaning}</p>
+              {(showPinyin || answerStatus) ? (
+                <p className="text-4xl font-semibold">{currentWord?.pinyin}</p>
+              ) : (
+                <p className="text-lg opacity-80 italic">Pinyin sẽ hiển thị sau khi kiểm tra</p>
+              )}
+              <p className="text-2xl">{currentWord?.meaning}</p>
             </CardContent>
           </Card>
 

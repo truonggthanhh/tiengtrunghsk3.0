@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { ArrowRight, Home, CheckCircle2, XCircle } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
+import { usePinyin } from '@/contexts/PinyinContext';
 
 const shuffleArray = <T,>(array: T[]): T[] => {
   const newArray = [...array];
@@ -21,6 +22,7 @@ const MsutongPinyinChoicePage = () => {
   const [searchParams] = useSearchParams();
   const level = searchParams.get('level') || 'so-cap';
   const lessonIds = searchParams.get('lessonIds')?.split(',') || [];
+  const { showPinyin } = usePinyin();
 
   const practiceVocabulary = useMemo(() => getVocabularyByMsutong(level, lessonIds), [level, lessonIds]);
   const distractorVocabulary = useMemo(() => getFullMsutongVocabularyByLevel(level), [level]);
@@ -208,9 +210,18 @@ const MsutongPinyinChoicePage = () => {
             <Progress value={progressValue} className="w-full" />
           </div>
           
-          <Card className="mb-8">
-            <CardContent className="p-10 flex items-center justify-center">
+          <Card className="mb-8 bg-gradient-colorful text-white border-0">
+            <CardContent className="p-10 flex flex-col items-center justify-center gap-4">
               <h2 className="text-7xl md:text-8xl font-bold">{currentWord?.hanzi}</h2>
+              {showPinyin && !selectedPinyin && (
+                <p className="text-2xl text-white/90">{currentWord?.pinyin}</p>
+              )}
+              {selectedPinyin && (
+                <div className="text-center">
+                  <p className="text-2xl text-white/90 mb-2">{currentWord?.pinyin}</p>
+                  <p className="text-xl text-white/80">{currentWord?.meaning}</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 

@@ -109,6 +109,11 @@ export const getReadingComprehensionByMsutong = (level: string, lessonIds: strin
   const passagesForLevel = msutongReadingComprehensionData[level];
   if (!passagesForLevel) return [];
 
+  // If no specific lessons selected, return all passages for the level
+  if (lessonIds.length === 0) {
+    return passagesForLevel;
+  }
+
   const selectedPassages: ReadingComprehensionPassage[] = [];
   const uniquePassageIds = new Set<number>();
 
