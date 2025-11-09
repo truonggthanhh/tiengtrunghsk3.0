@@ -1,0 +1,14 @@
+import { VocabularyWord } from './hsk1';
+
+export const hsk5ExtendedVocabulary: VocabularyWord[] = [
+  { id: 40001, hanzi: "把握", pinyin: "bǎwò", meaning: "Nắm bắt, chắc chắn", examples: [{ hanzi: "要把握机会。", pinyin: "Yào bǎwò jīhuì.", translation: "Phải nắm bắt cơ hội." }, { hanzi: "我没有把握。", pinyin: "Wǒ méiyǒu bǎwò.", translation: "Tôi không chắc chắn." }] },
+  { id: 40002, hanzi: "颁布", pinyin: "bānbù", meaning: "Ban hành", examples: [{ hanzi: "政府颁布了新法律。", pinyin: "Zhèngfǔ bānbù le xīn fǎlǜ.", translation: "Chính phủ đã ban hành luật mới." }, { hanzi: "这项政策已经颁布。", pinyin: "Zhè xiàng zhèngcè yǐjīng bānbù.", translation: "Chính sách này đã được ban hành." }] },
+  { id: 40003, hanzi: "版本", pinyin: "bǎnběn", meaning: "Phiên bản", examples: [{ hanzi: "这是最新版本。", pinyin: "Zhè shì zuìxīn bǎnběn.", translation: "Đây là phiên bản mới nhất." }, { hanzi: "有不同的版本。", pinyin: "Yǒu bùtóng de bǎnběn.", translation: "Có các phiên bản khác nhau." }] },
+  { id: 40004, hanzi: "办理", pinyin: "bànlǐ", meaning: "Xử lý, làm thủ tục", examples: [{ hanzi: "请去办理手续。", pinyin: "Qǐng qù bànlǐ shǒuxù.", translation: "Hãy đi làm thủ tục." }, { hanzi: "我要办理签证。", pinyin: "Wǒ yào bànlǐ qiānzhèng.", translation: "Tôi cần xin visa." }] },
+  { id: 40005, hanzi: "宝贵", pinyin: "bǎoguì", meaning: "Quý giá", examples: [{ hanzi: "时间很宝贵。", pinyin: "Shíjiān hěn bǎoguì.", translation: "Thời gian rất quý giá." }, { hanzi: "这是宝贵的经验。", pinyin: "Zhè shì bǎoguì de jīngyàn.", translation: "Đây là kinh nghiệm quý giá." }] },
+  { id: 40006, hanzi: "报酬", pinyin: "bàochou", meaning: "Báo酬, công lao", examples: [{ hanzi: "他得到了应有的报酬。", pinyin: "Tā dédào le yīngyǒu de bàochou.", translation: "Anh ấy nhận được báo酬 xứng đáng." }, { hanzi: "工作要有报酬。", pinyin: "Gōngzuò yào yǒu bàochou.", translation: "Làm việc phải có công lao." }] },
+  { id: 40007, hanzi: "报销", pinyin: "bàoxiāo", meaning: "Thanh toán, hoàn lại", examples: [{ hanzi: "可以报销吗？", pinyin: "Kěyǐ bàoxiāo ma?", translation: "Có thể hoàn lại không?" }, { hanzi: "我去报销费用。", pinyin: "Wǒ qù bàoxiāo fèiyòng.", translation: "Tôi đi thanh toán chi phí." }] },
+  { id: 40008, hanzi: "悲观", pinyin: "bēiguān", meaning: "Bi quan", examples: [{ hanzi: "不要太悲观。", pinyin: "Búyào tài bēiguān.", translation: "Đừng quá bi quan." }, { hanzi: "他对未来很悲观。", pinyin: "Tā duì wèilái hěn bēiguān.", translation: "Anh ấy rất bi quan về tương lai." }] },
+  { id: 40009, hanzi: "背景", pinyin: "bèijǐng", meaning: "Bối cảnh", examples: [{ hanzi: "了解一下背景。", pinyin: "Liǎojiě yīxià bèijǐng.", translation: "Tìm hiểu bối cảnh một chút." }, { hanzi: "这是历史背景。", pinyin: "Zhè shì lìshǐ bèijǐng.", translation: "Đây là bối cảnh lịch sử." }] },
+  { id: 40010, hanzi: "被动", pinyin: "bèidòng", meaning: "Bị động", examples: [{ hanzi: "不要太被动。", pinyin: "Búyào tài bèidòng.", translation: "Đừng quá bị động." }, { hanzi: "处于被动地位。", pinyin: "Chǔyú bèidòng dìwèi.", translation: "Ở vị trí bị động." }] }
+];

@@ -45,6 +45,15 @@ const SentenceChoicePage = () => {
 
   const currentQuestion = useMemo(() => questions[currentIndex], [questions, currentIndex]);
 
+  // Create a map of hanzi to pinyin for quick lookup
+  const hanziToPinyinMap = useMemo(() => {
+    const map = new Map<string, string>();
+    fullVocabulary.forEach(word => {
+      map.set(word.hanzi, word.pinyin);
+    });
+    return map;
+  }, [fullVocabulary]);
+
   const generateOptions = useCallback(() => {
     if (!currentQuestion) return;
 
@@ -52,9 +61,9 @@ const SentenceChoicePage = () => {
     const incorrectOptions = fullVocabulary
       .filter(word => word.hanzi !== correctOption)
       .map(word => word.hanzi);
-    
+
     const shuffledIncorrect = shuffleArray(incorrectOptions).slice(0, 3);
-    
+
     const finalOptions = shuffleArray([correctOption, ...shuffledIncorrect]);
     setOptions(finalOptions);
   }, [currentQuestion, fullVocabulary]);
@@ -216,15 +225,16 @@ const SentenceChoicePage = () => {
             <Progress value={progressValue} className="w-full h-2 bg-primary/20" indicatorClassName="bg-primary" />
           </div>
           
-          <Card className="mb-8 shadow-md bg-gradient-ocean text-white">
+          <Card className="mb-8 shadow-md bg-gradient-ocean text-white border-0">
             <CardContent className="p-10 flex flex-col items-center justify-center text-center gap-4">
               <h2 className="text-4xl md:text-5xl font-bold tracking-wider">{questionSentence}</h2>
-              <p className="text-lg text-white/90">{currentQuestion?.translation}</p>
-              {(showPinyin || selectedAnswer) && (
-                <p className="text-2xl font-medium text-white/90">
-                  Từ cần điền: {currentQuestion?.word.pinyin}
+              {showPinyin && currentQuestion?.sentence && (
+                <p className="text-xl font-medium text-white/80 italic">
+                  {/* Show pinyin for the full sentence if available from example data */}
+                  {fullVocabulary.find(w => w.hanzi === currentQuestion.word.hanzi)?.examples?.find(ex => ex.hanzi === currentQuestion.sentence)?.pinyin || ''}
                 </p>
               )}
+              <p className="text-lg text-white/90">{currentQuestion?.translation}</p>
             </CardContent>
           </Card>
 
@@ -232,23 +242,29 @@ const SentenceChoicePage = () => {
             {options.map((option, index) => {
               const isSelected = selectedAnswer === option;
               const isTheCorrectAnswer = option === currentQuestion.word.hanzi;
-              
+              const optionPinyin = hanziToPinyinMap.get(option);
+
               return (
                 <Button
                   key={index}
                   onClick={() => handleAnswer(option)}
                   disabled={!!selectedAnswer}
                   className={cn(
-                    "h-20 text-2xl transition-all duration-300 font-bold",
-                    isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90 text-destructive-foreground",
-                    selectedAnswer && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90 text-white",
-                    !isSelected && !selectedAnswer && "hover:bg-primary/10 hover:text-primary"
+                    "h-auto min-h-20 py-3 text-2xl transition-all duration-300 font-bold flex flex-col gap-1",
+                    isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90 text-destructive-foreground border-0",
+                    selectedAnswer && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90 text-white border-0",
+                    !isSelected && !selectedAnswer && "hover:bg-gradient-vivid hover:text-white border-2"
                   )}
                   variant="outline"
                 >
-                  {option}
-                  {isSelected && isCorrect === false && <XCircle className="ml-4 h-6 w-6" />}
-                  {selectedAnswer && isTheCorrectAnswer && <CheckCircle2 className="ml-4 h-6 w-6" />}
+                  <span>{option}</span>
+                  {showPinyin && optionPinyin && (
+                    <span className="text-sm font-medium opacity-80">
+                      {optionPinyin}
+                    </span>
+                  )}
+                  {isSelected && isCorrect === false && <XCircle className="h-6 w-6" />}
+                  {selectedAnswer && isTheCorrectAnswer && <CheckCircle2 className="h-6 w-6" />}
                 </Button>
               )
             })}
