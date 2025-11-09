@@ -167,10 +167,10 @@ const AiTutorPage = () => {
 
   if (!apiKey) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
+      <div className="min-h-screen bg-background flex flex-col">
         <Header />
         <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center text-center">
-          <Card className="w-full max-w-lg p-6 md:p-8 rounded-xl shadow-lg border border-primary/20">
+          <Card className="w-full max-w-lg p-6 md:p-8 rounded-xl shadow-lg border">
             <CardHeader>
               <KeyRound className="w-12 h-12 text-primary mx-auto mb-4" />
               <CardTitle className="text-2xl">Nhập API Key của Google Gemini</CardTitle>
@@ -190,10 +190,10 @@ const AiTutorPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-tertiary/10 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
       <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
-        <Card className="w-full max-w-3xl h-[80vh] flex flex-col rounded-xl shadow-lg border border-primary/20">
+        <Card className="w-full max-w-3xl h-[80vh] flex flex-col rounded-xl shadow-lg border">
           <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <CardTitle>Trợ lý ảo HSK {level}</CardTitle>

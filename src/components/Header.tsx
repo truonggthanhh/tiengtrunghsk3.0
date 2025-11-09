@@ -47,7 +47,7 @@ const Header = () => {
   };
 
   return (
-    <header className="py-4 px-6 border-b border-gray-200 sticky top-0 bg-white z-50 shadow-sm">
+    <header className="py-4 px-6 border-b sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 shadow-sm">
       <div className="container mx-auto flex justify-between items-center">
         <Link
           to="/"
@@ -61,14 +61,14 @@ const Header = () => {
             variant={showPinyin ? "default" : "outline"}
             size="sm"
             onClick={togglePinyin}
-            className={`flex items-center gap-2 ${showPinyin ? 'bg-gradient-spring text-white hover:bg-gradient-spring/90 border-0' : 'hover:bg-gray-100'}`}
+            className={`flex items-center gap-2 ${showPinyin ? 'bg-gradient-spring text-white dark:text-white hover:bg-gradient-spring/90 border-0' : ''}`}
           >
             <Languages className="h-4 w-4" />
             <span className="hidden sm:inline">{showPinyin ? 'Có Pinyin' : 'Không Pinyin'}</span>
           </Button>
 
           {session && (
-            <Button asChild variant="ghost" size="sm" className="hover:bg-gray-100">
+            <Button asChild variant="ghost" size="sm">
               <Link to="/profile" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Hồ sơ</span>
@@ -77,7 +77,7 @@ const Header = () => {
           )}
 
           {isAdmin && (
-            <Button asChild variant="ghost" size="sm" className="hover:bg-gray-100">
+            <Button asChild variant="ghost" size="sm">
               <Link to="/admin" className="flex items-center gap-2">
                 <UserCog className="h-4 w-4" />
                 <span className="hidden sm:inline">Quản trị</span>
@@ -90,7 +90,7 @@ const Header = () => {
               variant="ghost"
               size="sm"
               onClick={handleLogout}
-              className="flex items-center gap-2 hover:bg-gray-100"
+              className="flex items-center gap-2"
             >
               <LogOut className="h-4 w-4" />
               <span className="hidden sm:inline">Đăng xuất</span>
@@ -100,7 +100,6 @@ const Header = () => {
               asChild
               variant="ghost"
               size="sm"
-              className="hover:bg-gray-100"
             >
               <Link to="/login">Đăng nhập</Link>
             </Button>

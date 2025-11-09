@@ -245,18 +245,18 @@ const AdminDashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-cyan-50 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
       <main className="container mx-auto p-4 md:p-8 flex-grow">
-        <Card className="w-full max-w-6xl mx-auto border-0 shadow-2xl bg-white/90 backdrop-blur-lg">
-          <CardHeader className="bg-gradient-vivid text-white rounded-t-xl">
+        <Card className="w-full max-w-6xl mx-auto shadow-2xl">
+          <CardHeader className="bg-gradient-vivid text-white dark:text-white rounded-t-xl">
             <CardTitle className="text-3xl font-bold flex items-center gap-3">
-              <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
+              <div className="bg-white/20 dark:bg-white/20 p-2 rounded-lg backdrop-blur-sm">
                 <UserCog className="h-7 w-7" />
               </div>
               Bảng Điều Khiển Quản Trị
             </CardTitle>
-            <CardDescription className="text-white/90 text-base">
+            <CardDescription className="text-white/90 dark:text-white/90 text-base">
               Quản lý toàn bộ hệ thống học tiếng Trung.
             </CardDescription>
           </CardHeader>
