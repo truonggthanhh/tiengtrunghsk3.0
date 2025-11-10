@@ -7,6 +7,19 @@
     --background: 0 0% 100%;
     --foreground: 0 0% 10%;
 
+    /* Hong Kong Vintage Colors for Cantonese App */
+    --jade: #1F6F5E;
+    --verm: #D14A41;
+    --cream: #F5EFE6;
+    --ink: #2C2416;
+    --neon-cyan: #50E3E6;
+    --neon-pink: #FF6B9D;
+    --neon-pink-shadow: #d63384;
+    --neon-blue: #4F9DFF;
+    --neon-purple: #B673FF;
+    --neon-yellow: #FFD93D;
+    --neon-orange: #FF8C42;
+
     --card: 0 0% 100%;
     --card-foreground: 0 0% 10%;
 
@@ -302,5 +315,106 @@
 
   .shadow-orange {
     box-shadow: 0 10px 40px -10px rgba(255, 195, 113, 0.5);
+  }
+
+  /* Hong Kong Vintage Neon Text Effects */
+  .neon-cyan {
+    color: #50E3E6;
+    text-shadow:
+      0 0 5px #50E3E6,
+      0 0 10px #50E3E6,
+      0 0 20px #50E3E6,
+      0 0 40px #50E3E6;
+    font-weight: 800;
+  }
+
+  .neon-pink {
+    color: #FF6B9D;
+    text-shadow:
+      0 0 5px #FF6B9D,
+      0 0 10px #FF6B9D,
+      0 0 20px #FF6B9D,
+      0 0 40px #FF6B9D;
+    font-weight: 800;
+  }
+
+  .neon-blue {
+    color: #4F9DFF;
+    text-shadow:
+      0 0 5px #4F9DFF,
+      0 0 10px #4F9DFF,
+      0 0 20px #4F9DFF,
+      0 0 40px #4F9DFF;
+    font-weight: 800;
+  }
+
+  .neon-purple {
+    color: #B673FF;
+    text-shadow:
+      0 0 5px #B673FF,
+      0 0 10px #B673FF,
+      0 0 20px #B673FF,
+      0 0 40px #B673FF;
+    font-weight: 800;
+  }
+
+  .neon-yellow {
+    color: #FFD93D;
+    text-shadow:
+      0 0 5px #FFD93D,
+      0 0 10px #FFD93D,
+      0 0 20px #FFD93D,
+      0 0 40px #FFD93D;
+    font-weight: 800;
+  }
+
+  /* Hong Kong Vintage Background with Paper Texture */
+  .hk-vintage-bg {
+    background: linear-gradient(135deg, #F5EFE6 0%, #E8DCC8 100%);
+  }
+
+  .dark .hk-vintage-bg {
+    background: linear-gradient(135deg, #1a1410 0%, #2C2416 100%);
+  }
+
+  /* Neon Glow Animation */
+  @keyframes neon-pulse {
+    0%, 100% {
+      text-shadow:
+        0 0 5px currentColor,
+        0 0 10px currentColor,
+        0 0 20px currentColor,
+        0 0 40px currentColor;
+    }
+    50% {
+      text-shadow:
+        0 0 10px currentColor,
+        0 0 20px currentColor,
+        0 0 40px currentColor,
+        0 0 80px currentColor;
+    }
+  }
+
+  .neon-pulse {
+    animation: neon-pulse 2s ease-in-out infinite;
+  }
+
+  /* Vintage Hong Kong Border Styles */
+  .hk-border {
+    border: 3px solid var(--verm);
+    border-radius: 0.75rem;
+    box-shadow:
+      0 0 0 1px var(--jade),
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+
+  .dark .hk-border {
+    box-shadow:
+      0 0 0 1px var(--jade),
+      0 4px 6px -1px rgba(0, 0, 0, 0.5),
+      0 2px 4px -1px rgba(0, 0, 0, 0.3),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.05);
   }
 }

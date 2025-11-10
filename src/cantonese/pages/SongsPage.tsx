@@ -32,7 +32,7 @@ const SongsPage = () => {
       </h1>
       <div className="grid md:grid-cols-2 gap-4">
         {songs?.map((song: any) => (
-          <Link key={song.id} to={`/songs/${song.id}`} className="block p-4 rounded-xl bg-white dark:bg-black/20 border border-ink/10 hover:bg-black/5 dark:hover:bg-white/5 transition-colors shadow-[0_10px_0_#d7c8b6]">
+          <Link key={song.id} to={`/cantonese/songs/${song.id}`} className="block p-4 rounded-xl bg-white dark:bg-black/20 border border-ink/10 hover:bg-black/5 dark:hover:bg-white/5 transition-colors shadow-[0_10px_0_#d7c8b6]">
             <div className="font-semibold text-lg">{song.title}</div>
             <div className="text-sm text-ink/70">{song.artist}</div>
           </Link>

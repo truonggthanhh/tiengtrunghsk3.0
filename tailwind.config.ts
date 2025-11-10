@@ -82,6 +82,17 @@ export default {
           DEFAULT: "hsl(var(--tertiary))",
           foreground: "hsl(var(--tertiary-foreground))",
         },
+        // Hong Kong Vintage Colors for Cantonese App
+        jade: "#1F6F5E", // Traditional Hong Kong jade/teal green
+        verm: "#D14A41", // Hong Kong vermillion red
+        cream: "#F5EFE6", // Warm cream for text
+        ink: "#2C2416", // Dark brown-black for text
+        neonCyan: "#50E3E6", // Bright neon cyan
+        neonPink: "#FF6B9D", // Bright neon pink
+        neonBlue: "#4F9DFF", // Bright neon blue
+        neonPurple: "#B673FF", // Bright neon purple
+        neonYellow: "#FFD93D", // Bright neon yellow
+        neonOrange: "#FF8C42", // Bright neon orange
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -35,8 +35,8 @@ export default function ExerciseNeonCard({ label, type, icon: Icon, lessonId, is
 
   // Determine the correct destination URL
   const destination = type.toLowerCase() === 'review'
-    ? `/review/${lessonId}`
-    : `/practice/${lessonId}/${type}`;
+    ? `/cantonese/review/${lessonId}`
+    : `/cantonese/practice/${lessonId}/${type}`;
 
   return (
     <Link
