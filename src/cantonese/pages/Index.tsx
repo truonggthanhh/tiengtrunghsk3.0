@@ -24,9 +24,7 @@ function HongKongRetroLanding() {
   }
 
   return (
-    <main className="min-h-screen">
-      <BackgroundTexture variant="default" />
-      <Navbar />
+    <main>
       <Hero />
       <SellingPoints />
       <ExercisesShowcase />
@@ -35,38 +33,6 @@ function HongKongRetroLanding() {
       <TestimonialsStrip />
       <Footer />
     </main>
-  )
-}
-
-function Navbar(){
-  return (
-    <div className="relative z-10">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex items-center justify-between gap-4">
-          <Link to="/cantonese" className="flex items-center gap-3 group">
-            <div className="h-9 w-9 rounded-xl border border-ink/20 bg-jade grid place-items-center shadow-[0_0_0_2px_rgba(0,0,0,0.2)]">
-              <span className="text-cream font-black tracking-wider">粵</span>
-            </div>
-            <div>
-              <div className="text-ink font-extrabold leading-none tracking-wide">Học tiếng Quảng Đông</div>
-              <div className="text-xs text-ink/80">cùng Hào Hoa Chợ Lớn</div>
-            </div>
-          </Link>
-          <div className="hidden md:flex items-center gap-6 text-ink">
-            <Link to="/cantonese/lessons" className="hover:opacity-80">Bài học</Link>
-            <Link to="/cantonese/songs" className="hover:opacity-80">Bài hát</Link>
-            <a href="#features" className="hover:opacity-80">Tính năng</a>
-            <a href="#exercises" className="hover:opacity-80">Bài tập</a>
-            <a href="#tracks" className="hover:opacity-80">Lộ trình</a>
-          </div>
-          <div className="flex items-center gap-2">
-            <JyutpingToggle/>
-            <DarkModeToggle/>
-            <UserMenu />
-          </div>
-        </div>
-      </div>
-    </div>
   )
 }
 

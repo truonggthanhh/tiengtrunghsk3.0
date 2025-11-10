@@ -4,7 +4,7 @@ import { supabase } from '@/cantonese/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
-import { Upload, Sparkles, FileText, Trash2, Music, Users, PlusCircle, BookOpen, ListMusic, Edit3, Clock, CheckCircle2, XCircle, Star, Replace, GripVertical, KeyRound } from 'lucide-react';
+import { Upload, Sparkles, FileText, Trash2, Music, Users, PlusCircle, BookOpen, ListMusic, Edit3, Clock, CheckCircle2, XCircle, Star, Replace, GripVertical, KeyRound, Globe } from 'lucide-react';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -37,6 +37,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import ManageUserLessonsDialog from '@/cantonese/components/admin/ManageUserLessonsDialog';
+import ManageUserLanguageAccessDialog from '@/cantonese/components/admin/ManageUserLanguageAccessDialog';
 import SortableLessonItem from '@/cantonese/components/admin/SortableLessonItem'; // Import the new component
 
 const extractVideoId = (url: string) => {
@@ -69,6 +70,8 @@ type Profile = {
   last_name: string | null;
   role: 'user' | 'admin';
   updated_at: string;
+  cantonese_access?: boolean;
+  mandarin_access?: boolean;
 };
 
 const Dashboard = () => {
@@ -537,11 +540,13 @@ const SongManager = () => {
 };
 
 const UserManager = () => {
-  const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
+  const [selectedUserForLessons, setSelectedUserForLessons] = useState<Profile | null>(null);
+  const [selectedUserForLanguage, setSelectedUserForLanguage] = useState<Profile | null>(null);
+
   const { data: profiles, isLoading, error } = useQuery<Profile[]>({
     queryKey: ['allProfiles'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('profiles').select('*');
+      const { data, error } = await supabase.from('profiles').select('id, first_name, last_name, role, updated_at, cantonese_access, mandarin_access');
       if (error) throw error;
       return data;
     },
@@ -552,22 +557,42 @@ const UserManager = () => {
       <Card>
         <CardHeader>
           <CardTitle>Danh sách Người dùng</CardTitle>
-          <CardDescription>Quản lý và cấp quyền truy cập bài học cho từng người dùng.</CardDescription>
+          <CardDescription>Quản lý quyền truy cập ngôn ngữ và bài học cho từng người dùng.</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? <div>Đang tải...</div> : error ? <div className="text-verm">Lỗi tải danh sách người dùng.</div> : (
             <Table>
-              <TableHeader><TableRow><TableHead>Họ và Tên</TableHead><TableHead>Vai trò</TableHead><TableHead>Ngày cập nhật</TableHead><TableHead>Hành động</TableHead></TableRow></TableHeader>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Họ và Tên</TableHead>
+                  <TableHead>Vai trò</TableHead>
+                  <TableHead>Quyền ngôn ngữ</TableHead>
+                  <TableHead>Ngày cập nhật</TableHead>
+                  <TableHead>Hành động</TableHead>
+                </TableRow>
+              </TableHeader>
               <TableBody>
                 {profiles?.map((p) => (
                   <TableRow key={p.id}>
                     <TableCell>{p.first_name || ''} {p.last_name || ''}</TableCell>
                     <TableCell><Badge variant={p.role === 'admin' ? 'default' : 'secondary'}>{p.role}</Badge></TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        {p.cantonese_access && <Badge variant="outline" className="text-jade border-jade">粵</Badge>}
+                        {p.mandarin_access && <Badge variant="outline" className="text-primary border-primary">中</Badge>}
+                        {!p.cantonese_access && !p.mandarin_access && <span className="text-muted-foreground text-sm">Chưa cấp</span>}
+                      </div>
+                    </TableCell>
                     <TableCell>{new Date(p.updated_at).toLocaleString()}</TableCell>
                     <TableCell>
-                      <Button variant="outline" size="sm" onClick={() => setSelectedUser(p)}>
-                        <KeyRound className="h-4 w-4 mr-2" /> Quản lý bài học
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm" onClick={() => setSelectedUserForLanguage(p)}>
+                          <Globe className="h-4 w-4 mr-2" /> Ngôn ngữ
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => setSelectedUserForLessons(p)}>
+                          <KeyRound className="h-4 w-4 mr-2" /> Bài học
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -576,7 +601,8 @@ const UserManager = () => {
           )}
         </CardContent>
       </Card>
-      <ManageUserLessonsDialog user={selectedUser} onClose={() => setSelectedUser(null)} />
+      <ManageUserLessonsDialog user={selectedUserForLessons} onClose={() => setSelectedUserForLessons(null)} />
+      <ManageUserLanguageAccessDialog user={selectedUserForLanguage} onClose={() => setSelectedUserForLanguage(null)} />
     </>
   );
 };
