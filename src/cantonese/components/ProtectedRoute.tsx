@@ -10,7 +10,7 @@ const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
   }
 
   if (!session) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/cantonese/login" replace />;
   }
 
   return children ? <>{children}</> : <Outlet />;

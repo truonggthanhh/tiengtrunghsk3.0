@@ -28,7 +28,7 @@ export default function UserMenu() {
       toast.error(`Lỗi khi đăng xuất: ${error.message}`);
     } else {
       toast.success('Đã đăng xuất thành công!');
-      navigate('/');
+      navigate('/cantonese');
     }
   };
 
@@ -38,7 +38,7 @@ export default function UserMenu() {
 
   if (!session || !profile) {
     return (
-      <Link to="/login" className="rounded-xl px-4 py-2 text-ink bg-white dark:bg-black/20 hover:bg-white/90 transition shadow-md">
+      <Link to="/cantonese/login" className="rounded-xl px-4 py-2 text-ink bg-white dark:bg-black/20 hover:bg-white/90 transition shadow-md">
         Đăng nhập
       </Link>
     );
@@ -57,18 +57,18 @@ export default function UserMenu() {
         <DropdownMenuLabel className="font-bold text-ink dark:text-cream">Tài khoản của tôi</DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-ink/10 dark:bg-white/10" />
         <DropdownMenuItem asChild className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/5">
-          <Link to="/profile" className="flex items-center gap-2">
+          <Link to="/cantonese/profile" className="flex items-center gap-2">
             <User className="h-4 w-4" /> Hồ sơ của tôi
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/5">
-          <Link to="/learning-progress" className="flex items-center gap-2">
+          <Link to="/cantonese/learning-progress" className="flex items-center gap-2">
             <GraduationCap className="h-4 w-4" /> Quá trình học tập
           </Link>
         </DropdownMenuItem>
         {isAdmin && (
           <DropdownMenuItem asChild className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/5">
-            <Link to="/dashboard" className="flex items-center gap-2">
+            <Link to="/cantonese/dashboard" className="flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4" /> Dashboard
             </Link>
           </DropdownMenuItem>

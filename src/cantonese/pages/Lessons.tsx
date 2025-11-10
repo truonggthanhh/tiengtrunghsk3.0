@@ -26,7 +26,7 @@ const LessonsPage = () => {
 
   return (
     <div className="max-w-3xl mx-auto p-6">
-      <Link to="/" className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition text-sm mb-6">
+      <Link to="/cantonese" className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition text-sm mb-6">
         <Home className="h-4 w-4" /> Quay về trang chủ
       </Link>
       <h1 className="text-3xl font-black mb-8">Danh sách bài học</h1>
