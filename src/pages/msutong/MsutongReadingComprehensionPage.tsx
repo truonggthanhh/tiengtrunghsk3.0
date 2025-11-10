@@ -95,7 +95,7 @@ const MsutongReadingComprehensionPage = () => {
             Dạng bài tập đọc hiểu chưa có sẵn cho các bài học bạn đã chọn. Vui lòng chọn các bài học khác hoặc quay lại sau.
           </p>
           <Button asChild variant="secondary" className="font-bold">
-            <Link to="/msutong">
+            <Link to="/mandarin/msutong">
               <Home className="mr-2 h-4 w-4" /> Quay lại trang chọn bài
             </Link>
           </Button>
@@ -131,7 +131,7 @@ const MsutongReadingComprehensionPage = () => {
               <div className="flex gap-4 justify-center">
                 <Button onClick={resetExercise} className="bg-gradient-spring text-white hover:bg-gradient-spring/90 hover:scale-[1.02] transition-all font-bold border-0 shadow-cyan">Làm lại</Button>
                 <Button asChild className="bg-gradient-sunset text-white hover:bg-gradient-sunset/90 hover:scale-[1.02] transition-all font-bold border-0 shadow-pink">
-                  <Link to="/msutong">
+                  <Link to="/mandarin/msutong">
                     <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
                   </Link>
                 </Button>
@@ -250,7 +250,7 @@ const MsutongReadingComprehensionPage = () => {
 
           <div className="text-center mt-8">
             <Button asChild className="bg-gradient-spring text-white hover:bg-gradient-spring/90 hover:scale-[1.02] transition-all font-bold border-0 shadow-cyan">
-              <Link to="/msutong">
+              <Link to="/mandarin/msutong">
                 <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
               </Link>
             </Button>

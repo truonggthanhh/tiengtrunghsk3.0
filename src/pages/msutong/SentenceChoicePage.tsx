@@ -133,7 +133,7 @@ const MsutongSentenceChoicePage = () => {
             Dạng bài tập này đang được phát triển hoặc các bài bạn chọn không có câu ví dụ. Vui lòng quay lại sau.
           </p>
           <Button asChild>
-            <Link to="/msutong">
+            <Link to="/mandarin/msutong">
               <Home className="mr-2 h-4 w-4" /> Quay lại trang chọn bài
             </Link>
           </Button>
@@ -167,7 +167,7 @@ const MsutongSentenceChoicePage = () => {
               ))}
               <Button onClick={() => handleStart(allAvailableQuestions.length)} size="lg" className="font-bold">Tất cả ({allAvailableQuestions.length} câu)</Button>
               <Button asChild variant="outline" className="font-bold">
-                <Link to="/msutong">
+                <Link to="/mandarin/msutong">
                   <Home className="mr-2 h-4 w-4" /> Quay về trang chọn bài
                 </Link>
               </Button>
@@ -197,7 +197,7 @@ const MsutongSentenceChoicePage = () => {
                         <div className="flex gap-4 justify-center">
                             <Button onClick={resetToLevelSelection} className="font-bold">Làm lại</Button>
                             <Button asChild variant="secondary" className="font-bold">
-                                <Link to="/msutong">
+                                <Link to="/mandarin/msutong">
                                     <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
                                 </Link>
                             </Button>
@@ -286,7 +286,7 @@ const MsutongSentenceChoicePage = () => {
 
           <div className="text-center mt-8">
             <Button asChild variant="secondary" className="font-bold">
-              <Link to="/msutong">
+              <Link to="/mandarin/msutong">
                 <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
               </Link>
             </Button>

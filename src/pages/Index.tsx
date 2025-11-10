@@ -224,7 +224,7 @@ const Index = () => {
                 </CardFooter>
               </Card>
 
-              <Link to="/msutong" className="block">
+              <Link to="/mandarin/msutong" className="block">
                 <Card className="flex flex-col text-center h-full cursor-pointer border-0 bg-gradient-ocean text-white p-8 hover-scale shadow-cyan overflow-hidden relative group">
                   <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
                   <CardHeader className="items-center flex-grow space-y-4 pb-6 relative z-10">
@@ -285,7 +285,7 @@ const Index = () => {
                 {exerciseTypes.map((exercise, index) => (
                   <Link
                     key={exercise.slug}
-                    to={exercise.isAvailable ? `/hsk/${level}/${exercise.slug}` : '#'}
+                    to={exercise.isAvailable ? `/mandarin/hsk/${level}/${exercise.slug}` : '#'}
                     className={!exercise.isAvailable ? 'pointer-events-none' : ''}
                   >
                     <Card className={cn(

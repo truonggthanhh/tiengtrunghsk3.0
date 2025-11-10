@@ -73,7 +73,7 @@ const FlashcardPage = () => {
             Chức năng này đang được phát triển cho HSK {level}. Vui lòng quay lại sau.
           </p>
           <Button asChild>
-            <Link to="/">
+            <Link to="/mandarin">
               <Home className="mr-2 h-4 w-4" /> Quay lại trang chủ
             </Link>
           </Button>
@@ -142,7 +142,7 @@ const FlashcardPage = () => {
           
           <div className="text-center mt-8">
             <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
-              <Link to="/">
+              <Link to="/mandarin">
                 <Home className="mr-2 h-4 w-4" /> Chọn bài tập khác
               </Link>
             </Button>

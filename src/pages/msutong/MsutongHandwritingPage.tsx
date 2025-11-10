@@ -28,7 +28,7 @@ const MsutongHandwritingPage: React.FC = () => {
         fullVocabularyForSuggestions={fullMsutongVocab} // Provide all Msutong words for search suggestions
         title={`Luyện viết chữ Hán (Msutong ${booksParam} - ${lessonsDisplay})`}
         description="Xem thứ tự nét và luyện viết các chữ Hán trong bài học đã chọn."
-        homeLink="/msutong"
+        homeLink="/mandarin/msutong"
       />
     </div>
   );

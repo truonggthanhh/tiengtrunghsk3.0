@@ -95,7 +95,7 @@ const MsutongFillInTheBlankPage = () => {
             Vui lòng quay lại và chọn bài học để bắt đầu.
           </p>
           <Button asChild>
-            <Link to="/msutong">
+            <Link to="/mandarin/msutong">
               <Home className="mr-2 h-4 w-4" /> Quay lại trang chọn bài
             </Link>
           </Button>
@@ -129,7 +129,7 @@ const MsutongFillInTheBlankPage = () => {
               ))}
               <Button onClick={() => handleStart(practiceVocabulary.length)} size="lg" className="font-bold">Tất cả ({practiceVocabulary.length} từ)</Button>
               <Button asChild variant="outline" className="font-bold">
-                <Link to="/msutong">
+                <Link to="/mandarin/msutong">
                   <Home className="mr-2 h-4 w-4" /> Quay về trang chọn bài
                 </Link>
               </Button>
@@ -159,7 +159,7 @@ const MsutongFillInTheBlankPage = () => {
                         <div className="flex gap-4 justify-center">
                             <Button onClick={resetToLevelSelection} className="font-bold">Làm lại</Button>
                             <Button asChild variant="secondary" className="font-bold">
-                                <Link to="/msutong">
+                                <Link to="/mandarin/msutong">
                                     <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
                                 </Link>
                             </Button>
@@ -240,7 +240,7 @@ const MsutongFillInTheBlankPage = () => {
 
           <div className="text-center mt-8">
             <Button asChild variant="secondary" className="font-bold">
-              <Link to="/msutong">
+              <Link to="/mandarin/msutong">
                 <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
               </Link>
             </Button>
