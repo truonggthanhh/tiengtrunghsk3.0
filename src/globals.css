@@ -317,55 +317,71 @@
     box-shadow: 0 10px 40px -10px rgba(255, 195, 113, 0.5);
   }
 
-  /* Hong Kong Vintage Neon Text Effects */
+  /* Hong Kong Vintage Neon Text Effects - Softer & More Readable */
   .neon-cyan {
-    color: #50E3E6;
+    color: #3BC9CC;
     text-shadow:
-      0 0 5px #50E3E6,
-      0 0 10px #50E3E6,
-      0 0 20px #50E3E6,
-      0 0 40px #50E3E6;
-    font-weight: 800;
+      0 0 3px rgba(59, 201, 204, 0.4),
+      0 0 8px rgba(59, 201, 204, 0.3),
+      0 0 15px rgba(59, 201, 204, 0.2);
+    font-weight: 700;
   }
 
   .neon-pink {
-    color: #FF6B9D;
+    color: #E85787;
     text-shadow:
-      0 0 5px #FF6B9D,
-      0 0 10px #FF6B9D,
-      0 0 20px #FF6B9D,
-      0 0 40px #FF6B9D;
-    font-weight: 800;
+      0 0 3px rgba(232, 87, 135, 0.4),
+      0 0 8px rgba(232, 87, 135, 0.3),
+      0 0 15px rgba(232, 87, 135, 0.2);
+    font-weight: 700;
   }
 
   .neon-blue {
-    color: #4F9DFF;
+    color: #3B89E6;
     text-shadow:
-      0 0 5px #4F9DFF,
-      0 0 10px #4F9DFF,
-      0 0 20px #4F9DFF,
-      0 0 40px #4F9DFF;
-    font-weight: 800;
+      0 0 3px rgba(59, 137, 230, 0.4),
+      0 0 8px rgba(59, 137, 230, 0.3),
+      0 0 15px rgba(59, 137, 230, 0.2);
+    font-weight: 700;
   }
 
   .neon-purple {
-    color: #B673FF;
+    color: #9B5FE6;
     text-shadow:
-      0 0 5px #B673FF,
-      0 0 10px #B673FF,
-      0 0 20px #B673FF,
-      0 0 40px #B673FF;
-    font-weight: 800;
+      0 0 3px rgba(155, 95, 230, 0.4),
+      0 0 8px rgba(155, 95, 230, 0.3),
+      0 0 15px rgba(155, 95, 230, 0.2);
+    font-weight: 700;
   }
 
   .neon-yellow {
-    color: #FFD93D;
+    color: #E6BD3D;
     text-shadow:
-      0 0 5px #FFD93D,
-      0 0 10px #FFD93D,
-      0 0 20px #FFD93D,
-      0 0 40px #FFD93D;
-    font-weight: 800;
+      0 0 3px rgba(230, 189, 61, 0.4),
+      0 0 8px rgba(230, 189, 61, 0.3),
+      0 0 15px rgba(230, 189, 61, 0.2);
+    font-weight: 700;
+  }
+
+  /* Dark mode - slightly brighter for better contrast */
+  .dark .neon-cyan {
+    color: #50E3E6;
+  }
+
+  .dark .neon-pink {
+    color: #FF6B9D;
+  }
+
+  .dark .neon-blue {
+    color: #5FA7FF;
+  }
+
+  .dark .neon-purple {
+    color: #B673FF;
+  }
+
+  .dark .neon-yellow {
+    color: #FFD93D;
   }
 
   /* Hong Kong Vintage Background with Paper Texture */
