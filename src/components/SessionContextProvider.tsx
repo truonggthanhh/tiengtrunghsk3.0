@@ -25,7 +25,7 @@ export const SessionContextProvider: React.FC<{ children: React.ReactNode }> = (
       setSession(session);
       setIsLoading(false);
       if (_event === 'SIGNED_OUT') {
-        navigate('/login');
+        navigate('/mandarin/login');
       }
     });
 
