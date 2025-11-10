@@ -38,7 +38,7 @@ export default function UserMenu() {
 
   if (!session || !profile) {
     return (
-      <Link to="/cantonese/login" className="rounded-xl px-4 py-2 text-ink bg-white dark:bg-black/20 hover:bg-white/90 transition shadow-md">
+      <Link to="/cantonese/login" className="rounded-xl px-4 py-2 text-ink dark:text-cream bg-white dark:bg-black/40 hover:bg-white/90 dark:hover:bg-black/60 transition shadow-md border border-ink/10 dark:border-white/10">
         Đăng nhập
       </Link>
     );
@@ -49,31 +49,31 @@ export default function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="rounded-xl px-4 py-2 text-ink bg-white dark:bg-black/20 hover:bg-white/90 transition shadow-md">
+        <Button variant="outline" className="rounded-xl px-4 py-2 text-ink dark:text-cream bg-white dark:bg-black/40 hover:bg-white/90 dark:hover:bg-black/60 transition shadow-md border border-ink/10 dark:border-white/10">
           <User className="h-4 w-4 mr-2" /> {displayName}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56 bg-white dark:bg-black/20 border border-ink/10 shadow-lg">
+      <DropdownMenuContent className="w-56 bg-white dark:bg-gray-900 border border-ink/10 dark:border-white/20 shadow-lg">
         <DropdownMenuLabel className="font-bold text-ink dark:text-cream">Tài khoản của tôi</DropdownMenuLabel>
-        <DropdownMenuSeparator className="bg-ink/10 dark:bg-white/10" />
-        <DropdownMenuItem asChild className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/5">
+        <DropdownMenuSeparator className="bg-ink/10 dark:bg-white/20" />
+        <DropdownMenuItem asChild className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/10 text-ink dark:text-cream">
           <Link to="/cantonese/profile" className="flex items-center gap-2">
             <User className="h-4 w-4" /> Hồ sơ của tôi
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/5">
+        <DropdownMenuItem asChild className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/10 text-ink dark:text-cream">
           <Link to="/cantonese/learning-progress" className="flex items-center gap-2">
             <GraduationCap className="h-4 w-4" /> Quá trình học tập
           </Link>
         </DropdownMenuItem>
         {isAdmin && (
-          <DropdownMenuItem asChild className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/5">
+          <DropdownMenuItem asChild className="cursor-pointer hover:bg-black/5 dark:hover:bg-white/10 text-ink dark:text-cream">
             <Link to="/cantonese/dashboard" className="flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4" /> Dashboard
             </Link>
           </DropdownMenuItem>
         )}
-        <DropdownMenuSeparator className="bg-ink/10 dark:bg-white/10" />
+        <DropdownMenuSeparator className="bg-ink/10 dark:bg-white/20" />
         <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-verm hover:bg-verm/10 dark:hover:bg-verm/20">
           <LogOut className="h-4 w-4 mr-2" /> Đăng xuất
         </DropdownMenuItem>

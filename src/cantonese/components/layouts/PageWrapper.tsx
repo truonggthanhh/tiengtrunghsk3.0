@@ -11,12 +11,12 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
       <BackgroundTexture variant="subtle" />
 
       {/* Navigation Bar */}
-      <nav className="relative z-20 border-b border-ink/10 bg-cream/80 dark:bg-black/20 backdrop-blur-sm">
+      <nav className="relative z-20 border-b border-ink/10 dark:border-white/10 bg-cream/90 dark:bg-gray-900/90 backdrop-blur-md shadow-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between gap-4">
             <Link to="/cantonese" className="flex items-center gap-3 group">
-              <div className="h-9 w-9 rounded-xl border border-ink/20 bg-jade grid place-items-center shadow-[0_0_0_2px_rgba(0,0,0,0.2)]">
-                <span className="text-cream font-black tracking-wider">粵</span>
+              <div className="h-9 w-9 rounded-xl border-2 border-jade dark:border-jade/80 bg-jade dark:bg-jade/20 grid place-items-center shadow-lg">
+                <span className="text-cream dark:text-jade font-black tracking-wider">粵</span>
               </div>
               <div>
                 <div className="text-ink dark:text-cream font-extrabold leading-none tracking-wide">Học tiếng Quảng Đông</div>
@@ -24,9 +24,9 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
               </div>
             </Link>
 
-            <div className="hidden md:flex items-center gap-6 text-ink dark:text-cream">
-              <Link to="/cantonese/lessons" className="hover:opacity-80 transition">Bài học</Link>
-              <Link to="/cantonese/songs" className="hover:opacity-80 transition">Bài hát</Link>
+            <div className="hidden md:flex items-center gap-6 text-ink dark:text-cream font-medium">
+              <Link to="/cantonese/lessons" className="hover:opacity-80 hover:text-jade dark:hover:text-jade transition">Bài học</Link>
+              <Link to="/cantonese/songs" className="hover:opacity-80 hover:text-jade dark:hover:text-jade transition">Bài hát</Link>
             </div>
 
             <div className="flex items-center gap-2">
