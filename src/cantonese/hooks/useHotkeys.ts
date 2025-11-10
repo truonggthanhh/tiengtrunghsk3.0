@@ -1,6 +1,6 @@
 import React from 'react'
 import { useTheme } from '@/cantonese/components/providers/ThemeProvider'
-import { useSettings } from '@/components/providers/SettingsProvider'
+import { useSettings } from '@/cantonese/components/providers/SettingsProvider'
 
 type Opts = {
   onPrev?: ()=>void
