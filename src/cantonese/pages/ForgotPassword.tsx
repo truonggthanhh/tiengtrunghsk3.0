@@ -36,7 +36,7 @@ const ForgotPasswordPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="mx-auto max-w-md p-6 mt-16 rounded-2xl bg-white dark:bg-black/20 border border-ink/10">
-        <Link to="/login" className="text-sm text-ink/70 hover:text-ink dark:text-cream/70 dark:hover:text-cream mb-4 inline-block">← Quay về Đăng nhập</Link>
+        <Link to="/cantonese/login" className="text-sm text-ink/70 hover:text-ink dark:text-cream/70 dark:hover:text-cream mb-4 inline-block">← Quay về Đăng nhập</Link>
         <h1 className="text-2xl font-bold mb-4 text-center">Quên mật khẩu</h1>
         <p className="text-center text-ink/70 dark:text-cream/70 mb-6">
           Nhập địa chỉ email của bạn và chúng tôi sẽ gửi cho bạn một liên kết để đặt lại mật khẩu.

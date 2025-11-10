@@ -71,7 +71,7 @@ const EmailPasswordAuthForm = () => {
             // Auto-login enabled, email confirmation disabled
             toast.success('Đăng ký thành công! Đang chuyển hướng...');
             setTimeout(() => {
-              navigate('/lessons');
+              navigate('/cantonese/lessons');
             }, 500);
           }
         }
@@ -154,7 +154,7 @@ const EmailPasswordAuthForm = () => {
           </p>
         )}
         <p className="mt-2">
-          <Link to="/forgot-password" className="text-ink/70 dark:text-cream/70 hover:underline">
+          <Link to="/cantonese/forgot-password" className="text-ink/70 dark:text-cream/70 hover:underline">
             Bạn quên mật khẩu?
           </Link>
         </p>

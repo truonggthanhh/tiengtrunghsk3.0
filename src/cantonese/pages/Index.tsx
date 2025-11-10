@@ -43,7 +43,7 @@ function Navbar(){
     <div className="relative z-10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-3 group">
+          <Link to="/cantonese" className="flex items-center gap-3 group">
             <div className="h-9 w-9 rounded-xl border border-ink/20 bg-jade grid place-items-center shadow-[0_0_0_2px_rgba(0,0,0,0.2)]">
               <span className="text-cream font-black tracking-wider">粵</span>
             </div>
@@ -53,8 +53,8 @@ function Navbar(){
             </div>
           </Link>
           <div className="hidden md:flex items-center gap-6 text-ink">
-            <Link to="/lessons" className="hover:opacity-80">Bài học</Link>
-            <Link to="/songs" className="hover:opacity-80">Bài hát</Link>
+            <Link to="/cantonese/lessons" className="hover:opacity-80">Bài học</Link>
+            <Link to="/cantonese/songs" className="hover:opacity-80">Bài hát</Link>
             <a href="#features" className="hover:opacity-80">Tính năng</a>
             <a href="#exercises" className="hover:opacity-80">Bài tập</a>
             <a href="#tracks" className="hover:opacity-80">Lộ trình</a>
@@ -79,8 +79,8 @@ function Hero(){
             <NeonHeader />
             <p className="mt-6 text-lg text-ink/90">Học tiếng Quảng Đông theo chuẩn phiên âm Việt Bính (Jyutping) quốc tế.</p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link to="/lessons" className="inline-flex items-center gap-2 rounded-2xl bg-verm px-5 py-3 font-semibold text-ink shadow-[0_8px_0_#8f2a22] hover:translate-y-0.5 active:translate-y-1 transition-transform"><Zap className="h-5 w-5" /> Vào học</Link>
-              <Link to="/songs" className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-neonCyan to-neonPink px-5 py-3 font-semibold text-cream shadow-[0_8px_0_var(--neon-pink-shadow)] hover:translate-y-0.5 active:translate-y-1 transition-transform"><Music className="h-5 w-5" /> Học qua bài hát</Link>
+              <Link to="/cantonese/lessons" className="inline-flex items-center gap-2 rounded-2xl bg-verm px-5 py-3 font-semibold text-ink shadow-[0_8px_0_#8f2a22] hover:translate-y-0.5 active:translate-y-1 transition-transform"><Zap className="h-5 w-5" /> Vào học</Link>
+              <Link to="/cantonese/songs" className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-neonCyan to-neonPink px-5 py-3 font-semibold text-cream shadow-[0_8px_0_var(--neon-pink-shadow)] hover:translate-y-0.5 active:translate-y-1 transition-transform"><Music className="h-5 w-5" /> Học qua bài hát</Link>
             </div>
             <div className="mt-6 flex flex-wrap gap-3 text-xs text-ink/80">
               <ToneBadge tone={1} label="Âm 1" />
@@ -313,7 +313,7 @@ function Footer(){ // Không còn nhận props
       toast.error(`Lỗi khi đăng xuất: ${error.message}`);
     } else {
       toast.success('Đã đăng xuất thành công!');
-      navigate('/');
+      navigate('/cantonese');
     }
   };
 
@@ -333,7 +333,7 @@ function Footer(){ // Không còn nhận props
               {session && isAdmin ? (
                 <button onClick={handleLogout} className="text-xs text-verm hover:text-red-700 transition underline">Đăng xuất Admin</button>
               ) : (
-                <Link to="/dashboard" className="text-xs text-ink/60 hover:text-ink transition">Admin Login</Link>
+                <Link to="/cantonese/dashboard" className="text-xs text-ink/60 hover:text-ink transition">Admin Login</Link>
               )}
             </div>
           </div>

@@ -204,7 +204,7 @@ const PracticePage = () => {
       <div className="max-w-5xl mx-auto p-6">
         <div className="flex justify-between items-center mb-4">
           <div className="flex gap-3">
-            <Link to="/" className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition text-sm">
+            <Link to="/cantonese" className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition text-sm">
               <Home className="h-4 w-4" /> Trang chủ
             </Link>
             <Link to={`/lessons/${lessonId}`} className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition text-sm">

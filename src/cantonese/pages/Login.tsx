@@ -86,7 +86,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (!isLoading && session) {
-      navigate('/lessons');
+      navigate('/cantonese/lessons');
     }
   }, [session, isLoading, navigate]);
 
@@ -101,7 +101,7 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="mx-auto max-w-2xl p-6 mt-16 rounded-2xl bg-white dark:bg-black/20 border border-ink/10">
-        <Link to="/" className="text-sm text-ink/70 hover:text-ink dark:text-cream/70 dark:hover:text-cream mb-4 inline-block">← Quay về trang chủ</Link>
+        <Link to="/cantonese" className="text-sm text-ink/70 hover:text-ink dark:text-cream/70 dark:hover:text-cream mb-4 inline-block">← Quay về trang chủ</Link>
         <h1 className="text-2xl font-bold mb-4 text-center">Đăng nhập</h1>
 
         {/* Form đăng nhập/đăng ký bằng Email/Mật khẩu tùy chỉnh */}

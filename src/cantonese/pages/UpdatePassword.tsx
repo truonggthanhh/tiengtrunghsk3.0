@@ -22,7 +22,7 @@ const UpdatePasswordPage = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         toast.error('Phiên không hợp lệ hoặc đã hết hạn. Vui lòng thử lại quy trình đặt lại mật khẩu.');
-        navigate('/login');
+        navigate('/cantonese/login');
       }
       setSessionChecked(true);
     };
@@ -45,7 +45,7 @@ const UpdatePasswordPage = () => {
       toast.error(`Lỗi cập nhật mật khẩu: ${error.message}`);
     } else {
       toast.success('Mật khẩu của bạn đã được cập nhật thành công!');
-      navigate('/login');
+      navigate('/cantonese/login');
     }
     setLoading(false);
   };
@@ -57,7 +57,7 @@ const UpdatePasswordPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="mx-auto max-w-md p-6 mt-16 rounded-2xl bg-white dark:bg-black/20 border border-ink/10">
-        <Link to="/login" className="text-sm text-ink/70 hover:text-ink dark:text-cream/70 dark:hover:text-cream mb-4 inline-block">← Quay về Đăng nhập</Link>
+        <Link to="/cantonese/login" className="text-sm text-ink/70 hover:text-ink dark:text-cream/70 dark:hover:text-cream mb-4 inline-block">← Quay về Đăng nhập</Link>
         <h1 className="text-2xl font-bold mb-4 text-center">Cập nhật mật khẩu</h1>
         <p className="text-center text-ink/70 dark:text-cream/70 mb-6">
           Vui lòng nhập mật khẩu mới của bạn.
