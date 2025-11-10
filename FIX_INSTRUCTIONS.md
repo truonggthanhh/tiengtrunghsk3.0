@@ -43,10 +43,12 @@ My previous UI fixes (dark mode, styling) were actually correct, but they **reve
 
 ### **Step 1: Run the Database Fix SQL** (MOST IMPORTANT! ⚠️)
 
+⚠️ **IMPORTANT**: Use `FIX_PROFILE_ISSUES_V2.sql` - it works with your actual database structure!
+
 1. Open **Supabase Dashboard** → https://supabase.com/dashboard
 2. Go to **SQL Editor** (left sidebar)
 3. Click **"New query"**
-4. Open the file `FIX_PROFILE_ISSUES.sql` from this project
+4. Open the file `FIX_PROFILE_ISSUES_V2.sql` from this project
 5. **Copy ALL the content** (Ctrl+A, Ctrl+C)
 6. **Paste** into Supabase SQL Editor (Ctrl+V)
 7. Click **"Run"** or press Ctrl+Enter
@@ -54,6 +56,7 @@ My previous UI fixes (dark mode, styling) were actually correct, but they **reve
 9. **Verify** the output shows:
    - ✓ Functions created (get_my_role, is_admin, set_user_lesson_access)
    - ✓ Policies created for profiles, lessons, user_lesson_access tables
+   - ✓ Columns exist (is_admin, role, cantonese_access, mandarin_access)
 
 ### **Step 2: Test the Application**
 
@@ -81,11 +84,11 @@ If you need admin access, run this in Supabase SQL Editor:
 ```sql
 -- Replace 'your@email.com' with your actual email
 UPDATE profiles
-SET role = 'admin'
+SET is_admin = true
 WHERE id = (SELECT id FROM auth.users WHERE email = 'your@email.com');
 
--- Verify it worked
-SELECT u.email, p.role
+-- Verify it worked (should show is_admin = true and role = 'admin')
+SELECT u.email, p.is_admin, p.role
 FROM auth.users u
 JOIN profiles p ON u.id = p.id
 WHERE u.email = 'your@email.com';
@@ -101,11 +104,11 @@ WHERE u.email = 'your@email.com';
 2. Look for `[ProfileProvider]` logs
 3. Check if there's an error (❌)
 4. Common problems:
-   - **"Error fetching profile"** → Run `FIX_PROFILE_ISSUES.sql` again
+   - **"Error fetching profile"** → Run `FIX_PROFILE_ISSUES_V2.sql` again
    - **"Profile not found"** → Your profile doesn't exist, sign up again or run:
      ```sql
-     INSERT INTO profiles (id, first_name, last_name, role)
-     SELECT id, 'Your Name', 'Last Name', 'user'
+     INSERT INTO profiles (id, first_name, last_name, is_admin)
+     SELECT id, 'Your Name', 'Last Name', false
      FROM auth.users
      WHERE email = 'your@email.com'
      ON CONFLICT (id) DO NOTHING;
@@ -124,9 +127,9 @@ WHERE u.email = 'your@email.com';
 
 1. Verify you're admin:
    ```sql
-   SELECT role FROM profiles WHERE id = auth.uid();
+   SELECT is_admin, role FROM profiles WHERE id = auth.uid();
    ```
-2. Should return `admin` not `user`
+2. Should return `is_admin = true` and `role = admin`
 3. If not, run the UPDATE query from Step 3 above
 
 ---
@@ -136,14 +139,18 @@ WHERE u.email = 'your@email.com';
 ### Files Modified:
 1. ✅ `src/cantonese/components/providers/ProfileProvider.tsx`
    - Better error handling
-   - Fallback to profile.role if RPC fails
-   - Extensive logging
+   - Compatible with both `is_admin` (boolean) and `role` (text) columns
+   - Fallback to RPC if database columns fail
+   - Extensive logging with ✓/❌ indicators
 
 ### Files Created:
-1. ✅ `FIX_PROFILE_ISSUES.sql`
-   - Database schema fixes
-   - Missing RPC functions
-   - Proper RLS policies
+1. ✅ `FIX_PROFILE_ISSUES_V2.sql` ⭐ **USE THIS ONE**
+   - Works with your actual database structure (`is_admin` column)
+   - Creates missing RPC functions
+   - Fixes RLS policies
+   - Adds `role` column and keeps it synced with `is_admin`
+2. ~~`FIX_PROFILE_ISSUES.sql`~~ (deprecated - don't use)
+3. ✅ `FIX_INSTRUCTIONS.md` (this file)
 
 ---
 
