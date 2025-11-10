@@ -36,36 +36,46 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
 
   useEffect(() => {
     async function getProfileAndRole() {
+      console.log('[ProfileProvider] Starting - Session:', session ? `✓ User: ${session.user.email}` : '✗ No session');
       setIsLoadingProfile(true);
-      setProfile(null);
-      setIsAdmin(false);
 
-      if (session?.user) {
-        // Lấy thông tin hồ sơ và vai trò một cách song song
-        const profilePromise = supabase
+      if (!session?.user) {
+        console.log('[ProfileProvider] No session, clearing profile state');
+        setProfile(null);
+        setIsAdmin(false);
+        setIsLoadingProfile(false);
+        return;
+      }
+
+      try {
+        // Fetch profile
+        const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('id, first_name, last_name, avatar_url, role')
           .eq('id', session.user.id)
           .maybeSingle();
 
-        // Gọi trực tiếp hàm RPC 'get_my_role' để có nguồn xác thực vai trò cuối cùng
-        const rolePromise = supabase.rpc('get_my_role');
+        if (profileError) {
+          console.error('[ProfileProvider] ❌ Error fetching profile:', profileError);
+          setProfile(null);
+          setIsAdmin(false);
+          setIsLoadingProfile(false);
+          return;
+        }
 
-        const [profileResult, roleResult] = await Promise.all([profilePromise, rolePromise]);
+        let finalProfile: Profile | null = null;
 
-        // Xử lý dữ liệu hồ sơ
-        if (profileResult.error) {
-          console.error('ProfileProvider: Lỗi khi lấy hồ sơ:', profileResult.error);
-        } else if (profileResult.data) {
-          setProfile(profileResult.data as Profile);
-        } else if (!profileResult.data && session.user) {
-          // Profile không tồn tại, tạo profile mặc định từ user metadata
-          console.log('ProfileProvider: Profile không tồn tại, tạo từ user metadata');
+        if (profileData) {
+          console.log('[ProfileProvider] ✓ Profile found:', { name: `${profileData.first_name} ${profileData.last_name}`, role: profileData.role });
+          finalProfile = profileData as Profile;
+          setProfile(finalProfile);
+        } else {
+          // Profile doesn't exist, create default
+          console.log('[ProfileProvider] Profile not found, creating default...');
 
           const userMetadata = session.user.user_metadata || {};
           const email = session.user.email || '';
 
-          // Tạo profile từ metadata hoặc email
           const defaultProfile: Profile = {
             id: session.user.id,
             first_name: userMetadata.first_name || userMetadata.full_name?.split(' ')[0] || email.split('@')[0] || 'User',
@@ -74,42 +84,55 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
             role: 'user'
           };
 
-          // Cố gắng insert profile vào database
-          try {
-            const { error: insertError } = await supabase
-              .from('profiles')
-              .insert({
-                id: session.user.id,
-                first_name: defaultProfile.first_name,
-                last_name: defaultProfile.last_name,
-                avatar_url: defaultProfile.avatar_url,
-                role: 'user'
-              });
+          // Try to insert profile
+          const { error: insertError } = await supabase
+            .from('profiles')
+            .insert({
+              id: session.user.id,
+              first_name: defaultProfile.first_name,
+              last_name: defaultProfile.last_name,
+              avatar_url: defaultProfile.avatar_url,
+              role: 'user'
+            });
 
-            if (insertError) {
-              console.error('ProfileProvider: Lỗi khi tạo profile:', insertError);
-            } else {
-              console.log('ProfileProvider: Đã tạo profile thành công');
-            }
-          } catch (err) {
-            console.error('ProfileProvider: Exception khi tạo profile:', err);
+          if (insertError) {
+            console.error('[ProfileProvider] ❌ Error creating profile:', insertError);
+          } else {
+            console.log('[ProfileProvider] ✓ Profile created');
           }
 
-          // Set profile ngay lập tức (không chờ insert)
+          finalProfile = defaultProfile;
           setProfile(defaultProfile);
         }
 
-        // Xử lý dữ liệu vai trò và đặt trạng thái admin
-        if (roleResult.error) {
-          console.error('ProfileProvider: Lỗi khi gọi RPC get_my_role:', roleResult.error);
-          setIsAdmin(false); // Mặc định là false khi có lỗi
-        } else {
-          // Lệnh gọi RPC là nguồn xác thực duy nhất cho việc có phải là admin hay không
-          setIsAdmin(roleResult.data === 'admin');
+        // Determine admin status - prefer profile.role, fallback to RPC if available
+        let adminStatus = finalProfile?.role === 'admin';
+        console.log('[ProfileProvider] Admin status from profile.role:', adminStatus);
+
+        // Try RPC as additional verification (non-critical if it fails)
+        try {
+          const { data: roleData, error: roleError } = await supabase.rpc('get_my_role');
+          if (!roleError && roleData) {
+            const rpcAdminStatus = roleData === 'admin';
+            console.log('[ProfileProvider] ✓ RPC role check:', roleData, '→', rpcAdminStatus);
+            adminStatus = rpcAdminStatus;
+          } else if (roleError) {
+            console.warn('[ProfileProvider] ⚠ RPC get_my_role failed (using profile.role fallback):', roleError.message);
+          }
+        } catch (rpcError) {
+          console.warn('[ProfileProvider] ⚠ RPC exception (using profile.role fallback):', rpcError);
         }
 
+        setIsAdmin(adminStatus);
+        console.log('[ProfileProvider] ✓ Final state - Profile:', !!finalProfile, 'Admin:', adminStatus);
+
+      } catch (err) {
+        console.error('[ProfileProvider] ❌ Unexpected error:', err);
+        setProfile(null);
+        setIsAdmin(false);
+      } finally {
+        setIsLoadingProfile(false);
       }
-      setIsLoadingProfile(false);
     }
 
     if (!isLoadingSession) {
