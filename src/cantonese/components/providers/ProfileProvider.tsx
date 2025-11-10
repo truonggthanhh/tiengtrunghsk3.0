@@ -9,7 +9,8 @@ interface Profile {
   first_name: string | null;
   last_name: string | null;
   avatar_url: string | null;
-  role: 'user' | 'admin';
+  role?: 'user' | 'admin';
+  is_admin?: boolean;
 }
 
 interface ProfileContextType {
@@ -48,10 +49,10 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
       }
 
       try {
-        // Fetch profile
+        // Fetch profile - try to get both is_admin and role columns for compatibility
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('id, first_name, last_name, avatar_url, role')
+          .select('id, first_name, last_name, avatar_url, is_admin, role')
           .eq('id', session.user.id)
           .maybeSingle();
 
@@ -66,8 +67,15 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
         let finalProfile: Profile | null = null;
 
         if (profileData) {
-          console.log('[ProfileProvider] ✓ Profile found:', { name: `${profileData.first_name} ${profileData.last_name}`, role: profileData.role });
-          finalProfile = profileData as Profile;
+          // Determine role from either is_admin or role column
+          const computedRole = profileData.is_admin ? 'admin' : (profileData.role || 'user');
+          console.log('[ProfileProvider] ✓ Profile found:', {
+            name: `${profileData.first_name} ${profileData.last_name}`,
+            is_admin: profileData.is_admin,
+            role: profileData.role,
+            computed: computedRole
+          });
+          finalProfile = { ...profileData, role: computedRole } as Profile;
           setProfile(finalProfile);
         } else {
           // Profile doesn't exist, create default
@@ -81,10 +89,11 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
             first_name: userMetadata.first_name || userMetadata.full_name?.split(' ')[0] || email.split('@')[0] || 'User',
             last_name: userMetadata.last_name || userMetadata.full_name?.split(' ').slice(1).join(' ') || '',
             avatar_url: userMetadata.avatar_url || userMetadata.picture || null,
-            role: 'user'
+            role: 'user',
+            is_admin: false
           };
 
-          // Try to insert profile
+          // Try to insert profile (compatible with both schemas)
           const { error: insertError } = await supabase
             .from('profiles')
             .insert({
@@ -92,7 +101,7 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
               first_name: defaultProfile.first_name,
               last_name: defaultProfile.last_name,
               avatar_url: defaultProfile.avatar_url,
-              role: 'user'
+              is_admin: false
             });
 
           if (insertError) {
@@ -105,9 +114,9 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
           setProfile(defaultProfile);
         }
 
-        // Determine admin status - prefer profile.role, fallback to RPC if available
-        let adminStatus = finalProfile?.role === 'admin';
-        console.log('[ProfileProvider] Admin status from profile.role:', adminStatus);
+        // Determine admin status - check is_admin first, then role, then RPC
+        let adminStatus = finalProfile?.is_admin === true || finalProfile?.role === 'admin';
+        console.log('[ProfileProvider] Admin status from profile:', { is_admin: finalProfile?.is_admin, role: finalProfile?.role, result: adminStatus });
 
         // Try RPC as additional verification (non-critical if it fails)
         try {
