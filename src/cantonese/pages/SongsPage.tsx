@@ -24,7 +24,7 @@ const SongsPage = () => {
 
   return (
     <div className="max-w-5xl mx-auto p-6">
-      <Link to="/" className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition text-sm mb-4">
+      <Link to="/cantonese" className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition text-sm mb-4">
         <Home className="h-4 w-4" /> Quay về trang chủ
       </Link>
       <h1 className="text-2xl font-bold mb-4 flex items-center gap-2">
@@ -32,7 +32,7 @@ const SongsPage = () => {
       </h1>
       <div className="grid md:grid-cols-2 gap-4">
         {songs?.map((song: any) => (
-          <Link key={song.id} to={`/songs/${song.id}`} className="block p-4 rounded-xl bg-white dark:bg-black/20 border border-ink/10 hover:bg-black/5 dark:hover:bg-white/5 transition-colors shadow-[0_10px_0_#d7c8b6]">
+          <Link key={song.id} to={`/cantonese/songs/${song.id}`} className="block p-4 rounded-xl bg-white dark:bg-black/20 border border-ink/10 hover:bg-black/5 dark:hover:bg-white/5 transition-colors shadow-[0_10px_0_#d7c8b6]">
             <div className="font-semibold text-lg">{song.title}</div>
             <div className="text-sm text-ink/70">{song.artist}</div>
           </Link>

@@ -24,7 +24,7 @@ const LessonCard = ({ lesson, colorClass = 'jade' }: LessonCardProps) => {
   `;
 
   return (
-    <Link to={`/lessons/${lesson.id}`} className={cn(baseClasses, colorStyles)}>
+    <Link to={`/cantonese/lessons/${lesson.id}`} className={cn(baseClasses, colorStyles)}>
       <div className="flex items-center gap-5">
         <BookOpen className={cn(`h-10 w-10 text-${colorClass} transition-transform duration-300 group-hover:scale-110`)} style={{ filter: `drop-shadow(0 0 8px currentColor)` }} />
         <div>

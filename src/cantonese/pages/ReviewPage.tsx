@@ -126,7 +126,7 @@ const ReviewPage = () => {
           </div>
           <div className="flex items-center gap-3">
             <JyutpingToggle />
-            <Link to={`/lessons/${lessonId}`} className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition text-sm">
+            <Link to={`/cantonese/lessons/${lessonId}`} className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition text-sm">
               <ArrowLeft className="h-4 w-4" /> Quay lại
             </Link>
           </div>
@@ -188,10 +188,10 @@ const PracticeResults = ({ score, total, lessonId }: { score: number; total: num
         {isPerfect ? 'Xuất sắc!' : `Bạn đã trả lời đúng ${percentage}%`}
       </div>
       <div className="flex justify-center gap-4 flex-wrap">
-        <Link to={`/lessons/${lessonId}`} className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition">
+        <Link to={`/cantonese/lessons/${lessonId}`} className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition">
           Quay lại bài học
         </Link>
-        <Link to={`/review/${lessonId}`} className="inline-flex items-center gap-2 rounded-2xl bg-verm px-4 py-2 font-semibold text-ink shadow-[0_4px_0_#8f2a22] hover:translate-y-0.5 active:translate-y-1 transition-transform">
+        <Link to={`/cantonese/review/${lessonId}`} className="inline-flex items-center gap-2 rounded-2xl bg-verm px-4 py-2 font-semibold text-ink shadow-[0_4px_0_#8f2a22] hover:translate-y-0.5 active:translate-y-1 transition-transform">
           Làm lại đề khác
         </Link>
       </div>
