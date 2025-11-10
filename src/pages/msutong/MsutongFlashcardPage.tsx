@@ -76,7 +76,7 @@ const MsutongFlashcardPage = () => {
             Vui lòng quay lại và chọn bài học để bắt đầu.
           </p>
           <Button asChild>
-            <Link to="/msutong">
+            <Link to="/mandarin/msutong">
               <Home className="mr-2 h-4 w-4" /> Quay lại trang chọn bài
             </Link>
           </Button>
@@ -145,7 +145,7 @@ const MsutongFlashcardPage = () => {
           
           <div className="text-center mt-8">
             <Button asChild variant="secondary" className="font-bold">
-              <Link to="/msutong">
+              <Link to="/mandarin/msutong">
                 <Home className="mr-2 h-4 w-4" /> Chọn bài tập khác
               </Link>
             </Button>

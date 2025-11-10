@@ -37,7 +37,7 @@ const ProfilePage: React.FC = () => {
   useEffect(() => {
     if (!isSessionLoading) {
       if (!session) {
-        navigate('/login');
+        navigate('/mandarin/login');
         return;
       }
       loadUserData();
@@ -167,7 +167,7 @@ const ProfilePage: React.FC = () => {
               <div className="text-center py-12">
                 <p className="text-muted-foreground mb-4">Bạn chưa hoàn thành bài tập nào</p>
                 <Button asChild className="bg-gradient-vivid text-white hover:bg-gradient-vivid/90 border-0">
-                  <Link to="/">Bắt đầu học ngay</Link>
+                  <Link to="/mandarin">Bắt đầu học ngay</Link>
                 </Button>
               </div>
             ) : (
@@ -230,7 +230,7 @@ const ProfilePage: React.FC = () => {
 
         <div className="text-center mt-8">
           <Button asChild className="font-bold bg-gradient-spring text-white hover:bg-gradient-spring/90 border-0 shadow-cyan">
-            <Link to="/">
+            <Link to="/mandarin">
               <Home className="mr-2 h-4 w-4" /> Quay lại trang chủ
             </Link>
           </Button>

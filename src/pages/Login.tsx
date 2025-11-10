@@ -13,7 +13,7 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     if (!isLoading && session) {
-      navigate('/');
+      navigate('/mandarin');
     }
   }, [session, isLoading, navigate]);
 
@@ -69,7 +69,7 @@ const Login: React.FC = () => {
                   },
                 }}
                 theme="light"
-                redirectTo={window.location.origin + '/'}
+                redirectTo={window.location.origin + '/mandarin'}
                 localization={{
                   variables: {
                     sign_in: {

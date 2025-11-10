@@ -140,7 +140,7 @@ const PronunciationPage = () => {
             Chức năng này đang được phát triển cho HSK {level}. Vui lòng quay lại sau.
           </p>
           <Button asChild>
-            <Link to="/">
+            <Link to="/mandarin">
               <Home className="mr-2 h-4 w-4" /> Quay lại trang chủ
             </Link>
           </Button>
@@ -173,7 +173,7 @@ const PronunciationPage = () => {
                 </Button>
               ))}
               <Button asChild variant="outline" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
-                <Link to="/">
+                <Link to="/mandarin">
                   <Home className="mr-2 h-4 w-4" /> Quay về trang chủ
                 </Link>
               </Button>
@@ -203,7 +203,7 @@ const PronunciationPage = () => {
                         <div className="flex gap-4 justify-center">
                             <Button onClick={resetToLevelSelection} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">Làm lại</Button>
                             <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
-                                <Link to="/">
+                                <Link to="/mandarin">
                                     <Home className="mr-2 h-4 w-4" /> Về trang chủ
                                 </Link>
                             </Button>
@@ -270,7 +270,7 @@ const PronunciationPage = () => {
 
           <div className="text-center mt-12">
             <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
-              <Link to="/">
+              <Link to="/mandarin">
                 <Home className="mr-2 h-4 w-4" /> Về trang chủ
               </Link>
             </Button>

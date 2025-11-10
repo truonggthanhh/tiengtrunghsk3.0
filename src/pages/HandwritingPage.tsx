@@ -16,7 +16,7 @@ const HandwritingPage: React.FC = () => {
         fullVocabularyForSuggestions={getVocabularyByLevel('6')} // Provide all HSK words for search suggestions
         title={`Luyện viết chữ Hán HSK ${level}`}
         description="Xem thứ tự nét và luyện viết các chữ Hán trong cấp độ này."
-        homeLink="/"
+        homeLink="/mandarin"
       />
     </div>
   );

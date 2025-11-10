@@ -3,9 +3,14 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { ThemeProvider } from "./components/ThemeProvider";
+
+// Language Selection
+import LanguageSelection from "./pages/LanguageSelection";
+
+// Mandarin App Pages
+import MandarinIndex from "./pages/Index";
 import FlashcardPage from "./pages/FlashcardPage";
 import PinyinChoicePage from "./pages/PinyinChoicePage";
 import MeaningChoicePage from "./pages/MeaningChoicePage";
@@ -24,13 +29,36 @@ import MsutongMeaningChoicePage from "./pages/msutong/MsutongMeaningChoicePage";
 import MsutongFillInTheBlankPage from "./pages/msutong/MsutongFillInTheBlankPage";
 import MsutongPronunciationPage from "./pages/msutong/MsutongPronunciationPage";
 import MsutongReadingComprehensionPage from "./pages/msutong/MsutongReadingComprehensionPage";
-import HandwritingPage from "./pages/HandwritingPage"; // Import new HSK handwriting page
-import MsutongHandwritingPage from "./pages/msutong/MsutongHandwritingPage"; // Import new Msutong handwriting page
-import Login from "./pages/Login";
+import HandwritingPage from "./pages/HandwritingPage";
+import MsutongHandwritingPage from "./pages/msutong/MsutongHandwritingPage";
+import MandarinLogin from "./pages/Login";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import ProfilePage from "./pages/ProfilePage";
 import { SessionContextProvider } from "./components/SessionContextProvider";
 import { PinyinProvider } from "./contexts/PinyinContext";
+
+// Cantonese App Pages
+import CantoneseIndex from "./cantonese/pages/Index";
+import CantoneseLogin from "./cantonese/pages/Login";
+import CantoneseDashboard from "./cantonese/pages/Dashboard";
+import CantoneseProfile from "./cantonese/pages/Profile";
+import CantoneseLessons from "./cantonese/pages/Lessons";
+import CantoneseLessonDetail from "./cantonese/pages/LessonDetail";
+import CantonesePractice from "./cantonese/pages/Practice";
+import CantoneseReview from "./cantonese/pages/ReviewPage";
+import CantoneseSongs from "./cantonese/pages/SongsPage";
+import CantoneseSongDetail from "./cantonese/pages/SongDetail";
+import CantoneseLearningProgress from "./cantonese/pages/LearningProgress";
+import CantoneseForgotPassword from "./cantonese/pages/ForgotPassword";
+import CantoneseUpdatePassword from "./cantonese/pages/UpdatePassword";
+
+// Cantonese Components
+import CantonesePageWrapper from "./cantonese/components/layouts/PageWrapper";
+import CantoneseProtectedRoute from "./cantonese/components/ProtectedRoute";
+import CantoneseThemeProvider from "./cantonese/components/providers/ThemeProvider";
+import CantoneseSettingsProvider from "./cantonese/components/providers/SettingsProvider";
+import CantoneseSessionContextProvider from "./cantonese/components/providers/SessionContextProvider";
+import CantoneseProfileProvider from "./cantonese/components/providers/ProfileProvider";
 
 const queryClient = new QueryClient();
 
@@ -41,43 +69,477 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <SessionContextProvider>
-            <PinyinProvider>
-              <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/admin" element={<AdminDashboardPage />} /> 
-              
+          <Routes>
+            {/* Language Selection */}
+            <Route path="/" element={<LanguageSelection />} />
+
+            {/* Mandarin App Routes */}
+            <Route path="/mandarin">
+              <Route
+                index
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MandarinIndex />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="login"
+                element={
+                  <SessionContextProvider>
+                    <MandarinLogin />
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="profile"
+                element={
+                  <SessionContextProvider>
+                    <ProfilePage />
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="admin"
+                element={
+                  <SessionContextProvider>
+                    <AdminDashboardPage />
+                  </SessionContextProvider>
+                }
+              />
+
               {/* HSK Routes */}
-              <Route path="/hsk/:level/flashcard" element={<FlashcardPage />} />
-              <Route path="/hsk/:level/pinyin-choice" element={<PinyinChoicePage />} />
-              <Route path="/hsk/:level/meaning-choice" element={<MeaningChoicePage />} />
-              <Route path="/hsk/:level/fill-in-the-blank" element={<FillInTheBlankPage />} />
-              <Route path="/hsk/:level/sentence-choice" element={<SentenceChoicePage />} />
-              <Route path="/hsk/:level/sentence-scramble" element={<SentenceScramblePage />} />
-              <Route path="/hsk/:level/pronunciation" element={<PronunciationPage />} />
-              <Route path="/hsk/:level/handwriting-practice" element={<HandwritingPage />} /> {/* New HSK Handwriting Route */}
-              <Route path="/hsk/:level/ai-tutor" element={<AiTutorPage />} />
+              <Route
+                path="hsk/:level/flashcard"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <FlashcardPage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="hsk/:level/pinyin-choice"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <PinyinChoicePage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="hsk/:level/meaning-choice"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MeaningChoicePage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="hsk/:level/fill-in-the-blank"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <FillInTheBlankPage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="hsk/:level/sentence-choice"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <SentenceChoicePage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="hsk/:level/sentence-scramble"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <SentenceScramblePage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="hsk/:level/pronunciation"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <PronunciationPage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="hsk/:level/handwriting-practice"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <HandwritingPage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="hsk/:level/ai-tutor"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <AiTutorPage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
 
               {/* Msutong Routes */}
-              <Route path="/msutong" element={<MsutongPage />} />
-              <Route path="/msutong/msutong-flashcard" element={<MsutongFlashcardPage />} />
-              <Route path="/msutong/msutong-pinyin-choice" element={<MsutongPinyinChoicePage />} />
-              <Route path="/msutong/msutong-meaning-choice" element={<MsutongMeaningChoicePage />} />
-              <Route path="/msutong/msutong-fill-in-the-blank" element={<MsutongFillInTheBlankPage />} />
-              <Route path="/msutong/msutong-pronunciation" element={<MsutongPronunciationPage />} />
-              <Route path="/msutong/msutong-sentence-choice" element={<MsutongSentenceChoicePage />} />
-              <Route path="/msutong/msutong-sentence-scramble" element={<MsutongSentenceScramblePage />} />
-              <Route path="/msutong/msutong-reading-comprehension" element={<MsutongReadingComprehensionPage />} />
-              <Route path="/msutong/msutong-handwriting-practice" element={<MsutongHandwritingPage />} /> {/* New Msutong Handwriting Route */}
-              <Route path="/msutong/msutong-ai-tutor" element={<MsutongAiTutorPage />} />
+              <Route
+                path="msutong"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MsutongPage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="msutong/msutong-flashcard"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MsutongFlashcardPage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="msutong/msutong-pinyin-choice"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MsutongPinyinChoicePage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="msutong/msutong-meaning-choice"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MsutongMeaningChoicePage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="msutong/msutong-fill-in-the-blank"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MsutongFillInTheBlankPage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="msutong/msutong-pronunciation"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MsutongPronunciationPage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="msutong/msutong-sentence-choice"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MsutongSentenceChoicePage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="msutong/msutong-sentence-scramble"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MsutongSentenceScramblePage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="msutong/msutong-reading-comprehension"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MsutongReadingComprehensionPage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="msutong/msutong-handwriting-practice"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MsutongHandwritingPage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="msutong/msutong-ai-tutor"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MsutongAiTutorPage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+            </Route>
 
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-              </Routes>
-            </PinyinProvider>
-          </SessionContextProvider>
+            {/* Cantonese App Routes */}
+            <Route path="/cantonese">
+              <Route
+                index
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantonesePageWrapper>
+                            <CantoneseIndex />
+                          </CantonesePageWrapper>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+
+              {/* Public routes */}
+              <Route
+                path="login"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantonesePageWrapper>
+                            <CantoneseLogin />
+                          </CantonesePageWrapper>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+              <Route
+                path="forgot-password"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantonesePageWrapper>
+                            <CantoneseForgotPassword />
+                          </CantonesePageWrapper>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+              <Route
+                path="update-password"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantonesePageWrapper>
+                            <CantoneseUpdatePassword />
+                          </CantonesePageWrapper>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+              <Route
+                path="lessons"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantonesePageWrapper>
+                            <CantoneseLessons />
+                          </CantonesePageWrapper>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+              <Route
+                path="lessons/:lessonId"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantonesePageWrapper>
+                            <CantoneseLessonDetail />
+                          </CantonesePageWrapper>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+              <Route
+                path="practice/:lessonId/:type"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantonesePageWrapper>
+                            <CantonesePractice />
+                          </CantonesePageWrapper>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+              <Route
+                path="review/:lessonId"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantonesePageWrapper>
+                            <CantoneseReview />
+                          </CantonesePageWrapper>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+              <Route
+                path="songs"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantonesePageWrapper>
+                            <CantoneseSongs />
+                          </CantonesePageWrapper>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+              <Route
+                path="songs/:songId"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantonesePageWrapper>
+                            <CantoneseSongDetail />
+                          </CantonesePageWrapper>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+
+              {/* Protected routes - wrap in providers + ProtectedRoute */}
+              <Route
+                path="dashboard"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantoneseProtectedRoute>
+                            <CantonesePageWrapper>
+                              <CantoneseDashboard />
+                            </CantonesePageWrapper>
+                          </CantoneseProtectedRoute>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+              <Route
+                path="profile"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantoneseProtectedRoute>
+                            <CantonesePageWrapper>
+                              <CantoneseProfile />
+                            </CantonesePageWrapper>
+                          </CantoneseProtectedRoute>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+              <Route
+                path="learning-progress"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantoneseProtectedRoute>
+                            <CantonesePageWrapper>
+                              <CantoneseLearningProgress />
+                            </CantonesePageWrapper>
+                          </CantoneseProtectedRoute>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+            </Route>
+
+            {/* 404 Not Found */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>

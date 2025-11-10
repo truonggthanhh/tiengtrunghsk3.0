@@ -50,7 +50,7 @@ const Header = () => {
     <header className="py-4 px-6 border-b sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 shadow-sm">
       <div className="container mx-auto flex justify-between items-center">
         <Link
-          to="/"
+          to="/mandarin"
           className="text-2xl md:text-2xl font-bold text-primary hover:text-primary/80 transition-colors"
         >
           TIẾNG TRUNG HAOHAO
@@ -69,7 +69,7 @@ const Header = () => {
 
           {session && (
             <Button asChild variant="ghost" size="sm">
-              <Link to="/profile" className="flex items-center gap-2">
+              <Link to="/mandarin/profile" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Hồ sơ</span>
               </Link>
@@ -78,7 +78,7 @@ const Header = () => {
 
           {isAdmin && (
             <Button asChild variant="ghost" size="sm">
-              <Link to="/admin" className="flex items-center gap-2">
+              <Link to="/mandarin/admin" className="flex items-center gap-2">
                 <UserCog className="h-4 w-4" />
                 <span className="hidden sm:inline">Quản trị</span>
               </Link>
@@ -101,7 +101,7 @@ const Header = () => {
               variant="ghost"
               size="sm"
             >
-              <Link to="/login">Đăng nhập</Link>
+              <Link to="/mandarin/login">Đăng nhập</Link>
             </Button>
           )}
           <ThemeToggle />

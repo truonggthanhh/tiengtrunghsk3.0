@@ -123,7 +123,7 @@ const MsutongPage = () => {
             </div>
             <div className="text-center mt-8">
               <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
-                <Link to="/">
+                <Link to="/mandarin">
                   <Home className="mr-2 h-4 w-4" /> Quay về trang chủ
                 </Link>
               </Button>
@@ -200,9 +200,9 @@ const MsutongPage = () => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {exerciseTypes.map((exercise) => (
-                <Link 
-                  key={exercise.slug} 
-                  to={exercise.isAvailable ? `/msutong/msutong-${exercise.slug}?${practiceUrlParams}` : '#'}
+                <Link
+                  key={exercise.slug}
+                  to={exercise.isAvailable ? `/mandarin/msutong/msutong-${exercise.slug}?${practiceUrlParams}` : '#'}
                   className={cn(!exercise.isAvailable && "pointer-events-none")}
                 >
                   <Card className={cn("flex flex-col text-center h-full hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-in-out group cursor-pointer border-primary/30 hover:border-primary rounded-xl", !exercise.isAvailable && "opacity-50")}>

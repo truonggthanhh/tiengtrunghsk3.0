@@ -218,7 +218,7 @@ const MsutongAiTutorPage = () => {
         </Card>
         <div className="text-center mt-4 flex gap-4">
           <Button onClick={handleResetApiKey} variant="outline"><RefreshCw className="mr-2 h-4 w-4" /> Đổi API Key</Button>
-          <Button asChild variant="secondary"><Link to="/msutong"><Home className="mr-2 h-4 w-4" /> Về trang chủ</Link></Button>
+          <Button asChild variant="secondary"><Link to="/mandarin/msutong"><Home className="mr-2 h-4 w-4" /> Về trang chủ</Link></Button>
         </div>
       </main>
     </div>
