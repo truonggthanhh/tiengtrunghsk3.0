@@ -36,7 +36,7 @@ export default function UserMenu() {
     return <div className="h-9 w-24 animate-pulse rounded-xl bg-ink/10 dark:bg-white/10" />;
   }
 
-  if (!session || !profile) {
+  if (!session) {
     return (
       <Link to="/cantonese/login" className="rounded-xl px-4 py-2 text-ink dark:text-cream bg-white dark:bg-black/40 hover:bg-white/90 dark:hover:bg-black/60 transition shadow-md border border-ink/10 dark:border-white/10">
         Đăng nhập
@@ -44,7 +44,8 @@ export default function UserMenu() {
     );
   }
 
-  const displayName = profile.first_name || profile.last_name || 'Người dùng';
+  // If session exists but profile is still loading or failed, show user menu with email fallback
+  const displayName = profile?.first_name || profile?.last_name || session.user.email?.split('@')[0] || 'Người dùng';
 
   return (
     <DropdownMenu>
