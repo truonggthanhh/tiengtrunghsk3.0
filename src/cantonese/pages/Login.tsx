@@ -108,6 +108,7 @@ const LoginPage = () => {
         <EmailPasswordAuthForm />
 
         {/* Các tùy chọn đăng nhập bằng mạng xã hội */}
+        {/* TEMPORARY DISABLED: Google OAuth needs configuration in Supabase + Google Cloud Console
         <div className="mt-6">
           <p className="text-center text-ink/70 dark:text-cream/70 mb-4">Hoặc đăng nhập bằng</p>
           <Auth
@@ -120,9 +121,10 @@ const LoginPage = () => {
             theme="light"
             redirectTo={window.location.origin + '/cantonese/lessons'}
             localization={vietnameseLocalization}
-            socialLayout="horizontal" 
+            socialLayout="horizontal"
           />
         </div>
+        */}
       </div>
     </div>
   );
