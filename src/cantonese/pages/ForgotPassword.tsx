@@ -20,7 +20,7 @@ const ForgotPasswordPage = () => {
     setMessage('');
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/update-password`, // Cần một trang update-password
+      redirectTo: `${window.location.origin}/cantonese/update-password`,
     });
 
     if (error) {

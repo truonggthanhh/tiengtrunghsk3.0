@@ -118,7 +118,7 @@ const LoginPage = () => {
               theme: ThemeSupa,
             }}
             theme="light"
-            redirectTo={window.location.origin + '/lessons'}
+            redirectTo={window.location.origin + '/cantonese/lessons'}
             localization={vietnameseLocalization}
             socialLayout="horizontal" 
           />

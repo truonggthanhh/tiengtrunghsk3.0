@@ -50,7 +50,7 @@ const EmailPasswordAuthForm = () => {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/lessons`,
+            emailRedirectTo: `${window.location.origin}/cantonese/lessons`,
           }
         });
 
