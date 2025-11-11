@@ -89,7 +89,9 @@ const App = () => (
                 path="login"
                 element={
                   <SessionContextProvider>
-                    <MandarinLogin />
+                    <PinyinProvider>
+                      <MandarinLogin />
+                    </PinyinProvider>
                   </SessionContextProvider>
                 }
               />
@@ -97,7 +99,9 @@ const App = () => (
                 path="profile"
                 element={
                   <SessionContextProvider>
-                    <ProfilePage />
+                    <PinyinProvider>
+                      <ProfilePage />
+                    </PinyinProvider>
                   </SessionContextProvider>
                 }
               />
@@ -105,7 +109,9 @@ const App = () => (
                 path="admin"
                 element={
                   <SessionContextProvider>
-                    <AdminDashboardPage />
+                    <PinyinProvider>
+                      <AdminDashboardPage />
+                    </PinyinProvider>
                   </SessionContextProvider>
                 }
               />
