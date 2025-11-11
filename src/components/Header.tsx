@@ -4,7 +4,7 @@ import { useSession } from "@/components/SessionContextProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { LogOut, UserCog, Languages, User } from "lucide-react";
+import { LogOut, UserCog, Languages, User, BarChart2 } from "lucide-react";
 import { toast } from "sonner";
 import { usePinyin } from "@/contexts/PinyinContext";
 
@@ -68,12 +68,20 @@ const Header = () => {
           </Button>
 
           {session && (
-            <Button asChild variant="ghost" size="sm">
-              <Link to="/mandarin/profile" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                <span className="hidden sm:inline">Hồ sơ</span>
-              </Link>
-            </Button>
+            <>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/mandarin/profile" className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  <span className="hidden sm:inline">Hồ sơ</span>
+                </Link>
+              </Button>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/mandarin/learning-progress" className="flex items-center gap-2">
+                  <BarChart2 className="h-4 w-4" />
+                  <span className="hidden sm:inline">Tiến độ</span>
+                </Link>
+              </Button>
+            </>
           )}
 
           {isAdmin && (

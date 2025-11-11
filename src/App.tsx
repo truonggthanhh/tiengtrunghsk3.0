@@ -34,6 +34,7 @@ import MsutongHandwritingPage from "./pages/msutong/MsutongHandwritingPage";
 import MandarinLogin from "./pages/Login";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import ProfilePage from "./pages/ProfilePage";
+import LearningProgressPage from "./pages/LearningProgressPage";
 import { SessionContextProvider } from "./components/SessionContextProvider";
 import { PinyinProvider } from "./contexts/PinyinContext";
 
@@ -101,6 +102,16 @@ const App = () => (
                   <SessionContextProvider>
                     <PinyinProvider>
                       <ProfilePage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="learning-progress"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <LearningProgressPage />
                     </PinyinProvider>
                   </SessionContextProvider>
                 }

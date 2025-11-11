@@ -103,7 +103,7 @@ CREATE POLICY "Only admins can manage achievements" ON achievements
     EXISTS (
       SELECT 1 FROM profiles
       WHERE profiles.id = auth.uid()
-      AND (profiles.is_admin = true OR profiles.role = 'admin')
+      AND profiles.role = 'admin'
     )
   );
 
