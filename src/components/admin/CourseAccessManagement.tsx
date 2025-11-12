@@ -58,19 +58,26 @@ export const CourseAccessManagement: React.FC = () => {
   });
 
   // Fetch course access for selected user
-  const { data: courseAccess = [], isLoading: isLoadingAccess } = useQuery({
+  const { data: courseAccess = [], isLoading: isLoadingAccess, refetch: refetchAccess } = useQuery({
     queryKey: ['courseAccess', selectedUserId],
     queryFn: async () => {
       if (!selectedUserId) return [];
 
+      console.log('[CourseAccess] Fetching access for user:', selectedUserId);
       const { data, error } = await supabase.rpc('get_user_course_access', {
         p_user_id: selectedUserId,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('[CourseAccess] Error fetching access:', error);
+        throw error;
+      }
+
+      console.log('[CourseAccess] Received access data:', data);
       return data as CourseAccessRecord[];
     },
     enabled: !!selectedUserId,
+    staleTime: 0, // Always consider data stale
   });
 
   // Get current admin ID
@@ -87,6 +94,8 @@ export const CourseAccessManagement: React.FC = () => {
     mutationFn: async ({ courseType, notes }: { courseType: string; notes?: string }) => {
       if (!selectedUserId || !currentAdmin) throw new Error('Missing user or admin ID');
 
+      console.log('[CourseAccess] Unlocking course:', { courseType, userId: selectedUserId, adminId: currentAdmin });
+
       const { error } = await supabase.rpc('unlock_course_for_user', {
         p_user_id: selectedUserId,
         p_course_type: courseType,
@@ -94,14 +103,22 @@ export const CourseAccessManagement: React.FC = () => {
         p_notes: notes || null,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('[CourseAccess] Unlock error:', error);
+        throw error;
+      }
+
+      console.log('[CourseAccess] Unlock successful');
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['courseAccess', selectedUserId] });
-      toast.success('Đã mở khóa khóa học');
+    onSuccess: async () => {
+      console.log('[CourseAccess] Invalidating and refetching...');
+      await queryClient.invalidateQueries({ queryKey: ['courseAccess', selectedUserId] });
+      await refetchAccess();
+      toast.success('✅ Đã mở khóa khóa học');
     },
     onError: (error: any) => {
-      toast.error('Lỗi mở khóa', { description: error.message });
+      console.error('[CourseAccess] Mutation onError:', error);
+      toast.error('❌ Lỗi mở khóa', { description: error.message });
     },
   });
 
@@ -110,20 +127,30 @@ export const CourseAccessManagement: React.FC = () => {
     mutationFn: async (courseType: string) => {
       if (!selectedUserId || !currentAdmin) throw new Error('Missing user or admin ID');
 
+      console.log('[CourseAccess] Locking course:', { courseType, userId: selectedUserId, adminId: currentAdmin });
+
       const { error } = await supabase.rpc('lock_course_for_user', {
         p_user_id: selectedUserId,
         p_course_type: courseType,
         p_admin_id: currentAdmin,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('[CourseAccess] Lock error:', error);
+        throw error;
+      }
+
+      console.log('[CourseAccess] Lock successful');
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['courseAccess', selectedUserId] });
-      toast.success('Đã khóa lại khóa học');
+    onSuccess: async () => {
+      console.log('[CourseAccess] Invalidating and refetching...');
+      await queryClient.invalidateQueries({ queryKey: ['courseAccess', selectedUserId] });
+      await refetchAccess();
+      toast.success('🔒 Đã khóa lại khóa học');
     },
     onError: (error: any) => {
-      toast.error('Lỗi khóa', { description: error.message });
+      console.error('[CourseAccess] Mutation onError:', error);
+      toast.error('❌ Lỗi khóa', { description: error.message });
     },
   });
 
@@ -132,6 +159,8 @@ export const CourseAccessManagement: React.FC = () => {
     mutationFn: async ({ courseTypes, notes }: { courseTypes: string[]; notes?: string }) => {
       if (!selectedUserId || !currentAdmin) throw new Error('Missing user or admin ID');
 
+      console.log('[CourseAccess] Bulk unlocking courses:', { courseTypes, userId: selectedUserId, adminId: currentAdmin });
+
       const { error } = await supabase.rpc('bulk_unlock_courses', {
         p_user_id: selectedUserId,
         p_course_types: courseTypes,
@@ -139,15 +168,23 @@ export const CourseAccessManagement: React.FC = () => {
         p_notes: notes || null,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('[CourseAccess] Bulk unlock error:', error);
+        throw error;
+      }
+
+      console.log('[CourseAccess] Bulk unlock successful');
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['courseAccess', selectedUserId] });
-      toast.success('Đã mở khóa nhiều khóa học');
+    onSuccess: async () => {
+      console.log('[CourseAccess] Invalidating and refetching...');
+      await queryClient.invalidateQueries({ queryKey: ['courseAccess', selectedUserId] });
+      await refetchAccess();
+      toast.success('✅ Đã mở khóa nhiều khóa học');
       setBulkNotes('');
     },
     onError: (error: any) => {
-      toast.error('Lỗi mở khóa hàng loạt', { description: error.message });
+      console.error('[CourseAccess] Mutation onError:', error);
+      toast.error('❌ Lỗi mở khóa hàng loạt', { description: error.message });
     },
   });
 
