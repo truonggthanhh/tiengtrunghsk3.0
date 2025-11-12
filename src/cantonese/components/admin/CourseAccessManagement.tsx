@@ -40,7 +40,7 @@ export const CourseAccessManagement: React.FC = () => {
   const queryClient = useQueryClient();
 
   // Fetch users via RPC (gets email from auth.users)
-  const { data: users = [], isLoading: isLoadingUsers } = useQuery({
+  const { data: users = [], isLoading: isLoadingUsers, error: usersError } = useQuery({
     queryKey: ['users'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_all_users_with_emails');
@@ -202,7 +202,28 @@ export const CourseAccessManagement: React.FC = () => {
 
           {/* User list */}
           {isLoadingUsers ? (
-            <div className="text-center py-4">Đang tải...</div>
+            <div className="text-center py-4 text-gray-500">
+              <div className="animate-spin inline-block w-6 h-6 border-4 border-current border-t-transparent rounded-full mb-2" />
+              <div>Đang tải danh sách người dùng...</div>
+            </div>
+          ) : usersError ? (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="text-red-800 font-semibold mb-2">❌ Lỗi tải người dùng</div>
+              <div className="text-sm text-red-700 mb-3">{usersError.message}</div>
+              <div className="text-xs text-red-600 bg-red-100 p-2 rounded">
+                <strong>Kiểm tra:</strong>
+                <br />1. Bạn đã chạy SQL function <code>get_all_users_with_emails()</code> trong Supabase chưa?
+                <br />2. Mở Console (F12) → Tab Console để xem chi tiết lỗi
+              </div>
+            </div>
+          ) : filteredUsers.length === 0 && searchEmail ? (
+            <div className="text-center py-8 text-gray-500">
+              Không tìm thấy user với email "{searchEmail}"
+            </div>
+          ) : filteredUsers.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              Chưa có user nào trong hệ thống
+            </div>
           ) : (
             <div className="max-h-60 overflow-y-auto border rounded-lg">
               {filteredUsers.map(user => (
