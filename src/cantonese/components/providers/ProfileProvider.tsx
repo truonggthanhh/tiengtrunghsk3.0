@@ -49,10 +49,10 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
       }
 
       try {
-        // Fetch profile - try to get both is_admin and role columns for compatibility
+        // Fetch profile - Cantonese only has 'role' column (no is_admin)
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('id, first_name, last_name, avatar_url, is_admin, role')
+          .select('id, first_name, last_name, avatar_url, role')
           .eq('id', session.user.id)
           .maybeSingle();
 
@@ -67,11 +67,10 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
         let finalProfile: Profile | null = null;
 
         if (profileData) {
-          // Determine role from either is_admin or role column
-          const computedRole = profileData.is_admin ? 'admin' : (profileData.role || 'user');
+          // Cantonese uses only 'role' column (no is_admin)
+          const computedRole = profileData.role || 'user';
           console.log('[ProfileProvider] ✓ Profile found:', {
             name: `${profileData.first_name} ${profileData.last_name}`,
-            is_admin: profileData.is_admin,
             role: profileData.role,
             computed: computedRole
           });
@@ -89,11 +88,10 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
             first_name: userMetadata.first_name || userMetadata.full_name?.split(' ')[0] || email.split('@')[0] || 'User',
             last_name: userMetadata.last_name || userMetadata.full_name?.split(' ').slice(1).join(' ') || '',
             avatar_url: userMetadata.avatar_url || userMetadata.picture || null,
-            role: 'user',
-            is_admin: false
+            role: 'user'
           };
 
-          // Try to insert profile (compatible with both schemas)
+          // Try to insert profile (Cantonese schema - no is_admin column)
           const { error: insertError } = await supabase
             .from('profiles')
             .insert({
@@ -101,7 +99,7 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
               first_name: defaultProfile.first_name,
               last_name: defaultProfile.last_name,
               avatar_url: defaultProfile.avatar_url,
-              is_admin: false
+              role: 'user'
             });
 
           if (insertError) {
@@ -114,9 +112,9 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
           setProfile(defaultProfile);
         }
 
-        // Determine admin status - check is_admin first, then role, then RPC
-        let adminStatus = finalProfile?.is_admin === true || finalProfile?.role === 'admin';
-        console.log('[ProfileProvider] Admin status from profile:', { is_admin: finalProfile?.is_admin, role: finalProfile?.role, result: adminStatus });
+        // Determine admin status - check role column only (Cantonese has no is_admin)
+        let adminStatus = finalProfile?.role === 'admin';
+        console.log('[ProfileProvider] Admin status from profile:', { role: finalProfile?.role, result: adminStatus });
 
         // Try RPC as additional verification (non-critical if it fails)
         try {
