@@ -4,7 +4,7 @@ import { supabase } from '@/cantonese/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
-import { Upload, Sparkles, FileText, Trash2, Music, Users, PlusCircle, BookOpen, ListMusic, Edit3, Clock, CheckCircle2, XCircle, Star, Replace, GripVertical, KeyRound, Globe } from 'lucide-react';
+import { Upload, Sparkles, FileText, Trash2, Music, Users, PlusCircle, BookOpen, ListMusic, Edit3, Clock, CheckCircle2, XCircle, Star, Replace, GripVertical, KeyRound, Globe, Lock } from 'lucide-react';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -39,6 +39,7 @@ import { Badge } from '@/components/ui/badge';
 import ManageUserLessonsDialog from '@/cantonese/components/admin/ManageUserLessonsDialog';
 import ManageUserLanguageAccessDialog from '@/cantonese/components/admin/ManageUserLanguageAccessDialog';
 import SortableLessonItem from '@/cantonese/components/admin/SortableLessonItem'; // Import the new component
+import { CourseAccessManagement } from '@/cantonese/components/admin/CourseAccessManagement';
 
 const extractVideoId = (url: string) => {
   const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
@@ -118,12 +119,14 @@ const Dashboard = () => {
             <Button variant={activeTab === 'lessons' ? 'secondary' : 'ghost'} onClick={() => setActiveTab('lessons')} className="justify-start gap-2"><BookOpen className="h-4 w-4" /> Quản lý Bài học</Button>
             <Button variant={activeTab === 'songs' ? 'secondary' : 'ghost'} onClick={() => setActiveTab('songs')} className="justify-start gap-2"><ListMusic className="h-4 w-4" /> Quản lý Bài hát</Button>
             {isUserAdmin && (<Button variant={activeTab === 'users' ? 'secondary' : 'ghost'} onClick={() => setActiveTab('users')} className="justify-start gap-2"><Users className="h-4 w-4" /> Quản lý Người dùng</Button>)}
+            {isUserAdmin && (<Button variant={activeTab === 'courseaccess' ? 'secondary' : 'ghost'} onClick={() => setActiveTab('courseaccess')} className="justify-start gap-2"><Lock className="h-4 w-4" /> Khóa học</Button>)}
           </nav>
         </aside>
         <main className="md:col-span-3">
           {activeTab === 'lessons' && <LessonManager />}
           {activeTab === 'songs' && <SongManager />}
           {activeTab === 'users' && isUserAdmin && <UserManager />}
+          {activeTab === 'courseaccess' && isUserAdmin && <CourseAccessManagement />}
         </main>
       </div>
     </div>

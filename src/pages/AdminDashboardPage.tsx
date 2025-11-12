@@ -11,8 +11,9 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Home, Loader2, UserCog, Key, Sparkles, Upload, FileText } from 'lucide-react';
+import { Home, Loader2, UserCog, Key, Sparkles, Upload, FileText, Lock } from 'lucide-react';
 import { toast } from 'sonner';
+import { CourseAccessManagement } from '@/components/admin/CourseAccessManagement';
 
 interface UserProfile {
   id: string;
@@ -262,10 +263,14 @@ const AdminDashboardPage: React.FC = () => {
           </CardHeader>
           <CardContent className="p-6">
             <Tabs defaultValue="users" className="w-full">
-              <TabsList className="grid w-full grid-cols-5 mb-6">
+              <TabsList className="grid w-full grid-cols-6 mb-6">
                 <TabsTrigger value="users" className="flex items-center gap-2">
                   <UserCog className="h-4 w-4" />
                   <span className="hidden sm:inline">Người dùng</span>
+                </TabsTrigger>
+                <TabsTrigger value="courseaccess" className="flex items-center gap-2">
+                  <Lock className="h-4 w-4" />
+                  <span className="hidden sm:inline">Khóa học</span>
                 </TabsTrigger>
                 <TabsTrigger value="apikey" className="flex items-center gap-2">
                   <Key className="h-4 w-4" />
@@ -319,6 +324,11 @@ const AdminDashboardPage: React.FC = () => {
                     </TableBody>
                   </Table>
                 </div>
+              </TabsContent>
+
+              {/* Course Access Management Tab */}
+              <TabsContent value="courseaccess" className="space-y-4">
+                <CourseAccessManagement />
               </TabsContent>
 
               {/* API Key Management Tab */}
