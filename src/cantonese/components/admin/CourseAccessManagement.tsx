@@ -39,17 +39,18 @@ export const CourseAccessManagement: React.FC = () => {
   const [bulkNotes, setBulkNotes] = useState('');
   const queryClient = useQueryClient();
 
-  // Fetch users
+  // Fetch users via RPC (gets email from auth.users)
   const { data: users = [], isLoading: isLoadingUsers } = useQuery({
     queryKey: ['users'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id, first_name, last_name, email, role')
-        .order('email');
+      const { data, error } = await supabase.rpc('get_all_users_with_emails');
 
-      if (error) throw error;
-      return data as Profile[];
+      if (error) {
+        console.error('Error fetching users:', error);
+        throw error;
+      }
+
+      return (data || []) as Profile[];
     },
   });
 

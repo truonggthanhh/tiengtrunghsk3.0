@@ -268,21 +268,7 @@ function TestimonialsStrip(){
   )
 }
 
-function Footer(){ // Không còn nhận props
-  const navigate = useNavigate();
-  const { session } = useSession(); // Lấy session từ context
-  const { isAdmin } = useProfile(); // Lấy isAdmin từ context
-
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast.error(`Lỗi khi đăng xuất: ${error.message}`);
-    } else {
-      toast.success('Đã đăng xuất thành công!');
-      navigate('/cantonese');
-    }
-  };
-
+function Footer(){
   return (
     <footer className="relative z-10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
@@ -296,11 +282,6 @@ function Footer(){ // Không còn nhận props
             </div>
             <div className="text-center md:text-right">
               <div className="text-xs text-ink/80">© {new Date().getFullYear()} – Made by HaoHoaChoLon.</div>
-              {session && isAdmin ? (
-                <button onClick={handleLogout} className="text-xs text-verm hover:text-red-700 transition underline">Đăng xuất Admin</button>
-              ) : (
-                <Link to="/cantonese/dashboard" className="text-xs text-ink/60 hover:text-ink transition">Admin Login</Link>
-              )}
             </div>
           </div>
         </div>

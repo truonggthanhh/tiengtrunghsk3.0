@@ -231,6 +231,29 @@ $$ LANGUAGE plpgsql;
 --   FOR EACH ROW
 --   EXECUTE FUNCTION initialize_user_course_access();
 
+-- Function 6: Get all users with emails (for admin UI)
+CREATE OR REPLACE FUNCTION get_all_users_with_emails()
+RETURNS TABLE (
+  id UUID,
+  first_name TEXT,
+  last_name TEXT,
+  email TEXT,
+  role TEXT
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    p.id,
+    p.first_name,
+    p.last_name,
+    au.email,
+    p.role
+  FROM profiles p
+  INNER JOIN auth.users au ON au.id = p.id
+  ORDER BY au.email;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- =====================================================
 -- COURSE TYPE DEFINITIONS
 -- =====================================================

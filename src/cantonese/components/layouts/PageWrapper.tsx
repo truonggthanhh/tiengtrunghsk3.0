@@ -4,8 +4,14 @@ import { Link } from 'react-router-dom';
 import UserMenu from '@/cantonese/components/UserMenu';
 import DarkModeToggle from '@/cantonese/components/ui/DarkModeToggle';
 import JyutpingToggle from '@/cantonese/components/ui/JyutpingToggle';
+import { useProfile } from '@/cantonese/components/providers/ProfileProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { Button } from '@/components/ui/button';
+import { UserCog, BarChart2 } from 'lucide-react';
 
 const PageWrapper = ({ children }: { children: React.ReactNode }) => {
+  const { session } = useSession();
+  const { isAdmin } = useProfile();
   return (
     <div className="relative min-h-screen">
       <BackgroundTexture variant="subtle" />
@@ -30,6 +36,24 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
             </div>
 
             <div className="flex items-center gap-2">
+              {session && (
+                <>
+                  <Button asChild variant="ghost" size="sm" className="text-ink dark:text-cream hover:text-jade dark:hover:text-jade">
+                    <Link to="/cantonese/learning-progress" className="flex items-center gap-2">
+                      <BarChart2 className="h-4 w-4" />
+                      <span className="hidden sm:inline">Tiến độ</span>
+                    </Link>
+                  </Button>
+                  {isAdmin && (
+                    <Button asChild variant="ghost" size="sm" className="text-ink dark:text-cream hover:text-jade dark:hover:text-jade">
+                      <Link to="/cantonese/dashboard" className="flex items-center gap-2">
+                        <UserCog className="h-4 w-4" />
+                        <span className="hidden sm:inline">Quản trị</span>
+                      </Link>
+                    </Button>
+                  )}
+                </>
+              )}
               <JyutpingToggle />
               <DarkModeToggle />
               <UserMenu />
