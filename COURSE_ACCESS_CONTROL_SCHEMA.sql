@@ -246,8 +246,8 @@ BEGIN
     p.id,
     p.first_name,
     p.last_name,
-    au.email,
-    p.role
+    au.email::TEXT,  -- Cast VARCHAR to TEXT
+    p.role::TEXT     -- Cast to TEXT
   FROM profiles p
   INNER JOIN auth.users au ON au.id = p.id
   ORDER BY au.email;
