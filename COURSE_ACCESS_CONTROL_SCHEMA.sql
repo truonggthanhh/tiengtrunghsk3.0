@@ -172,11 +172,12 @@ BEGIN
     uca.unlocked_at,
     COALESCE(
       p.first_name || ' ' || p.last_name,
-      p.email
+      au.email::TEXT
     ) as unlocked_by_admin_name,
     uca.notes
   FROM user_course_access uca
   LEFT JOIN profiles p ON p.id = uca.unlocked_by_admin_id
+  LEFT JOIN auth.users au ON au.id = uca.unlocked_by_admin_id
   WHERE uca.user_id = p_user_id
   ORDER BY uca.course_type;
 END;
