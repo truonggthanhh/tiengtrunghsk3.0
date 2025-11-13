@@ -109,94 +109,96 @@ BEGIN
   END IF;
 
   -- Search based on mode
-  RETURN QUERY
-  CASE
+  IF search_mode = 'hanzi' THEN
     -- Search by Hanzi (Chinese characters)
-    WHEN search_mode = 'hanzi' THEN
-      SELECT
-        de.id,
-        de.simplified,
-        de.traditional,
-        de.pinyin_number,
-        de.pinyin_tone,
-        de.vietnamese,
-        de.hsk_level,
-        de.frequency,
-        CASE
-          WHEN de.simplified = search_query THEN 1.0
-          WHEN de.traditional = search_query THEN 0.95
-          WHEN de.simplified LIKE search_query || '%' THEN 0.8
-          WHEN de.simplified LIKE '%' || search_query || '%' THEN 0.6
-          ELSE 0.5
-        END AS relevance
-      FROM dictionary_entries de
-      WHERE de.simplified LIKE '%' || search_query || '%'
-         OR de.traditional LIKE '%' || search_query || '%'
-      ORDER BY relevance DESC, de.frequency ASC NULLS LAST
-      LIMIT max_results OFFSET offset_val;
+    RETURN QUERY
+    SELECT
+      de.id,
+      de.simplified,
+      de.traditional,
+      de.pinyin_number,
+      de.pinyin_tone,
+      de.vietnamese,
+      de.hsk_level,
+      de.frequency,
+      CASE
+        WHEN de.simplified = search_query THEN 1.0
+        WHEN de.traditional = search_query THEN 0.95
+        WHEN de.simplified LIKE search_query || '%' THEN 0.8
+        WHEN de.simplified LIKE '%' || search_query || '%' THEN 0.6
+        ELSE 0.5
+      END AS relevance
+    FROM dictionary_entries de
+    WHERE de.simplified LIKE '%' || search_query || '%'
+       OR de.traditional LIKE '%' || search_query || '%'
+    ORDER BY relevance DESC, de.frequency ASC NULLS LAST
+    LIMIT max_results OFFSET offset_val;
 
+  ELSIF search_mode = 'pinyin' THEN
     -- Search by Pinyin
-    WHEN search_mode = 'pinyin' THEN
-      SELECT
-        de.id,
-        de.simplified,
-        de.traditional,
-        de.pinyin_number,
-        de.pinyin_tone,
-        de.vietnamese,
-        de.hsk_level,
-        de.frequency,
-        CASE
-          WHEN de.pinyin_number = LOWER(search_query) THEN 1.0
-          WHEN de.pinyin_tone = LOWER(search_query) THEN 0.95
-          WHEN de.pinyin_number LIKE LOWER(search_query) || '%' THEN 0.8
-          WHEN de.pinyin_number LIKE '%' || LOWER(search_query) || '%' THEN 0.6
-          ELSE 0.5
-        END AS relevance
-      FROM dictionary_entries de
-      WHERE de.pinyin_number ILIKE '%' || search_query || '%'
-         OR de.pinyin_tone ILIKE '%' || search_query || '%'
-      ORDER BY relevance DESC, de.frequency ASC NULLS LAST
-      LIMIT max_results OFFSET offset_val;
+    RETURN QUERY
+    SELECT
+      de.id,
+      de.simplified,
+      de.traditional,
+      de.pinyin_number,
+      de.pinyin_tone,
+      de.vietnamese,
+      de.hsk_level,
+      de.frequency,
+      CASE
+        WHEN de.pinyin_number = LOWER(search_query) THEN 1.0
+        WHEN de.pinyin_tone = LOWER(search_query) THEN 0.95
+        WHEN de.pinyin_number LIKE LOWER(search_query) || '%' THEN 0.8
+        WHEN de.pinyin_number LIKE '%' || LOWER(search_query) || '%' THEN 0.6
+        ELSE 0.5
+      END AS relevance
+    FROM dictionary_entries de
+    WHERE de.pinyin_number ILIKE '%' || search_query || '%'
+       OR de.pinyin_tone ILIKE '%' || search_query || '%'
+    ORDER BY relevance DESC, de.frequency ASC NULLS LAST
+    LIMIT max_results OFFSET offset_val;
 
+  ELSIF search_mode = 'vietnamese' THEN
     -- Search by Vietnamese
-    WHEN search_mode = 'vietnamese' THEN
-      SELECT
-        de.id,
-        de.simplified,
-        de.traditional,
-        de.pinyin_number,
-        de.pinyin_tone,
-        de.vietnamese,
-        de.hsk_level,
-        de.frequency,
-        ts_rank(to_tsvector('simple', de.vietnamese), plainto_tsquery('simple', search_query)) AS relevance
-      FROM dictionary_entries de
-      WHERE to_tsvector('simple', de.vietnamese) @@ plainto_tsquery('simple', search_query)
-         OR de.vietnamese ILIKE '%' || search_query || '%'
-      ORDER BY relevance DESC, de.frequency ASC NULLS LAST
-      LIMIT max_results OFFSET offset_val;
+    RETURN QUERY
+    SELECT
+      de.id,
+      de.simplified,
+      de.traditional,
+      de.pinyin_number,
+      de.pinyin_tone,
+      de.vietnamese,
+      de.hsk_level,
+      de.frequency,
+      ts_rank(to_tsvector('simple', de.vietnamese), plainto_tsquery('simple', search_query)) AS relevance
+    FROM dictionary_entries de
+    WHERE to_tsvector('simple', de.vietnamese) @@ plainto_tsquery('simple', search_query)
+       OR de.vietnamese ILIKE '%' || search_query || '%'
+    ORDER BY relevance DESC, de.frequency ASC NULLS LAST
+    LIMIT max_results OFFSET offset_val;
 
-    ELSE
-      -- Fallback: search all fields
-      SELECT
-        de.id,
-        de.simplified,
-        de.traditional,
-        de.pinyin_number,
-        de.pinyin_tone,
-        de.vietnamese,
-        de.hsk_level,
-        de.frequency,
-        0.5 AS relevance
-      FROM dictionary_entries de
-      WHERE de.simplified LIKE '%' || search_query || '%'
-         OR de.traditional LIKE '%' || search_query || '%'
-         OR de.pinyin_number ILIKE '%' || search_query || '%'
-         OR de.vietnamese ILIKE '%' || search_query || '%'
-      ORDER BY de.frequency ASC NULLS LAST
-      LIMIT max_results OFFSET offset_val;
-  END CASE;
+  ELSE
+    -- Fallback: search all fields
+    RETURN QUERY
+    SELECT
+      de.id,
+      de.simplified,
+      de.traditional,
+      de.pinyin_number,
+      de.pinyin_tone,
+      de.vietnamese,
+      de.hsk_level,
+      de.frequency,
+      0.5 AS relevance
+    FROM dictionary_entries de
+    WHERE de.simplified LIKE '%' || search_query || '%'
+       OR de.traditional LIKE '%' || search_query || '%'
+       OR de.pinyin_number ILIKE '%' || search_query || '%'
+       OR de.vietnamese ILIKE '%' || search_query || '%'
+    ORDER BY de.frequency ASC NULLS LAST
+    LIMIT max_results OFFSET offset_val;
+  END IF;
 END;
 $$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
 
