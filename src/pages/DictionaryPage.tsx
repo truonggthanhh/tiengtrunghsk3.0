@@ -67,6 +67,28 @@ const SEARCH_MODES: Array<{ value: SearchMode; label: string; color: string }> =
   { value: 'vietnamese', label: 'Tiếng Việt', color: 'from-green-500 to-emerald-500' },
 ];
 
+// Auto-detect search mode based on query content
+function detectSearchMode(query: string): SearchMode {
+  // Check for Chinese characters
+  if (/[\u4e00-\u9fff]/.test(query)) {
+    return 'hanzi';
+  }
+  // Check for pinyin with tone numbers
+  if (/[a-z]+[1-5]/i.test(query)) {
+    return 'pinyin';
+  }
+  // Check for Vietnamese diacritics
+  if (/[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/i.test(query)) {
+    return 'vietnamese';
+  }
+  // Check for plain latin
+  if (/^[a-z\s]+$/i.test(query)) {
+    return 'pinyin';
+  }
+  // Default to vietnamese
+  return 'vietnamese';
+}
+
 const DictionaryPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchMode, setSearchMode] = useState<SearchMode>('auto');
@@ -75,38 +97,74 @@ const DictionaryPage: React.FC = () => {
 
   const debouncedQuery = useDebounce(searchQuery, 300);
 
-  // Fetch dictionary entries
+  // Fetch dictionary entries - Call RPC function directly (no Edge Function needed!)
   const { data, isLoading, error } = useQuery<SearchResponse>({
     queryKey: ['dictionary', debouncedQuery, searchMode, page],
     queryFn: async () => {
       if (!debouncedQuery.trim()) {
-        return { query: '', mode: searchMode, data: [], pagination: { page: 1, pageSize: 30, total: 0, totalPages: 0, hasNextPage: false, hasPrevPage: false } };
+        return {
+          query: '',
+          mode: searchMode,
+          data: [],
+          pagination: {
+            page: 1,
+            pageSize: 30,
+            total: 0,
+            totalPages: 0,
+            hasNextPage: false,
+            hasPrevPage: false
+          }
+        };
       }
 
-      const { data: { session } } = await supabase.auth.getSession();
+      const pageSize = 30;
+      const offset = (page - 1) * pageSize;
 
-      const params = new URLSearchParams({
-        q: debouncedQuery,
-        mode: searchMode,
-        page: page.toString(),
-        pageSize: '30',
+      // Determine actual search mode
+      const actualMode = searchMode === 'auto' ? detectSearchMode(debouncedQuery) : searchMode;
+
+      // Call database RPC function directly
+      const { data: entries, error: rpcError } = await supabase.rpc('search_dictionary', {
+        search_query: debouncedQuery,
+        search_mode: actualMode,
+        max_results: pageSize,
+        offset_val: offset
       });
 
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/dictionary-lookup?${params}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to search dictionary');
+      if (rpcError) {
+        console.error('Dictionary search error:', rpcError);
+        throw new Error(rpcError.message || 'Failed to search dictionary');
       }
 
-      return response.json();
+      // Get approximate total count for pagination
+      const countQuery = supabase
+        .from('dictionary_entries')
+        .select('*', { count: 'exact', head: true });
+
+      if (actualMode === 'hanzi') {
+        countQuery.or(`simplified.like.%${debouncedQuery}%,traditional.like.%${debouncedQuery}%`);
+      } else if (actualMode === 'pinyin') {
+        countQuery.or(`pinyin_number.ilike.%${debouncedQuery}%,pinyin_tone.ilike.%${debouncedQuery}%`);
+      } else {
+        countQuery.ilike('vietnamese', `%${debouncedQuery}%`);
+      }
+
+      const { count } = await countQuery;
+      const total = count || 0;
+
+      return {
+        query: debouncedQuery,
+        mode: actualMode,
+        data: entries || [],
+        pagination: {
+          page,
+          pageSize,
+          total,
+          totalPages: Math.ceil(total / pageSize),
+          hasNextPage: page < Math.ceil(total / pageSize),
+          hasPrevPage: page > 1,
+        },
+      };
     },
     enabled: debouncedQuery.trim().length > 0,
   });
