@@ -220,28 +220,10 @@ GRANT EXECUTE ON FUNCTION search_dictionary TO public;
 -- Function to get dictionary statistics
 CREATE OR REPLACE FUNCTION get_dictionary_stats()
 RETURNS JSON AS $$
-WITH stats AS (
-  SELECT
-    COUNT(*) as total_entries,
-    COUNT(*) FILTER (WHERE hsk_level IS NOT NULL) as entries_with_hsk
-  FROM dictionary_entries
-),
-hsk_counts AS (
-  SELECT
-    json_object_agg('HSK' || hsk_level, count) as entries_by_hsk
-  FROM (
-    SELECT hsk_level, COUNT(*) as count
-    FROM dictionary_entries
-    WHERE hsk_level IS NOT NULL
-    GROUP BY hsk_level
-  ) subq
-)
 SELECT json_build_object(
-  'total_entries', stats.total_entries,
-  'entries_with_hsk', stats.entries_with_hsk,
-  'entries_by_hsk', COALESCE(hsk_counts.entries_by_hsk, '{}'::json)
-)
-FROM stats, hsk_counts;
+  'total_entries', (SELECT COUNT(*) FROM dictionary_entries),
+  'entries_with_hsk', (SELECT COUNT(*) FROM dictionary_entries WHERE hsk_level IS NOT NULL)
+);
 $$ LANGUAGE SQL STABLE;
 
 GRANT EXECUTE ON FUNCTION get_dictionary_stats TO public;
