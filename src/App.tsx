@@ -11,6 +11,7 @@ import LanguageSelection from "./pages/LanguageSelection";
 
 // Mandarin App Pages
 import MandarinIndex from "./pages/Index";
+import DictionaryPage from "./pages/DictionaryPage";
 import FlashcardPage from "./pages/FlashcardPage";
 import PinyinChoicePage from "./pages/PinyinChoicePage";
 import MeaningChoicePage from "./pages/MeaningChoicePage";
@@ -122,6 +123,16 @@ const App = () => (
                   <SessionContextProvider>
                     <PinyinProvider>
                       <AdminDashboardPage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="dictionary"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <DictionaryPage />
                     </PinyinProvider>
                   </SessionContextProvider>
                 }
