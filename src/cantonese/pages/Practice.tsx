@@ -157,16 +157,35 @@ const PracticePage = () => {
   const attachHooks = (h: any) => setExerciseHooks(h);
   const controls = { setFlip, setPrev, setNext, setPick };
 
-  if (isSessionLoading || isLoadingLesson || isLoadingExercise) { // Thêm isLoadingLesson
-    return <div className="p-6">Đang tải bài tập...</div>;
+  if (isSessionLoading || isLoadingLesson || isLoadingExercise) {
+    return (
+      <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent mb-4"></div>
+          <p className="text-lg font-medium text-purple-600 dark:text-purple-400">Đang tải bài tập...</p>
+        </div>
+      </div>
+    );
   }
 
-  if (errorExercise || errorLessonData) { // Thêm errorLessonData
-    return <div className="p-6 text-verm">Lỗi tải bài tập: {errorExercise?.message || errorLessonData?.message}</div>;
+  if (errorExercise || errorLessonData) {
+    return (
+      <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white flex items-center justify-center">
+        <div className="text-center p-6">
+          <p className="text-lg font-medium text-red-600 dark:text-red-400">Lỗi tải bài tập: {errorExercise?.message || errorLessonData?.message}</p>
+        </div>
+      </div>
+    );
   }
 
   if (!fullData) {
-    return <div className="p-6">Không tìm thấy bài tập cho loại này. Vui lòng generate từ Dashboard.</div>;
+    return (
+      <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white flex items-center justify-center">
+        <div className="text-center p-6">
+          <p className="text-lg font-medium text-gray-600 dark:text-gray-300">Không tìm thấy bài tập cho loại này. Vui lòng generate từ Dashboard.</p>
+        </div>
+      </div>
+    );
   }
 
   const renderExercise = () => {
@@ -201,51 +220,72 @@ const PracticePage = () => {
 
   return (
     <Suspense fallback={<div className="p-6">Đang tải component...</div>}>
-      <div className="max-w-5xl mx-auto p-6">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex gap-3">
-            <Link to="/cantonese" className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition text-sm">
-              <Home className="h-4 w-4" /> Trang chủ
-            </Link>
-            <Link to={`/cantonese/lessons/${lessonId}`} className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition text-sm">
-              <ArrowLeft className="h-4 w-4" /> Chọn bài tập khác
-            </Link>
-          </div>
-          <JyutpingToggle /> {/* Add JyutpingToggle here */}
-        </div>
-        
-        {(type?.toUpperCase() !== 'FLASHCARD' && type?.toUpperCase() !== 'HANZI_WRITE') && totalItems > 0 && (
-          <div className="flex items-center gap-2 mb-4 p-3 bg-white dark:bg-black/20 rounded-xl border border-ink/10 shadow-sm">
-            <span className="text-sm text-ink/70">Số câu:</span>
-            <Select value={selectedQuantity} onValueChange={setSelectedQuantity}>
-              <SelectTrigger className="w-[120px] bg-cream dark:bg-black/10 border-ink/15 text-ink">
-                <SelectValue placeholder="Số câu" />
-              </SelectTrigger>
-              <SelectContent className="bg-white dark:bg-black/20 border-ink/10">
-                {uniqueSortedOptions.map(q => (
-                  <SelectItem key={q} value={String(q)} className="hover:bg-black/5 dark:hover:bg-white/5">
-                    {q === totalItems ? `Tất cả (${q})` : q}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
+      <main className="relative min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white overflow-hidden transition-colors duration-300">
+        {/* Film grain effect - ONLY in dark mode */}
+        <div className="hidden dark:block fixed inset-0 pointer-events-none z-50 opacity-[0.03]" style={{
+          backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 400 400\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")'
+        }} />
 
-        {showResults && lastSavedScore ? (
-          <PracticeResults score={lastSavedScore.score} total={lastSavedScore.total} lessonId={lessonId} type={type} />
-        ) : (
-          renderExercise()
-        )}
-      </div>
-      {!showResults && (
-        <div className="max-w-2xl mx-auto p-6 flex items-center justify-between">
-          <button onClick={handleCompleteExercise} className="inline-flex items-center gap-2 rounded-2xl bg-verm px-5 py-3 font-semibold text-ink shadow-[0_8px_0_#8f2a22] hover:translate-y-0.5 active:translate-y-1 transition-transform" disabled={!canSaveProgress}>
-            Hoàn thành bài tập
-          </button>
-          <HotkeyHelp />
+        {/* Scanlines - ONLY in dark mode */}
+        <div className="hidden dark:block fixed inset-0 pointer-events-none z-50 opacity-10" style={{
+          backgroundImage: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px)',
+          backgroundSize: '100% 2px'
+        }} />
+
+        {/* Background gradient */}
+        <div className="fixed inset-0 bg-gradient-to-br from-purple-50 via-white to-pink-50 dark:bg-[radial-gradient(ellipse_at_top,_rgba(147,51,234,0.15)_0%,_rgba(0,0,0,1)_50%)]" />
+
+        {/* Main content */}
+        <div className="relative z-10 max-w-5xl mx-auto p-6">
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex gap-3">
+              <Link to="/cantonese" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-purple-300 dark:border-purple-600 bg-white/90 dark:bg-black/70 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/30 transition-all shadow-md text-sm font-medium">
+                <Home className="h-4 w-4" /> Trang chủ
+              </Link>
+              <Link to={`/cantonese/lessons/${lessonId}`} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-pink-300 dark:border-pink-600 bg-white/90 dark:bg-black/70 text-pink-600 dark:text-pink-400 hover:bg-pink-50 dark:hover:bg-pink-900/30 transition-all shadow-md text-sm font-medium">
+                <ArrowLeft className="h-4 w-4" /> Chọn bài tập khác
+              </Link>
+            </div>
+            <JyutpingToggle />
+          </div>
+
+          {(type?.toUpperCase() !== 'FLASHCARD' && type?.toUpperCase() !== 'HANZI_WRITE') && totalItems > 0 && (
+            <div className="flex items-center gap-3 mb-6 p-4 bg-white/95 dark:bg-black/70 rounded-xl border-2 border-purple-300 dark:border-purple-600 shadow-lg">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Số câu:</span>
+              <Select value={selectedQuantity} onValueChange={setSelectedQuantity}>
+                <SelectTrigger className="w-[140px] bg-white dark:bg-black/50 border-2 border-pink-300 dark:border-pink-600 text-gray-900 dark:text-white font-medium">
+                  <SelectValue placeholder="Số câu" />
+                </SelectTrigger>
+                <SelectContent className="bg-white dark:bg-black/90 border-2 border-purple-300 dark:border-purple-600">
+                  {uniqueSortedOptions.map(q => (
+                    <SelectItem key={q} value={String(q)} className="hover:bg-purple-100 dark:hover:bg-purple-900/30">
+                      {q === totalItems ? `Tất cả (${q})` : q}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {showResults && lastSavedScore ? (
+            <PracticeResults score={lastSavedScore.score} total={lastSavedScore.total} lessonId={lessonId} type={type} />
+          ) : (
+            renderExercise()
+          )}
         </div>
-      )}
+        {!showResults && (
+          <div className="relative z-10 max-w-2xl mx-auto p-6 flex items-center justify-between">
+            <button
+              onClick={handleCompleteExercise}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-lg bg-gradient-to-br from-pink-500 to-purple-600 text-white border-2 border-pink-400 dark:border-purple-500 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!canSaveProgress}
+            >
+              Hoàn thành bài tập
+            </button>
+            <HotkeyHelp />
+          </div>
+        )}
+      </main>
     </Suspense>
   );
 };
@@ -256,26 +296,45 @@ const PracticeResults = ({ score, total, lessonId, type }: { score: number; tota
   const isPerfect = score === total && total > 0;
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white dark:bg-black/20 rounded-2xl border border-ink/10 shadow-[0_10px_0_#d7c8b6] text-center">
-      <h2 className="text-2xl font-bold mb-4 text-ink dark:text-cream">Kết quả làm bài</h2>
-      <div className="flex items-center justify-center gap-4 mb-4">
+    <div className="max-w-xl mx-auto p-8 bg-white/95 dark:bg-black/70 rounded-2xl border-2 border-purple-300 dark:border-purple-600 shadow-2xl text-center">
+      <h2 className="text-3xl font-black mb-6 text-pink-600 dark:text-pink-400">
+        <span style={{ textShadow: '0 0 10px rgba(255,16,240,0.3)' }}>
+          Kết quả làm bài
+        </span>
+      </h2>
+
+      <div className="flex items-center justify-center gap-6 mb-6">
         {isPerfect ? (
-          <CheckCircle2 className="h-12 w-12 text-jade" />
+          <div className="p-4 rounded-full bg-gradient-to-br from-green-200 to-emerald-200 dark:from-green-900/50 dark:to-emerald-900/50">
+            <CheckCircle2 className="h-16 w-16 text-green-600 dark:text-green-400" />
+          </div>
         ) : (
-          <XCircle className="h-12 w-12 text-verm" />
+          <div className="p-4 rounded-full bg-gradient-to-br from-red-200 to-pink-200 dark:from-red-900/50 dark:to-pink-900/50">
+            <XCircle className="h-16 w-16 text-red-600 dark:text-red-400" />
+          </div>
         )}
-        <div className="text-5xl font-black text-ink dark:text-cream">
-          {score} / {total}
+        <div className="text-6xl font-black text-gray-900 dark:text-white">
+          <span style={{ textShadow: '0 0 15px rgba(147,51,234,0.3)' }}>
+            {score} / {total}
+          </span>
         </div>
       </div>
-      <div className="text-xl font-semibold mb-4 text-ink dark:text-cream">
-        {isPerfect ? 'Hoàn hảo!' : `Đạt ${percentage}%`}
+
+      <div className="text-2xl font-bold mb-8 text-purple-600 dark:text-purple-400">
+        {isPerfect ? '🎉 Hoàn hảo!' : `Đạt ${percentage}%`}
       </div>
+
       <div className="flex justify-center gap-4 flex-wrap">
-        <Link to={`/cantonese/lessons/${lessonId}`} className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition">
+        <Link
+          to={`/cantonese/lessons/${lessonId}`}
+          className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border-2 border-pink-300 dark:border-pink-600 bg-white/90 dark:bg-black/70 text-pink-600 dark:text-pink-400 hover:bg-pink-50 dark:hover:bg-pink-900/30 transition-all shadow-md font-medium"
+        >
           Quay lại bài học
         </Link>
-        <Link to={`/cantonese/practice/${lessonId}/${type}`} className="inline-flex items-center gap-2 rounded-2xl bg-verm px-4 py-2 font-semibold text-ink shadow-[0_4 px_0_#8f2a22] hover:translate-y-0.5 active:translate-y-1 transition-transform">
+        <Link
+          to={`/cantonese/practice/${lessonId}/${type}`}
+          className="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-bold bg-gradient-to-br from-purple-500 to-pink-600 text-white border-2 border-purple-400 dark:border-pink-500 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all"
+        >
           Làm lại
         </Link>
       </div>
