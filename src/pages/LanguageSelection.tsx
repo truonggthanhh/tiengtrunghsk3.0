@@ -13,21 +13,21 @@ const LanguageSelection: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-black">
-      {/* Animated background with Chinese patterns */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(255,16,240,0.15)_0%,_rgba(0,0,0,1)_100%)]" />
+    <div className="relative min-h-screen overflow-hidden bg-white dark:bg-black transition-colors duration-300">
+      {/* Animated background - different for light/dark */}
+      <div className="absolute inset-0 bg-gradient-to-br from-pink-50 via-purple-50 to-cyan-50 dark:bg-[radial-gradient(ellipse_at_center,_rgba(255,16,240,0.15)_0%,_rgba(0,0,0,1)_100%)]" />
 
       {/* Chinese pattern overlay */}
       <div
-        className="absolute inset-0 opacity-5"
+        className="absolute inset-0 opacity-10 dark:opacity-5"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v6h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v6h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           backgroundSize: '60px 60px'
         }}
       />
 
-      {/* Floating particles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Floating particles - ONLY in dark mode */}
+      <div className="hidden dark:block absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(20)].map((_, i) => (
           <div
             key={i}
@@ -51,73 +51,55 @@ const LanguageSelection: React.FC = () => {
           <div className="text-center mb-16 space-y-6">
             {/* Main title with Chinese characters */}
             <div className="relative inline-block">
-              <h1
-                className="text-6xl md:text-8xl font-black mb-4 tracking-wider"
-                style={{
-                  color: '#FF10F0',
+              <h1 className="text-6xl md:text-8xl font-black mb-4 tracking-wider text-pink-600 dark:text-pink-500 transition-colors">
+                <span className="inline-block" style={{
                   textShadow: `
-                    0 0 10px rgba(255,16,240,0.8),
-                    0 0 20px rgba(255,16,240,0.6),
-                    0 0 30px rgba(255,16,240,0.4),
-                    0 0 40px rgba(255,16,240,0.2),
-                    0 0 70px rgba(255,16,240,0.1),
-                    0 0 80px rgba(255,16,240,0.05)
+                    0 0 5px rgba(255,16,240,0.3),
+                    0 0 10px rgba(255,16,240,0.2)
                   `,
-                  animation: 'pulse 2s ease-in-out infinite'
-                }}
-              >
-                學中文
+                  filter: 'brightness(1.1)'
+                }}>
+                  學中文
+                </span>
               </h1>
+
+              {/* Glow effect - ONLY in dark mode */}
               <div
-                className="absolute -inset-4 blur-3xl opacity-50"
+                className="hidden dark:block absolute -inset-4 blur-3xl opacity-40 -z-10"
                 style={{
                   background: 'radial-gradient(circle, rgba(255,16,240,0.6) 0%, transparent 70%)'
                 }}
               />
             </div>
 
-            <h2
-              className="text-3xl md:text-5xl font-bold tracking-wide"
-              style={{
-                color: '#00F0FF',
-                textShadow: `
-                  0 0 10px rgba(0,240,255,0.8),
-                  0 0 20px rgba(0,240,255,0.5),
-                  0 0 30px rgba(0,240,255,0.3)
-                `
-              }}
-            >
-              HỌC TIẾNG TRUNG
+            <h2 className="text-3xl md:text-5xl font-bold tracking-wide text-cyan-600 dark:text-cyan-400 transition-colors">
+              <span style={{
+                textShadow: `0 0 5px rgba(0,240,255,0.3), 0 0 10px rgba(0,240,255,0.2)`
+              }}>
+                HỌC TIẾNG TRUNG
+              </span>
             </h2>
 
-            <p
-              className="text-xl md:text-2xl font-medium"
-              style={{
-                color: '#FFD700',
-                textShadow: '0 0 10px rgba(255,215,0,0.5)'
-              }}
-            >
-              Chọn phương ngữ bạn muốn chinh phục
+            <p className="text-xl md:text-2xl font-medium text-orange-600 dark:text-yellow-400 transition-colors">
+              <span style={{
+                textShadow: '0 0 8px rgba(255,215,0,0.3)'
+              }}>
+                Chọn phương ngữ bạn muốn chinh phục
+              </span>
             </p>
           </div>
 
           {/* Language cards with neon borders */}
           <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12">
 
-            {/* Mandarin Card - Cyan/Purple neon */}
+            {/* Mandarin Card - Cyan/Purple */}
             <Card
-              className="group relative cursor-pointer transition-all duration-500 bg-black/80 backdrop-blur-md border-0 overflow-hidden"
+              className="group relative cursor-pointer transition-all duration-500 bg-white/95 dark:bg-black/80 backdrop-blur-md border-2 border-purple-300 dark:border-purple-600 hover:border-cyan-400 dark:hover:border-cyan-400 overflow-hidden shadow-xl dark:shadow-purple-500/30"
               onClick={() => navigate('/mandarin')}
-              style={{
-                boxShadow: `
-                  0 0 20px rgba(138,43,226,0.4),
-                  inset 0 0 20px rgba(138,43,226,0.1)
-                `
-              }}
             >
-              {/* Neon border effect */}
+              {/* Neon border effect - ONLY in dark mode */}
               <div
-                className="absolute inset-0 rounded-lg opacity-75 group-hover:opacity-100 transition-opacity"
+                className="hidden dark:block absolute inset-0 rounded-lg opacity-75 group-hover:opacity-100 transition-opacity"
                 style={{
                   background: 'linear-gradient(45deg, #8A2BE2, #00F0FF, #8A2BE2)',
                   padding: '2px',
@@ -127,53 +109,38 @@ const LanguageSelection: React.FC = () => {
                 }}
               />
 
-              {/* Glow effect on hover */}
+              {/* Glow effect on hover - ONLY in dark mode */}
               <div
-                className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-lg blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-500"
+                className="hidden dark:block absolute -inset-1 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-lg blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-500"
               />
 
               <CardHeader className="relative z-10 text-center pb-4 pt-8">
                 <div className="flex justify-center mb-6">
-                  <div
-                    className="relative p-6 rounded-full group-hover:scale-110 transition-transform duration-500"
-                    style={{
-                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                      boxShadow: '0 0 30px rgba(102,126,234,0.6), 0 0 60px rgba(118,75,162,0.3)'
-                    }}
-                  >
+                  <div className="relative p-6 rounded-full bg-gradient-to-br from-purple-200 to-indigo-300 dark:from-purple-600 dark:to-indigo-700 group-hover:scale-110 transition-transform duration-500 shadow-lg dark:shadow-purple-500/50">
                     <span className="text-6xl">中</span>
-                    <Sparkles
-                      className="absolute -top-2 -right-2 h-6 w-6 text-yellow-300 animate-pulse"
-                      style={{
-                        filter: 'drop-shadow(0 0 6px rgba(255,215,0,0.8))'
-                      }}
-                    />
+                    <Sparkles className="absolute -top-2 -right-2 h-6 w-6 text-yellow-500 dark:text-yellow-300 animate-pulse" />
                   </div>
                 </div>
 
-                <CardTitle
-                  className="text-4xl font-black mb-2"
-                  style={{
-                    color: '#00F0FF',
-                    textShadow: '0 0 10px rgba(0,240,255,0.8)'
-                  }}
-                >
-                  普通话
+                <CardTitle className="text-4xl font-black mb-2 text-cyan-600 dark:text-cyan-400 transition-colors">
+                  <span style={{
+                    textShadow: '0 0 10px rgba(0,240,255,0.5)'
+                  }}>
+                    普通话
+                  </span>
                 </CardTitle>
 
-                <CardDescription
-                  className="text-xl font-semibold"
-                  style={{
-                    color: '#FF10F0',
-                    textShadow: '0 0 8px rgba(255,16,240,0.6)'
-                  }}
-                >
-                  TIẾNG TRUNG PHỔ THÔNG
+                <CardDescription className="text-xl font-semibold text-pink-600 dark:text-pink-400 transition-colors">
+                  <span style={{
+                    textShadow: '0 0 8px rgba(255,16,240,0.4)'
+                  }}>
+                    TIẾNG TRUNG PHỔ THÔNG
+                  </span>
                 </CardDescription>
               </CardHeader>
 
               <CardContent className="relative z-10 space-y-4 px-6 pb-8">
-                <p className="text-center text-gray-300 font-medium">
+                <p className="text-center text-gray-600 dark:text-gray-300 font-medium">
                   Chuẩn Bắc Kinh • HSK • Msutong
                 </p>
 
@@ -185,52 +152,31 @@ const LanguageSelection: React.FC = () => {
                     'AI Tutor thông minh 🤖'
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-3 group/item">
-                      <Zap
-                        className="h-5 w-5 mt-0.5 flex-shrink-0 group-hover/item:scale-125 transition-transform"
-                        style={{
-                          color: '#FFD700',
-                          filter: 'drop-shadow(0 0 4px rgba(255,215,0,0.6))'
-                        }}
-                      />
-                      <span className="text-gray-200 group-hover/item:text-white transition-colors">
+                      <Zap className="h-5 w-5 mt-0.5 flex-shrink-0 text-yellow-600 dark:text-yellow-400 group-hover/item:scale-125 transition-transform" />
+                      <span className="text-gray-700 dark:text-gray-200 group-hover/item:text-gray-900 dark:group-hover/item:text-white transition-colors">
                         {item}
                       </span>
                     </li>
                   ))}
                 </ul>
 
-                <Button
-                  className="w-full mt-6 text-lg py-7 font-bold border-2 relative overflow-hidden group/btn"
-                  style={{
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    borderColor: '#00F0FF',
-                    boxShadow: '0 0 20px rgba(0,240,255,0.4)',
-                    color: 'white'
-                  }}
-                >
+                <Button className="w-full mt-6 text-lg py-7 font-bold border-2 border-cyan-500 dark:border-cyan-400 relative overflow-hidden group/btn bg-gradient-to-br from-purple-100 to-cyan-100 dark:from-purple-900/40 dark:to-cyan-900/40 text-purple-700 dark:text-white hover:from-purple-200 hover:to-cyan-200 dark:hover:from-purple-800/60 dark:hover:to-cyan-800/60 transition-all shadow-lg dark:shadow-cyan-500/30">
                   <span className="relative z-10 flex items-center justify-center gap-2">
                     BẮT ĐẦU HỌC NGAY
                     <Sparkles className="h-5 w-5" />
                   </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-purple-500 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
                 </Button>
               </CardContent>
             </Card>
 
-            {/* Cantonese Card - Orange/Red neon */}
+            {/* Cantonese Card - Orange/Pink */}
             <Card
-              className="group relative cursor-pointer transition-all duration-500 bg-black/80 backdrop-blur-md border-0 overflow-hidden"
+              className="group relative cursor-pointer transition-all duration-500 bg-white/95 dark:bg-black/80 backdrop-blur-md border-2 border-orange-300 dark:border-orange-600 hover:border-pink-400 dark:hover:border-pink-400 overflow-hidden shadow-xl dark:shadow-orange-500/30"
               onClick={() => navigate('/cantonese')}
-              style={{
-                boxShadow: `
-                  0 0 20px rgba(255,51,102,0.4),
-                  inset 0 0 20px rgba(255,51,102,0.1)
-                `
-              }}
             >
-              {/* Neon border effect */}
+              {/* Neon border effect - ONLY in dark mode */}
               <div
-                className="absolute inset-0 rounded-lg opacity-75 group-hover:opacity-100 transition-opacity"
+                className="hidden dark:block absolute inset-0 rounded-lg opacity-75 group-hover:opacity-100 transition-opacity"
                 style={{
                   background: 'linear-gradient(45deg, #FF6B35, #F7931E, #FF6B35)',
                   padding: '2px',
@@ -240,54 +186,38 @@ const LanguageSelection: React.FC = () => {
                 }}
               />
 
-              {/* Glow effect on hover */}
+              {/* Glow effect on hover - ONLY in dark mode */}
               <div
-                className="absolute -inset-1 bg-gradient-to-r from-orange-600 to-red-600 rounded-lg blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-500"
+                className="hidden dark:block absolute -inset-1 bg-gradient-to-r from-orange-600 to-red-600 rounded-lg blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-500"
               />
 
               <CardHeader className="relative z-10 text-center pb-4 pt-8">
                 <div className="flex justify-center mb-6">
-                  <div
-                    className="relative p-6 rounded-full group-hover:scale-110 transition-transform duration-500"
-                    style={{
-                      background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-                      boxShadow: '0 0 30px rgba(240,147,251,0.6), 0 0 60px rgba(245,87,108,0.3)'
-                    }}
-                  >
+                  <div className="relative p-6 rounded-full bg-gradient-to-br from-pink-200 to-orange-300 dark:from-pink-600 dark:to-red-700 group-hover:scale-110 transition-transform duration-500 shadow-lg dark:shadow-pink-500/50">
                     <span className="text-6xl">粵</span>
-                    <Sparkles
-                      className="absolute -top-2 -right-2 h-6 w-6 text-yellow-300 animate-pulse"
-                      style={{
-                        filter: 'drop-shadow(0 0 6px rgba(255,215,0,0.8))',
-                        animationDelay: '0.5s'
-                      }}
-                    />
+                    <Sparkles className="absolute -top-2 -right-2 h-6 w-6 text-yellow-500 dark:text-yellow-300 animate-pulse" />
                   </div>
                 </div>
 
-                <CardTitle
-                  className="text-4xl font-black mb-2"
-                  style={{
-                    color: '#FF6B35',
-                    textShadow: '0 0 10px rgba(255,107,53,0.8)'
-                  }}
-                >
-                  粵語
+                <CardTitle className="text-4xl font-black mb-2 text-orange-600 dark:text-orange-400 transition-colors">
+                  <span style={{
+                    textShadow: '0 0 10px rgba(255,107,53,0.5)'
+                  }}>
+                    粵語
+                  </span>
                 </CardTitle>
 
-                <CardDescription
-                  className="text-xl font-semibold"
-                  style={{
-                    color: '#FFD700',
-                    textShadow: '0 0 8px rgba(255,215,0,0.6)'
-                  }}
-                >
-                  TIẾNG QUẢNG ĐÔNG
+                <CardDescription className="text-xl font-semibold text-yellow-600 dark:text-yellow-400 transition-colors">
+                  <span style={{
+                    textShadow: '0 0 8px rgba(255,215,0,0.4)'
+                  }}>
+                    TIẾNG QUẢNG ĐÔNG
+                  </span>
                 </CardDescription>
               </CardHeader>
 
               <CardContent className="relative z-10 space-y-4 px-6 pb-8">
-                <p className="text-center text-gray-300 font-medium">
+                <p className="text-center text-gray-600 dark:text-gray-300 font-medium">
                   Hong Kong Style • Cantopop • Chợ Lớn
                 </p>
 
@@ -299,34 +229,19 @@ const LanguageSelection: React.FC = () => {
                     'Flashcard & bài tập đa dạng'
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-3 group/item">
-                      <Zap
-                        className="h-5 w-5 mt-0.5 flex-shrink-0 group-hover/item:scale-125 transition-transform"
-                        style={{
-                          color: '#FFD700',
-                          filter: 'drop-shadow(0 0 4px rgba(255,215,0,0.6))'
-                        }}
-                      />
-                      <span className="text-gray-200 group-hover/item:text-white transition-colors">
+                      <Zap className="h-5 w-5 mt-0.5 flex-shrink-0 text-yellow-600 dark:text-yellow-400 group-hover/item:scale-125 transition-transform" />
+                      <span className="text-gray-700 dark:text-gray-200 group-hover/item:text-gray-900 dark:group-hover/item:text-white transition-colors">
                         {item}
                       </span>
                     </li>
                   ))}
                 </ul>
 
-                <Button
-                  className="w-full mt-6 text-lg py-7 font-bold border-2 relative overflow-hidden group/btn"
-                  style={{
-                    background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-                    borderColor: '#FFD700',
-                    boxShadow: '0 0 20px rgba(255,215,0,0.4)',
-                    color: 'white'
-                  }}
-                >
+                <Button className="w-full mt-6 text-lg py-7 font-bold border-2 border-yellow-500 dark:border-yellow-400 relative overflow-hidden group/btn bg-gradient-to-br from-pink-100 to-orange-100 dark:from-pink-900/40 dark:to-orange-900/40 text-orange-700 dark:text-white hover:from-pink-200 hover:to-orange-200 dark:hover:from-pink-800/60 dark:hover:to-orange-800/60 transition-all shadow-lg dark:shadow-yellow-500/30">
                   <span className="relative z-10 flex items-center justify-center gap-2">
                     KHÁM PHÁ NGAY
                     <Sparkles className="h-5 w-5" />
                   </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-500 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
                 </Button>
               </CardContent>
             </Card>
@@ -334,25 +249,23 @@ const LanguageSelection: React.FC = () => {
 
           {/* Footer with retro text */}
           <div className="text-center space-y-2">
-            <p
-              className="text-sm md:text-base font-medium tracking-wide"
-              style={{
-                color: '#00F0FF',
-                textShadow: '0 0 5px rgba(0,240,255,0.5)'
-              }}
-            >
-              兩種語言 • 同樣的漢字 • 不同的發音
+            <p className="text-sm md:text-base font-medium tracking-wide text-cyan-600 dark:text-cyan-400 transition-colors">
+              <span style={{
+                textShadow: '0 0 5px rgba(0,240,255,0.3)'
+              }}>
+                兩種語言 • 同樣的漢字 • 不同的發音
+              </span>
             </p>
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-600 dark:text-gray-400 text-sm">
               Cả hai ngôn ngữ đều dùng chữ Hán nhưng phát âm và ngữ pháp khác nhau
             </p>
           </div>
         </div>
       </div>
 
-      {/* Scanline effect for retro feel */}
+      {/* Scanline effect for retro feel - ONLY in dark mode */}
       <div
-        className="fixed inset-0 pointer-events-none z-50 opacity-5"
+        className="hidden dark:block fixed inset-0 pointer-events-none z-50 opacity-5"
         style={{
           backgroundImage: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px)',
           backgroundSize: '100% 2px'
