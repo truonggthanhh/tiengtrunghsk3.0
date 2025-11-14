@@ -4,6 +4,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
 import { FileText, Trash2, Edit3, Eye, PlusCircle, Upload, Image as ImageIcon } from 'lucide-react';
+import RichTextEditor from '@/components/RichTextEditor';
+import ImageUpload from '@/components/ImageUpload';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,6 +44,17 @@ interface BlogPost {
   published_at: string | null;
   view_count: number;
   tags: string[];
+  category_id: string | null;
+}
+
+interface BlogCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  language: string;
+  color: string | null;
+  display_order: number;
 }
 
 const BlogManager = () => {
@@ -57,6 +70,7 @@ const BlogManager = () => {
   const [status, setStatus] = useState<'draft' | 'published'>('draft');
   const [featuredImage, setFeaturedImage] = useState<File | null>(null);
   const [featuredImageUrl, setFeaturedImageUrl] = useState('');
+  const [categoryId, setCategoryId] = useState<string>('');
 
   // Edit state
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
@@ -66,6 +80,7 @@ const BlogManager = () => {
   const [editTags, setEditTags] = useState('');
   const [editStatus, setEditStatus] = useState<'draft' | 'published' | 'archived'>('draft');
   const [editFeaturedImageUrl, setEditFeaturedImageUrl] = useState('');
+  const [editCategoryId, setEditCategoryId] = useState<string>('');
 
   const { data: posts, isLoading, error } = useQuery<BlogPost[]>({
     queryKey: ['blog-posts-admin', 'cantonese'],
@@ -78,6 +93,21 @@ const BlogManager = () => {
 
       if (error) throw error;
       return data;
+    },
+    enabled: !!session,
+  });
+
+  const { data: categories } = useQuery<BlogCategory[]>({
+    queryKey: ['blog-categories', 'cantonese'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('blog_categories')
+        .select('*')
+        .eq('language', 'cantonese')
+        .order('display_order', { ascending: true });
+
+      if (error) throw error;
+      return data || [];
     },
     enabled: !!session,
   });
@@ -132,6 +162,7 @@ const BlogManager = () => {
         status,
         published_at: status === 'published' ? new Date().toISOString() : null,
         tags: tagsArray,
+        category_id: categoryId || null,
       };
 
       const { error } = await supabase.from('blog_posts').insert([postData]);
@@ -147,6 +178,7 @@ const BlogManager = () => {
       setStatus('draft');
       setFeaturedImage(null);
       setFeaturedImageUrl('');
+      setCategoryId('');
     },
     onError: (err: Error) => toast.error(`Lỗi: ${err.message}`),
   });
@@ -168,6 +200,7 @@ const BlogManager = () => {
         status: editStatus,
         tags: tagsArray,
         featured_image_url: editFeaturedImageUrl || null,
+        category_id: editCategoryId || null,
       };
 
       if (editStatus === 'published' && editingPost.status !== 'published') {
@@ -210,6 +243,7 @@ const BlogManager = () => {
     setEditTags(Array.isArray(post.tags) ? post.tags.join(', ') : '');
     setEditStatus(post.status);
     setEditFeaturedImageUrl(post.featured_image_url || '');
+    setEditCategoryId(post.category_id || '');
   };
 
   return (
@@ -314,12 +348,38 @@ const BlogManager = () => {
                 <Textarea id="excerpt" value={excerpt} onChange={e => setExcerpt(e.target.value)} placeholder="Mô tả ngắn..." rows={2} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="content">Nội dung * (HTML)</Label>
-                <Textarea id="content" value={content} onChange={e => setContent(e.target.value)} placeholder="<p>Nội dung bài viết...</p>" rows={8} className="font-mono text-sm" />
+                <Label htmlFor="content">Nội dung *</Label>
+                <RichTextEditor
+                  value={content}
+                  onChange={setContent}
+                  placeholder="Viết nội dung bài viết..."
+                  height="300px"
+                />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="featured-image-url">Link ảnh đại diện</Label>
-                <Input id="featured-image-url" value={featuredImageUrl} onChange={e => setFeaturedImageUrl(e.target.value)} placeholder="https://..." />
+                <Label htmlFor="category">Danh mục</Label>
+                <Select value={categoryId} onValueChange={setCategoryId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Chọn danh mục..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Không chọn</SelectItem>
+                    {categories?.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="featured-image">Ảnh đại diện</Label>
+                <ImageUpload
+                  bucket="lesson_pdfs"
+                  folder="blog-images"
+                  onImageUploaded={setFeaturedImageUrl}
+                  currentImageUrl={featuredImageUrl}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="tags">Tags (phân cách bằng dấu phẩy)</Label>
@@ -363,12 +423,38 @@ const BlogManager = () => {
               <Textarea id="edit-excerpt" value={editExcerpt} onChange={e => setEditExcerpt(e.target.value)} rows={2} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-content">Nội dung (HTML)</Label>
-              <Textarea id="edit-content" value={editContent} onChange={e => setEditContent(e.target.value)} rows={12} className="font-mono text-sm" />
+              <Label htmlFor="edit-content">Nội dung</Label>
+              <RichTextEditor
+                value={editContent}
+                onChange={setEditContent}
+                placeholder="Viết nội dung bài viết..."
+                height="400px"
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-featured-image-url">Link ảnh đại diện</Label>
-              <Input id="edit-featured-image-url" value={editFeaturedImageUrl} onChange={e => setEditFeaturedImageUrl(e.target.value)} />
+              <Label htmlFor="edit-category">Danh mục</Label>
+              <Select value={editCategoryId} onValueChange={setEditCategoryId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Chọn danh mục..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Không chọn</SelectItem>
+                  {categories?.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-featured-image">Ảnh đại diện</Label>
+              <ImageUpload
+                bucket="lesson_pdfs"
+                folder="blog-images"
+                onImageUploaded={setEditFeaturedImageUrl}
+                currentImageUrl={editFeaturedImageUrl}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-tags">Tags</Label>
