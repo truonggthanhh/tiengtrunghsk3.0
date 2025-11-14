@@ -101,16 +101,16 @@ const LessonDetail = () => {
   const hasAccess = React.useMemo(() => {
     if (!lesson) return false;
 
-    // If lesson has no course, it's accessible to everyone
-    if (!lesson.course_id || !lesson.courses) return true;
-
-    // If course is free, it's accessible to everyone
-    if (lesson.courses.is_free) return true;
-
-    // If user is not logged in, no access to paid content
+    // REQUIRE LOGIN: If user is not logged in, no access to any lessons
     if (!session?.user?.id) return false;
 
-    // Check if user has access to this course
+    // If lesson has no course, accessible to all logged-in users
+    if (!lesson.course_id || !lesson.courses) return true;
+
+    // If course is free, accessible to all logged-in users
+    if (lesson.courses.is_free) return true;
+
+    // If course is paid, check if user has access
     return userCourseAccess?.includes(lesson.course_id);
   }, [lesson, userCourseAccess, session]);
 
@@ -202,24 +202,36 @@ const LessonDetail = () => {
 
   // Check access permission
   if (!hasAccess) {
+    const isNotLoggedIn = !session?.user?.id;
+
     return (
       <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white flex items-center justify-center">
         <div className="text-center p-6 max-w-md">
           <div className="mb-4">
             <FileText className="h-16 w-16 mx-auto text-red-500" />
           </div>
-          <h2 className="text-2xl font-bold mb-2 text-red-600 dark:text-red-400">Không có quyền truy cập</h2>
+          <h2 className="text-2xl font-bold mb-2 text-red-600 dark:text-red-400">
+            {isNotLoggedIn ? 'Yêu cầu đăng nhập' : 'Không có quyền truy cập'}
+          </h2>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
-            Bài học này thuộc khóa học <strong>{lesson.courses?.name}</strong> yêu cầu đăng ký.
+            {isNotLoggedIn ? (
+              'Vui lòng đăng nhập để xem bài học này'
+            ) : lesson.courses?.name ? (
+              <>Bài học này thuộc khóa học <strong>{lesson.courses.name}</strong> yêu cầu đăng ký.</>
+            ) : (
+              'Bạn không có quyền truy cập bài học này'
+            )}
           </p>
-          <p className="text-sm text-gray-500 dark:text-gray-500 mb-6">
-            Vui lòng liên hệ quản trị viên để được cấp quyền truy cập.
-          </p>
+          {!isNotLoggedIn && (
+            <p className="text-sm text-gray-500 dark:text-gray-500 mb-6">
+              Vui lòng liên hệ quản trị viên để được cấp quyền truy cập.
+            </p>
+          )}
           <div className="flex gap-2 justify-center">
             <Link to="/cantonese/lessons" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-pink-300 dark:border-pink-700 bg-white dark:bg-gray-900 text-pink-600 dark:text-pink-400 hover:bg-pink-50 dark:hover:bg-pink-900/50 transition-colors text-sm font-medium">
               <ArrowLeft className="h-4 w-4" /> Quay về bài học
             </Link>
-            {!session && (
+            {isNotLoggedIn && (
               <Link to="/cantonese/login" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-pink-600 text-white hover:bg-pink-700 transition-colors text-sm font-medium">
                 Đăng nhập
               </Link>
