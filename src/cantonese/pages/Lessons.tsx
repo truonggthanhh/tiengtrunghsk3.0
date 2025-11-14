@@ -41,17 +41,17 @@ const LessonsPage = () => {
   const lessons = useMemo(() => {
     if (!lessonsWithCourses) return [];
 
+    // REQUIRE LOGIN: If user is not logged in, hide all lessons
+    if (!session?.user?.id) return [];
+
     return lessonsWithCourses.filter(lesson => {
-      // If lesson has no course, it's accessible to everyone
+      // If lesson has no course, accessible to all logged-in users
       if (!lesson.course_id || !lesson.courses) return true;
 
-      // If course is free, it's accessible to everyone
+      // If course is free, accessible to all logged-in users
       if (lesson.courses.is_free) return true;
 
-      // If user is not logged in, only show free content
-      if (!session?.user?.id) return false;
-
-      // Check if user has access to this course
+      // If course is paid, check if user has access
       return userCourseAccess?.includes(lesson.course_id);
     });
   }, [lessonsWithCourses, userCourseAccess, session]);
@@ -142,9 +142,37 @@ const LessonsPage = () => {
 
         {/* Lessons grid */}
         <div className="space-y-4 md:space-y-6">
-          {lessons?.map((l: any) => (
-            <LessonCard key={l.id} lesson={l} />
-          ))}
+          {!session?.user?.id ? (
+            <div className="text-center py-12">
+              <div className="max-w-md mx-auto bg-white/90 dark:bg-black/70 backdrop-blur-md p-8 rounded-2xl border-2 border-pink-300 dark:border-pink-600 shadow-xl">
+                <div className="mb-4">
+                  <svg className="mx-auto h-16 w-16 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                  Yêu cầu đăng nhập
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-6">
+                  Vui lòng đăng nhập để xem danh sách bài học
+                </p>
+                <Link
+                  to="/cantonese/login"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-pink-500 to-orange-500 text-white font-bold hover:from-pink-600 hover:to-orange-600 transition-all shadow-lg hover:shadow-xl"
+                >
+                  Đăng nhập ngay
+                </Link>
+              </div>
+            </div>
+          ) : lessons && lessons.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600 dark:text-gray-300">Chưa có bài học nào</p>
+            </div>
+          ) : (
+            lessons?.map((l: any) => (
+              <LessonCard key={l.id} lesson={l} />
+            ))
+          )}
         </div>
       </div>
     </main>
