@@ -12,6 +12,8 @@ import LanguageSelection from "./pages/LanguageSelection";
 // Mandarin App Pages
 import MandarinIndex from "./pages/Index";
 import DictionaryPage from "./pages/DictionaryPage";
+import SongsPage from "./pages/SongsPage";
+import SongDetail from "./pages/SongDetail";
 import FlashcardPage from "./pages/FlashcardPage";
 import PinyinChoicePage from "./pages/PinyinChoicePage";
 import MeaningChoicePage from "./pages/MeaningChoicePage";
@@ -133,6 +135,28 @@ const App = () => (
                   <SessionContextProvider>
                     <PinyinProvider>
                       <DictionaryPage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+
+              {/* Songs Routes */}
+              <Route
+                path="songs"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <SongsPage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="songs/:songId"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <SongDetail />
                     </PinyinProvider>
                   </SessionContextProvider>
                 }

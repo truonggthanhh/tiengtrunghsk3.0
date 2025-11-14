@@ -113,63 +113,79 @@ const SongDetail = () => {
     : '';
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <div className="flex gap-3 mb-4">
-        <Link to="/cantonese" className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition text-sm">
-          <Home className="h-4 w-4" /> Trang chủ
-        </Link>
-        <Link to="/cantonese/songs" className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition text-sm">
-          <ArrowLeft className="h-4 w-4" /> Quay về danh sách bài hát
-        </Link>
-      </div>
-      <h1 className="text-3xl font-black mb-1 flex items-center gap-2">
-        <Music className="h-7 w-7 text-jade" /> {song.title}
-      </h1>
-      <p className="text-ink/80 mb-4">{song.artist}</p>
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white transition-colors">
+      <div className="max-w-6xl mx-auto p-6 md:p-8">
+        {/* Navigation */}
+        <div className="flex gap-2 mb-6">
+          <Link to="/cantonese" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-900 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/50 transition-colors text-sm font-medium">
+            <Home className="h-4 w-4" /> Trang chủ
+          </Link>
+          <Link to="/cantonese/songs" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-pink-300 dark:border-pink-700 bg-white dark:bg-gray-900 text-pink-600 dark:text-pink-400 hover:bg-pink-50 dark:hover:bg-pink-900/50 transition-colors text-sm font-medium">
+            <ArrowLeft className="h-4 w-4" /> Quay về danh sách
+          </Link>
+        </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="aspect-video rounded-2xl overflow-hidden border-2 border-ink/10 shadow-[0_10px_0_#d7c8b6]">
-          {youtubeEmbedUrl ? (
-            <iframe
-              ref={iframeRef}
-              className="w-full h-full"
-              src={youtubeEmbedUrl}
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              title={song.title}
-            ></iframe>
-          ) : (
-            <div className="flex items-center justify-center h-full bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
-              Không có video YouTube
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-3xl md:text-4xl font-bold mb-2 text-cyan-600 dark:text-cyan-400 flex items-center gap-3">
+            <Music className="h-8 w-8" /> {song.title}
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-400">{song.artist}</p>
+        </div>
+
+        {/* Video & Lyrics Grid */}
+        <div className="grid lg:grid-cols-2 gap-6">
+          {/* YouTube Player */}
+          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm">
+            <div className="aspect-video">
+              {youtubeEmbedUrl ? (
+                <iframe
+                  ref={iframeRef}
+                  className="w-full h-full"
+                  src={youtubeEmbedUrl}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title={song.title}
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                  Không có video YouTube
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </div>
 
-        <div className="bg-white dark:bg-black/20 p-4 rounded-2xl border border-ink/10 shadow-[0_10px_0_#d7c8b6] h-[400px] overflow-y-auto">
-          <h2 className="font-bold text-xl mb-3">Lời bài hát</h2>
-          {lrcLines.length > 0 ? (
-            <ul className="space-y-2">
-              {lrcLines.map((line, index) => (
-                <li
-                  key={index}
-                  ref={el => lyricRefs.current[index] = el}
-                  className={`py-1 px-2 rounded-lg transition-colors ${
-                    index === activeLineIndex
-                      ? 'bg-verm text-cream font-semibold shadow-md'
-                      : 'text-ink/80 dark:text-cream/80'
-                  }`}
-                >
-                  {line.text}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-ink/70 dark:text-cream/70">Không có lời bài hát (LRC) cho bài này.</p>
-          )}
+          {/* Lyrics Panel */}
+          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm">
+            <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+              <h2 className="font-bold text-lg text-gray-900 dark:text-white">Lời bài hát</h2>
+            </div>
+            <div className="h-[400px] overflow-y-auto p-4">
+              {lrcLines.length > 0 ? (
+                <ul className="space-y-2">
+                  {lrcLines.map((line, index) => (
+                    <li
+                      key={index}
+                      ref={el => lyricRefs.current[index] = el}
+                      className={`py-2 px-3 rounded-lg transition-all duration-200 ${
+                        index === activeLineIndex
+                          ? 'bg-cyan-500 text-white font-semibold scale-105 shadow-md'
+                          : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                      }`}
+                    >
+                      {line.text}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-gray-500 dark:text-gray-400">Không có lời bài hát (LRC) cho bài này.</p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 
