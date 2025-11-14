@@ -67,16 +67,52 @@ const LessonDetail = () => {
   const { session, isLoading: isSessionLoading } = useSession();
   const { isAdmin, isLoadingProfile } = useProfile();
 
-  // 1. Fetch lesson details first
+  // 1. Fetch lesson details with course info
   const { data: lesson, isLoading: isLoadingLesson, error: errorLesson } = useQuery({
     queryKey: ['lesson', lessonId],
     queryFn: async () => {
-      const { data, error } = await supabase.from('lessons').select('user_id, title, description').eq('id', lessonId).single();
+      const { data, error } = await supabase
+        .from('lessons')
+        .select('user_id, title, description, course_id, courses(id, name, is_free)')
+        .eq('id', lessonId)
+        .single();
       if (error) throw error;
       return data;
     },
     enabled: !!lessonId,
   });
+
+  // Check user's course access
+  const { data: userCourseAccess } = useQuery({
+    queryKey: ['user-course-access', session?.user?.id],
+    queryFn: async () => {
+      if (!session?.user?.id) return [];
+      const { data, error } = await supabase
+        .from('user_course_access')
+        .select('course_id')
+        .eq('user_id', session.user.id);
+      if (error) throw error;
+      return data.map(item => item.course_id);
+    },
+    enabled: !!session?.user?.id,
+  });
+
+  // Check if user has access to this lesson
+  const hasAccess = React.useMemo(() => {
+    if (!lesson) return false;
+
+    // If lesson has no course, it's accessible to everyone
+    if (!lesson.course_id || !lesson.courses) return true;
+
+    // If course is free, it's accessible to everyone
+    if (lesson.courses.is_free) return true;
+
+    // If user is not logged in, no access to paid content
+    if (!session?.user?.id) return false;
+
+    // Check if user has access to this course
+    return userCourseAccess?.includes(lesson.course_id);
+  }, [lesson, userCourseAccess, session]);
 
   // 2. Derive queryUserId once lesson is loaded
   // ALWAYS use lesson.user_id because exercises belong to the lesson creator
@@ -159,6 +195,36 @@ const LessonDetail = () => {
       <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white flex items-center justify-center">
         <div className="text-center p-6">
           <p className="text-lg font-medium text-gray-600 dark:text-gray-300">Không tìm thấy bài học.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Check access permission
+  if (!hasAccess) {
+    return (
+      <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white flex items-center justify-center">
+        <div className="text-center p-6 max-w-md">
+          <div className="mb-4">
+            <FileText className="h-16 w-16 mx-auto text-red-500" />
+          </div>
+          <h2 className="text-2xl font-bold mb-2 text-red-600 dark:text-red-400">Không có quyền truy cập</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            Bài học này thuộc khóa học <strong>{lesson.courses?.name}</strong> yêu cầu đăng ký.
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-500 mb-6">
+            Vui lòng liên hệ quản trị viên để được cấp quyền truy cập.
+          </p>
+          <div className="flex gap-2 justify-center">
+            <Link to="/cantonese/lessons" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-pink-300 dark:border-pink-700 bg-white dark:bg-gray-900 text-pink-600 dark:text-pink-400 hover:bg-pink-50 dark:hover:bg-pink-900/50 transition-colors text-sm font-medium">
+              <ArrowLeft className="h-4 w-4" /> Quay về bài học
+            </Link>
+            {!session && (
+              <Link to="/cantonese/login" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-pink-600 text-white hover:bg-pink-700 transition-colors text-sm font-medium">
+                Đăng nhập
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     );
