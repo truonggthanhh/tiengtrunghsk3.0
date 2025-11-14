@@ -40,6 +40,7 @@ import ProfilePage from "./pages/ProfilePage";
 import LearningProgressPage from "./pages/LearningProgressPage";
 import { SessionContextProvider } from "./components/SessionContextProvider";
 import { PinyinProvider } from "./contexts/PinyinContext";
+import { GamificationProvider } from "./components/gamification/GamificationProvider";
 
 // Cantonese App Pages
 import CantoneseIndex from "./cantonese/pages/Index";
@@ -84,11 +85,12 @@ const queryClient = new QueryClient({
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
+      <GamificationProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
             {/* Language Selection */}
             <Route path="/" element={<LanguageSelection />} />
 
@@ -663,6 +665,7 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
+      </GamificationProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );
