@@ -2,9 +2,11 @@ import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/cantonese/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
 import { Calendar, User, Eye, Tag, ArrowLeft } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import CommentsSection from '@/components/CommentsSection';
 
 interface BlogPost {
   id: string;
@@ -24,6 +26,24 @@ interface BlogPost {
 
 const BlogDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
+  const { session } = useSession();
+
+  // Check if user is admin
+  const { data: userProfile } = useQuery({
+    queryKey: ['user-profile', session?.user?.id],
+    queryFn: async () => {
+      if (!session?.user?.id) return null;
+      const { data } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single();
+      return data;
+    },
+    enabled: !!session?.user?.id,
+  });
+
+  const isAdmin = userProfile?.role === 'admin';
 
   const { data: post, isLoading, error } = useQuery<BlogPost>({
     queryKey: ['blog-post', slug],
@@ -160,6 +180,9 @@ const BlogDetailPage = () => {
                 prose-img:rounded-xl prose-img:shadow-lg"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
+
+            {/* Comments Section */}
+            <CommentsSection postId={post.id} isAdmin={isAdmin} />
           </div>
         </article>
       </div>
