@@ -5,19 +5,17 @@
 -- ============================================================================
 
 -- ============================================================================
--- DROP EXISTING TRIGGERS AND FUNCTIONS FIRST (to prevent errors)
+-- DROP EXISTING FUNCTIONS AND TABLES
+-- Note: Triggers will be automatically dropped when tables are dropped with CASCADE
 -- ============================================================================
 
--- Drop existing triggers BEFORE dropping tables
-DROP TRIGGER IF EXISTS trigger_update_user_progress_timestamp ON user_progress;
-DROP TRIGGER IF EXISTS trigger_initialize_user_gamification ON auth.users;
-
--- Drop existing functions
+-- Drop existing functions first (they might reference tables)
 DROP FUNCTION IF EXISTS update_user_progress_timestamp() CASCADE;
 DROP FUNCTION IF EXISTS initialize_user_gamification() CASCADE;
 
 -- ============================================================================
 -- DROP EXISTING TABLES (in reverse dependency order)
+-- CASCADE will automatically drop all dependent triggers, constraints, etc.
 -- ============================================================================
 
 DROP TABLE IF EXISTS user_inventory CASCADE;
