@@ -3,7 +3,19 @@ import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import { useSession } from '@/components/SessionContextProvider';
 import { supabase } from '@/integrations/supabase/client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Switch } from '@/components/ui/switch';
@@ -11,9 +23,15 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Home, Loader2, UserCog, Key, Sparkles, Upload, FileText, Lock } from 'lucide-react';
+import { Home, Loader2, UserCog, Key, Sparkles, Upload, FileText, Lock, Music, PlusCircle, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { CourseAccessManagement } from '@/components/admin/CourseAccessManagement';
+
+const extractVideoId = (url: string) => {
+  const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+  const match = url.match(regex);
+  return match ? match[1] : null;
+};
 
 interface UserProfile {
   id: string;
@@ -262,8 +280,12 @@ const AdminDashboardPage: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6">
-            <Tabs defaultValue="users" className="w-full">
-              <TabsList className="grid w-full grid-cols-6 mb-6">
+            <Tabs defaultValue="songs" className="w-full">
+              <TabsList className="grid w-full grid-cols-7 mb-6">
+                <TabsTrigger value="songs" className="flex items-center gap-2">
+                  <Music className="h-4 w-4" />
+                  <span className="hidden sm:inline">Bài hát</span>
+                </TabsTrigger>
                 <TabsTrigger value="users" className="flex items-center gap-2">
                   <UserCog className="h-4 w-4" />
                   <span className="hidden sm:inline">Người dùng</span>
@@ -289,6 +311,11 @@ const AdminDashboardPage: React.FC = () => {
                   <span className="hidden sm:inline">Tài liệu</span>
                 </TabsTrigger>
               </TabsList>
+
+              {/* Songs Management Tab */}
+              <TabsContent value="songs" className="space-y-4">
+                <SongManager />
+              </TabsContent>
 
               {/* Users Management Tab */}
               <TabsContent value="users" className="space-y-4">
@@ -523,6 +550,171 @@ const AdminDashboardPage: React.FC = () => {
           </Button>
         </div>
       </main>
+    </div>
+  );
+};
+
+const SongManager = () => {
+  const queryClient = useQueryClient();
+  const [title, setTitle] = useState('');
+  const [artist, setArtist] = useState('');
+  const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [lrc, setLrc] = useState('');
+
+  const { data: songs, isLoading, error } = useQuery({
+    queryKey: ['songs'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('songs').select('*').order('created_at', { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const addSongMutation = useMutation({
+    mutationFn: async (newSong: { title: string; artist: string; youtube_video_id: string; lrc: string }) => {
+      const { error } = await supabase.from('songs').insert([newSong]);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['songs'] });
+      toast.success('Bài hát đã được thêm!');
+      setTitle('');
+      setArtist('');
+      setYoutubeUrl('');
+      setLrc('');
+    },
+    onError: (err: Error) => toast.error(`Lỗi: ${err.message}`),
+  });
+
+  const deleteSongMutation = useMutation({
+    mutationFn: async (songId: string) => {
+      const { error } = await supabase.from('songs').delete().eq('id', songId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['songs'] });
+      toast.success('Bài hát đã được xóa.');
+    },
+    onError: (err: Error) => toast.error(`Lỗi: ${err.message}`),
+  });
+
+  const handleSubmit = () => {
+    const videoId = extractVideoId(youtubeUrl);
+    if (!title || !artist || !videoId || !lrc) {
+      toast.error('Vui lòng điền đủ thông tin và link YouTube hợp lệ.');
+      return;
+    }
+    addSongMutation.mutate({ title, artist, youtube_video_id: videoId, lrc });
+  };
+
+  return (
+    <div className="grid lg:grid-cols-3 gap-6">
+      <div className="lg:col-span-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Danh sách Bài hát</CardTitle>
+            <CardDescription>Quản lý các bài hát Mandopop</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <div>Đang tải...</div>
+            ) : error ? (
+              <div className="text-red-600">Lỗi tải bài hát.</div>
+            ) : (
+              <div className="space-y-3">
+                {songs?.map((s: any) => (
+                  <div key={s.id} className="p-3 border rounded-lg flex items-center justify-between flex-wrap gap-2">
+                    <div>
+                      <span className="font-semibold">{s.title}</span> - {s.artist}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" asChild>
+                        <Link to={`/mandarin/songs/${s.id}`}>Nghe</Link>
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="destructive" size="sm">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Xác nhận xóa?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Xóa vĩnh viễn bài hát "{s.title}".
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Hủy</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => deleteSongMutation.mutate(s.id)}>
+                              Xóa
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+      <div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Thêm Bài hát mới</CardTitle>
+            <CardDescription>Nhập thông tin bài hát và lời bài hát với timestamp</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="space-y-2">
+              <Label htmlFor="song-title">Tiêu đề bài hát</Label>
+              <Input
+                id="song-title"
+                placeholder="Ví dụ: 七里香"
+                value={title}
+                onChange={e => setTitle(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="song-artist">Nghệ sĩ</Label>
+              <Input
+                id="song-artist"
+                placeholder="Ví dụ: Jay Chou 周杰倫"
+                value={artist}
+                onChange={e => setArtist(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="song-youtube">Link YouTube</Label>
+              <Input
+                id="song-youtube"
+                placeholder="https://www.youtube.com/watch?v=..."
+                value={youtubeUrl}
+                onChange={e => setYoutubeUrl(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="song-lrc">Lời bài hát (Format LRC)</Label>
+              <Textarea
+                id="song-lrc"
+                placeholder="[00:00.00]Dán nội dung file .LRC vào đây&#10;[00:05.00]Mỗi dòng có timestamp [MM:SS.MS]"
+                value={lrc}
+                onChange={e => setLrc(e.target.value)}
+                rows={12}
+                className="font-mono text-sm"
+              />
+              <p className="text-xs text-gray-500">
+                Format: [MM:SS.MS]Lời bài hát. Ví dụ: [00:15.50]你好
+              </p>
+            </div>
+            <Button onClick={handleSubmit} disabled={addSongMutation.isPending} className="w-full">
+              <PlusCircle className="h-4 w-4 mr-2" />
+              {addSongMutation.isPending ? 'Đang thêm...' : 'Thêm Bài hát'}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
