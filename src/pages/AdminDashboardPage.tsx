@@ -31,10 +31,11 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Home, Loader2, UserCog, Key, Sparkles, Upload, FileText, Lock, Music, PlusCircle, Trash2, Edit3, Newspaper } from 'lucide-react';
+import { Home, Loader2, UserCog, Key, Sparkles, Upload, FileText, Lock, Music, PlusCircle, Trash2, Edit3, Newspaper, BookOpen } from 'lucide-react';
 import { toast } from 'sonner';
 import { CourseAccessManagement } from '@/components/admin/CourseAccessManagement';
 import BlogManager from '@/mandarin/components/admin/BlogManager';
+import CourseManager from '@/mandarin/components/admin/CourseManager';
 
 const extractVideoId = (url: string) => {
   const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
@@ -290,7 +291,7 @@ const AdminDashboardPage: React.FC = () => {
           </CardHeader>
           <CardContent className="p-6">
             <Tabs defaultValue="songs" className="w-full">
-              <TabsList className="grid w-full grid-cols-8 mb-6">
+              <TabsList className="grid w-full grid-cols-9 mb-6">
                 <TabsTrigger value="songs" className="flex items-center gap-2">
                   <Music className="h-4 w-4" />
                   <span className="hidden sm:inline">Bài hát</span>
@@ -299,13 +300,17 @@ const AdminDashboardPage: React.FC = () => {
                   <Newspaper className="h-4 w-4" />
                   <span className="hidden sm:inline">Blog</span>
                 </TabsTrigger>
+                <TabsTrigger value="courses" className="flex items-center gap-2">
+                  <BookOpen className="h-4 w-4" />
+                  <span className="hidden sm:inline">Quản lý khóa học</span>
+                </TabsTrigger>
                 <TabsTrigger value="users" className="flex items-center gap-2">
                   <UserCog className="h-4 w-4" />
                   <span className="hidden sm:inline">Người dùng</span>
                 </TabsTrigger>
                 <TabsTrigger value="courseaccess" className="flex items-center gap-2">
                   <Lock className="h-4 w-4" />
-                  <span className="hidden sm:inline">Khóa học</span>
+                  <span className="hidden sm:inline">Quyền khóa học</span>
                 </TabsTrigger>
                 <TabsTrigger value="apikey" className="flex items-center gap-2">
                   <Key className="h-4 w-4" />
@@ -333,6 +338,11 @@ const AdminDashboardPage: React.FC = () => {
               {/* Blog Management Tab */}
               <TabsContent value="blog" className="space-y-4">
                 <BlogManager />
+              </TabsContent>
+
+              {/* Courses Management Tab */}
+              <TabsContent value="courses" className="space-y-4">
+                <CourseManager />
               </TabsContent>
 
               {/* Users Management Tab */}

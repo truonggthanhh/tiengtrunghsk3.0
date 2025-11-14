@@ -1,20 +1,60 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/cantonese/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 import { Home, Sparkles } from 'lucide-react';
 import LessonCard from '@/cantonese/components/LessonCard';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
 
 const LessonsPage = () => {
-  // Fetch lessons from Supabase, ordered by the new 'position' column
-  const { data: lessons, isLoading, error } = useQuery({
-    queryKey: ['lessons'],
+  const { session } = useSession();
+
+  // Fetch lessons with course info
+  const { data: lessonsWithCourses, isLoading, error } = useQuery({
+    queryKey: ['lessons-with-courses'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('lessons').select('*').order('position', { ascending: true, nullsFirst: false });
+      const { data, error } = await supabase
+        .from('lessons')
+        .select('*, courses(id, name, is_free)')
+        .order('position', { ascending: true, nullsFirst: false });
       if (error) throw error;
       return data;
     },
   });
+
+  // Fetch user's course access if logged in
+  const { data: userCourseAccess } = useQuery({
+    queryKey: ['user-course-access', session?.user?.id],
+    queryFn: async () => {
+      if (!session?.user?.id) return [];
+      const { data, error } = await supabase
+        .from('user_course_access')
+        .select('course_id')
+        .eq('user_id', session.user.id);
+      if (error) throw error;
+      return data.map(item => item.course_id);
+    },
+    enabled: !!session?.user?.id,
+  });
+
+  // Filter lessons based on authentication
+  const lessons = useMemo(() => {
+    if (!lessonsWithCourses) return [];
+
+    return lessonsWithCourses.filter(lesson => {
+      // If lesson has no course, it's accessible to everyone
+      if (!lesson.course_id || !lesson.courses) return true;
+
+      // If course is free, it's accessible to everyone
+      if (lesson.courses.is_free) return true;
+
+      // If user is not logged in, only show free content
+      if (!session?.user?.id) return false;
+
+      // Check if user has access to this course
+      return userCourseAccess?.includes(lesson.course_id);
+    });
+  }, [lessonsWithCourses, userCourseAccess, session]);
 
   if (isLoading) {
     return (

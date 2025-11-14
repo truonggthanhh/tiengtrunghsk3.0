@@ -36,6 +36,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ManageUserLessonsDialog from '@/cantonese/components/admin/ManageUserLessonsDialog';
 import SortableLessonItem from '@/cantonese/components/admin/SortableLessonItem'; // Import the new component
 import { CourseAccessManagement } from '@/cantonese/components/admin/CourseAccessManagement';
@@ -56,6 +57,15 @@ type Lesson = {
   pdf_url: string | null;
   user_id: string | null;
   position: number;
+};
+
+type Course = {
+  id: string;
+  name: string;
+  slug: string;
+  language: string;
+  is_free: boolean;
+  is_active: boolean;
 };
 
 type Job = {
@@ -242,6 +252,7 @@ const LessonManager = () => {
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
+  const [courseId, setCourseId] = useState<string>('');
   const [editingLesson, setEditingLesson] = useState<Lesson | null>(null);
   const [editedTitle, setEditedTitle] = useState('');
   const [editedDesc, setEditedDesc] = useState('');
@@ -288,6 +299,22 @@ const LessonManager = () => {
     enabled: !!session,
   });
 
+  const { data: courses } = useQuery<Course[]>({
+    queryKey: ['courses-admin', 'cantonese'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('courses')
+        .select('*')
+        .eq('language', 'cantonese')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!session,
+  });
+
   useEffect(() => {
     if (!session?.user?.id) return;
     const channel = supabase.channel('realtime-dashboard')
@@ -309,12 +336,12 @@ const LessonManager = () => {
   }, [session, queryClient]);
 
   const addLessonMutation = useMutation({
-    mutationFn: async ({ title, description, pdfPath, userId }: { title: string; description: string; pdfPath?: string; userId: string }) => {
-      const { data, error } = await supabase.from('lessons').insert([{ title, description, pdf_url: pdfPath, user_id: userId }]).select();
+    mutationFn: async ({ title, description, pdfPath, userId, courseId }: { title: string; description: string; pdfPath?: string; userId: string; courseId?: string }) => {
+      const { data, error } = await supabase.from('lessons').insert([{ title, description, pdf_url: pdfPath, user_id: userId, course_id: courseId || null }]).select();
       if (error) throw error;
       return data;
     },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['lessons'] }); toast.success('Bài học đã được tải lên!'); setFile(null); setTitle(''); setDesc(''); },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['lessons'] }); toast.success('Bài học đã được tải lên!'); setFile(null); setTitle(''); setDesc(''); setCourseId(''); },
     onError: (err) => toast.error(`Lỗi: ${err.message}`),
   });
 
@@ -438,7 +465,7 @@ const LessonManager = () => {
     const { error } = await supabase.storage.from('lesson_pdfs').upload(filePath, file);
     if (error) { toast.error(`Lỗi tải lên PDF: ${error.message}`); return; }
     const { data: { publicUrl } } = supabase.storage.from('lesson_pdfs').getPublicUrl(filePath);
-    addLessonMutation.mutate({ title, description: desc, pdfPath: publicUrl, userId: session.user.id });
+    addLessonMutation.mutate({ title, description: desc, pdfPath: publicUrl, userId: session.user.id, courseId: courseId || undefined });
   }
 
   const handleUpdateLesson = () => {
@@ -589,6 +616,22 @@ const LessonManager = () => {
                     onChange={e => setDesc(e.target.value)}
                     className="border-gray-300 dark:border-gray-700 focus:border-cyan-500 dark:focus:border-cyan-500"
                   />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="course" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Khóa học (tùy chọn)</Label>
+                  <Select value={courseId || "none"} onValueChange={(val) => setCourseId(val === "none" ? "" : val)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Chọn khóa học..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Không chọn</SelectItem>
+                      {courses?.map((course) => (
+                        <SelectItem key={course.id} value={course.id}>
+                          {course.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="lesson-pdf" className="text-sm font-semibold text-gray-700 dark:text-gray-300">File PDF</Label>
