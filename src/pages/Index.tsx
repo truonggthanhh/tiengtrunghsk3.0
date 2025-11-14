@@ -16,7 +16,6 @@ import HeroIllustration from "@/components/HeroIllustration";
 import FeatureSection from "@/components/FeatureSection";
 import TestimonialSection from "@/components/TestimonialSection";
 import CallToActionSection from "@/components/CallToActionSection";
-import DictionarySearch from "@/components/DictionarySearch"; // Import the new component
 import { cn } from "@/lib/utils";
 import { useSession } from "@/components/SessionContextProvider";
 
@@ -185,11 +184,6 @@ const Index = () => {
               </div>
             </div>
           </div>
-        </section>
-
-        {/* Dictionary Search Section */}
-        <section className="py-16 md:py-20 mb-16">
-          <DictionarySearch />
         </section>
 
         {/* Songs Section */}
