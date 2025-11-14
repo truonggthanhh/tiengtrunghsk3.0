@@ -9,7 +9,12 @@ import { useSession } from '@/cantonese/components/providers/SessionContextProvi
 import { Button } from '@/components/ui/button';
 import { UserCog, BarChart2 } from 'lucide-react';
 
-const PageWrapper = ({ children }: { children: React.ReactNode }) => {
+interface PageWrapperProps {
+  children: React.ReactNode;
+  showBackButton?: boolean;
+}
+
+const PageWrapper = ({ children, showBackButton = true }: PageWrapperProps) => {
   const { session } = useSession();
   const { isAdmin } = useProfile();
   return (
