@@ -109,24 +109,98 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-4 md:p-6">
-      <Link to="/cantonese" className="text-sm text-ink/70 hover:text-ink dark:text-cream/70 dark:hover:text-cream mb-4 inline-block">← Quay về trang chủ</Link>
-      <h1 className="text-3xl font-black mb-4">Dashboard Quản trị</h1>
-      <div className="grid md:grid-cols-4 gap-6">
-        <aside className="md:col-span-1">
-          <nav className="flex flex-col space-y-1 p-2 bg-white dark:bg-black/20 rounded-2xl border border-ink/10 shadow-sm">
-            <Button variant={activeTab === 'lessons' ? 'secondary' : 'ghost'} onClick={() => setActiveTab('lessons')} className="justify-start gap-2"><BookOpen className="h-4 w-4" /> Quản lý Bài học</Button>
-            <Button variant={activeTab === 'songs' ? 'secondary' : 'ghost'} onClick={() => setActiveTab('songs')} className="justify-start gap-2"><ListMusic className="h-4 w-4" /> Quản lý Bài hát</Button>
-            {isUserAdmin && (<Button variant={activeTab === 'users' ? 'secondary' : 'ghost'} onClick={() => setActiveTab('users')} className="justify-start gap-2"><Users className="h-4 w-4" /> Quản lý Người dùng</Button>)}
-            {isUserAdmin && (<Button variant={activeTab === 'courseaccess' ? 'secondary' : 'ghost'} onClick={() => setActiveTab('courseaccess')} className="justify-start gap-2"><Lock className="h-4 w-4" /> Khóa học</Button>)}
-          </nav>
-        </aside>
-        <main className="md:col-span-3">
-          {activeTab === 'lessons' && <LessonManager />}
-          {activeTab === 'songs' && <SongManager />}
-          {activeTab === 'users' && isUserAdmin && <UserManager />}
-          {activeTab === 'courseaccess' && isUserAdmin && <CourseAccessManagement />}
-        </main>
+    <div className="min-h-screen bg-gradient-to-br from-cyan-50/50 via-purple-50/30 to-pink-50/50 dark:from-gray-950 dark:via-cyan-950/10 dark:to-purple-950/10">
+      <div className="max-w-7xl mx-auto p-4 md:p-8">
+        {/* Header Section */}
+        <div className="mb-8">
+          <div className="flex items-center gap-4 mb-2">
+            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-cyan-500 via-purple-500 to-pink-500 grid place-items-center shadow-lg">
+              <UserCog className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-black bg-gradient-to-r from-cyan-600 via-purple-600 to-pink-600 dark:from-cyan-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+                Dashboard Quản trị
+              </h1>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Quản lý nội dung học Tiếng Quảng Đông</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="grid lg:grid-cols-5 gap-6">
+          {/* Sidebar Navigation */}
+          <aside className="lg:col-span-1">
+            <div className="sticky top-24">
+              <nav className="flex flex-col space-y-2 p-3 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md rounded-2xl border border-gray-200/50 dark:border-gray-800/50 shadow-xl">
+                <Button
+                  variant={activeTab === 'lessons' ? 'default' : 'ghost'}
+                  onClick={() => setActiveTab('lessons')}
+                  className={`justify-start gap-3 transition-all ${
+                    activeTab === 'lessons'
+                      ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white shadow-lg'
+                      : 'hover:bg-cyan-50 dark:hover:bg-cyan-900/20 text-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  <BookOpen className="h-5 w-5" />
+                  <span className="font-semibold">Bài học</span>
+                </Button>
+
+                <Button
+                  variant={activeTab === 'songs' ? 'default' : 'ghost'}
+                  onClick={() => setActiveTab('songs')}
+                  className={`justify-start gap-3 transition-all ${
+                    activeTab === 'songs'
+                      ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
+                      : 'hover:bg-purple-50 dark:hover:bg-purple-900/20 text-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  <ListMusic className="h-5 w-5" />
+                  <span className="font-semibold">Bài hát</span>
+                </Button>
+
+                {isUserAdmin && (
+                  <Button
+                    variant={activeTab === 'users' ? 'default' : 'ghost'}
+                    onClick={() => setActiveTab('users')}
+                    className={`justify-start gap-3 transition-all ${
+                      activeTab === 'users'
+                        ? 'bg-gradient-to-r from-pink-500 to-cyan-500 text-white shadow-lg'
+                        : 'hover:bg-pink-50 dark:hover:bg-pink-900/20 text-gray-700 dark:text-gray-300'
+                    }`}
+                  >
+                    <Users className="h-5 w-5" />
+                    <span className="font-semibold">Người dùng</span>
+                  </Button>
+                )}
+
+                {isUserAdmin && (
+                  <Button
+                    variant={activeTab === 'courseaccess' ? 'default' : 'ghost'}
+                    onClick={() => setActiveTab('courseaccess')}
+                    className={`justify-start gap-3 transition-all ${
+                      activeTab === 'courseaccess'
+                        ? 'bg-gradient-to-r from-cyan-500 to-pink-500 text-white shadow-lg'
+                        : 'hover:bg-cyan-50 dark:hover:bg-cyan-900/20 text-gray-700 dark:text-gray-300'
+                    }`}
+                  >
+                    <Lock className="h-5 w-5" />
+                    <span className="font-semibold">Khóa học</span>
+                  </Button>
+                )}
+              </nav>
+            </div>
+          </aside>
+
+          {/* Content Area */}
+          <main className="lg:col-span-4">
+            <div className="transition-all duration-300">
+              {activeTab === 'lessons' && <LessonManager />}
+              {activeTab === 'songs' && <SongManager />}
+              {activeTab === 'users' && isUserAdmin && <UserManager />}
+              {activeTab === 'courseaccess' && isUserAdmin && <CourseAccessManagement />}
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   );
@@ -391,27 +465,46 @@ const LessonManager = () => {
   return (
     <TooltipProvider>
       <div className="grid lg:grid-cols-3 gap-6">
+        {/* Lessons List */}
         <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Danh sách Bài học</CardTitle>
-              <CardDescription>Kéo thả để sắp xếp. Chọn bài học để tạo đề ôn tập, hoặc quản lý từng bài học.</CardDescription>
+          <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-gray-200/50 dark:border-gray-800/50 shadow-xl">
+            <CardHeader className="border-b border-gray-200 dark:border-gray-800 bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-pink-500/10">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-500 to-purple-500 grid place-items-center shadow-lg">
+                  <BookOpen className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-2xl font-black text-gray-900 dark:text-white">Danh sách Bài học</CardTitle>
+                  <CardDescription className="text-gray-600 dark:text-gray-400">Kéo thả để sắp xếp. Chọn bài học để tạo đề ôn tập.</CardDescription>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="mb-4">
-                <Button onClick={handleGenerateReviewBatch} disabled={selectedLessons.size === 0 || generateReviewBatchMutation.isPending}>
+            <CardContent className="p-6">
+              <div className="mb-6">
+                <Button
+                  onClick={handleGenerateReviewBatch}
+                  disabled={selectedLessons.size === 0 || generateReviewBatchMutation.isPending}
+                  className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white font-bold shadow-lg"
+                >
                   <Star className="h-4 w-4 mr-2" />
                   {generateReviewBatchMutation.isPending ? 'Đang xử lý...' : `Tạo đề ôn tập (${selectedLessons.size})`}
                 </Button>
               </div>
-              {(isLoadingLessons || isLoadingJobs || isLoadingReviewStatus) ? <div>Đang tải...</div> : (
+              {(isLoadingLessons || isLoadingJobs || isLoadingReviewStatus) ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="text-center">
+                    <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-cyan-500 border-t-transparent mb-4"></div>
+                    <p className="text-gray-600 dark:text-gray-400">Đang tải...</p>
+                  </div>
+                </div>
+              ) : (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                   <SortableContext items={lessons.map(l => l.id)} strategy={verticalListSortingStrategy}>
                     <div className="space-y-3">
                       {lessons?.map((l) => (
-                        <SortableLessonItem 
-                          key={l.id} 
-                          lesson={l} 
+                        <SortableLessonItem
+                          key={l.id}
+                          lesson={l}
                           job={lessonJobs.get(l.id)}
                           hasReviewTests={reviewTestStatus?.has(l.id)}
                           isSelected={selectedLessons.has(l.id)}
@@ -430,26 +523,113 @@ const LessonManager = () => {
             </CardContent>
           </Card>
         </div>
-        <div>
-          <Card>
-            <CardHeader><CardTitle>Thêm Bài học mới</CardTitle><CardDescription>Tải lên file PDF để tạo bài học mới.</CardDescription></CardHeader>
-            <CardContent className="space-y-3">
-              <Input placeholder="Tiêu đề bài học" value={title} onChange={e => setTitle(e.target.value)} />
-              <Textarea placeholder="Mô tả ngắn (tùy chọn)" value={desc} onChange={e => setDesc(e.target.value)} />
-              <Input type="file" accept="application/pdf" onChange={e => setFile(e.target.files?.[0] || null)} />
-              <Button onClick={uploadHandler} disabled={addLessonMutation.isPending}><Upload className="h-4 w-4 mr-2" /> {addLessonMutation.isPending ? 'Đang tải...' : 'Tải lên & Lưu'}</Button>
-            </CardContent>
-          </Card>
+
+        {/* Add New Lesson Form */}
+        <div className="lg:col-span-1">
+          <div className="sticky top-24">
+            <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-gray-200/50 dark:border-gray-800/50 shadow-xl">
+              <CardHeader className="border-b border-gray-200 dark:border-gray-800 bg-gradient-to-r from-pink-500/10 via-cyan-500/10 to-purple-500/10">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-500 to-cyan-500 grid place-items-center shadow-lg">
+                    <PlusCircle className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl font-black text-gray-900 dark:text-white">Thêm Bài học</CardTitle>
+                    <CardDescription className="text-gray-600 dark:text-gray-400">Tải lên PDF mới</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6 space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="lesson-title" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Tiêu đề bài học</Label>
+                  <Input
+                    id="lesson-title"
+                    placeholder="Ví dụ: Bài 1 - Chào hỏi"
+                    value={title}
+                    onChange={e => setTitle(e.target.value)}
+                    className="border-gray-300 dark:border-gray-700 focus:border-cyan-500 dark:focus:border-cyan-500"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lesson-desc" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Mô tả (tùy chọn)</Label>
+                  <Textarea
+                    id="lesson-desc"
+                    placeholder="Mô tả ngắn về bài học..."
+                    value={desc}
+                    onChange={e => setDesc(e.target.value)}
+                    className="border-gray-300 dark:border-gray-700 focus:border-cyan-500 dark:focus:border-cyan-500"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lesson-pdf" className="text-sm font-semibold text-gray-700 dark:text-gray-300">File PDF</Label>
+                  <Input
+                    id="lesson-pdf"
+                    type="file"
+                    accept="application/pdf"
+                    onChange={e => setFile(e.target.files?.[0] || null)}
+                    className="border-gray-300 dark:border-gray-700"
+                  />
+                </div>
+                <Button
+                  onClick={uploadHandler}
+                  disabled={addLessonMutation.isPending}
+                  className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white font-bold shadow-lg"
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  {addLessonMutation.isPending ? 'Đang tải...' : 'Tải lên & Lưu'}
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
+
+      {/* Edit Dialog */}
       <Dialog open={!!editingLesson} onOpenChange={(isOpen) => !isOpen && setEditingLesson(null)}>
-        <DialogContent>
-          <DialogHeader><DialogTitle>Chỉnh sửa bài học</DialogTitle><DialogDescription>Cập nhật tiêu đề và mô tả.</DialogDescription></DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4"><Label htmlFor="edit-title" className="text-right">Tiêu đề</Label><Input id="edit-title" value={editedTitle} onChange={(e) => setEditedTitle(e.target.value)} className="col-span-3" /></div>
-            <div className="grid grid-cols-4 items-center gap-4"><Label htmlFor="edit-desc" className="text-right">Mô tả</Label><Textarea id="edit-desc" value={editedDesc} onChange={(e) => setEditedDesc(e.target.value)} className="col-span-3" /></div>
+        <DialogContent className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
+          <DialogHeader className="border-b border-gray-200 dark:border-gray-800 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-500 to-purple-500 grid place-items-center shadow-lg">
+                <Edit3 className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <DialogTitle className="text-2xl font-black text-gray-900 dark:text-white">Chỉnh sửa bài học</DialogTitle>
+                <DialogDescription className="text-gray-600 dark:text-gray-400">Cập nhật tiêu đề và mô tả</DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-title" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Tiêu đề</Label>
+              <Input
+                id="edit-title"
+                value={editedTitle}
+                onChange={(e) => setEditedTitle(e.target.value)}
+                className="border-gray-300 dark:border-gray-700 focus:border-cyan-500 dark:focus:border-cyan-500"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-desc" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Mô tả</Label>
+              <Textarea
+                id="edit-desc"
+                value={editedDesc}
+                onChange={(e) => setEditedDesc(e.target.value)}
+                className="border-gray-300 dark:border-gray-700 focus:border-cyan-500 dark:focus:border-cyan-500"
+              />
+            </div>
           </div>
-          <DialogFooter><Button variant="outline" onClick={() => setEditingLesson(null)}>Hủy</Button><Button onClick={handleUpdateLesson} disabled={updateLessonMutation.isPending}>{updateLessonMutation.isPending ? 'Đang lưu...' : 'Lưu'}</Button></DialogFooter>
+          <DialogFooter className="border-t border-gray-200 dark:border-gray-800 pt-4">
+            <Button variant="outline" onClick={() => setEditingLesson(null)} className="border-gray-300 dark:border-gray-700">
+              Hủy
+            </Button>
+            <Button
+              onClick={handleUpdateLesson}
+              disabled={updateLessonMutation.isPending}
+              className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white font-bold shadow-lg"
+            >
+              {updateLessonMutation.isPending ? 'Đang lưu...' : 'Lưu'}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
       <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="application/pdf" style={{ display: 'none' }} />
@@ -542,20 +722,59 @@ const SongManager = () => {
 
   return (
     <div className="grid lg:grid-cols-3 gap-6">
+      {/* Songs List */}
       <div className="lg:col-span-2">
-        <Card>
-          <CardHeader><CardTitle>Danh sách Bài hát</CardTitle></CardHeader>
-          <CardContent>
-            {isLoading ? <div>Đang tải...</div> : error ? <div className="text-verm">Lỗi tải bài hát.</div> : (
+        <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-gray-200/50 dark:border-gray-800/50 shadow-xl">
+          <CardHeader className="border-b border-gray-200 dark:border-gray-800 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-cyan-500/10">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 grid place-items-center shadow-lg">
+                <ListMusic className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-2xl font-black text-gray-900 dark:text-white">Danh sách Bài hát</CardTitle>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Quản lý bài hát học Tiếng Quảng</p>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-6">
+            {isLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-center">
+                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent mb-4"></div>
+                  <p className="text-gray-600 dark:text-gray-400">Đang tải...</p>
+                </div>
+              </div>
+            ) : error ? (
+              <div className="text-red-600 dark:text-red-400 p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">Lỗi tải bài hát.</div>
+            ) : (
               <div className="space-y-3">
                 {songs?.map((s: any) => (
-                  <div key={s.id} className="p-3 border rounded-lg flex items-center justify-between flex-wrap gap-2">
-                    <div><span className="font-semibold">{s.title}</span> - {s.artist}</div>
+                  <div key={s.id} className="group p-4 border border-gray-200 dark:border-gray-800 rounded-xl flex items-center justify-between flex-wrap gap-3 hover:border-purple-300 dark:hover:border-purple-700 hover:shadow-lg transition-all duration-300 bg-gradient-to-r from-white to-purple-50/30 dark:from-gray-900 dark:to-purple-900/10">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 grid place-items-center shadow-md">
+                        <Music className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <span className="font-bold text-gray-900 dark:text-white">{s.title}</span>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{s.artist}</p>
+                      </div>
+                    </div>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm" asChild><Link to={`/cantonese/songs/${s.id}`}>Nghe</Link></Button>
-                      <Button variant="outline" size="sm" onClick={() => handleEditClick(s)}><Edit3 className="h-4 w-4" /></Button>
+                      <Button variant="outline" size="sm" asChild className="hover:bg-purple-50 dark:hover:bg-purple-900/20 border-purple-300 dark:border-purple-700">
+                        <Link to={`/cantonese/songs/${s.id}`} className="flex items-center gap-2">
+                          <Music className="h-4 w-4" />
+                          Nghe
+                        </Link>
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => handleEditClick(s)} className="hover:bg-cyan-50 dark:hover:bg-cyan-900/20 border-cyan-300 dark:border-cyan-700">
+                        <Edit3 className="h-4 w-4" />
+                      </Button>
                       <AlertDialog>
-                        <AlertDialogTrigger asChild><Button variant="destructive" size="sm"><Trash2 className="h-4 w-4" /></Button></AlertDialogTrigger>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="outline" size="sm" className="hover:bg-red-50 dark:hover:bg-red-900/20 border-red-300 dark:border-red-700 text-red-600 dark:text-red-400">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader><AlertDialogTitle>Xác nhận xóa?</AlertDialogTitle><AlertDialogDescription>Xóa vĩnh viễn bài hát "{s.title}".</AlertDialogDescription></AlertDialogHeader>
                           <AlertDialogFooter><AlertDialogCancel>Hủy</AlertDialogCancel><AlertDialogAction onClick={() => deleteSongMutation.mutate(s.id)}>Xóa</AlertDialogAction></AlertDialogFooter>
@@ -569,74 +788,144 @@ const SongManager = () => {
           </CardContent>
         </Card>
       </div>
-      <div>
-        <Card>
-          <CardHeader><CardTitle>Thêm Bài hát mới</CardTitle></CardHeader>
-          <CardContent className="space-y-3">
-            <Input placeholder="Tiêu đề bài hát" value={title} onChange={e => setTitle(e.target.value)} />
-            <Input placeholder="Nghệ sĩ" value={artist} onChange={e => setArtist(e.target.value)} />
-            <Input placeholder="Link YouTube" value={youtubeUrl} onChange={e => setYoutubeUrl(e.target.value)} />
-            <Textarea placeholder="Dán nội dung file .LRC" value={lrc} onChange={e => setLrc(e.target.value)} rows={10} />
-            <Button onClick={handleSubmit} disabled={addSongMutation.isPending}><PlusCircle className="h-4 w-4 mr-2" /> {addSongMutation.isPending ? 'Đang thêm...' : 'Thêm'}</Button>
-          </CardContent>
-        </Card>
+
+      {/* Add New Song Form */}
+      <div className="lg:col-span-1">
+        <div className="sticky top-24">
+          <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-gray-200/50 dark:border-gray-800/50 shadow-xl">
+            <CardHeader className="border-b border-gray-200 dark:border-gray-800 bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-pink-500/10">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-500 to-purple-500 grid place-items-center shadow-lg">
+                  <PlusCircle className="h-5 w-5 text-white" />
+                </div>
+                <CardTitle className="text-xl font-black text-gray-900 dark:text-white">Thêm Bài hát</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="song-title" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Tiêu đề bài hát</Label>
+                <Input
+                  id="song-title"
+                  placeholder="Ví dụ: 七里香"
+                  value={title}
+                  onChange={e => setTitle(e.target.value)}
+                  className="border-gray-300 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-500"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="song-artist" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nghệ sĩ</Label>
+                <Input
+                  id="song-artist"
+                  placeholder="Ví dụ: Jay Chou 周杰倫"
+                  value={artist}
+                  onChange={e => setArtist(e.target.value)}
+                  className="border-gray-300 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-500"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="youtube-url" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Link YouTube</Label>
+                <Input
+                  id="youtube-url"
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  value={youtubeUrl}
+                  onChange={e => setYoutubeUrl(e.target.value)}
+                  className="border-gray-300 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-500"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="lrc-content" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nội dung LRC</Label>
+                <Textarea
+                  id="lrc-content"
+                  placeholder="[00:00.00]Dán nội dung file .LRC vào đây..."
+                  value={lrc}
+                  onChange={e => setLrc(e.target.value)}
+                  rows={8}
+                  className="border-gray-300 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-500 font-mono text-sm"
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400">Format: [MM:SS.MS]Lời bài hát</p>
+              </div>
+              <Button
+                onClick={handleSubmit}
+                disabled={addSongMutation.isPending}
+                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold shadow-lg"
+              >
+                <PlusCircle className="h-4 w-4 mr-2" />
+                {addSongMutation.isPending ? 'Đang thêm...' : 'Thêm Bài hát'}
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* Edit Dialog */}
       <Dialog open={!!editingSong} onOpenChange={(isOpen) => !isOpen && setEditingSong(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Chỉnh sửa bài hát</DialogTitle>
-            <DialogDescription>Cập nhật thông tin bài hát và lời bài hát</DialogDescription>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
+          <DialogHeader className="border-b border-gray-200 dark:border-gray-800 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-500 to-purple-500 grid place-items-center shadow-lg">
+                <Edit3 className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <DialogTitle className="text-2xl font-black text-gray-900 dark:text-white">Chỉnh sửa bài hát</DialogTitle>
+                <DialogDescription className="text-gray-600 dark:text-gray-400">Cập nhật thông tin bài hát và lời bài hát</DialogDescription>
+              </div>
+            </div>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-title">Tiêu đề bài hát</Label>
+              <Label htmlFor="edit-title" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Tiêu đề bài hát</Label>
               <Input
                 id="edit-title"
                 placeholder="Ví dụ: 七里香"
                 value={editTitle}
                 onChange={e => setEditTitle(e.target.value)}
+                className="border-gray-300 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-500"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-artist">Nghệ sĩ</Label>
+              <Label htmlFor="edit-artist" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nghệ sĩ</Label>
               <Input
                 id="edit-artist"
                 placeholder="Ví dụ: Jay Chou 周杰倫"
                 value={editArtist}
                 onChange={e => setEditArtist(e.target.value)}
+                className="border-gray-300 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-500"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-youtube">Link YouTube</Label>
+              <Label htmlFor="edit-youtube" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Link YouTube</Label>
               <Input
                 id="edit-youtube"
                 placeholder="https://www.youtube.com/watch?v=..."
                 value={editYoutubeUrl}
                 onChange={e => setEditYoutubeUrl(e.target.value)}
+                className="border-gray-300 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-500"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-lrc">Lời bài hát (Format LRC)</Label>
+              <Label htmlFor="edit-lrc" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Lời bài hát (Format LRC)</Label>
               <Textarea
                 id="edit-lrc"
                 placeholder="[00:00.00]Dán nội dung file .LRC vào đây"
                 value={editLrc}
                 onChange={e => setEditLrc(e.target.value)}
                 rows={12}
-                className="font-mono text-sm"
+                className="font-mono text-sm border-gray-300 dark:border-gray-700 focus:border-purple-500 dark:focus:border-purple-500"
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 Format: [MM:SS.MS]Lời bài hát. Ví dụ: [00:15.50]你好
               </p>
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditingSong(null)}>
+          <DialogFooter className="border-t border-gray-200 dark:border-gray-800 pt-4">
+            <Button variant="outline" onClick={() => setEditingSong(null)} className="border-gray-300 dark:border-gray-700">
               Hủy
             </Button>
-            <Button onClick={handleUpdateSong} disabled={updateSongMutation.isPending}>
+            <Button
+              onClick={handleUpdateSong}
+              disabled={updateSongMutation.isPending}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold shadow-lg"
+            >
               {updateSongMutation.isPending ? 'Đang lưu...' : 'Lưu thay đổi'}
             </Button>
           </DialogFooter>
@@ -660,39 +949,69 @@ const UserManager = () => {
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <CardTitle>Danh sách Người dùng</CardTitle>
-          <CardDescription>Quản lý quyền truy cập ngôn ngữ và bài học cho từng người dùng.</CardDescription>
+      <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-gray-200/50 dark:border-gray-800/50 shadow-xl">
+        <CardHeader className="border-b border-gray-200 dark:border-gray-800 bg-gradient-to-r from-pink-500/10 via-cyan-500/10 to-purple-500/10">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-500 to-cyan-500 grid place-items-center shadow-lg">
+              <Users className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <CardTitle className="text-2xl font-black text-gray-900 dark:text-white">Danh sách Người dùng</CardTitle>
+              <CardDescription className="text-gray-600 dark:text-gray-400">Quản lý quyền truy cập ngôn ngữ và bài học cho từng người dùng.</CardDescription>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
-          {isLoading ? <div>Đang tải...</div> : error ? <div className="text-verm">Lỗi tải danh sách người dùng.</div> : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Họ và Tên</TableHead>
-                  <TableHead>Vai trò</TableHead>
-                  <TableHead>Ngày cập nhật</TableHead>
-                  <TableHead>Hành động</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {profiles?.map((p) => (
-                  <TableRow key={p.id}>
-                    <TableCell>{p.first_name || ''} {p.last_name || ''}</TableCell>
-                    <TableCell><Badge variant={p.role === 'admin' ? 'default' : 'secondary'}>{p.role}</Badge></TableCell>
-                    <TableCell>{new Date(p.updated_at).toLocaleString()}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm" onClick={() => setSelectedUserForLessons(p)}>
-                          <BookOpen className="h-4 w-4 mr-2" /> Bài học
-                        </Button>
-                      </div>
-                    </TableCell>
+        <CardContent className="p-6">
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-pink-500 border-t-transparent mb-4"></div>
+                <p className="text-gray-600 dark:text-gray-400">Đang tải...</p>
+              </div>
+            </div>
+          ) : error ? (
+            <div className="text-red-600 dark:text-red-400 p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">Lỗi tải danh sách người dùng.</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-gray-200 dark:border-gray-800">
+                    <TableHead className="font-bold text-gray-900 dark:text-white">Họ và Tên</TableHead>
+                    <TableHead className="font-bold text-gray-900 dark:text-white">Vai trò</TableHead>
+                    <TableHead className="font-bold text-gray-900 dark:text-white">Ngày cập nhật</TableHead>
+                    <TableHead className="font-bold text-gray-900 dark:text-white">Hành động</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {profiles?.map((p) => (
+                    <TableRow key={p.id} className="border-gray-200 dark:border-gray-800 hover:bg-pink-50/50 dark:hover:bg-pink-900/10 transition-colors">
+                      <TableCell className="font-medium text-gray-900 dark:text-white">{p.first_name || ''} {p.last_name || ''}</TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={p.role === 'admin' ? 'default' : 'secondary'}
+                          className={p.role === 'admin' ? 'bg-gradient-to-r from-pink-500 to-cyan-500 text-white' : ''}
+                        >
+                          {p.role}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-gray-600 dark:text-gray-400">{new Date(p.updated_at).toLocaleString()}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSelectedUserForLessons(p)}
+                            className="hover:bg-pink-50 dark:hover:bg-pink-900/20 border-pink-300 dark:border-pink-700"
+                          >
+                            <BookOpen className="h-4 w-4 mr-2" /> Bài học
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>

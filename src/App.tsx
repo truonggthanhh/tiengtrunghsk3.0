@@ -552,7 +552,7 @@ const App = () => (
                       <CantoneseSessionContextProvider>
                         <CantoneseProfileProvider>
                           <CantoneseProtectedRoute>
-                            <CantonesePageWrapper>
+                            <CantonesePageWrapper showBackButton={false}>
                               <CantoneseDashboard />
                             </CantonesePageWrapper>
                           </CantoneseProtectedRoute>
