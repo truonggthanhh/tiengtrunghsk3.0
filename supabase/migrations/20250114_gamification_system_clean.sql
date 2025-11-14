@@ -5,6 +5,18 @@
 -- ============================================================================
 
 -- ============================================================================
+-- DROP EXISTING TRIGGERS AND FUNCTIONS FIRST (to prevent errors)
+-- ============================================================================
+
+-- Drop existing triggers BEFORE dropping tables
+DROP TRIGGER IF EXISTS trigger_update_user_progress_timestamp ON user_progress;
+DROP TRIGGER IF EXISTS trigger_initialize_user_gamification ON auth.users;
+
+-- Drop existing functions
+DROP FUNCTION IF EXISTS update_user_progress_timestamp() CASCADE;
+DROP FUNCTION IF EXISTS initialize_user_gamification() CASCADE;
+
+-- ============================================================================
 -- DROP EXISTING TABLES (in reverse dependency order)
 -- ============================================================================
 
@@ -28,14 +40,6 @@ DROP TABLE IF EXISTS xp_events CASCADE;
 DROP TABLE IF EXISTS user_progress CASCADE;
 DROP TABLE IF EXISTS level_definitions CASCADE;
 DROP TABLE IF EXISTS badges CASCADE;
-
--- Drop existing triggers
-DROP TRIGGER IF EXISTS trigger_update_user_progress_timestamp ON user_progress;
-DROP TRIGGER IF EXISTS trigger_initialize_user_gamification ON auth.users;
-
--- Drop existing functions
-DROP FUNCTION IF EXISTS update_user_progress_timestamp();
-DROP FUNCTION IF EXISTS initialize_user_gamification();
 
 -- ============================================================================
 -- (1) XP / LEVEL / BADGE SYSTEM
