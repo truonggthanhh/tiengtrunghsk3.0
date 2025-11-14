@@ -358,12 +358,12 @@ const BlogManager = () => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="category">Danh mục</Label>
-                <Select value={categoryId} onValueChange={setCategoryId}>
+                <Select value={categoryId || "none"} onValueChange={(val) => setCategoryId(val === "none" ? "" : val)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Chọn danh mục..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Không chọn</SelectItem>
+                    <SelectItem value="none">Không chọn</SelectItem>
                     {categories?.map((cat) => (
                       <SelectItem key={cat.id} value={cat.id}>
                         {cat.name}
@@ -433,12 +433,12 @@ const BlogManager = () => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-category">Danh mục</Label>
-              <Select value={editCategoryId} onValueChange={setEditCategoryId}>
+              <Select value={editCategoryId || "none"} onValueChange={(val) => setEditCategoryId(val === "none" ? "" : val)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Chọn danh mục..." />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Không chọn</SelectItem>
+                  <SelectItem value="none">Không chọn</SelectItem>
                   {categories?.map((cat) => (
                     <SelectItem key={cat.id} value={cat.id}>
                       {cat.name}
