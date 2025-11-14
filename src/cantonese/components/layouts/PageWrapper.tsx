@@ -7,7 +7,13 @@ import JyutpingToggle from '@/cantonese/components/ui/JyutpingToggle';
 import { useProfile } from '@/cantonese/components/providers/ProfileProvider';
 import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
 import { Button } from '@/components/ui/button';
-import { UserCog, BarChart2 } from 'lucide-react';
+import { UserCog, BarChart2, ChevronDown, BookOpen, Music, FileText } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface PageWrapperProps {
   children: React.ReactNode;
@@ -36,8 +42,36 @@ const PageWrapper = ({ children, showBackButton = true }: PageWrapperProps) => {
             </Link>
 
             <div className="hidden md:flex items-center gap-6 text-ink dark:text-cream font-medium">
-              <Link to="/cantonese/lessons" className="hover:opacity-80 hover:text-jade dark:hover:text-jade transition">Bài học</Link>
-              <Link to="/cantonese/songs" className="hover:opacity-80 hover:text-jade dark:hover:text-jade transition">Bài hát</Link>
+              {/* Courses Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center gap-1 hover:text-jade dark:hover:text-jade transition px-2">
+                    <BookOpen className="h-4 w-4" />
+                    Khóa học
+                    <ChevronDown className="h-3 w-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
+                  <DropdownMenuItem asChild>
+                    <Link to="/cantonese/lessons" className="flex items-center gap-2 cursor-pointer">
+                      <BookOpen className="h-4 w-4" />
+                      Tất cả bài học
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Songs Link */}
+              <Link to="/cantonese/songs" className="flex items-center gap-2 hover:opacity-80 hover:text-jade dark:hover:text-jade transition">
+                <Music className="h-4 w-4" />
+                Bài hát
+              </Link>
+
+              {/* Blog Link */}
+              <Link to="/cantonese/blog" className="flex items-center gap-2 hover:opacity-80 hover:text-jade dark:hover:text-jade transition">
+                <FileText className="h-4 w-4" />
+                Blog
+              </Link>
             </div>
 
             <div className="flex items-center gap-2">

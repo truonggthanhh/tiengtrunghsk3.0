@@ -4,7 +4,7 @@ import { supabase } from '@/cantonese/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
-import { Upload, Sparkles, FileText, Trash2, Music, Users, PlusCircle, BookOpen, ListMusic, Edit3, Clock, CheckCircle2, XCircle, Star, Replace, GripVertical, KeyRound, Lock } from 'lucide-react';
+import { Upload, Sparkles, FileText, Trash2, Music, Users, PlusCircle, BookOpen, ListMusic, Edit3, Clock, CheckCircle2, XCircle, Star, Replace, GripVertical, KeyRound, Lock, Newspaper } from 'lucide-react';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -39,6 +39,7 @@ import { Badge } from '@/components/ui/badge';
 import ManageUserLessonsDialog from '@/cantonese/components/admin/ManageUserLessonsDialog';
 import SortableLessonItem from '@/cantonese/components/admin/SortableLessonItem'; // Import the new component
 import { CourseAccessManagement } from '@/cantonese/components/admin/CourseAccessManagement';
+import BlogManager from '@/cantonese/components/admin/BlogManager';
 
 const extractVideoId = (url: string) => {
   const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
@@ -187,6 +188,19 @@ const Dashboard = () => {
                     <span className="font-semibold">Khóa học</span>
                   </Button>
                 )}
+
+                <Button
+                  variant={activeTab === 'blog' ? 'default' : 'ghost'}
+                  onClick={() => setActiveTab('blog')}
+                  className={`justify-start gap-3 transition-all ${
+                    activeTab === 'blog'
+                      ? 'bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 text-white shadow-lg'
+                      : 'hover:bg-purple-50 dark:hover:bg-purple-900/20 text-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  <Newspaper className="h-5 w-5" />
+                  <span className="font-semibold">Blog</span>
+                </Button>
               </nav>
             </div>
           </aside>
@@ -198,6 +212,7 @@ const Dashboard = () => {
               {activeTab === 'songs' && <SongManager />}
               {activeTab === 'users' && isUserAdmin && <UserManager />}
               {activeTab === 'courseaccess' && isUserAdmin && <CourseAccessManagement />}
+              {activeTab === 'blog' && <BlogManager />}
             </div>
           </main>
         </div>
