@@ -16,6 +16,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Switch } from '@/components/ui/switch';
@@ -23,7 +31,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Home, Loader2, UserCog, Key, Sparkles, Upload, FileText, Lock, Music, PlusCircle, Trash2 } from 'lucide-react';
+import { Home, Loader2, UserCog, Key, Sparkles, Upload, FileText, Lock, Music, PlusCircle, Trash2, Edit3 } from 'lucide-react';
 import { toast } from 'sonner';
 import { CourseAccessManagement } from '@/components/admin/CourseAccessManagement';
 
@@ -561,6 +569,13 @@ const SongManager = () => {
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [lrc, setLrc] = useState('');
 
+  // Edit state
+  const [editingSong, setEditingSong] = useState<any>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editArtist, setEditArtist] = useState('');
+  const [editYoutubeUrl, setEditYoutubeUrl] = useState('');
+  const [editLrc, setEditLrc] = useState('');
+
   const { data: songs, isLoading, error } = useQuery({
     queryKey: ['songs'],
     queryFn: async () => {
@@ -586,6 +601,19 @@ const SongManager = () => {
     onError: (err: Error) => toast.error(`Lỗi: ${err.message}`),
   });
 
+  const updateSongMutation = useMutation({
+    mutationFn: async ({ id, title, artist, youtube_video_id, lrc }: { id: string; title: string; artist: string; youtube_video_id: string; lrc: string }) => {
+      const { error } = await supabase.from('songs').update({ title, artist, youtube_video_id, lrc }).eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['songs'] });
+      toast.success('Bài hát đã được cập nhật!');
+      setEditingSong(null);
+    },
+    onError: (err: Error) => toast.error(`Lỗi: ${err.message}`),
+  });
+
   const deleteSongMutation = useMutation({
     mutationFn: async (songId: string) => {
       const { error } = await supabase.from('songs').delete().eq('id', songId);
@@ -605,6 +633,29 @@ const SongManager = () => {
       return;
     }
     addSongMutation.mutate({ title, artist, youtube_video_id: videoId, lrc });
+  };
+
+  const handleEditClick = (song: any) => {
+    setEditingSong(song);
+    setEditTitle(song.title);
+    setEditArtist(song.artist);
+    setEditYoutubeUrl(`https://www.youtube.com/watch?v=${song.youtube_video_id}`);
+    setEditLrc(song.lrc);
+  };
+
+  const handleUpdateSong = () => {
+    const videoId = extractVideoId(editYoutubeUrl);
+    if (!editTitle || !editArtist || !videoId || !editLrc) {
+      toast.error('Vui lòng điền đủ thông tin và link YouTube hợp lệ.');
+      return;
+    }
+    updateSongMutation.mutate({
+      id: editingSong.id,
+      title: editTitle,
+      artist: editArtist,
+      youtube_video_id: videoId,
+      lrc: editLrc
+    });
   };
 
   return (
@@ -630,6 +681,9 @@ const SongManager = () => {
                     <div className="flex gap-2">
                       <Button variant="outline" size="sm" asChild>
                         <Link to={`/mandarin/songs/${s.id}`}>Nghe</Link>
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => handleEditClick(s)}>
+                        <Edit3 className="h-4 w-4" />
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
@@ -715,6 +769,67 @@ const SongManager = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Edit Dialog */}
+      <Dialog open={!!editingSong} onOpenChange={(isOpen) => !isOpen && setEditingSong(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Chỉnh sửa bài hát</DialogTitle>
+            <DialogDescription>Cập nhật thông tin bài hát và lời bài hát</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-title">Tiêu đề bài hát</Label>
+              <Input
+                id="edit-title"
+                placeholder="Ví dụ: 七里香"
+                value={editTitle}
+                onChange={e => setEditTitle(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-artist">Nghệ sĩ</Label>
+              <Input
+                id="edit-artist"
+                placeholder="Ví dụ: Jay Chou 周杰倫"
+                value={editArtist}
+                onChange={e => setEditArtist(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-youtube">Link YouTube</Label>
+              <Input
+                id="edit-youtube"
+                placeholder="https://www.youtube.com/watch?v=..."
+                value={editYoutubeUrl}
+                onChange={e => setEditYoutubeUrl(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-lrc">Lời bài hát (Format LRC)</Label>
+              <Textarea
+                id="edit-lrc"
+                placeholder="[00:00.00]Dán nội dung file .LRC vào đây"
+                value={editLrc}
+                onChange={e => setEditLrc(e.target.value)}
+                rows={12}
+                className="font-mono text-sm"
+              />
+              <p className="text-xs text-gray-500">
+                Format: [MM:SS.MS]Lời bài hát. Ví dụ: [00:15.50]你好
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingSong(null)}>
+              Hủy
+            </Button>
+            <Button onClick={handleUpdateSong} disabled={updateSongMutation.isPending}>
+              {updateSongMutation.isPending ? 'Đang lưu...' : 'Lưu thay đổi'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
