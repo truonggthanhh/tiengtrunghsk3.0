@@ -4,7 +4,7 @@ import { useSession } from "@/components/SessionContextProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { LogOut, UserCog, Languages, User, BarChart2, BookOpen } from "lucide-react";
+import { LogOut, UserCog, Languages, User, BarChart2, BookOpen, Newspaper } from "lucide-react";
 import { toast } from "sonner";
 import { usePinyin } from "@/contexts/PinyinContext";
 
@@ -72,6 +72,14 @@ const Header = () => {
             <Link to="/mandarin/dictionary" className="flex items-center gap-2">
               <BookOpen className="h-4 w-4" />
               <span className="hidden sm:inline">Từ điển</span>
+            </Link>
+          </Button>
+
+          {/* Blog - Available to everyone */}
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/mandarin/blog" className="flex items-center gap-2">
+              <Newspaper className="h-4 w-4" />
+              <span className="hidden sm:inline">Blog</span>
             </Link>
           </Button>
 
