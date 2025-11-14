@@ -31,9 +31,10 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Home, Loader2, UserCog, Key, Sparkles, Upload, FileText, Lock, Music, PlusCircle, Trash2, Edit3 } from 'lucide-react';
+import { Home, Loader2, UserCog, Key, Sparkles, Upload, FileText, Lock, Music, PlusCircle, Trash2, Edit3, Newspaper } from 'lucide-react';
 import { toast } from 'sonner';
 import { CourseAccessManagement } from '@/components/admin/CourseAccessManagement';
+import BlogManager from '@/mandarin/components/admin/BlogManager';
 
 const extractVideoId = (url: string) => {
   const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
@@ -289,10 +290,14 @@ const AdminDashboardPage: React.FC = () => {
           </CardHeader>
           <CardContent className="p-6">
             <Tabs defaultValue="songs" className="w-full">
-              <TabsList className="grid w-full grid-cols-7 mb-6">
+              <TabsList className="grid w-full grid-cols-8 mb-6">
                 <TabsTrigger value="songs" className="flex items-center gap-2">
                   <Music className="h-4 w-4" />
                   <span className="hidden sm:inline">Bài hát</span>
+                </TabsTrigger>
+                <TabsTrigger value="blog" className="flex items-center gap-2">
+                  <Newspaper className="h-4 w-4" />
+                  <span className="hidden sm:inline">Blog</span>
                 </TabsTrigger>
                 <TabsTrigger value="users" className="flex items-center gap-2">
                   <UserCog className="h-4 w-4" />
@@ -323,6 +328,11 @@ const AdminDashboardPage: React.FC = () => {
               {/* Songs Management Tab */}
               <TabsContent value="songs" className="space-y-4">
                 <SongManager />
+              </TabsContent>
+
+              {/* Blog Management Tab */}
+              <TabsContent value="blog" className="space-y-4">
+                <BlogManager />
               </TabsContent>
 
               {/* Users Management Tab */}

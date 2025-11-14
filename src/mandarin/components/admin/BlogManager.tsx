@@ -1,8 +1,8 @@
 import React, { useState, useRef } from 'react';
-import { supabase } from '@/cantonese/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/components/SessionContextProvider';
 import { FileText, Trash2, Edit3, Eye, PlusCircle, Upload, Image as ImageIcon } from 'lucide-react';
 import RichTextEditor from '@/components/RichTextEditor';
 import ImageUpload from '@/components/ImageUpload';
@@ -83,12 +83,12 @@ const BlogManager = () => {
   const [editCategoryId, setEditCategoryId] = useState<string>('');
 
   const { data: posts, isLoading, error } = useQuery<BlogPost[]>({
-    queryKey: ['blog-posts-admin', 'cantonese'],
+    queryKey: ['blog-posts-admin', 'mandarin'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('blog_posts')
         .select('*')
-        .eq('language', 'cantonese')
+        .eq('language', 'mandarin')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -98,12 +98,12 @@ const BlogManager = () => {
   });
 
   const { data: categories } = useQuery<BlogCategory[]>({
-    queryKey: ['blog-categories', 'cantonese'],
+    queryKey: ['blog-categories', 'mandarin'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('blog_categories')
         .select('*')
-        .eq('language', 'cantonese')
+        .eq('language', 'mandarin')
         .order('display_order', { ascending: true });
 
       if (error) throw error;
@@ -158,7 +158,7 @@ const BlogManager = () => {
         content,
         featured_image_url: imageUrl || null,
         author_id: session.user.id,
-        language: 'cantonese',
+        language: 'mandarin',
         status,
         published_at: status === 'published' ? new Date().toISOString() : null,
         tags: tagsArray,
@@ -169,7 +169,7 @@ const BlogManager = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['blog-posts-admin', 'cantonese'] });
+      queryClient.invalidateQueries({ queryKey: ['blog-posts-admin', 'mandarin'] });
       toast.success('Bài viết đã được tạo!');
       setTitle('');
       setExcerpt('');
@@ -215,8 +215,8 @@ const BlogManager = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['blog-posts-admin', 'cantonese'] });
-      queryClient.invalidateQueries({ queryKey: ['blog-posts', 'cantonese'] });
+      queryClient.invalidateQueries({ queryKey: ['blog-posts-admin', 'mandarin'] });
+      queryClient.invalidateQueries({ queryKey: ['blog-posts', 'mandarin'] });
       toast.success('Bài viết đã được cập nhật!');
       setEditingPost(null);
     },
@@ -229,7 +229,7 @@ const BlogManager = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['blog-posts-admin', 'cantonese'] });
+      queryClient.invalidateQueries({ queryKey: ['blog-posts-admin', 'mandarin'] });
       toast.success('Bài viết đã được xóa.');
     },
     onError: (err: Error) => toast.error(`Lỗi: ${err.message}`),

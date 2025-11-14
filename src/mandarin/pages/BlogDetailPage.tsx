@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { supabase } from '@/cantonese/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/components/SessionContextProvider';
 import { Calendar, User, Eye, Tag, ArrowLeft } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -63,7 +63,7 @@ const BlogDetailPage = () => {
           profiles:author_id (first_name, last_name)
         `)
         .eq('slug', slug)
-        .eq('language', 'cantonese')
+        .eq('language', 'mandarin')
         .eq('status', 'published')
         .single();
 
@@ -106,7 +106,7 @@ const BlogDetailPage = () => {
       <div className="max-w-4xl mx-auto p-4 md:p-8">
         {/* Back Button */}
         <Button asChild variant="ghost" className="mb-6">
-          <Link to="/cantonese/blog" className="flex items-center gap-2">
+          <Link to="/mandarin/blog" className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             Quay lại Blog
           </Link>

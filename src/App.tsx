@@ -57,6 +57,8 @@ import CantoneseForgotPassword from "./cantonese/pages/ForgotPassword";
 import CantoneseUpdatePassword from "./cantonese/pages/UpdatePassword";
 import CantoneseBlog from "./cantonese/pages/BlogPage";
 import CantoneseBlogDetail from "./cantonese/pages/BlogDetailPage";
+import MandarinBlog from "./mandarin/pages/BlogPage";
+import MandarinBlogDetail from "./mandarin/pages/BlogDetailPage";
 
 // Cantonese Components
 import CantonesePageWrapper from "./cantonese/components/layouts/PageWrapper";
@@ -170,6 +172,28 @@ const App = () => (
                   <SessionContextProvider>
                     <PinyinProvider>
                       <SongDetail />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+
+              {/* Blog Routes */}
+              <Route
+                path="blog"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MandarinBlog />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="blog/:slug"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MandarinBlogDetail />
                     </PinyinProvider>
                   </SessionContextProvider>
                 }
