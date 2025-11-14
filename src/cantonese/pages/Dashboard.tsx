@@ -40,6 +40,7 @@ import ManageUserLessonsDialog from '@/cantonese/components/admin/ManageUserLess
 import SortableLessonItem from '@/cantonese/components/admin/SortableLessonItem'; // Import the new component
 import { CourseAccessManagement } from '@/cantonese/components/admin/CourseAccessManagement';
 import BlogManager from '@/cantonese/components/admin/BlogManager';
+import CourseManager from '@/cantonese/components/admin/CourseManager';
 
 const extractVideoId = (url: string) => {
   const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
@@ -201,6 +202,19 @@ const Dashboard = () => {
                   <Newspaper className="h-5 w-5" />
                   <span className="font-semibold">Blog</span>
                 </Button>
+
+                <Button
+                  variant={activeTab === 'courses' ? 'default' : 'ghost'}
+                  onClick={() => setActiveTab('courses')}
+                  className={`justify-start gap-3 transition-all ${
+                    activeTab === 'courses'
+                      ? 'bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-500 text-white shadow-lg'
+                      : 'hover:bg-purple-50 dark:hover:bg-purple-900/20 text-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  <BookOpen className="h-5 w-5" />
+                  <span className="font-semibold">Quản lý khóa học</span>
+                </Button>
               </nav>
             </div>
           </aside>
@@ -213,6 +227,7 @@ const Dashboard = () => {
               {activeTab === 'users' && isUserAdmin && <UserManager />}
               {activeTab === 'courseaccess' && isUserAdmin && <CourseAccessManagement />}
               {activeTab === 'blog' && <BlogManager />}
+              {activeTab === 'courses' && <CourseManager />}
             </div>
           </main>
         </div>
