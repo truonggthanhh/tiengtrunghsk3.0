@@ -7,6 +7,22 @@
 -- (1) XP / LEVEL / BADGE SYSTEM
 -- ============================================================================
 
+-- Badges Table (MUST be created first because level_definitions references it)
+CREATE TABLE IF NOT EXISTS badges (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  code VARCHAR(100) NOT NULL UNIQUE,
+  name VARCHAR(200) NOT NULL,
+  description TEXT,
+  icon_url TEXT,
+  rarity VARCHAR(20) DEFAULT 'common', -- 'common', 'rare', 'epic', 'legendary'
+  unlock_condition JSONB NOT NULL, -- { "type": "streak", "value": 30 }
+  language VARCHAR(20), -- 'mandarin', 'cantonese', 'both'
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX idx_badges_rarity ON badges(rarity);
+CREATE INDEX idx_badges_language ON badges(language);
+
 -- Level Definitions Table
 CREATE TABLE IF NOT EXISTS level_definitions (
   id SERIAL PRIMARY KEY,
@@ -46,22 +62,6 @@ CREATE TABLE IF NOT EXISTS xp_events (
 
 CREATE INDEX idx_xp_events_user ON xp_events(user_id, created_at DESC);
 CREATE INDEX idx_xp_events_type ON xp_events(event_type);
-
--- Badges Table
-CREATE TABLE IF NOT EXISTS badges (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  code VARCHAR(100) NOT NULL UNIQUE,
-  name VARCHAR(200) NOT NULL,
-  description TEXT,
-  icon_url TEXT,
-  rarity VARCHAR(20) DEFAULT 'common', -- 'common', 'rare', 'epic', 'legendary'
-  unlock_condition JSONB NOT NULL, -- { "type": "streak", "value": 30 }
-  language VARCHAR(20), -- 'mandarin', 'cantonese', 'both'
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
-CREATE INDEX idx_badges_rarity ON badges(rarity);
-CREATE INDEX idx_badges_language ON badges(language);
 
 -- User Badges Table
 CREATE TABLE IF NOT EXISTS user_badges (
