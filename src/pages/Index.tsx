@@ -18,6 +18,7 @@ import TestimonialSection from "@/components/TestimonialSection";
 import CallToActionSection from "@/components/CallToActionSection";
 import DictionarySearch from "@/components/DictionarySearch"; // Import the new component
 import { cn } from "@/lib/utils";
+import { useSession } from "@/components/SessionContextProvider";
 
 const exerciseTypes = [
   {
@@ -104,9 +105,10 @@ const exerciseTypes = [
 ];
 
 const Index = () => {
+  const { session } = useSession();
   const [selectedTopic, setSelectedTopic] = useState<"hsk" | null>(null);
   const [level, setLevel] = useState("1");
-  
+
   const topicSectionRef = useRef<HTMLElement>(null);
   const levelSectionRef = useRef<HTMLElement>(null);
 
@@ -306,41 +308,64 @@ const Index = () => {
                 </h2>
                 <p className="text-muted-foreground text-lg">Luyện tập đa dạng để nắm vững kiến thức</p>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {exerciseTypes.map((exercise, index) => (
-                  <Link
-                    key={exercise.slug}
-                    to={exercise.isAvailable ? `/mandarin/hsk/${level}/${exercise.slug}` : '#'}
-                    className={!exercise.isAvailable ? 'pointer-events-none' : ''}
-                  >
-                    <Card className={cn(
-                      "flex flex-col text-center h-full cursor-pointer border-0 text-white p-6 hover-scale overflow-hidden relative group",
-                      exercise.isAvailable ? `${exercise.gradient} ${exercise.shadowColor}` : "bg-gray-300 opacity-60"
-                    )}>
-                      <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                      <CardHeader className="items-center flex-grow space-y-4 pb-4 relative z-10">
-                        <div className="bg-white/20 p-4 rounded-xl backdrop-blur-sm animate-float" style={{animationDelay: `${index * 0.1}s`}}>
-                          {React.cloneElement(exercise.icon, { className: "w-10 h-10 text-white" })}
-                        </div>
-                        <CardTitle className="text-xl font-bold text-white">{exercise.title}</CardTitle>
-                        <CardDescription className="text-sm leading-relaxed text-white/90">{exercise.description}</CardDescription>
-                      </CardHeader>
-                      <CardFooter className="pt-4 relative z-10">
-                        <Button
-                          variant={exercise.isAvailable ? "default" : "secondary"}
-                          className={cn(
-                            "w-full font-semibold rounded-xl h-11 shadow-lg",
-                            exercise.isAvailable && "bg-white text-purple-600 hover:bg-gray-50"
-                          )}
-                          disabled={!exercise.isAvailable}
-                        >
-                          {exercise.isAvailable ? 'Bắt đầu luyện tập' : 'Sắp ra mắt'}
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
+              {!session?.user?.id ? (
+                <div className="max-w-md mx-auto">
+                  <div className="bg-white dark:bg-gray-900 border-2 border-primary/30 p-8 rounded-2xl shadow-xl text-center">
+                    <div className="mb-4">
+                      <svg className="mx-auto h-16 w-16 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-2xl font-bold mb-2">
+                      Yêu cầu đăng nhập
+                    </h3>
+                    <p className="text-muted-foreground mb-6">
+                      Vui lòng đăng nhập để truy cập bài tập HSK
+                    </p>
+                    <Button asChild className="w-full">
+                      <Link to="/mandarin/login">
+                        Đăng nhập ngay
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {exerciseTypes.map((exercise, index) => (
+                    <Link
+                      key={exercise.slug}
+                      to={exercise.isAvailable ? `/mandarin/hsk/${level}/${exercise.slug}` : '#'}
+                      className={!exercise.isAvailable ? 'pointer-events-none' : ''}
+                    >
+                      <Card className={cn(
+                        "flex flex-col text-center h-full cursor-pointer border-0 text-white p-6 hover-scale overflow-hidden relative group",
+                        exercise.isAvailable ? `${exercise.gradient} ${exercise.shadowColor}` : "bg-gray-300 opacity-60"
+                      )}>
+                        <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                        <CardHeader className="items-center flex-grow space-y-4 pb-4 relative z-10">
+                          <div className="bg-white/20 p-4 rounded-xl backdrop-blur-sm animate-float" style={{animationDelay: `${index * 0.1}s`}}>
+                            {React.cloneElement(exercise.icon, { className: "w-10 h-10 text-white" })}
+                          </div>
+                          <CardTitle className="text-xl font-bold text-white">{exercise.title}</CardTitle>
+                          <CardDescription className="text-sm leading-relaxed text-white/90">{exercise.description}</CardDescription>
+                        </CardHeader>
+                        <CardFooter className="pt-4 relative z-10">
+                          <Button
+                            variant={exercise.isAvailable ? "default" : "secondary"}
+                            className={cn(
+                              "w-full font-semibold rounded-xl h-11 shadow-lg",
+                              exercise.isAvailable && "bg-white text-purple-600 hover:bg-gray-50"
+                            )}
+                            disabled={!exercise.isAvailable}
+                          >
+                            {exercise.isAvailable ? 'Bắt đầu luyện tập' : 'Sắp ra mắt'}
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </section>
 
             {/* Testimonial Section */}

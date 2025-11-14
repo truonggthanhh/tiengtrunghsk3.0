@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Label } from '@/components/ui/label';
 import { BookCopy, ChevronRight, ArrowLeft, BookOpen, Mic, Puzzle, FileQuestion, CheckSquare, Shuffle, AudioLines, Bot, Home, BookText, PenTool } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useSession } from '@/components/SessionContextProvider';
 
 const levels = [
   { slug: 'so-cap', name: 'Sơ cấp' },
@@ -34,6 +35,7 @@ const exerciseTypes = [
 ];
 
 const MsutongPage = () => {
+  const { session } = useSession();
   const [step, setStep] = useState<'level' | 'book' | 'lesson' | 'exercise'>('level');
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   const [selectedBooks, setSelectedBooks] = useState<string[]>([]);
@@ -227,6 +229,44 @@ const MsutongPage = () => {
         );
     }
   };
+
+  // Require authentication
+  if (!session?.user?.id) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <Header />
+        <main className="container mx-auto p-4 md:p-8 flex-grow flex items-center justify-center">
+          <div className="text-center py-12 max-w-md">
+            <div className="mb-6 bg-white/90 dark:bg-black/70 backdrop-blur-md p-8 rounded-2xl border-2 border-primary/30 shadow-xl">
+              <div className="mb-4">
+                <svg className="mx-auto h-16 w-16 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold mb-2">
+                Yêu cầu đăng nhập
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                Vui lòng đăng nhập để truy cập giáo trình Msutong
+              </p>
+              <div className="flex gap-3 justify-center">
+                <Button asChild variant="outline">
+                  <Link to="/mandarin">
+                    <Home className="mr-2 h-4 w-4" /> Trang chủ
+                  </Link>
+                </Button>
+                <Button asChild>
+                  <Link to="/mandarin/login">
+                    Đăng nhập ngay
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
