@@ -55,6 +55,8 @@ import CantoneseSongDetail from "./cantonese/pages/SongDetail";
 import CantoneseLearningProgress from "./cantonese/pages/LearningProgress";
 import CantoneseForgotPassword from "./cantonese/pages/ForgotPassword";
 import CantoneseUpdatePassword from "./cantonese/pages/UpdatePassword";
+import CantoneseBlog from "./cantonese/pages/BlogPage";
+import CantoneseBlogDetail from "./cantonese/pages/BlogDetailPage";
 
 // Cantonese Components
 import CantonesePageWrapper from "./cantonese/components/layouts/PageWrapper";
@@ -535,6 +537,38 @@ const App = () => (
                         <CantoneseProfileProvider>
                           <CantonesePageWrapper>
                             <CantoneseSongDetail />
+                          </CantonesePageWrapper>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+              <Route
+                path="blog"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantonesePageWrapper>
+                            <CantoneseBlog />
+                          </CantonesePageWrapper>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+              <Route
+                path="blog/:slug"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantonesePageWrapper>
+                            <CantoneseBlogDetail />
                           </CantonesePageWrapper>
                         </CantoneseProfileProvider>
                       </CantoneseSessionContextProvider>
