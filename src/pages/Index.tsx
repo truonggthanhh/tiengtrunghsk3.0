@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { BookOpen, CheckSquare, Shuffle, FileQuestion, Mic, Puzzle, ArrowRight, ChevronRight, AudioLines, Bot, GraduationCap, BookCopy, PenTool } from "lucide-react";
+import { BookOpen, CheckSquare, Shuffle, FileQuestion, Mic, Puzzle, ArrowRight, ChevronRight, AudioLines, Bot, GraduationCap, BookCopy, PenTool, Music } from "lucide-react";
 import HeroIllustration from "@/components/HeroIllustration";
 import FeatureSection from "@/components/FeatureSection";
 import TestimonialSection from "@/components/TestimonialSection";
@@ -188,6 +188,31 @@ const Index = () => {
         {/* Dictionary Search Section */}
         <section className="py-16 md:py-20 mb-16">
           <DictionarySearch />
+        </section>
+
+        {/* Songs Section */}
+        <section className="py-16 md:py-20 mb-16">
+          <div className="max-w-4xl mx-auto">
+            <Link to="/mandarin/songs">
+              <Card className="flex flex-col text-center cursor-pointer border-0 bg-gradient-to-br from-red-500 via-orange-500 to-pink-500 text-white p-8 hover-scale shadow-xl overflow-hidden relative group">
+                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                <CardHeader className="items-center space-y-4 relative z-10">
+                  <div className="bg-white/20 p-6 rounded-2xl backdrop-blur-sm animate-float">
+                    <Music className="w-16 h-16 text-white" />
+                  </div>
+                  <CardTitle className="text-3xl md:text-4xl font-bold text-white">🎤 Học qua Bài Hát 🎵</CardTitle>
+                  <CardDescription className="text-lg leading-relaxed text-white/90 max-w-2xl">
+                    Học tiếng Trung qua các bài hát Mandopop với lời bài hát đồng bộ theo nhịp nhạc YouTube
+                  </CardDescription>
+                </CardHeader>
+                <CardFooter className="pt-4 relative z-10 flex justify-center">
+                  <Button className="bg-white text-red-600 hover:bg-gray-50 font-semibold rounded-xl h-12 px-8 shadow-lg text-lg">
+                    Khám phá ngay <ChevronRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </CardFooter>
+              </Card>
+            </Link>
+          </div>
         </section>
 
         {/* Topic Selection Section - Clean Design */}
