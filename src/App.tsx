@@ -64,7 +64,18 @@ import CantoneseSettingsProvider from "./cantonese/components/providers/Settings
 import CantoneseSessionContextProvider from "./cantonese/components/providers/SessionContextProvider";
 import CantoneseProfileProvider from "./cantonese/components/providers/ProfileProvider";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false, // Không refetch khi quay lại tab
+      refetchOnMount: false, // Không refetch khi component mount lại
+      refetchOnReconnect: false, // Không refetch khi reconnect internet
+      staleTime: 5 * 60 * 1000, // Data được coi là fresh trong 5 phút
+      gcTime: 10 * 60 * 1000, // Cache data trong 10 phút (formerly cacheTime)
+      retry: 1, // Chỉ retry 1 lần nếu request fail
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
