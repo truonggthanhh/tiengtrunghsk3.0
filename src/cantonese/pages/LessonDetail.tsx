@@ -168,46 +168,30 @@ const LessonDetail = () => {
   const areReviewTestsAvailable = (reviewTests ?? 0) > 0;
 
   return (
-    <main className="relative min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white overflow-hidden transition-colors duration-300">
-      {/* Film grain effect - ONLY in dark mode */}
-      <div className="hidden dark:block fixed inset-0 pointer-events-none z-50 opacity-[0.03]" style={{
-        backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 400 400\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")'
-      }} />
-
-      {/* Scanlines - ONLY in dark mode */}
-      <div className="hidden dark:block fixed inset-0 pointer-events-none z-50 opacity-10" style={{
-        backgroundImage: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px)',
-        backgroundSize: '100% 2px'
-      }} />
-
-      {/* Background gradient */}
-      <div className="fixed inset-0 bg-gradient-to-br from-purple-50 via-white to-pink-50 dark:bg-[radial-gradient(ellipse_at_top,_rgba(255,16,240,0.15)_0%,_rgba(0,0,0,1)_50%)]" />
-
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white transition-colors duration-300">
       {/* Main content */}
-      <div className="relative z-10 max-w-5xl mx-auto p-6 md:p-12">
+      <div className="max-w-5xl mx-auto p-6 md:p-12">
         {/* Navigation buttons */}
-        <div className="flex gap-3 mb-8">
-          <Link to="/cantonese" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-purple-300 dark:border-purple-600 bg-white/90 dark:bg-black/70 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/30 transition-all shadow-md text-sm font-medium">
+        <div className="flex gap-2 mb-8">
+          <Link to="/cantonese" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-900 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/50 transition-colors text-sm font-medium">
             <Home className="h-4 w-4" /> Trang chủ
           </Link>
-          <Link to="/cantonese/lessons" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-pink-300 dark:border-pink-600 bg-white/90 dark:bg-black/70 text-pink-600 dark:text-pink-400 hover:bg-pink-50 dark:hover:bg-pink-900/30 transition-all shadow-md text-sm font-medium">
+          <Link to="/cantonese/lessons" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-pink-300 dark:border-pink-700 bg-white dark:bg-gray-900 text-pink-600 dark:text-pink-400 hover:bg-pink-50 dark:hover:bg-pink-900/50 transition-colors text-sm font-medium">
             <ArrowLeft className="h-4 w-4" /> Quay về bài học
           </Link>
         </div>
 
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-12">
+        <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-10">
           <div className="flex-1">
-            <h1 className="text-4xl md:text-5xl font-black mb-3 text-pink-600 dark:text-pink-400">
-              <span style={{ textShadow: '0 0 10px rgba(255,16,240,0.3)' }}>
-                {lesson.title}
-              </span>
+            <h1 className="text-3xl md:text-4xl font-bold mb-2 text-pink-600 dark:text-pink-400">
+              {lesson.title}
             </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-prose">{lesson.description}</p>
+            <p className="text-base text-gray-600 dark:text-gray-400">{lesson.description}</p>
           </div>
           <button
             onClick={exportSessionsToCsv}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-cyan-300 dark:border-cyan-600 bg-white/90 dark:bg-black/70 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/30 transition-all shadow-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-cyan-300 dark:border-cyan-700 bg-white dark:bg-gray-900 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/50 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={!exerciseSessions || exerciseSessions.length === 0}
           >
             <FileText className="h-4 w-4" /> Export CSV
@@ -228,10 +212,10 @@ const LessonDetail = () => {
 
           <div className="relative py-4">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t-2 border-purple-200 dark:border-purple-800"></div>
+              <div className="w-full border-t border-gray-200 dark:border-gray-800"></div>
             </div>
             <div className="relative flex justify-center">
-              <span className="px-4 text-sm font-medium bg-white dark:bg-black text-gray-500 dark:text-gray-400">
+              <span className="px-4 text-xs font-medium bg-gray-50 dark:bg-gray-950 text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Các dạng bài tập
               </span>
             </div>
