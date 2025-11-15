@@ -55,12 +55,12 @@ export default defineConfig(() => ({
             return "vendor-misc";
           }
 
-          // Split Cantonese and Mandarin app code
+          // Split Cantonese and Mandarin app code (with v2 prefix to force new hash)
           if (id.includes("/cantonese/")) {
-            return "app-cantonese";
+            return "app-cantonese-v2";
           }
           if (id.includes("/mandarin/") || id.includes("/msutong/")) {
-            return "app-mandarin";
+            return "app-mandarin-v2";
           }
         },
       },
