@@ -8,6 +8,7 @@ import { ArrowRight, Home, RefreshCw } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { usePinyin } from '@/contexts/PinyinContext';
+import { GamificationWrapper, useGamificationTracking } from '@/components/gamification/GamificationWrapper';
 
 const shuffleArray = <T,>(array: T[]): T[] => {
   const newArray = [...array];
@@ -28,6 +29,7 @@ const MsutongSentenceScramblePage = () => {
   const [searchParams] = useSearchParams();
   const level = searchParams.get('level') || 'so-cap';
   const lessonIds = searchParams.get('lessonIds')?.split(',') || [];
+  const { trackQuizCompletion } = useGamificationTracking();
 
   const vocabulary = useMemo(() => getVocabularyByMsutong(level, lessonIds), [level, lessonIds]);
   
@@ -65,6 +67,16 @@ const MsutongSentenceScramblePage = () => {
   useEffect(() => {
     resetCurrentQuestion();
   }, [currentQuestion, resetCurrentQuestion]);
+
+  useEffect(() => {
+    if (showResult && questions.length > 0) {
+      trackQuizCompletion(correctAnswers, questions.length, {
+        quiz_type: 'msutong_sentence_scramble',
+        level: level,
+        question_count: questionCount,
+      });
+    }
+  }, [showResult, correctAnswers, questions.length, questionCount, level, trackQuizCompletion]);
 
   const handleStart = (count: number) => {
     setQuestionCount(count);
@@ -212,89 +224,91 @@ const MsutongSentenceScramblePage = () => {
   const progressValue = ((currentIndex + 1) / questions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Header />
-      <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
-        <div className="w-full max-w-3xl">
-          <div className="mb-6 text-center">
-            <h1 className="text-3xl font-bold">Sắp Xếp Câu (Msutong)</h1>
-            <p className="text-muted-foreground">Sắp xếp các từ sau thành một câu hoàn chỉnh.</p>
-          </div>
-
-          <div className="mb-4">
-            <div className="flex justify-between items-center mb-2 text-muted-foreground">
-              <span>Câu: {currentIndex + 1} / {questions.length}</span>
-              <span>Đúng: {correctAnswers}</span>
+    <GamificationWrapper>
+      <div className="min-h-screen bg-background flex flex-col">
+        <Header />
+        <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
+          <div className="w-full max-w-3xl">
+            <div className="mb-6 text-center">
+              <h1 className="text-3xl font-bold">Sắp Xếp Câu (Msutong)</h1>
+              <p className="text-muted-foreground">Sắp xếp các từ sau thành một câu hoàn chỉnh.</p>
             </div>
-            <Progress value={progressValue} className="w-full" />
-          </div>
-          
-          <Card className="mb-8 shadow-md bg-gradient-spring text-white">
-            <CardContent className="p-8 text-center">
-              <p className="text-xl text-white/90">Nghĩa: "{currentQuestion?.translation}"</p>
-            </CardContent>
-          </Card>
 
-          <Card className={cn(
-            "mb-4 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3 border-dashed",
-            answerStatus === 'correct' && 'border-green-500',
-            answerStatus === 'incorrect' && 'border-destructive'
-          )}>
-            {userAnswer.map((charObj) => (
-              <Button key={charObj.id} variant="secondary" className="text-2xl h-14 px-4 font-bold" onClick={() => handleAnswerCharClick(charObj)}>
-                {charObj.char}
-              </Button>
-            ))}
-            {userAnswer.length === 0 && <span className="text-muted-foreground">Câu trả lời của bạn sẽ xuất hiện ở đây</span>}
-          </Card>
+            <div className="mb-4">
+              <div className="flex justify-between items-center mb-2 text-muted-foreground">
+                <span>Câu: {currentIndex + 1} / {questions.length}</span>
+                <span>Đúng: {correctAnswers}</span>
+              </div>
+              <Progress value={progressValue} className="w-full" />
+            </div>
 
-          <div className="mb-8 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3">
-            {shuffledChars.map((charObj) => (
-              <Button key={charObj.id} variant="outline" className="text-2xl h-14 px-4 font-bold" onClick={() => handleCharSelect(charObj)}>
-                {charObj.char}
-              </Button>
-            ))}
-          </div>
-
-          <div className="flex justify-center gap-4">
-            {answerStatus !== 'correct' && (
-              <Button onClick={handleSubmit} size="lg" disabled={!!answerStatus || userAnswer.length === 0} className="font-bold">
-                Kiểm tra
-              </Button>
-            )}
-            {answerStatus === 'incorrect' && (
-                <Button onClick={goToNextWord} size="lg" className="font-bold">
-                    Câu tiếp theo <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-            )}
-            <Button onClick={resetCurrentQuestion} variant="outline" size="lg" disabled={!!answerStatus} className="font-bold">
-                <RefreshCw className="mr-2 h-5 w-5" /> Thử lại
-            </Button>
-          </div>
-
-          {answerStatus === 'incorrect' && (
-            <Card className="mt-6 shadow-md bg-gradient-tropical text-white">
-              <CardContent className="p-6 text-center space-y-2">
-                <p className="text-white font-semibold text-lg">Sai rồi!</p>
-                <p className="text-2xl md:text-3xl font-bold">{currentQuestion.sentence}</p>
-                {showPinyin && (currentQuestion as any).pinyin && (
-                  <p className="text-xl font-medium text-white/90">{(currentQuestion as any).pinyin}</p>
-                )}
-                <p className="text-lg text-white/90">Nghĩa: {currentQuestion.translation}</p>
+            <Card className="mb-8 shadow-md bg-gradient-spring text-white">
+              <CardContent className="p-8 text-center">
+                <p className="text-xl text-white/90">Nghĩa: "{currentQuestion?.translation}"</p>
               </CardContent>
             </Card>
-          )}
 
-          <div className="text-center mt-12">
-            <Button asChild variant="secondary" className="font-bold">
-              <Link to="/mandarin/msutong">
-                <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
-              </Link>
-            </Button>
+            <Card className={cn(
+              "mb-4 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3 border-dashed",
+              answerStatus === 'correct' && 'border-green-500',
+              answerStatus === 'incorrect' && 'border-destructive'
+            )}>
+              {userAnswer.map((charObj) => (
+                <Button key={charObj.id} variant="secondary" className="text-2xl h-14 px-4 font-bold" onClick={() => handleAnswerCharClick(charObj)}>
+                  {charObj.char}
+                </Button>
+              ))}
+              {userAnswer.length === 0 && <span className="text-muted-foreground">Câu trả lời của bạn sẽ xuất hiện ở đây</span>}
+            </Card>
+
+            <div className="mb-8 min-h-24 p-4 flex flex-wrap items-center justify-center gap-3">
+              {shuffledChars.map((charObj) => (
+                <Button key={charObj.id} variant="outline" className="text-2xl h-14 px-4 font-bold" onClick={() => handleCharSelect(charObj)}>
+                  {charObj.char}
+                </Button>
+              ))}
+            </div>
+
+            <div className="flex justify-center gap-4">
+              {answerStatus !== 'correct' && (
+                <Button onClick={handleSubmit} size="lg" disabled={!!answerStatus || userAnswer.length === 0} className="font-bold">
+                  Kiểm tra
+                </Button>
+              )}
+              {answerStatus === 'incorrect' && (
+                  <Button onClick={goToNextWord} size="lg" className="font-bold">
+                      Câu tiếp theo <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+              )}
+              <Button onClick={resetCurrentQuestion} variant="outline" size="lg" disabled={!!answerStatus} className="font-bold">
+                  <RefreshCw className="mr-2 h-5 w-5" /> Thử lại
+              </Button>
+            </div>
+
+            {answerStatus === 'incorrect' && (
+              <Card className="mt-6 shadow-md bg-gradient-tropical text-white">
+                <CardContent className="p-6 text-center space-y-2">
+                  <p className="text-white font-semibold text-lg">Sai rồi!</p>
+                  <p className="text-2xl md:text-3xl font-bold">{currentQuestion.sentence}</p>
+                  {showPinyin && (currentQuestion as any).pinyin && (
+                    <p className="text-xl font-medium text-white/90">{(currentQuestion as any).pinyin}</p>
+                  )}
+                  <p className="text-lg text-white/90">Nghĩa: {currentQuestion.translation}</p>
+                </CardContent>
+              </Card>
+            )}
+
+            <div className="text-center mt-12">
+              <Button asChild variant="secondary" className="font-bold">
+                <Link to="/mandarin/msutong">
+                  <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
+                </Link>
+              </Button>
+            </div>
           </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </GamificationWrapper>
   );
 };
 

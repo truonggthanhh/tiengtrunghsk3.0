@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { BookOpen, Headphones, Keyboard, PenTool, Zap, PlayCircle, Sparkles, Music, ListChecks, ToggleRight, Star, Volume2, Flame, Heart, ShoppingBag } from 'lucide-react'
+import { BookOpen, Headphones, Keyboard, PenTool, Zap, PlayCircle, Sparkles, Music, ListChecks, ToggleRight, Star, Volume2, Flame, Heart, ShoppingBag, Trophy, Award, Target, TrendingUp } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useSession } from '@/cantonese/components/providers/SessionContextProvider'
 import { useProfile } from '@/cantonese/components/providers/ProfileProvider'
@@ -41,6 +41,7 @@ function HongKongRetroLanding() {
 
       <Hero />
       <MarketSection />
+      <GamificationSection />
       <NeonSignsShowcase />
       <CantoneseFeaturesIntro />
       <TestimonialsStrip />
@@ -467,6 +468,83 @@ function TestimonialsStrip() {
             </motion.div>
           ))}
         </div>
+      </div>
+    </section>
+  )
+}
+
+function GamificationSection() {
+  const { session } = useSession();
+
+  return (
+    <section className="relative py-20 px-4">
+      <div className="container mx-auto max-w-6xl">
+        <motion.div
+          initial={{opacity:0, y:30}}
+          whileInView={{opacity:1, y:0}}
+          transition={{duration:0.6}}
+          viewport={{once:true}}
+          className="text-center mb-12 space-y-4"
+        >
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 text-white px-6 py-3 rounded-full font-bold shadow-lg animate-pulse">
+            <Trophy className="h-5 w-5" />
+            <span>Hệ thống Gamification</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-black text-pink-600 dark:text-pink-400">
+            <span style={{
+              textShadow: '0 0 10px rgba(255,16,240,0.5)'
+            }}>
+              學粵語 × 玩遊戲
+            </span>
+          </h2>
+          <p className="text-2xl font-bold text-cyan-600 dark:text-cyan-400">
+            HỌC TIẾNG QUẢNG × CHƠI GAME
+          </p>
+          <p className="text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
+            Mở khóa thành tựu, lên level, thu thập badges và hoàn thành nhiệm vụ khi học Cantonese
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {[
+            { icon: <TrendingUp className="h-8 w-8" />, title: 'XP & Levels', desc: 'Nhận XP và lên cấp', gradient: 'from-purple-500 to-pink-500', shadow: 'shadow-pink-500/30' },
+            { icon: <Award className="h-8 w-8" />, title: 'Badges', desc: 'Mở khóa huy hiệu', gradient: 'from-orange-500 to-red-500', shadow: 'shadow-orange-500/30' },
+            { icon: <Target className="h-8 w-8" />, title: 'Missions', desc: 'Hoàn thành nhiệm vụ', gradient: 'from-blue-500 to-purple-500', shadow: 'shadow-purple-500/30' },
+            { icon: <Flame className="h-8 w-8" />, title: 'Streaks', desc: 'Duy trì chuỗi ngày học', gradient: 'from-cyan-500 to-blue-500', shadow: 'shadow-cyan-500/30' },
+            { icon: <Star className="h-8 w-8" />, title: 'Flashcards', desc: 'Thu thập thẻ học', gradient: 'from-yellow-500 to-orange-500', shadow: 'shadow-yellow-500/30' },
+            { icon: <Trophy className="h-8 w-8" />, title: 'Leaderboard', desc: 'Thi đua với bạn bè', gradient: 'from-green-500 to-cyan-500', shadow: 'shadow-green-500/30' },
+          ].map((item, index) => (
+            <motion.div
+              key={index}
+              initial={{opacity:0, y:20}}
+              whileInView={{opacity:1, y:0}}
+              transition={{duration:0.4, delay: index * 0.1}}
+              viewport={{once:true}}
+              className={`rounded-2xl p-6 text-center bg-gradient-to-br ${item.gradient} text-white shadow-xl ${item.shadow} hover:scale-105 transition-transform cursor-pointer border-2 border-white/20 backdrop-blur-sm`}
+            >
+              <div className="flex justify-center mb-3">
+                {item.icon}
+              </div>
+              <h3 className="font-bold text-lg mb-1">{item.title}</h3>
+              <p className="text-sm opacity-90">{item.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.div
+          initial={{opacity:0}}
+          whileInView={{opacity:1}}
+          transition={{duration:0.6, delay:0.8}}
+          viewport={{once:true}}
+          className="text-center mt-12"
+        >
+          <p className="text-xl text-gray-700 dark:text-gray-300 font-semibold">
+            🎮 學習唔單調！學粵語同時享受遊戲樂趣
+          </p>
+          <p className="text-lg text-pink-600 dark:text-pink-400 mt-2">
+            Học tập không nhàm chán! Học Quảng Đông đồng thời tận hưởng niềm vui từ game
+          </p>
+        </motion.div>
       </div>
     </section>
   )

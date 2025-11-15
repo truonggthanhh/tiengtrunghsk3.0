@@ -9,6 +9,7 @@ import { ArrowRight, Home } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { usePinyin } from '@/contexts/PinyinContext';
+import { GamificationWrapper, useGamificationTracking } from '@/components/gamification/GamificationWrapper';
 
 const shuffleArray = <T,>(array: T[]): T[] => {
   const newArray = [...array];
@@ -24,6 +25,7 @@ const MsutongFillInTheBlankPage = () => {
   const [searchParams] = useSearchParams();
   const level = searchParams.get('level') || 'so-cap';
   const lessonIds = searchParams.get('lessonIds')?.split(',') || [];
+  const { trackQuizCompletion } = useGamificationTracking();
 
   const practiceVocabulary = useMemo(() => getVocabularyByMsutong(level, lessonIds), [level, lessonIds]);
 
@@ -76,7 +78,17 @@ const MsutongFillInTheBlankPage = () => {
       setAnswerStatus('incorrect');
     }
   };
-  
+
+  useEffect(() => {
+    if (showResult && vocabulary.length > 0) {
+      trackQuizCompletion(correctAnswers, vocabulary.length, {
+        quiz_type: 'msutong_fill_blank',
+        level: level,
+        question_count: questionCount,
+      });
+    }
+  }, [showResult, correctAnswers, vocabulary.length, questionCount, level, trackQuizCompletion]);
+
   const resetToLevelSelection = () => {
     setQuestionCount(null);
     setVocabulary([]);
@@ -174,80 +186,82 @@ const MsutongFillInTheBlankPage = () => {
   const progressValue = ((currentIndex + 1) / vocabulary.length) * 100;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Header />
-      <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
-        <div className="w-full max-w-2xl">
-          <div className="mb-6 text-center">
-            <h1 className="text-3xl font-bold">Điền Từ (Msutong)</h1>
-            <p className="text-muted-foreground">Dựa vào phiên âm và nghĩa, hãy điền chữ Hán tương ứng.</p>
-          </div>
-
-          <div className="mb-4">
-            <div className="flex justify-between items-center mb-2 text-muted-foreground">
-              <span>Câu: {currentIndex + 1} / {vocabulary.length}</span>
-              <span>Đúng: {correctAnswers}</span>
+    <GamificationWrapper>
+      <div className="min-h-screen bg-background flex flex-col">
+        <Header />
+        <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
+          <div className="w-full max-w-2xl">
+            <div className="mb-6 text-center">
+              <h1 className="text-3xl font-bold">Điền Từ (Msutong)</h1>
+              <p className="text-muted-foreground">Dựa vào phiên âm và nghĩa, hãy điền chữ Hán tương ứng.</p>
             </div>
-            <Progress value={progressValue} className="w-full" />
-          </div>
-          
-          <Card className="mb-8 bg-gradient-fire text-white border-0">
-            <CardContent className="p-10 flex flex-col items-center justify-center gap-4">
-              {(showPinyin || answerStatus) ? (
-                <p className="text-4xl font-semibold">{currentWord?.pinyin}</p>
-              ) : (
-                <p className="text-lg opacity-80 italic">Pinyin sẽ hiển thị sau khi kiểm tra</p>
-              )}
-              <p className="text-2xl">{currentWord?.meaning}</p>
-            </CardContent>
-          </Card>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Nhập chữ Hán..."
-              className={cn(
-                "text-center text-3xl h-16",
-                answerStatus === 'correct' && 'border-green-500 focus-visible:ring-green-500',
-                answerStatus === 'incorrect' && 'border-destructive focus-visible:ring-destructive'
+            <div className="mb-4">
+              <div className="flex justify-between items-center mb-2 text-muted-foreground">
+                <span>Câu: {currentIndex + 1} / {vocabulary.length}</span>
+                <span>Đúng: {correctAnswers}</span>
+              </div>
+              <Progress value={progressValue} className="w-full" />
+            </div>
+
+            <Card className="mb-8 bg-gradient-fire text-white border-0">
+              <CardContent className="p-10 flex flex-col items-center justify-center gap-4">
+                {(showPinyin || answerStatus) ? (
+                  <p className="text-4xl font-semibold">{currentWord?.pinyin}</p>
+                ) : (
+                  <p className="text-lg opacity-80 italic">Pinyin sẽ hiển thị sau khi kiểm tra</p>
+                )}
+                <p className="text-2xl">{currentWord?.meaning}</p>
+              </CardContent>
+            </Card>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <Input
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Nhập chữ Hán..."
+                className={cn(
+                  "text-center text-3xl h-16",
+                  answerStatus === 'correct' && 'border-green-500 focus-visible:ring-green-500',
+                  answerStatus === 'incorrect' && 'border-destructive focus-visible:ring-destructive'
+                )}
+                disabled={!!answerStatus}
+              />
+
+              {answerStatus !== 'correct' && (
+                <Button type="submit" className="w-full font-bold" size="lg" disabled={!!answerStatus}>
+                  Kiểm tra
+                </Button>
               )}
-              disabled={!!answerStatus}
-            />
-            
-            {answerStatus !== 'correct' && (
-              <Button type="submit" className="w-full font-bold" size="lg" disabled={!!answerStatus}>
-                Kiểm tra
-              </Button>
+            </form>
+
+            {answerStatus === 'incorrect' && (
+              <div className="mt-6 text-center p-4 bg-destructive/10 rounded-lg">
+                <p className="text-destructive mb-2 font-semibold">Sai rồi!</p>
+                <p className="text-lg">Đáp án đúng là: <span className="font-bold text-2xl">{currentWord.hanzi}</span></p>
+              </div>
             )}
-          </form>
 
-          {answerStatus === 'incorrect' && (
-            <div className="mt-6 text-center p-4 bg-destructive/10 rounded-lg">
-              <p className="text-destructive mb-2 font-semibold">Sai rồi!</p>
-              <p className="text-lg">Đáp án đúng là: <span className="font-bold text-2xl">{currentWord.hanzi}</span></p>
-            </div>
-          )}
+            {answerStatus && answerStatus !== 'correct' && (
+              <div className="mt-8 text-center">
+                <Button onClick={goToNextWord} size="lg" className="font-bold">
+                  {currentIndex === vocabulary.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </div>
+            )}
 
-          {answerStatus && answerStatus !== 'correct' && (
-            <div className="mt-8 text-center">
-              <Button onClick={goToNextWord} size="lg" className="font-bold">
-                {currentIndex === vocabulary.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}
-                <ArrowRight className="ml-2 h-5 w-5" />
+            <div className="text-center mt-8">
+              <Button asChild variant="secondary" className="font-bold">
+                <Link to="/mandarin/msutong">
+                  <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
+                </Link>
               </Button>
             </div>
-          )}
-
-          <div className="text-center mt-8">
-            <Button asChild variant="secondary" className="font-bold">
-              <Link to="/mandarin/msutong">
-                <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
-              </Link>
-            </Button>
           </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </GamificationWrapper>
   );
 };
 
