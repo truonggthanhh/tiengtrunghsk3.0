@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Trophy, Zap, Swords, ScrollText, Sparkles, Target,
-  Award, Gift, Flame, Star, ChevronRight, GamepadIcon
+  Award, Gift, Flame, Star, ChevronRight, Gamepad2
 } from 'lucide-react';
 import { useGamification } from '@/components/gamification/GamificationProvider';
 import GamificationDashboard from '@/components/gamification/GamificationDashboard';
@@ -78,7 +78,7 @@ const MandarinGamificationIndex = () => {
         {/* Hero Section */}
         <div className="text-center mb-12 space-y-4">
           <div className="inline-flex items-center justify-center gap-3 mb-4">
-            <GamepadIcon className="w-16 h-16 text-primary animate-bounce" />
+            <Gamepad2 className="w-16 h-16 text-primary animate-bounce" />
             <Zap className="w-12 h-12 text-yellow-500 animate-pulse" />
           </div>
 

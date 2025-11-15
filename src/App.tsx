@@ -61,6 +61,14 @@ const MandarinBlog = lazy(() => import("./mandarin/pages/BlogPage"));
 const MandarinBlogDetail = lazy(() => import("./mandarin/pages/BlogDetailPage"));
 const MandarinGamificationIndex = lazy(() => import("./mandarin/pages/GamificationIndex"));
 
+// Mandarin Gamification Pages
+const MandarinBossBattles = lazy(() => import("./mandarin/pages/gamification/BossBattles"));
+const MandarinCardCollection = lazy(() => import("./mandarin/pages/gamification/CardCollection"));
+const MandarinLuckyWheel = lazy(() => import("./mandarin/pages/gamification/LuckyWheel"));
+const MandarinMissions = lazy(() => import("./mandarin/pages/gamification/Missions"));
+const MandarinStoryMode = lazy(() => import("./mandarin/pages/gamification/StoryMode"));
+const MandarinBadges = lazy(() => import("./mandarin/pages/gamification/Badges"));
+
 // Cantonese App Pages
 const CantoneseIndex = lazy(() => import("./cantonese/pages/Index"));
 const CantoneseLogin = lazy(() => import("./cantonese/pages/Login"));
@@ -424,13 +432,73 @@ const App = () => (
                 }
               />
 
-              {/* Gamification Route */}
+              {/* Gamification Routes */}
               <Route
                 path="gamification"
                 element={
                   <SessionContextProvider>
                     <PinyinProvider>
                       <MandarinGamificationIndex />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="gamification/boss-battles"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MandarinBossBattles />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="gamification/card-collection"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MandarinCardCollection />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="gamification/lucky-wheel"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MandarinLuckyWheel />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="gamification/missions"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MandarinMissions />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="gamification/story-mode"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MandarinStoryMode />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="gamification/badges"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MandarinBadges />
                     </PinyinProvider>
                   </SessionContextProvider>
                 }
