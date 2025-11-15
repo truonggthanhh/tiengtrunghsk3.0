@@ -61,7 +61,15 @@ import CantoneseBlogDetail from "./cantonese/pages/BlogDetailPage";
 import MandarinBlog from "./mandarin/pages/BlogPage";
 import MandarinBlogDetail from "./mandarin/pages/BlogDetailPage";
 import MandarinGamificationIndex from "./mandarin/pages/GamificationIndex";
-import CantoneseGamificationIndex from "./cantonese/pages/GamificationIndex";
+
+// Cantonese Gamification Pages
+import CantoneseGamificationDashboard from "./cantonese/pages/gamification/index";
+import CantoneseBossBattles from "./cantonese/pages/gamification/BossBattles";
+import CantoneseCardCollection from "./cantonese/pages/gamification/CardCollection";
+import CantoneseLuckyWheel from "./cantonese/pages/gamification/LuckyWheel";
+import CantoneseMissions from "./cantonese/pages/gamification/Missions";
+import CantoneseStoryMode from "./cantonese/pages/gamification/StoryMode";
+import CantoneseBadges from "./cantonese/pages/gamification/Badges";
 
 // Cantonese Components
 import CantonesePageWrapper from "./cantonese/components/layouts/PageWrapper";
@@ -673,7 +681,7 @@ const App = () => (
                 }
               />
 
-              {/* Gamification Route */}
+              {/* Gamification Routes */}
               <Route
                 path="gamification"
                 element={
@@ -683,7 +691,115 @@ const App = () => (
                         <CantoneseProfileProvider>
                           <CantoneseProtectedRoute>
                             <CantonesePageWrapper>
-                              <CantoneseGamificationIndex />
+                              <CantoneseGamificationDashboard />
+                            </CantonesePageWrapper>
+                          </CantoneseProtectedRoute>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+              <Route
+                path="gamification/boss-battles"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantoneseProtectedRoute>
+                            <CantonesePageWrapper>
+                              <CantoneseBossBattles />
+                            </CantonesePageWrapper>
+                          </CantoneseProtectedRoute>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+              <Route
+                path="gamification/card-collection"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantoneseProtectedRoute>
+                            <CantonesePageWrapper>
+                              <CantoneseCardCollection />
+                            </CantonesePageWrapper>
+                          </CantoneseProtectedRoute>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+              <Route
+                path="gamification/lucky-wheel"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantoneseProtectedRoute>
+                            <CantonesePageWrapper>
+                              <CantoneseLuckyWheel />
+                            </CantonesePageWrapper>
+                          </CantoneseProtectedRoute>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+              <Route
+                path="gamification/missions"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantoneseProtectedRoute>
+                            <CantonesePageWrapper>
+                              <CantoneseMissions />
+                            </CantonesePageWrapper>
+                          </CantoneseProtectedRoute>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+              <Route
+                path="gamification/story-mode"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantoneseProtectedRoute>
+                            <CantonesePageWrapper>
+                              <CantoneseStoryMode />
+                            </CantonesePageWrapper>
+                          </CantoneseProtectedRoute>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+              <Route
+                path="gamification/badges"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantoneseProtectedRoute>
+                            <CantonesePageWrapper>
+                              <CantoneseBadges />
                             </CantonesePageWrapper>
                           </CantoneseProtectedRoute>
                         </CantoneseProfileProvider>
