@@ -8,6 +8,7 @@ import { ArrowRight, Home, CheckCircle2, XCircle } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { usePinyin } from '@/contexts/PinyinContext';
+import { GamificationWrapper, useGamificationTracking } from '@/components/gamification/GamificationWrapper';
 
 // Helper function to shuffle an array
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -23,6 +24,7 @@ const MeaningChoicePage = () => {
   const { level } = useParams<{ level: string }>();
   const fullVocabulary = useMemo(() => getVocabularyByLevel(level || '1'), [level]);
   const { showPinyin } = usePinyin();
+  const { trackQuizCompletion } = useGamificationTracking();
 
   const [questionCount, setQuestionCount] = useState<number | null>(null);
   const [vocabulary, setVocabulary] = useState<VocabularyWord[]>([]);
@@ -67,6 +69,16 @@ const MeaningChoicePage = () => {
       generateOptions();
     }
   }, [currentIndex, generateOptions, vocabulary]);
+
+  useEffect(() => {
+    if (showResult && vocabulary.length > 0) {
+      trackQuizCompletion(correctAnswers, vocabulary.length, {
+        quiz_type: 'meaning_choice',
+        level: level,
+        question_count: questionCount,
+      });
+    }
+  }, [showResult, correctAnswers, vocabulary.length, questionCount, level, trackQuizCompletion]);
 
   const handleStart = (count: number) => {
     setQuestionCount(count);
@@ -191,77 +203,79 @@ const MeaningChoicePage = () => {
   const progressValue = ((currentIndex + 1) / vocabulary.length) * 100;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Header />
-      <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
-        <div className="w-full max-w-2xl bg-card p-6 md:p-8 rounded-xl shadow-lg border">
-          <div className="mb-6 text-center">
-            <h1 className="text-3xl font-bold">Chọn Nghĩa HSK {level}</h1>
-            <p className="text-muted-foreground">Chọn nghĩa đúng cho từ vựng sau.</p>
-          </div>
-
-          <div className="mb-4">
-            <div className="flex justify-between items-center mb-2 text-muted-foreground">
-              <span>Câu: {currentIndex + 1} / {vocabulary.length}</span>
-              <span>Đúng: {correctAnswers}</span>
+    <GamificationWrapper>
+      <div className="min-h-screen bg-background flex flex-col">
+        <Header />
+        <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
+          <div className="w-full max-w-2xl bg-card p-6 md:p-8 rounded-xl shadow-lg border">
+            <div className="mb-6 text-center">
+              <h1 className="text-3xl font-bold">Chọn Nghĩa HSK {level}</h1>
+              <p className="text-muted-foreground">Chọn nghĩa đúng cho từ vựng sau.</p>
             </div>
-            <Progress value={progressValue} className="w-full h-2 bg-primary/20" indicatorClassName="bg-primary" />
-          </div>
-          
-          <Card className="mb-8 shadow-md bg-gradient-sunset text-white">
-            <CardContent className="p-10 flex flex-col items-center justify-center space-y-4">
-              <h2 className="text-7xl md:text-8xl font-bold">{currentWord?.hanzi}</h2>
-              {showPinyin && (
-                <p className="text-2xl md:text-3xl font-medium text-white/90">{currentWord?.pinyin}</p>
-              )}
-            </CardContent>
-          </Card>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {options.map((meaning, index) => {
-              const isSelected = selectedMeaning === meaning;
-              const isTheCorrectAnswer = meaning === currentWord.meaning;
-              
-              return (
-                <Button
-                  key={index}
-                  onClick={() => handleAnswer(meaning)}
-                  disabled={!!selectedMeaning}
-                  className={cn(
-                    "h-auto min-h-20 text-lg py-4 transition-all duration-300 font-bold",
-                    isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90 text-destructive-foreground",
-                    selectedMeaning && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90 text-white",
-                    !isSelected && !selectedMeaning && "hover:bg-primary/10 hover:text-primary"
-                  )}
-                  variant="outline"
-                >
-                  {meaning}
-                  {isSelected && isCorrect === false && <XCircle className="ml-4 h-6 w-6" />}
-                  {selectedMeaning && isTheCorrectAnswer && <CheckCircle2 className="ml-4 h-6 w-6" />}
+            <div className="mb-4">
+              <div className="flex justify-between items-center mb-2 text-muted-foreground">
+                <span>Câu: {currentIndex + 1} / {vocabulary.length}</span>
+                <span>Đúng: {correctAnswers}</span>
+              </div>
+              <Progress value={progressValue} className="w-full h-2 bg-primary/20" indicatorClassName="bg-primary" />
+            </div>
+
+            <Card className="mb-8 shadow-md bg-gradient-sunset text-white">
+              <CardContent className="p-10 flex flex-col items-center justify-center space-y-4">
+                <h2 className="text-7xl md:text-8xl font-bold">{currentWord?.hanzi}</h2>
+                {showPinyin && (
+                  <p className="text-2xl md:text-3xl font-medium text-white/90">{currentWord?.pinyin}</p>
+                )}
+              </CardContent>
+            </Card>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {options.map((meaning, index) => {
+                const isSelected = selectedMeaning === meaning;
+                const isTheCorrectAnswer = meaning === currentWord.meaning;
+
+                return (
+                  <Button
+                    key={index}
+                    onClick={() => handleAnswer(meaning)}
+                    disabled={!!selectedMeaning}
+                    className={cn(
+                      "h-auto min-h-20 text-lg py-4 transition-all duration-300 font-bold",
+                      isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90 text-destructive-foreground",
+                      selectedMeaning && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90 text-white",
+                      !isSelected && !selectedMeaning && "hover:bg-primary/10 hover:text-primary"
+                    )}
+                    variant="outline"
+                  >
+                    {meaning}
+                    {isSelected && isCorrect === false && <XCircle className="ml-4 h-6 w-6" />}
+                    {selectedMeaning && isTheCorrectAnswer && <CheckCircle2 className="ml-4 h-6 w-6" />}
+                  </Button>
+                )
+              })}
+            </div>
+
+            {selectedMeaning && isCorrect === false && (
+              <div className="mt-8 text-center">
+                <Button onClick={goToNextWord} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">
+                  {currentIndex === vocabulary.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-              )
-            })}
-          </div>
+              </div>
+            )}
 
-          {selectedMeaning && isCorrect === false && (
-            <div className="mt-8 text-center">
-              <Button onClick={goToNextWord} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">
-                {currentIndex === vocabulary.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}
-                <ArrowRight className="ml-2 h-5 w-5" />
+            <div className="text-center mt-8">
+              <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
+                <Link to="/mandarin">
+                  <Home className="mr-2 h-4 w-4" /> Về trang chủ
+                </Link>
               </Button>
             </div>
-          )}
-
-          <div className="text-center mt-8">
-            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
-              <Link to="/mandarin">
-                <Home className="mr-2 h-4 w-4" /> Về trang chủ
-              </Link>
-            </Button>
           </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </GamificationWrapper>
   );
 };
 

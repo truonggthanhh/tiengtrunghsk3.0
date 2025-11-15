@@ -8,6 +8,7 @@ import { ArrowRight, Home, RefreshCw, Lightbulb } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { usePinyin } from '@/contexts/PinyinContext';
+import { GamificationWrapper, useGamificationTracking } from '@/components/gamification/GamificationWrapper';
 import { pinyin } from 'pinyin-pro';
 
 // Helper function to shuffle an array
@@ -29,6 +30,7 @@ interface CharObject {
 
 const SentenceScramblePage = () => {
   const { showPinyin } = usePinyin();
+  const { trackQuizCompletion } = useGamificationTracking();
   const { level } = useParams<{ level: string }>();
   const fullVocabulary = useMemo(() => getVocabularyByLevel(level || '1'), [level]);
   
@@ -71,6 +73,16 @@ const SentenceScramblePage = () => {
       setShowHint(false);
     }
   }, [currentQuestion]);
+
+  useEffect(() => {
+    if (showResult && questions.length > 0) {
+      trackQuizCompletion(correctAnswers, questions.length, {
+        quiz_type: 'sentence_scramble',
+        level: level,
+        question_count: questionCount,
+      });
+    }
+  }, [showResult, correctAnswers, questions.length, questionCount, level, trackQuizCompletion]);
 
   const handleStart = (count: number) => {
     setQuestionCount(count);
@@ -215,8 +227,9 @@ const SentenceScramblePage = () => {
   const progressValue = ((currentIndex + 1) / questions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Header />
+    <GamificationWrapper>
+      <div className="min-h-screen bg-background flex flex-col">
+        <Header />
       <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
         <div className="w-full max-w-3xl bg-card p-6 md:p-8 rounded-xl shadow-lg border">
           <div className="mb-6 text-center">
@@ -339,7 +352,8 @@ const SentenceScramblePage = () => {
           </div>
         </div>
       </main>
-    </div>
+      </div>
+    </GamificationWrapper>
   );
 };
 
