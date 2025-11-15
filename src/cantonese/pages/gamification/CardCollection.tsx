@@ -1,115 +1,235 @@
-/**
- * Cantonese Card Collection Page
- * Collect and manage vocabulary cards
- */
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Progress } from '@/components/ui/progress';
 import { useGamification } from '@/components/gamification/GamificationProvider';
 import {
-  Home,
-  Loader2,
-  Lock,
-  Album,
-  Sparkles,
   ArrowLeft,
+  Sparkles,
+  Lock,
   Package,
   Star,
+  Zap,
+  Gift,
   Trophy,
-  Filter
+  Crown,
+  Loader2,
 } from 'lucide-react';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/components/SessionContextProvider';
+import confetti from 'canvas-confetti';
 
 interface VocabCard {
   id: string;
-  traditional: string;
-  simplified: string;
-  jyutping: string;
+  hanzi: string;
+  pinyin: string;
   meaning: string;
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
-  isCollected: boolean;
+  collected: boolean;
 }
+
+interface CardPack {
+  id: string;
+  name: string;
+  description: string;
+  cost: number;
+  cardCount: number;
+  icon: string;
+  color: string;
+}
+
+const rarityColors = {
+  common: 'bg-gray-400',
+  rare: 'bg-blue-500',
+  epic: 'bg-purple-500',
+  legendary: 'bg-yellow-500',
+};
+
+const rarityEmojis = {
+  common: '⚪',
+  rare: '🔵',
+  epic: '🟣',
+  legendary: '🌟',
+};
+
+// Mock card database
+const allCards: VocabCard[] = [
+  // Common cards
+  { id: '1', hanzi: '你好', pinyin: 'nǐ hǎo', meaning: 'Hello', rarity: 'common', collected: false },
+  { id: '2', hanzi: '谢谢', pinyin: 'xiè xiè', meaning: 'Thank you', rarity: 'common', collected: false },
+  { id: '3', hanzi: '再见', pinyin: 'zài jiàn', meaning: 'Goodbye', rarity: 'common', collected: false },
+  { id: '4', hanzi: '吃饭', pinyin: 'chī fàn', meaning: 'To eat', rarity: 'common', collected: false },
+  { id: '5', hanzi: '喝水', pinyin: 'hē shuǐ', meaning: 'To drink', rarity: 'common', collected: false },
+
+  // Rare cards
+  { id: '6', hanzi: '学习', pinyin: 'xué xí', meaning: 'To study', rarity: 'rare', collected: false },
+  { id: '7', hanzi: '朋友', pinyin: 'péng yǒu', meaning: 'Friend', rarity: 'rare', collected: false },
+  { id: '8', hanzi: '学校', pinyin: 'xué xiào', meaning: 'School', rarity: 'rare', collected: false },
+  { id: '9', hanzi: '老师', pinyin: 'lǎo shī', meaning: 'Teacher', rarity: 'rare', collected: false },
+
+  // Epic cards
+  { id: '10', hanzi: '聪明', pinyin: 'cōng míng', meaning: 'Smart', rarity: 'epic', collected: false },
+  { id: '11', hanzi: '勇敢', pinyin: 'yǒng gǎn', meaning: 'Brave', rarity: 'epic', collected: false },
+  { id: '12', hanzi: '美丽', pinyin: 'měi lì', meaning: 'Beautiful', rarity: 'epic', collected: false },
+
+  // Legendary cards
+  { id: '13', hanzi: '一帆风顺', pinyin: 'yī fān fēng shùn', meaning: 'Smooth sailing', rarity: 'legendary', collected: false },
+  { id: '14', hanzi: '龙马精神', pinyin: 'lóng mǎ jīng shén', meaning: 'Spirit of dragon and horse', rarity: 'legendary', collected: false },
+];
+
+const cardPacks: CardPack[] = [
+  {
+    id: '1',
+    name: 'Gói Cơ Bản',
+    description: 'Chứa 3 thẻ từ vựng ngẫu nhiên',
+    cost: 0,
+    cardCount: 3,
+    icon: '📦',
+    color: 'from-gray-400 to-gray-600',
+  },
+  {
+    id: '2',
+    name: 'Gói Bạc',
+    description: 'Chứa 5 thẻ, tăng tỷ lệ rare',
+    cost: 100,
+    cardCount: 5,
+    icon: '🎁',
+    color: 'from-blue-400 to-blue-600',
+  },
+  {
+    id: '3',
+    name: 'Gói Vàng',
+    description: 'Chứa 10 thẻ, đảm bảo ít nhất 1 epic',
+    cost: 250,
+    cardCount: 10,
+    icon: '🎀',
+    color: 'from-purple-400 to-purple-600',
+  },
+  {
+    id: '4',
+    name: 'Gói Kim Cương',
+    description: 'Chứa 15 thẻ, đảm bảo 1 legendary',
+    cost: 500,
+    cardCount: 15,
+    icon: '💎',
+    color: 'from-yellow-400 to-yellow-600',
+  },
+];
 
 export default function CantoneseCardCollection() {
   const { session } = useSession();
-  const { userProgress, isLoading } = useGamification();
-  const [selectedRarity, setSelectedRarity] = useState<string>('all');
+  const { userProgress, isLoading, addXP } = useGamification();
+  const [collectedCards, setCollectedCards] = useState<VocabCard[]>([]);
+  const [openingPack, setOpeningPack] = useState(false);
+  const [revealedCards, setRevealedCards] = useState<VocabCard[]>([]);
+  const [showResults, setShowResults] = useState(false);
 
-  // Mock card data - will be replaced with real API data
-  const mockCards: VocabCard[] = [
-    {
-      id: '1',
-      traditional: '你好',
-      simplified: '你好',
-      jyutping: 'nei5 hou2',
-      meaning: 'Hello',
-      rarity: 'common',
-      isCollected: true
-    },
-    {
-      id: '2',
-      traditional: '多謝',
-      simplified: '多谢',
-      jyutping: 'do1 ze6',
-      meaning: 'Thank you',
-      rarity: 'common',
-      isCollected: true
-    },
-    {
-      id: '3',
-      traditional: '廣東話',
-      simplified: '广东话',
-      jyutping: 'gwong2 dung1 waa2',
-      meaning: 'Cantonese',
-      rarity: 'rare',
-      isCollected: false
-    },
-    {
-      id: '4',
-      traditional: '語言',
-      simplified: '语言',
-      jyutping: 'jyu5 jin4',
-      meaning: 'Language',
-      rarity: 'epic',
-      isCollected: false
-    },
-    {
-      id: '5',
-      traditional: '學習',
-      simplified: '学习',
-      jyutping: 'hok6 zaap6',
-      meaning: 'To study/learn',
-      rarity: 'legendary',
-      isCollected: false
+  // Simulate XP as currency (in real app would be separate)
+  const playerXP = userProgress?.total_xp || 0;
+
+  const getRandomCards = (count: number, guaranteedRarity?: 'rare' | 'epic' | 'legendary'): VocabCard[] => {
+    const results: VocabCard[] = [];
+
+    // Add guaranteed card if specified
+    if (guaranteedRarity) {
+      const guaranteedPool = allCards.filter(c => c.rarity === guaranteedRarity);
+      if (guaranteedPool.length > 0) {
+        const randomCard = guaranteedPool[Math.floor(Math.random() * guaranteedPool.length)];
+        results.push({ ...randomCard });
+        count--;
+      }
     }
-  ];
 
-  // Require login
+    // Fill remaining with weighted random
+    for (let i = 0; i < count; i++) {
+      const rand = Math.random();
+      let rarity: 'common' | 'rare' | 'epic' | 'legendary';
+
+      if (rand < 0.6) rarity = 'common';
+      else if (rand < 0.85) rarity = 'rare';
+      else if (rand < 0.97) rarity = 'epic';
+      else rarity = 'legendary';
+
+      const pool = allCards.filter(c => c.rarity === rarity);
+      if (pool.length > 0) {
+        const randomCard = pool[Math.floor(Math.random() * pool.length)];
+        results.push({ ...randomCard });
+      }
+    }
+
+    return results;
+  };
+
+  const handleOpenPack = (pack: CardPack) => {
+    // Check if player has enough XP
+    if (pack.cost > playerXP) {
+      alert('Không đủ XP để mở gói này!');
+      return;
+    }
+
+    setOpeningPack(true);
+    setShowResults(false);
+
+    // Deduct XP (in real app)
+    // addXP?.(-pack.cost);
+
+    // Generate cards based on pack type
+    let cards: VocabCard[];
+    if (pack.id === '4') {
+      cards = getRandomCards(pack.cardCount, 'legendary');
+    } else if (pack.id === '3') {
+      cards = getRandomCards(pack.cardCount, 'epic');
+    } else if (pack.id === '2') {
+      cards = getRandomCards(pack.cardCount, 'rare');
+    } else {
+      cards = getRandomCards(pack.cardCount);
+    }
+
+    // Simulate pack opening animation
+    setTimeout(() => {
+      setRevealedCards(cards);
+      setOpeningPack(false);
+      setShowResults(true);
+
+      // Add to collection
+      setCollectedCards(prev => {
+        const newCards = [...prev];
+        cards.forEach(card => {
+          if (!newCards.find(c => c.id === card.id)) {
+            newCards.push(card);
+          }
+        });
+        return newCards;
+      });
+
+      // Confetti for epic or legendary
+      if (cards.some(c => c.rarity === 'legendary' || c.rarity === 'epic')) {
+        confetti({
+          particleCount: 150,
+          spread: 100,
+          origin: { y: 0.6 }
+        });
+      }
+    }, 2000);
+  };
+
   if (!session?.user) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <main className="container mx-auto p-4 md:p-8 flex-grow flex items-center justify-center">
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto p-4 md:p-8 flex items-center justify-center">
           <Card className="max-w-md">
             <CardContent className="text-center py-12">
               <Lock className="w-16 h-16 text-gray-300 dark:text-gray-700 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">需要登入</h2>
+              <h2 className="text-2xl font-bold mb-2">Yêu cầu đăng nhập</h2>
               <p className="text-muted-foreground mb-6">
-                請登入以查看你的卡片收藏
+                Vui lòng đăng nhập để xem bộ sưu tập thẻ
               </p>
-              <div className="flex gap-3 justify-center">
-                <Button asChild variant="outline">
-                  <Link to="/cantonese">
-                    <Home className="mr-2 h-4 w-4" /> 主頁
-                  </Link>
-                </Button>
-                <Button asChild>
-                  <Link to="/cantonese/login">立即登入</Link>
-                </Button>
-              </div>
+              <Button asChild>
+                <Link to="/cantonese/login">Đăng nhập ngay</Link>
+              </Button>
             </CardContent>
           </Card>
         </main>
@@ -117,235 +237,239 @@ export default function CantoneseCardCollection() {
     );
   }
 
-  // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <main className="container mx-auto p-4 md:p-8 flex-grow flex items-center justify-center">
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto p-4 md:p-8 flex items-center justify-center">
+          <Loader2 className="w-12 h-12 animate-spin text-primary" />
+        </main>
+      </div>
+    );
+  }
+
+  // Pack Opening Animation
+  if (openingPack) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-purple-950 to-background">
+        <Header />
+        <main className="container mx-auto px-4 py-8 flex items-center justify-center min-h-[80vh]">
           <div className="text-center">
-            <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
-            <p className="text-muted-foreground">載入收藏中...</p>
+            <Package className="w-32 h-32 text-purple-500 mx-auto mb-6 animate-bounce" />
+            <h2 className="text-4xl font-bold text-white mb-4">Đang mở gói...</h2>
+            <Loader2 className="w-12 h-12 animate-spin text-purple-500 mx-auto" />
           </div>
         </main>
       </div>
     );
   }
 
-  const getRarityColor = (rarity: string) => {
-    switch (rarity) {
-      case 'common': return 'border-gray-400 bg-gray-50 dark:bg-gray-900';
-      case 'rare': return 'border-blue-400 bg-blue-50 dark:bg-blue-950';
-      case 'epic': return 'border-purple-400 bg-purple-50 dark:bg-purple-950';
-      case 'legendary': return 'border-yellow-400 bg-yellow-50 dark:bg-yellow-950';
-      default: return 'border-gray-400';
-    }
-  };
+  // Show Revealed Cards
+  if (showResults && revealedCards.length > 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+        <Header />
+        <main className="container mx-auto px-4 py-8 max-w-6xl">
+          <div className="text-center mb-8">
+            <h2 className="text-4xl font-bold mb-2">🎉 Bạn nhận được!</h2>
+            <p className="text-muted-foreground">
+              Tổng cộng {revealedCards.length} thẻ mới
+            </p>
+          </div>
 
-  const getRarityBadgeColor = (rarity: string) => {
-    switch (rarity) {
-      case 'common': return 'bg-gray-500';
-      case 'rare': return 'bg-blue-500';
-      case 'epic': return 'bg-purple-500';
-      case 'legendary': return 'bg-yellow-500';
-      default: return 'bg-gray-500';
-    }
-  };
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+            {revealedCards.map((card, index) => (
+              <Card
+                key={index}
+                className={`relative overflow-hidden hover-scale bg-gradient-to-br ${
+                  card.rarity === 'legendary' ? 'from-yellow-500/20 to-orange-500/20 border-yellow-500' :
+                  card.rarity === 'epic' ? 'from-purple-500/20 to-pink-500/20 border-purple-500' :
+                  card.rarity === 'rare' ? 'from-blue-500/20 to-cyan-500/20 border-blue-500' :
+                  'from-gray-500/20 to-gray-700/20 border-gray-500'
+                }`}
+                style={{ animation: `slideIn 0.5s ease-out ${index * 0.1}s both` }}
+              >
+                <CardHeader className="pb-3">
+                  <div className="flex justify-between items-start">
+                    <Badge className={rarityColors[card.rarity]}>
+                      {rarityEmojis[card.rarity]} {card.rarity.toUpperCase()}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <div className="text-5xl mb-3">{card.hanzi}</div>
+                  <div className="text-sm text-muted-foreground mb-2">{card.pinyin}</div>
+                  <div className="font-semibold">{card.meaning}</div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
 
-  const getRarityText = (rarity: string) => {
-    switch (rarity) {
-      case 'common': return '普通';
-      case 'rare': return '稀有';
-      case 'epic': return '史詩';
-      case 'legendary': return '傳奇';
-      default: return rarity;
-    }
-  };
+          <div className="text-center">
+            <Button onClick={() => {
+              setShowResults(false);
+              setRevealedCards([]);
+            }} size="lg">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Quay lại
+            </Button>
+          </div>
+        </main>
 
-  const collectedCards = mockCards.filter(c => c.isCollected);
-  const totalCards = mockCards.length;
+        <style>{`
+          @keyframes slideIn {
+            from {
+              opacity: 0;
+              transform: translateY(30px) scale(0.9);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0) scale(1);
+            }
+          }
+        `}</style>
+      </div>
+    );
+  }
 
-  const filteredCards = selectedRarity === 'all'
-    ? mockCards
-    : mockCards.filter(c => c.rarity === selectedRarity);
-
+  // Main Collection View
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <main className="container mx-auto p-4 md:p-8 flex-grow">
-        {/* Page Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
+    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+      <Header />
+      <main className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <Button asChild variant="outline" size="icon">
+              <Link to="/cantonese/gamification">
+                <ArrowLeft className="h-4 w-4" />
+              </Link>
+            </Button>
             <div>
               <h1 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
-                <Album className="w-8 h-8 text-pink-500" />
-                卡片收藏
+                <Sparkles className="w-8 h-8 text-purple-500" />
+                Sưu Tập Thẻ
               </h1>
               <p className="text-muted-foreground mt-1">
-                收集詞彙卡片並建立你的粵語知識庫
+                Thu thập và mở khóa các thẻ từ vựng độc đáo
               </p>
             </div>
-
-            <div className="flex gap-2">
-              <Button asChild variant="outline">
-                <Link to="/cantonese/gamification">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  返回
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link to="/cantonese">
-                  <Home className="mr-2 h-4 w-4" />
-                  主頁
-                </Link>
-              </Button>
-            </div>
           </div>
+
+          {userProgress && (
+            <Badge variant="outline" className="text-lg px-4 py-2 hidden md:flex">
+              <Zap className="w-4 h-4 mr-2 text-yellow-500" />
+              {userProgress.total_xp} XP
+            </Badge>
+          )}
         </div>
 
         {/* Collection Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">收集進度</CardTitle>
-              <Album className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {collectedCards.length} / {totalCards}
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {Math.round((collectedCards.length / totalCards) * 100)}% 完成
-              </p>
-            </CardContent>
-          </Card>
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Bộ Sưu Tập Của Bạn</CardTitle>
+            <CardDescription>
+              Đã thu thập {collectedCards.length} / {allCards.length} thẻ
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Progress
+              value={(collectedCards.length / allCards.length) * 100}
+              className="h-3"
+            />
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">稀有卡片</CardTitle>
-              <Star className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {collectedCards.filter(c => c.rarity === 'rare').length}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">史詩卡片</CardTitle>
-              <Trophy className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {collectedCards.filter(c => c.rarity === 'epic').length}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">可用卡包</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">3</div>
-              <Button size="sm" className="w-full mt-2">
-                <Package className="mr-2 h-4 w-4" />
-                開啟卡包
-              </Button>
-            </CardContent>
-          </Card>
+        {/* Card Packs */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <Package className="w-6 h-6" />
+            Mua Gói Thẻ
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {cardPacks.map(pack => (
+              <Card key={pack.id} className={`hover-scale bg-gradient-to-br ${pack.color} text-white border-0`}>
+                <CardHeader>
+                  <div className="text-6xl mb-3 text-center">{pack.icon}</div>
+                  <CardTitle className="text-white text-center">{pack.name}</CardTitle>
+                  <CardDescription className="text-gray-200 text-center">
+                    {pack.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <div className="text-3xl font-bold mb-2">
+                    {pack.cost === 0 ? 'MIỄN PHÍ' : `${pack.cost} XP`}
+                  </div>
+                  <div className="text-sm opacity-90">
+                    {pack.cardCount} thẻ
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button
+                    className="w-full bg-white text-black hover:bg-gray-100"
+                    onClick={() => handleOpenPack(pack)}
+                    disabled={pack.cost > playerXP}
+                  >
+                    {pack.cost > playerXP ? (
+                      <>
+                        <Lock className="mr-2 h-4 w-4" />
+                        Không đủ XP
+                      </>
+                    ) : (
+                      <>
+                        <Gift className="mr-2 h-4 w-4" />
+                        Mở gói
+                      </>
+                    )}
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
         </div>
 
-        {/* Filter Tabs */}
-        <Tabs defaultValue="all" className="space-y-6" onValueChange={setSelectedRarity}>
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="all">全部</TabsTrigger>
-            <TabsTrigger value="common">普通</TabsTrigger>
-            <TabsTrigger value="rare">稀有</TabsTrigger>
-            <TabsTrigger value="epic">史詩</TabsTrigger>
-            <TabsTrigger value="legendary">傳奇</TabsTrigger>
-          </TabsList>
+        {/* Collected Cards Gallery */}
+        <div>
+          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <Trophy className="w-6 h-6" />
+            Thẻ Đã Thu Thập ({collectedCards.length})
+          </h2>
 
-          <TabsContent value={selectedRarity} className="space-y-4">
-            {/* Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredCards.map((card) => (
+          {collectedCards.length === 0 ? (
+            <Card>
+              <CardContent className="text-center py-16">
+                <Sparkles className="w-16 h-16 text-gray-300 dark:text-gray-700 mx-auto mb-4 animate-pulse" />
+                <p className="text-muted-foreground text-lg">
+                  Bạn chưa có thẻ nào. Hãy mở gói để bắt đầu thu thập!
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              {collectedCards.map(card => (
                 <Card
                   key={card.id}
-                  className={`relative overflow-hidden border-2 ${getRarityColor(card.rarity)} ${!card.isCollected ? 'opacity-40' : 'hover:shadow-lg transition-shadow'}`}
+                  className={`hover-scale bg-gradient-to-br ${
+                    card.rarity === 'legendary' ? 'from-yellow-500/20 to-orange-500/20 border-yellow-500' :
+                    card.rarity === 'epic' ? 'from-purple-500/20 to-pink-500/20 border-purple-500' :
+                    card.rarity === 'rare' ? 'from-blue-500/20 to-cyan-500/20 border-blue-500' :
+                    'from-gray-500/20 to-gray-700/20 border-gray-500'
+                  }`}
                 >
-                  {!card.isCollected && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
-                      <Lock className="w-12 h-12 text-white" />
-                    </div>
-                  )}
-
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <CardTitle className="text-2xl">{card.traditional}</CardTitle>
-                      <Badge className={getRarityBadgeColor(card.rarity)}>
-                        {getRarityText(card.rarity)}
-                      </Badge>
-                    </div>
+                  <CardHeader className="pb-2">
+                    <Badge className={`${rarityColors[card.rarity]} text-xs`}>
+                      {rarityEmojis[card.rarity]}
+                    </Badge>
                   </CardHeader>
-
-                  <CardContent className="space-y-2">
-                    <div>
-                      <p className="text-sm text-muted-foreground">簡體</p>
-                      <p className="text-lg font-medium">{card.simplified}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">粵拼</p>
-                      <p className="font-mono text-sm">{card.jyutping}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">意思</p>
-                      <p>{card.meaning}</p>
-                    </div>
+                  <CardContent className="text-center">
+                    <div className="text-4xl mb-2">{card.hanzi}</div>
+                    <div className="text-xs text-muted-foreground mb-1">{card.pinyin}</div>
+                    <div className="text-sm font-semibold">{card.meaning}</div>
                   </CardContent>
-
-                  {card.isCollected && (
-                    <CardFooter>
-                      <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
-                        <Sparkles className="w-4 h-4" />
-                        <span>已收集</span>
-                      </div>
-                    </CardFooter>
-                  )}
                 </Card>
               ))}
             </div>
-
-            {filteredCards.length === 0 && (
-              <div className="text-center py-12">
-                <Album className="w-16 h-16 text-gray-300 dark:text-gray-700 mx-auto mb-3" />
-                <p className="text-muted-foreground">此類別中沒有卡片</p>
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
-
-        {/* Info Card */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>如何獲得卡片？</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-sm text-muted-foreground">
-              • 完成課程和測驗以獲得卡包
-            </p>
-            <p className="text-sm text-muted-foreground">
-              • 擊敗Boss以獲得稀有卡片
-            </p>
-            <p className="text-sm text-muted-foreground">
-              • 完成每日任務以獲得獎勵卡包
-            </p>
-            <p className="text-sm text-muted-foreground">
-              • 收集所有卡片以解鎖特殊徽章
-            </p>
-          </CardContent>
-        </Card>
+          )}
+        </div>
       </main>
     </div>
   );

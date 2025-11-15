@@ -36,6 +36,7 @@ interface Boss {
   questions: Question[];
   isUnlocked: boolean;
   isDefeated: boolean;
+  avatar: string; // Boss emoji avatar
 }
 
 interface Question {
@@ -55,54 +56,126 @@ const difficultyColors = {
   legendary: 'bg-purple-500',
 };
 
-// Mock questions for boss battles
-const generateQuestions = (): Question[] => [
+// Question pool for boss battles
+const questionPool = [
   {
-    id: '1',
     hanzi: '你好',
     pinyin: 'nǐ hǎo',
     meaning: '?',
     options: ['Hello', 'Goodbye', 'Thank you', 'Sorry'],
     correctAnswer: 'Hello',
-    damage: 20,
   },
   {
-    id: '2',
     hanzi: '谢谢',
     pinyin: 'xiè xiè',
     meaning: '?',
     options: ['Please', 'Sorry', 'Thank you', 'Excuse me'],
     correctAnswer: 'Thank you',
-    damage: 20,
   },
   {
-    id: '3',
     hanzi: '再见',
     pinyin: 'zài jiàn',
     meaning: '?',
     options: ['Hello', 'Goodbye', 'See you', 'Good night'],
     correctAnswer: 'Goodbye',
-    damage: 20,
   },
   {
-    id: '4',
     hanzi: '对不起',
     pinyin: 'duì bu qǐ',
     meaning: '?',
     options: ['Thank you', 'Sorry', 'Excuse me', 'Please'],
     correctAnswer: 'Sorry',
-    damage: 20,
   },
   {
-    id: '5',
     hanzi: '学习',
     pinyin: 'xué xí',
     meaning: '?',
     options: ['To study', 'To play', 'To work', 'To sleep'],
     correctAnswer: 'To study',
-    damage: 20,
+  },
+  {
+    hanzi: '吃饭',
+    pinyin: 'chī fàn',
+    meaning: '?',
+    options: ['To eat', 'To drink', 'To sleep', 'To study'],
+    correctAnswer: 'To eat',
+  },
+  {
+    hanzi: '喝水',
+    pinyin: 'hē shuǐ',
+    meaning: '?',
+    options: ['To eat', 'To drink water', 'To cook', 'To wash'],
+    correctAnswer: 'To drink water',
+  },
+  {
+    hanzi: '睡觉',
+    pinyin: 'shuì jiào',
+    meaning: '?',
+    options: ['To sleep', 'To wake up', 'To dream', 'To rest'],
+    correctAnswer: 'To sleep',
+  },
+  {
+    hanzi: '朋友',
+    pinyin: 'péng yǒu',
+    meaning: '?',
+    options: ['Friend', 'Family', 'Teacher', 'Student'],
+    correctAnswer: 'Friend',
+  },
+  {
+    hanzi: '老师',
+    pinyin: 'lǎo shī',
+    meaning: '?',
+    options: ['Student', 'Teacher', 'Friend', 'Parent'],
+    correctAnswer: 'Teacher',
+  },
+  {
+    hanzi: '学生',
+    pinyin: 'xué shēng',
+    meaning: '?',
+    options: ['Teacher', 'Student', 'Worker', 'Doctor'],
+    correctAnswer: 'Student',
+  },
+  {
+    hanzi: '家',
+    pinyin: 'jiā',
+    meaning: '?',
+    options: ['House', 'School', 'Office', 'Park'],
+    correctAnswer: 'House',
+  },
+  {
+    hanzi: '学校',
+    pinyin: 'xué xiào',
+    meaning: '?',
+    options: ['Home', 'School', 'Hospital', 'Restaurant'],
+    correctAnswer: 'School',
+  },
+  {
+    hanzi: '医院',
+    pinyin: 'yī yuàn',
+    meaning: '?',
+    options: ['School', 'Hospital', 'Hotel', 'Museum'],
+    correctAnswer: 'Hospital',
+  },
+  {
+    hanzi: '书',
+    pinyin: 'shū',
+    meaning: '?',
+    options: ['Book', 'Pen', 'Paper', 'Desk'],
+    correctAnswer: 'Book',
   },
 ];
+
+// Generate random questions from pool
+const generateQuestions = (count: number = 5, damage: number = 20): Question[] => {
+  const shuffled = [...questionPool].sort(() => Math.random() - 0.5);
+  const selected = shuffled.slice(0, count);
+
+  return selected.map((q, index) => ({
+    id: String(index + 1),
+    ...q,
+    damage,
+  }));
+};
 
 export default function MandarinBossBattles() {
   const { session } = useSession();
@@ -124,9 +197,10 @@ export default function MandarinBossBattles() {
       maxHealth: 100,
       currentHealth: 100,
       xpReward: 50,
-      questions: generateQuestions(),
+      questions: generateQuestions(5, 20),
       isUnlocked: true,
       isDefeated: false,
+      avatar: '🐸', // Green frog for beginner
     },
     {
       id: '2',
@@ -136,9 +210,10 @@ export default function MandarinBossBattles() {
       maxHealth: 150,
       currentHealth: 150,
       xpReward: 100,
-      questions: generateQuestions(),
+      questions: generateQuestions(7, 20),
       isUnlocked: true,
       isDefeated: false,
+      avatar: '🐺', // Wolf for medium
     },
     {
       id: '3',
@@ -148,9 +223,10 @@ export default function MandarinBossBattles() {
       maxHealth: 200,
       currentHealth: 200,
       xpReward: 200,
-      questions: generateQuestions(),
-      isUnlocked: false,
+      questions: generateQuestions(10, 20),
+      isUnlocked: true, // Unlock all levels
       isDefeated: false,
+      avatar: '🐉', // Dragon for hard
     },
     {
       id: '4',
@@ -160,9 +236,10 @@ export default function MandarinBossBattles() {
       maxHealth: 300,
       currentHealth: 300,
       xpReward: 500,
-      questions: generateQuestions(),
-      isUnlocked: false,
+      questions: generateQuestions(15, 20),
+      isUnlocked: true, // Unlock all levels
       isDefeated: false,
+      avatar: '👹', // Demon/Oni for legendary
     },
   ]);
 
@@ -300,7 +377,7 @@ export default function MandarinBossBattles() {
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Sword className="w-5 h-5 text-red-400" />
+                    <span className="text-3xl">{selectedBoss.avatar}</span>
                     <span className="font-bold text-white">{selectedBoss.name}</span>
                   </div>
                   <span className="text-sm text-red-300">{selectedBoss.currentHealth}/{selectedBoss.maxHealth}</span>
@@ -316,7 +393,7 @@ export default function MandarinBossBattles() {
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-blue-400" />
+                    <span className="text-3xl">🧑</span>
                     <span className="font-bold text-white">Bạn</span>
                   </div>
                   <span className="text-sm text-blue-300">{playerHealth}/100</span>
@@ -503,8 +580,8 @@ export default function MandarinBossBattles() {
 
               <CardHeader>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-gradient-to-br from-red-500 to-orange-500 p-4 rounded-2xl">
-                    <Sword className="w-8 h-8 text-white" />
+                  <div className="bg-gradient-to-br from-red-500 to-orange-500 p-4 rounded-2xl text-5xl">
+                    {boss.avatar}
                   </div>
                 </div>
                 <CardTitle className="text-2xl">{boss.name}</CardTitle>
