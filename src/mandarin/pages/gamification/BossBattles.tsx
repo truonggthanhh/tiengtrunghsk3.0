@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -16,19 +16,36 @@ import {
   Zap,
   ArrowLeft,
   Crown,
-  Sparkles
+  Sparkles,
+  Shield,
+  Target,
+  X,
+  Check
 } from 'lucide-react';
 import { useSession } from '@/components/SessionContextProvider';
+import confetti from 'canvas-confetti';
 
 interface Boss {
   id: string;
   name: string;
   description: string;
   difficulty: 'easy' | 'medium' | 'hard' | 'legendary';
-  health: number;
+  maxHealth: number;
+  currentHealth: number;
   xpReward: number;
+  questions: Question[];
   isUnlocked: boolean;
   isDefeated: boolean;
+}
+
+interface Question {
+  id: string;
+  hanzi: string;
+  pinyin: string;
+  meaning: string;
+  options: string[];
+  correctAnswer: string;
+  damage: number;
 }
 
 const difficultyColors = {
@@ -38,20 +55,76 @@ const difficultyColors = {
   legendary: 'bg-purple-500',
 };
 
+// Mock questions for boss battles
+const generateQuestions = (): Question[] => [
+  {
+    id: '1',
+    hanzi: '你好',
+    pinyin: 'nǐ hǎo',
+    meaning: '?',
+    options: ['Hello', 'Goodbye', 'Thank you', 'Sorry'],
+    correctAnswer: 'Hello',
+    damage: 20,
+  },
+  {
+    id: '2',
+    hanzi: '谢谢',
+    pinyin: 'xiè xiè',
+    meaning: '?',
+    options: ['Please', 'Sorry', 'Thank you', 'Excuse me'],
+    correctAnswer: 'Thank you',
+    damage: 20,
+  },
+  {
+    id: '3',
+    hanzi: '再见',
+    pinyin: 'zài jiàn',
+    meaning: '?',
+    options: ['Hello', 'Goodbye', 'See you', 'Good night'],
+    correctAnswer: 'Goodbye',
+    damage: 20,
+  },
+  {
+    id: '4',
+    hanzi: '对不起',
+    pinyin: 'duì bu qǐ',
+    meaning: '?',
+    options: ['Thank you', 'Sorry', 'Excuse me', 'Please'],
+    correctAnswer: 'Sorry',
+    damage: 20,
+  },
+  {
+    id: '5',
+    hanzi: '学习',
+    pinyin: 'xué xí',
+    meaning: '?',
+    options: ['To study', 'To play', 'To work', 'To sleep'],
+    correctAnswer: 'To study',
+    damage: 20,
+  },
+];
+
 export default function MandarinBossBattles() {
   const { session } = useSession();
-  const { userProgress, isLoading } = useGamification();
+  const { userProgress, isLoading, addXP } = useGamification();
+  const navigate = useNavigate();
   const [selectedBoss, setSelectedBoss] = useState<Boss | null>(null);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [playerHealth, setPlayerHealth] = useState(100);
+  const [showResult, setShowResult] = useState<'correct' | 'wrong' | null>(null);
+  const [battleComplete, setBattleComplete] = useState(false);
+  const [victory, setVictory] = useState(false);
 
-  // Mock boss data
-  const mockBosses: Boss[] = [
+  const [bosses, setBosses] = useState<Boss[]>([
     {
       id: '1',
       name: '词汇守护者',
       description: '掌握基础汉语词汇的守护神',
       difficulty: 'easy',
-      health: 100,
+      maxHealth: 100,
+      currentHealth: 100,
       xpReward: 50,
+      questions: generateQuestions(),
       isUnlocked: true,
       isDefeated: false,
     },
@@ -60,8 +133,10 @@ export default function MandarinBossBattles() {
       name: '语法大师',
       description: '精通汉语语法的强大对手',
       difficulty: 'medium',
-      health: 200,
+      maxHealth: 150,
+      currentHealth: 150,
       xpReward: 100,
+      questions: generateQuestions(),
       isUnlocked: true,
       isDefeated: false,
     },
@@ -70,8 +145,10 @@ export default function MandarinBossBattles() {
       name: '成语霸主',
       description: '挑战你对成语的理解',
       difficulty: 'hard',
-      health: 300,
+      maxHealth: 200,
+      currentHealth: 200,
       xpReward: 200,
+      questions: generateQuestions(),
       isUnlocked: false,
       isDefeated: false,
     },
@@ -80,12 +157,86 @@ export default function MandarinBossBattles() {
       name: '诗词仙人',
       description: '传说中的古诗词大师',
       difficulty: 'legendary',
-      health: 500,
+      maxHealth: 300,
+      currentHealth: 300,
       xpReward: 500,
+      questions: generateQuestions(),
       isUnlocked: false,
       isDefeated: false,
     },
-  ];
+  ]);
+
+  const handleStartBattle = (boss: Boss) => {
+    setSelectedBoss(boss);
+    setCurrentQuestion(0);
+    setPlayerHealth(100);
+    setBattleComplete(false);
+    setVictory(false);
+    setShowResult(null);
+  };
+
+  const handleAnswer = (answer: string) => {
+    if (!selectedBoss || showResult) return;
+
+    const question = selectedBoss.questions[currentQuestion];
+    const isCorrect = answer === question.correctAnswer;
+
+    setShowResult(isCorrect ? 'correct' : 'wrong');
+
+    setTimeout(() => {
+      if (isCorrect) {
+        // Player attacks boss
+        const newHealth = selectedBoss.currentHealth - question.damage;
+        setSelectedBoss({
+          ...selectedBoss,
+          currentHealth: Math.max(0, newHealth),
+        });
+
+        if (newHealth <= 0) {
+          // Victory!
+          setVictory(true);
+          setBattleComplete(true);
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
+
+          // Update boss as defeated
+          setBosses(prev => prev.map(b =>
+            b.id === selectedBoss.id ? { ...b, isDefeated: true } : b
+          ));
+
+          // Add XP
+          if (addXP) {
+            addXP(selectedBoss.xpReward);
+          }
+        } else if (currentQuestion < selectedBoss.questions.length - 1) {
+          setCurrentQuestion(prev => prev + 1);
+        } else {
+          // No more questions but boss still alive
+          setCurrentQuestion(0);
+        }
+      } else {
+        // Boss attacks player
+        const newPlayerHealth = playerHealth - 25;
+        setPlayerHealth(Math.max(0, newPlayerHealth));
+
+        if (newPlayerHealth <= 0) {
+          // Defeat
+          setVictory(false);
+          setBattleComplete(true);
+        }
+      }
+
+      setShowResult(null);
+    }, 1000);
+  };
+
+  const handleBackToSelection = () => {
+    setSelectedBoss(null);
+    setBattleComplete(false);
+  };
 
   if (!session?.user) {
     return (
@@ -99,16 +250,9 @@ export default function MandarinBossBattles() {
               <p className="text-muted-foreground mb-6">
                 Vui lòng đăng nhập để chiến đấu với Boss
               </p>
-              <div className="flex gap-3 justify-center">
-                <Button asChild variant="outline">
-                  <Link to="/mandarin">
-                    <Home className="mr-2 h-4 w-4" /> Trang chủ
-                  </Link>
-                </Button>
-                <Button asChild>
-                  <Link to="/mandarin/login">Đăng nhập ngay</Link>
-                </Button>
-              </div>
+              <Button asChild>
+                <Link to="/mandarin/login">Đăng nhập ngay</Link>
+              </Button>
             </CardContent>
           </Card>
         </main>
@@ -121,21 +265,185 @@ export default function MandarinBossBattles() {
       <div className="min-h-screen bg-background">
         <Header />
         <main className="container mx-auto p-4 md:p-8 flex items-center justify-center">
-          <div className="text-center">
-            <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
-            <p className="text-muted-foreground">Đang tải...</p>
-          </div>
+          <Loader2 className="w-12 h-12 animate-spin text-primary" />
         </main>
       </div>
     );
   }
 
+  // Battle Screen
+  if (selectedBoss && !battleComplete) {
+    const question = selectedBoss.questions[currentQuestion];
+    const bossHealthPercent = (selectedBoss.currentHealth / selectedBoss.maxHealth) * 100;
+    const playerHealthPercent = playerHealth;
+
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-red-950 to-background">
+        <Header />
+        <main className="container mx-auto px-4 py-8 max-w-4xl">
+          {/* Battle Header */}
+          <div className="flex justify-between items-center mb-8">
+            <Button variant="outline" onClick={handleBackToSelection}>
+              <ArrowLeft className="mr-2 h-4 w-4" /> Rút lui
+            </Button>
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-white">vs {selectedBoss.name}</h2>
+              <p className="text-sm text-gray-300">Câu {currentQuestion + 1}/{selectedBoss.questions.length}</p>
+            </div>
+            <div className="w-24" />
+          </div>
+
+          {/* Health Bars */}
+          <div className="grid grid-cols-2 gap-8 mb-12">
+            {/* Boss Health */}
+            <Card className="bg-red-900/50 border-red-700">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Sword className="w-5 h-5 text-red-400" />
+                    <span className="font-bold text-white">{selectedBoss.name}</span>
+                  </div>
+                  <span className="text-sm text-red-300">{selectedBoss.currentHealth}/{selectedBoss.maxHealth}</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <Progress value={bossHealthPercent} className="h-4 bg-red-950" />
+              </CardContent>
+            </Card>
+
+            {/* Player Health */}
+            <Card className="bg-blue-900/50 border-blue-700">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Shield className="w-5 h-5 text-blue-400" />
+                    <span className="font-bold text-white">Bạn</span>
+                  </div>
+                  <span className="text-sm text-blue-300">{playerHealth}/100</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <Progress value={playerHealthPercent} className="h-4 bg-blue-950" />
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Question Card */}
+          <Card className="bg-gradient-to-br from-purple-900/50 to-pink-900/50 border-purple-700">
+            <CardHeader>
+              <CardTitle className="text-center text-white">
+                <div className="text-5xl mb-4 font-bold">{question.hanzi}</div>
+                <div className="text-2xl text-purple-300 mb-2">{question.pinyin}</div>
+                <div className="text-xl text-gray-300">Nghĩa là gì?</div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                {question.options.map((option, index) => (
+                  <Button
+                    key={index}
+                    onClick={() => handleAnswer(option)}
+                    disabled={showResult !== null}
+                    className={`h-20 text-lg font-semibold ${
+                      showResult === 'correct' && option === question.correctAnswer
+                        ? 'bg-green-600 hover:bg-green-700'
+                        : showResult === 'wrong' && option !== question.correctAnswer
+                        ? 'bg-red-600 hover:bg-red-700'
+                        : 'bg-purple-600 hover:bg-purple-700'
+                    }`}
+                  >
+                    {showResult && option === question.correctAnswer && (
+                      <Check className="mr-2 h-5 w-5" />
+                    )}
+                    {showResult === 'wrong' && option !== question.correctAnswer && (
+                      <X className="mr-2 h-5 w-5" />
+                    )}
+                    {option}
+                  </Button>
+                ))}
+              </div>
+
+              {showResult && (
+                <div className={`mt-4 p-4 rounded-lg text-center font-bold ${
+                  showResult === 'correct' ? 'bg-green-600' : 'bg-red-600'
+                } text-white animate-pulse`}>
+                  {showResult === 'correct' ? '✓ Chính xác! Tấn công -' + question.damage + ' HP!' : '✗ Sai rồi! Bị tấn công -25 HP!'}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </main>
+      </div>
+    );
+  }
+
+  // Battle Complete Screen
+  if (battleComplete && selectedBoss) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+        <Header />
+        <main className="container mx-auto px-4 py-8 max-w-2xl flex items-center justify-center">
+          <Card className={`w-full ${victory ? 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border-yellow-500' : 'bg-gradient-to-br from-gray-500/20 to-gray-700/20 border-gray-500'}`}>
+            <CardHeader className="text-center">
+              <div className="flex justify-center mb-4">
+                {victory ? (
+                  <Trophy className="w-24 h-24 text-yellow-500 animate-bounce" />
+                ) : (
+                  <X className="w-24 h-24 text-red-500" />
+                )}
+              </div>
+              <CardTitle className="text-4xl mb-2">
+                {victory ? '🎉 Chiến Thắng!' : '💀 Thất Bại!'}
+              </CardTitle>
+              <CardDescription className="text-xl">
+                {victory
+                  ? `Bạn đã đánh bại ${selectedBoss.name}!`
+                  : `Bạn đã bị ${selectedBoss.name} đánh bại!`
+                }
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center space-y-4">
+              {victory && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-center gap-2 text-2xl font-bold text-yellow-600">
+                    <Zap className="w-6 h-6" />
+                    +{selectedBoss.xpReward} XP
+                  </div>
+                  <div className="flex items-center justify-center gap-2 text-lg">
+                    <Crown className="w-5 h-5 text-yellow-500" />
+                    <span>Boss đã được đánh dấu là đã hoàn thành!</span>
+                  </div>
+                </div>
+              )}
+              {!victory && (
+                <p className="text-muted-foreground">
+                  Đừng bỏ cuộc! Hãy học thêm từ vựng và thử lại!
+                </p>
+              )}
+            </CardContent>
+            <CardFooter className="flex gap-3">
+              <Button variant="outline" onClick={handleBackToSelection} className="flex-1">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Quay lại
+              </Button>
+              {!victory && (
+                <Button onClick={() => handleStartBattle(selectedBoss)} className="flex-1">
+                  <Target className="mr-2 h-4 w-4" />
+                  Thử lại
+                </Button>
+              )}
+            </CardFooter>
+          </Card>
+        </main>
+      </div>
+    );
+  }
+
+  // Boss Selection Screen
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
       <Header />
-
       <main className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <Button asChild variant="outline" size="icon">
@@ -155,18 +463,15 @@ export default function MandarinBossBattles() {
           </div>
 
           {userProgress && (
-            <div className="hidden md:flex items-center gap-4">
-              <Badge variant="outline" className="text-lg px-4 py-2">
-                <Trophy className="w-4 h-4 mr-2" />
-                Level {userProgress.current_level}
-              </Badge>
-            </div>
+            <Badge variant="outline" className="text-lg px-4 py-2 hidden md:flex">
+              <Trophy className="w-4 h-4 mr-2" />
+              Level {userProgress.current_level}
+            </Badge>
           )}
         </div>
 
-        {/* Boss Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockBosses.map((boss) => (
+          {bosses.map((boss) => (
             <Card
               key={boss.id}
               className={`relative overflow-hidden ${
@@ -174,23 +479,19 @@ export default function MandarinBossBattles() {
                   ? 'cursor-pointer hover-scale border-2'
                   : 'opacity-60'
               }`}
-              onClick={() => boss.isUnlocked && setSelectedBoss(boss)}
             >
-              {/* Difficulty Badge */}
               <div className="absolute top-4 right-4 z-10">
                 <Badge className={difficultyColors[boss.difficulty]}>
                   {boss.difficulty.toUpperCase()}
                 </Badge>
               </div>
 
-              {/* Lock Icon for locked bosses */}
               {!boss.isUnlocked && (
                 <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
                   <Lock className="w-16 h-16 text-muted-foreground" />
                 </div>
               )}
 
-              {/* Defeated Badge */}
               {boss.isDefeated && (
                 <div className="absolute top-4 left-4 z-10">
                   <Badge variant="secondary" className="bg-green-500">
@@ -219,7 +520,7 @@ export default function MandarinBossBattles() {
                       <Heart className="w-4 h-4 text-red-500" />
                       HP
                     </span>
-                    <span className="font-bold">{boss.health}</span>
+                    <span className="font-bold">{boss.maxHealth}</span>
                   </div>
                   <Progress value={100} className="h-2" />
                 </div>
@@ -239,6 +540,7 @@ export default function MandarinBossBattles() {
                 <Button
                   className="w-full"
                   disabled={!boss.isUnlocked}
+                  onClick={() => handleStartBattle(boss)}
                   variant={boss.isDefeated ? 'outline' : 'default'}
                 >
                   {boss.isDefeated ? 'Chiến đấu lại' : 'Bắt đầu chiến đấu'}
@@ -247,17 +549,6 @@ export default function MandarinBossBattles() {
             </Card>
           ))}
         </div>
-
-        {/* Coming Soon Notice */}
-        <Card className="mt-8 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-300">
-          <CardContent className="text-center py-12">
-            <Sparkles className="w-16 h-16 text-purple-500 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold mb-2">Tính năng đang phát triển</h3>
-            <p className="text-muted-foreground">
-              Chế độ đấu Boss sẽ sớm ra mắt với nhiều thử thách thú vị!
-            </p>
-          </CardContent>
-        </Card>
       </main>
     </div>
   );
