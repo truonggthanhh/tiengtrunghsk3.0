@@ -1,3 +1,4 @@
+import React, { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,7 +8,6 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import { SessionContextProvider } from "./components/SessionContextProvider";
 import { PinyinProvider } from "./contexts/PinyinContext";
 import { GamificationProvider } from "./components/gamification/GamificationProvider";
-import { lazy, Suspense } from "react";
 
 // Cantonese Components (keep providers non-lazy)
 import CantonesePageWrapper from "./cantonese/components/layouts/PageWrapper";
