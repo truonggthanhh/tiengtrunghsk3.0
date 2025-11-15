@@ -1,4 +1,6 @@
 "use client"
+import React from "react";
+
 export default function HotkeyHelp(){
   return (
     <div className="text-xs text-ink/70 dark:text-ink/80">
