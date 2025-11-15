@@ -57,26 +57,26 @@ const rarityEmojis = {
 // Mock card database
 const allCards: VocabCard[] = [
   // Common cards
-  { id: '1', hanzi: '你好', pinyin: 'nǐ hǎo', meaning: 'Hello', rarity: 'common', collected: false },
-  { id: '2', hanzi: '谢谢', pinyin: 'xiè xiè', meaning: 'Thank you', rarity: 'common', collected: false },
-  { id: '3', hanzi: '再见', pinyin: 'zài jiàn', meaning: 'Goodbye', rarity: 'common', collected: false },
-  { id: '4', hanzi: '吃饭', pinyin: 'chī fàn', meaning: 'To eat', rarity: 'common', collected: false },
-  { id: '5', hanzi: '喝水', pinyin: 'hē shuǐ', meaning: 'To drink', rarity: 'common', collected: false },
+  { id: '1', hanzi: '你好', pinyin: 'nǐ hǎo', meaning: 'Xin chào', rarity: 'common', collected: false },
+  { id: '2', hanzi: '谢谢', pinyin: 'xiè xiè', meaning: 'Cảm ơn', rarity: 'common', collected: false },
+  { id: '3', hanzi: '再见', pinyin: 'zài jiàn', meaning: 'Tạm biệt', rarity: 'common', collected: false },
+  { id: '4', hanzi: '吃饭', pinyin: 'chī fàn', meaning: 'Ăn cơm', rarity: 'common', collected: false },
+  { id: '5', hanzi: '喝水', pinyin: 'hē shuǐ', meaning: 'Uống nước', rarity: 'common', collected: false },
 
   // Rare cards
-  { id: '6', hanzi: '学习', pinyin: 'xué xí', meaning: 'To study', rarity: 'rare', collected: false },
-  { id: '7', hanzi: '朋友', pinyin: 'péng yǒu', meaning: 'Friend', rarity: 'rare', collected: false },
-  { id: '8', hanzi: '学校', pinyin: 'xué xiào', meaning: 'School', rarity: 'rare', collected: false },
-  { id: '9', hanzi: '老师', pinyin: 'lǎo shī', meaning: 'Teacher', rarity: 'rare', collected: false },
+  { id: '6', hanzi: '学习', pinyin: 'xué xí', meaning: 'Học tập', rarity: 'rare', collected: false },
+  { id: '7', hanzi: '朋友', pinyin: 'péng yǒu', meaning: 'Bạn bè', rarity: 'rare', collected: false },
+  { id: '8', hanzi: '学校', pinyin: 'xué xiào', meaning: 'Trường học', rarity: 'rare', collected: false },
+  { id: '9', hanzi: '老师', pinyin: 'lǎo shī', meaning: 'Giáo viên', rarity: 'rare', collected: false },
 
   // Epic cards
-  { id: '10', hanzi: '聪明', pinyin: 'cōng míng', meaning: 'Smart', rarity: 'epic', collected: false },
-  { id: '11', hanzi: '勇敢', pinyin: 'yǒng gǎn', meaning: 'Brave', rarity: 'epic', collected: false },
-  { id: '12', hanzi: '美丽', pinyin: 'měi lì', meaning: 'Beautiful', rarity: 'epic', collected: false },
+  { id: '10', hanzi: '聪明', pinyin: 'cōng míng', meaning: 'Thông minh', rarity: 'epic', collected: false },
+  { id: '11', hanzi: '勇敢', pinyin: 'yǒng gǎn', meaning: 'Dũng cảm', rarity: 'epic', collected: false },
+  { id: '12', hanzi: '美丽', pinyin: 'měi lì', meaning: 'Đẹp', rarity: 'epic', collected: false },
 
   // Legendary cards
-  { id: '13', hanzi: '一帆风顺', pinyin: 'yī fān fēng shùn', meaning: 'Smooth sailing', rarity: 'legendary', collected: false },
-  { id: '14', hanzi: '龙马精神', pinyin: 'lóng mǎ jīng shén', meaning: 'Spirit of dragon and horse', rarity: 'legendary', collected: false },
+  { id: '13', hanzi: '一帆风顺', pinyin: 'yī fān fēng shùn', meaning: 'Thuận buồm xuôi gió', rarity: 'legendary', collected: false },
+  { id: '14', hanzi: '龙马精神', pinyin: 'lóng mǎ jīng shén', meaning: 'Tinh thần rồng ngựa', rarity: 'legendary', collected: false },
 ];
 
 const cardPacks: CardPack[] = [
