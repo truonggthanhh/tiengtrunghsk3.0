@@ -60,6 +60,8 @@ import CantoneseBlog from "./cantonese/pages/BlogPage";
 import CantoneseBlogDetail from "./cantonese/pages/BlogDetailPage";
 import MandarinBlog from "./mandarin/pages/BlogPage";
 import MandarinBlogDetail from "./mandarin/pages/BlogDetailPage";
+import MandarinGamificationIndex from "./mandarin/pages/GamificationIndex";
+import CantoneseGamificationIndex from "./cantonese/pages/GamificationIndex";
 
 // Cantonese Components
 import CantonesePageWrapper from "./cantonese/components/layouts/PageWrapper";
@@ -404,6 +406,18 @@ const App = () => (
                   </SessionContextProvider>
                 }
               />
+
+              {/* Gamification Route */}
+              <Route
+                path="gamification"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <MandarinGamificationIndex />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
             </Route>
 
             {/* Cantonese App Routes */}
@@ -650,6 +664,26 @@ const App = () => (
                           <CantoneseProtectedRoute>
                             <CantonesePageWrapper>
                               <CantoneseLearningProgress />
+                            </CantonesePageWrapper>
+                          </CantoneseProtectedRoute>
+                        </CantoneseProfileProvider>
+                      </CantoneseSessionContextProvider>
+                    </CantoneseSettingsProvider>
+                  </CantoneseThemeProvider>
+                }
+              />
+
+              {/* Gamification Route */}
+              <Route
+                path="gamification"
+                element={
+                  <CantoneseThemeProvider>
+                    <CantoneseSettingsProvider>
+                      <CantoneseSessionContextProvider>
+                        <CantoneseProfileProvider>
+                          <CantoneseProtectedRoute>
+                            <CantonesePageWrapper>
+                              <CantoneseGamificationIndex />
                             </CantonesePageWrapper>
                           </CantoneseProtectedRoute>
                         </CantoneseProfileProvider>

@@ -187,12 +187,46 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Gamification Dashboard - Only for logged in users */}
-        {session?.user?.id && (
-          <section className="mb-20">
-            <GamificationDashboard />
-          </section>
-        )}
+        {/* Gamification Call-to-Action - Prominent Section */}
+        <section className="mb-20">
+          <div className="max-w-5xl mx-auto">
+            <Link to="/mandarin/gamification">
+              <Card className="flex flex-col text-center cursor-pointer border-0 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 text-white p-10 md:p-14 hover-scale shadow-2xl overflow-hidden relative group">
+                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                <div className="absolute top-0 right-0 bg-yellow-400 text-purple-900 px-4 py-2 rounded-bl-3xl text-sm font-bold shadow-lg z-10 animate-bounce">
+                  MỚI! 🎮
+                </div>
+                <CardHeader className="items-center space-y-6 relative z-10">
+                  <div className="flex gap-4 items-center justify-center">
+                    <GamepadIcon className="w-20 h-20 text-white animate-bounce" />
+                    <Zap className="w-16 h-16 text-yellow-300 animate-pulse" />
+                    <Trophy className="w-20 h-20 text-white animate-bounce" style={{animationDelay: '0.2s'}} />
+                  </div>
+                  <CardTitle className="text-4xl md:text-5xl font-bold text-white">
+                    🎮 Học Tiếng Trung Qua Game! 🏆
+                  </CardTitle>
+                  <CardDescription className="text-xl md:text-2xl leading-relaxed text-white/95 max-w-3xl">
+                    Đấu boss, sưu tập thẻ, quay vòng may mắn, hoàn thành nhiệm vụ và còn nhiều hơn nữa!
+                    Thu thập XP, lên level và mở khóa huy hiệu đặc biệt.
+                  </CardDescription>
+                </CardHeader>
+                <CardFooter className="pt-6 relative z-10 flex flex-col gap-4">
+                  <Button className="bg-white text-purple-600 hover:bg-gray-50 font-bold rounded-2xl h-14 px-12 shadow-xl text-xl">
+                    Khám phá ngay <ChevronRight className="ml-2 h-6 w-6" />
+                  </Button>
+                  <div className="flex gap-4 flex-wrap justify-center text-sm">
+                    <span className="bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">⚔️ Đấu Boss</span>
+                    <span className="bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">✨ Sưu Tập Thẻ</span>
+                    <span className="bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">🎁 Vòng May Mắn</span>
+                    <span className="bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">🎯 Nhiệm Vụ</span>
+                    <span className="bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">📚 Câu Chuyện</span>
+                    <span className="bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">🏅 Huy Hiệu</span>
+                  </div>
+                </CardFooter>
+              </Card>
+            </Link>
+          </div>
+        </section>
 
         {/* Songs Section */}
         <section className="py-16 md:py-20 mb-16">
