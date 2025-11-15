@@ -15,10 +15,12 @@ export default defineConfig(() => ({
     },
   },
   build: {
-    // Increase chunk size warning limit (vendor-react is unavoidably large)
-    chunkSizeWarningLimit: 1500,
     rollupOptions: {
       output: {
+        // Add entryFileNames to force new hashes
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
         // Manual chunks for better code splitting
         manualChunks: (id) => {
           // Vendor chunks for large libraries
