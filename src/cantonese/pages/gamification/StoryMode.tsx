@@ -1,188 +1,175 @@
-/**
- * Cantonese Story Mode Page
- * Journey through landmarks learning Cantonese
- */
-
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useGamification } from '@/components/gamification/GamificationProvider';
 import {
-  Home,
-  Loader2,
-  Lock,
-  BookOpen,
-  Sparkles,
   ArrowLeft,
+  ScrollText,
+  Lock,
   MapPin,
-  Trophy,
-  CheckCircle2,
   Star,
-  Play,
-  Crown
+  CheckCircle2,
+  BookOpen,
+  Map,
+  Trophy,
+  Loader2,
 } from 'lucide-react';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/components/SessionContextProvider';
 
-interface StoryChapter {
+interface Chapter {
   id: string;
   number: number;
   title: string;
   location: string;
   description: string;
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
-  lessons: number;
+  icon: string;
   completedLessons: number;
+  totalLessons: number;
   xpReward: number;
   isUnlocked: boolean;
   isCompleted: boolean;
-  isCurrent: boolean;
 }
 
 export default function CantoneseStoryMode() {
   const { session } = useSession();
   const { userProgress, isLoading } = useGamification();
+  const navigate = useNavigate();
 
-  // Mock story chapters - will be replaced with real API data
-  const mockChapters: StoryChapter[] = [
+  const [chapters, setChapters] = useState<Chapter[]>([
     {
-      id: 'c1',
+      id: '1',
       number: 1,
-      title: '香港之旅開始',
-      location: '香港國際機場',
-      description: '你剛剛抵達香港。學習基本問候語和機場常用詞彙來開始你的冒險。',
-      difficulty: 'beginner',
-      lessons: 5,
-      completedLessons: 5,
+      title: 'Chào mừng đến Bắc Kinh',
+      location: '北京 (Beijing)',
+      description: 'Bắt đầu hành trình học tiếng Trung tại thủ đô Bắc Kinh. Học các cụm từ chào hỏi và giới thiệu bản thân.',
+      icon: '🏛️',
+      completedLessons: 0,
+      totalLessons: 5,
       xpReward: 100,
       isUnlocked: true,
-      isCompleted: true,
-      isCurrent: false
+      isCompleted: false,
     },
     {
-      id: 'c2',
+      id: '2',
       number: 2,
-      title: '探索中環',
-      location: '中環商業區',
-      description: '探索香港的金融中心，學習商務和購物相關的粵語。',
-      difficulty: 'beginner',
-      lessons: 8,
-      completedLessons: 3,
+      title: 'Khám phá Thượng Hải',
+      location: '上海 (Shanghai)',
+      description: 'Khám phá thành phố hiện đại Thượng Hải. Học từ vựng về mua sắm, ăn uống và di chuyển.',
+      icon: '🏙️',
+      completedLessons: 0,
+      totalLessons: 6,
       xpReward: 150,
       isUnlocked: true,
       isCompleted: false,
-      isCurrent: true
     },
     {
-      id: 'c3',
+      id: '3',
       number: 3,
-      title: '茶餐廳美食',
-      location: '旺角茶餐廳',
-      description: '在傳統茶餐廳學習如何用粵語點餐和談論食物。',
-      difficulty: 'beginner',
-      lessons: 6,
+      title: 'Vạn Lý Trường Thành',
+      location: '长城 (Great Wall)',
+      description: 'Tham quan kỳ quan thế giới. Học các từ vựng về lịch sử và văn hóa Trung Quốc.',
+      icon: '🏰',
       completedLessons: 0,
-      xpReward: 120,
+      totalLessons: 7,
+      xpReward: 200,
       isUnlocked: true,
       isCompleted: false,
-      isCurrent: false
     },
     {
-      id: 'c4',
+      id: '4',
       number: 4,
-      title: '維多利亞港夜景',
-      location: '尖沙咀海濱',
-      description: '欣賞維港夜景，學習描述風景和表達感受的詞彙。',
-      difficulty: 'intermediate',
-      lessons: 7,
+      title: 'Tây An cổ kính',
+      location: '西安 (Xi\'an)',
+      description: 'Khám phá thành phố cổ đại Tây An. Học về ẩm thực truyền thống và lịch sử nhà Tần.',
+      icon: '🗿',
       completedLessons: 0,
-      xpReward: 180,
-      isUnlocked: false,
+      totalLessons: 8,
+      xpReward: 250,
+      isUnlocked: true,
       isCompleted: false,
-      isCurrent: false
     },
     {
-      id: 'c5',
+      id: '5',
       number: 5,
-      title: '太平山頂',
-      location: '太平山頂',
-      description: '登上太平山頂，學習方向指示和交通相關的粵語。',
-      difficulty: 'intermediate',
-      lessons: 9,
+      title: 'Thành Đô và gấu trúc',
+      location: '成都 (Chengdu)',
+      description: 'Ghé thăm Thành Đô, quê hương của gấu trúc. Học từ vựng về động vật và thiên nhiên.',
+      icon: '🐼',
       completedLessons: 0,
-      xpReward: 200,
-      isUnlocked: false,
-      isCompleted: false,
-      isCurrent: false
-    },
-    {
-      id: 'c6',
-      number: 6,
-      title: '大嶼山寺廟',
-      location: '大嶼山天壇大佛',
-      description: '參觀佛教聖地，學習文化和宗教相關詞彙。',
-      difficulty: 'intermediate',
-      lessons: 8,
-      completedLessons: 0,
-      xpReward: 220,
-      isUnlocked: false,
-      isCompleted: false,
-      isCurrent: false
-    },
-    {
-      id: 'c7',
-      number: 7,
-      title: '香港歷史',
-      location: '香港歷史博物館',
-      description: '了解香港歷史，學習描述過去和歷史事件的語法。',
-      difficulty: 'advanced',
-      lessons: 10,
-      completedLessons: 0,
+      totalLessons: 9,
       xpReward: 300,
       isUnlocked: false,
       isCompleted: false,
-      isCurrent: false
     },
     {
-      id: 'c8',
-      number: 8,
-      title: '粵劇文化',
-      location: '西九文化區',
-      description: '體驗傳統粵劇，掌握高級粵語表達和文化習俗。',
-      difficulty: 'advanced',
-      lessons: 12,
+      id: '6',
+      number: 6,
+      title: 'Quế Lâm thơ mộng',
+      location: '桂林 (Guilin)',
+      description: 'Thưởng ngoạn phong cảnh tuyệt đẹp Quế Lâm. Học từ vựng về thiên nhiên và du lịch.',
+      icon: '⛰️',
       completedLessons: 0,
+      totalLessons: 10,
       xpReward: 350,
       isUnlocked: false,
       isCompleted: false,
-      isCurrent: false
-    }
-  ];
+    },
+    {
+      id: '7',
+      number: 7,
+      title: 'Hồng Kông sôi động',
+      location: '香港 (Hong Kong)',
+      description: 'Trải nghiệm sự pha trộn văn hóa Đông Tây tại Hồng Kông. Học tiếng Quảng Đông cơ bản.',
+      icon: '🌃',
+      completedLessons: 0,
+      totalLessons: 11,
+      xpReward: 400,
+      isUnlocked: false,
+      isCompleted: false,
+    },
+    {
+      id: '8',
+      number: 8,
+      title: 'Tử Cấm Thành huyền bí',
+      location: '故宫 (Forbidden City)',
+      description: 'Khám phá cung điện hoàng gia cổ xưa. Học từ vựng nâng cao về văn hóa và lịch sử.',
+      icon: '👑',
+      completedLessons: 0,
+      totalLessons: 12,
+      xpReward: 500,
+      isUnlocked: false,
+      isCompleted: false,
+    },
+  ]);
 
-  // Require login
+  const handleStartChapter = (chapter: Chapter) => {
+    if (!chapter.isUnlocked) return;
+    // Navigate to lessons for this chapter
+    // navigate(`/cantonese/story/${chapter.id}`);
+    alert(`Chương ${chapter.number}: ${chapter.title} - Tính năng bài học đang được phát triển!`);
+  };
+
+  const progressPercent = (chapters.filter(c => c.isCompleted).length / chapters.length) * 100;
+
   if (!session?.user) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <main className="container mx-auto p-4 md:p-8 flex-grow flex items-center justify-center">
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto p-4 md:p-8 flex items-center justify-center">
           <Card className="max-w-md">
             <CardContent className="text-center py-12">
               <Lock className="w-16 h-16 text-gray-300 dark:text-gray-700 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">需要登入</h2>
+              <h2 className="text-2xl font-bold mb-2">Yêu cầu đăng nhập</h2>
               <p className="text-muted-foreground mb-6">
-                請登入以開始故事模式
+                Vui lòng đăng nhập để khám phá câu chuyện
               </p>
-              <div className="flex gap-3 justify-center">
-                <Button asChild variant="outline">
-                  <Link to="/cantonese">
-                    <Home className="mr-2 h-4 w-4" /> 主頁
-                  </Link>
-                </Button>
-                <Button asChild>
-                  <Link to="/cantonese/login">立即登入</Link>
-                </Button>
-              </div>
+              <Button asChild>
+                <Link to="/cantonese/login">Đăng nhập ngay</Link>
+              </Button>
             </CardContent>
           </Card>
         </main>
@@ -190,279 +177,188 @@ export default function CantoneseStoryMode() {
     );
   }
 
-  // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <main className="container mx-auto p-4 md:p-8 flex-grow flex items-center justify-center">
-          <div className="text-center">
-            <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
-            <p className="text-muted-foreground">載入故事模式中...</p>
-          </div>
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto p-4 md:p-8 flex items-center justify-center">
+          <Loader2 className="w-12 h-12 animate-spin text-primary" />
         </main>
       </div>
     );
   }
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'beginner': return 'bg-green-500';
-      case 'intermediate': return 'bg-yellow-500';
-      case 'advanced': return 'bg-red-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
-  const getDifficultyText = (difficulty: string) => {
-    switch (difficulty) {
-      case 'beginner': return '初級';
-      case 'intermediate': return '中級';
-      case 'advanced': return '高級';
-      default: return difficulty;
-    }
-  };
-
-  const totalChapters = mockChapters.length;
-  const completedChapters = mockChapters.filter(c => c.isCompleted).length;
-  const totalLessons = mockChapters.reduce((sum, c) => sum + c.lessons, 0);
-  const completedLessons = mockChapters.reduce((sum, c) => sum + c.completedLessons, 0);
-
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <main className="container mx-auto p-4 md:p-8 flex-grow">
-        {/* Page Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
-                <BookOpen className="w-8 h-8 text-green-500" />
-                故事模式
-              </h1>
-              <p className="text-muted-foreground mt-1">
-                透過香港地標學習粵語的旅程
-              </p>
-            </div>
-
-            <div className="flex gap-2">
-              <Button asChild variant="outline">
-                <Link to="/cantonese/gamification">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  返回
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link to="/cantonese">
-                  <Home className="mr-2 h-4 w-4" />
-                  主頁
-                </Link>
-              </Button>
-            </div>
+    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+      <Header />
+      <main className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="flex items-center gap-4 mb-8">
+          <Button asChild variant="outline" size="icon">
+            <Link to="/cantonese/gamification">
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+          </Button>
+          <div className="flex-1">
+            <h1 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
+              <ScrollText className="w-8 h-8 text-blue-500" />
+              Chế Độ Câu Chuyện
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              Hành trình qua các địa danh nổi tiếng của Trung Quốc
+            </p>
           </div>
         </div>
 
-        {/* Story Progress Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">章節進度</CardTitle>
-              <BookOpen className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {completedChapters} / {totalChapters}
+        {/* Overall Progress */}
+        <Card className="mb-8 bg-gradient-to-br from-blue-500/10 to-purple-500/10 border-blue-400">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Map className="w-5 h-5" />
+                  Tiến Độ Tổng Thể
+                </CardTitle>
+                <CardDescription>
+                  {chapters.filter(c => c.isCompleted).length} / {chapters.length} chương đã hoàn thành
+                </CardDescription>
               </div>
-              <Progress value={(completedChapters / totalChapters) * 100} className="mt-2" />
-            </CardContent>
-          </Card>
+              <Trophy className="w-12 h-12 text-yellow-500" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Progress value={progressPercent} className="h-4" />
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">課程完成</CardTitle>
-              <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {completedLessons} / {totalLessons}
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {Math.round((completedLessons / totalLessons) * 100)}% 完成
-              </p>
-            </CardContent>
-          </Card>
+        {/* Chapter Map */}
+        <div className="relative">
+          {/* Journey Path Visual */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500 hidden md:block"
+               style={{ transform: 'translateX(-50%)' }} />
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">總獲得經驗值</CardTitle>
-              <Sparkles className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {mockChapters.filter(c => c.isCompleted).reduce((sum, c) => sum + c.xpReward, 0)} XP
-              </div>
-            </CardContent>
-          </Card>
+          <div className="space-y-12">
+            {chapters.map((chapter, index) => {
+              const isLeft = index % 2 === 0;
+              const progressPercent = (chapter.completedLessons / chapter.totalLessons) * 100;
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">當前章節</CardTitle>
-              <Star className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                第 {mockChapters.find(c => c.isCurrent)?.number || 1} 章
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Story Map - Timeline View */}
-        <div className="space-y-6">
-          <h2 className="text-2xl font-bold flex items-center gap-2">
-            <MapPin className="w-6 h-6 text-primary" />
-            香港學習之旅
-          </h2>
-
-          <div className="relative">
-            {/* Timeline Line */}
-            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-border hidden md:block" />
-
-            {/* Chapters */}
-            <div className="space-y-6">
-              {mockChapters.map((chapter, index) => (
-                <Card
+              return (
+                <div
                   key={chapter.id}
-                  className={`relative ${
-                    chapter.isCurrent
-                      ? 'ring-2 ring-primary shadow-lg'
-                      : chapter.isCompleted
-                      ? 'bg-muted/30'
-                      : !chapter.isUnlocked
-                      ? 'opacity-50'
-                      : ''
-                  }`}
+                  className={`relative flex ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-8`}
                 >
-                  {/* Timeline Dot */}
-                  <div className="absolute left-8 -translate-x-1/2 top-6 w-4 h-4 rounded-full border-4 bg-background hidden md:block z-10"
-                    style={{
-                      borderColor: chapter.isCompleted
-                        ? 'rgb(34, 197, 94)'
-                        : chapter.isCurrent
-                        ? 'rgb(59, 130, 246)'
+                  {/* Chapter Card */}
+                  <Card
+                    className={`flex-1 max-w-2xl hover-scale ${
+                      chapter.isCompleted
+                        ? 'bg-gradient-to-br from-green-500/20 to-emerald-500/20 border-green-500'
                         : chapter.isUnlocked
-                        ? 'rgb(156, 163, 175)'
-                        : 'rgb(209, 213, 219)'
-                    }}
-                  />
+                        ? 'bg-gradient-to-br from-blue-500/10 to-purple-500/10'
+                        : 'opacity-60'
+                    }`}
+                  >
+                    {!chapter.isUnlocked && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10 rounded-lg">
+                        <Lock className="w-16 h-16 text-muted-foreground" />
+                      </div>
+                    )}
 
-                  <CardHeader className="md:ml-12">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <Badge variant="outline" className="font-mono">
-                            第 {chapter.number} 章
-                          </Badge>
-                          <Badge className={getDifficultyColor(chapter.difficulty)}>
-                            {getDifficultyText(chapter.difficulty)}
-                          </Badge>
-                          {chapter.isCompleted && (
-                            <Badge className="bg-green-500">
-                              <CheckCircle2 className="w-3 h-3 mr-1" />
-                              已完成
+                    {chapter.isCompleted && (
+                      <div className="absolute top-4 right-4 z-10">
+                        <Badge className="bg-green-500">
+                          <CheckCircle2 className="w-3 h-3 mr-1" />
+                          Hoàn thành
+                        </Badge>
+                      </div>
+                    )}
+
+                    <CardHeader>
+                      <div className="flex items-start gap-4">
+                        <div className="text-6xl">{chapter.icon}</div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge variant="outline">Chương {chapter.number}</Badge>
+                            <Badge variant="secondary" className="flex items-center gap-1">
+                              <MapPin className="w-3 h-3" />
+                              {chapter.location}
                             </Badge>
-                          )}
-                          {chapter.isCurrent && (
-                            <Badge className="bg-blue-500">
-                              <Play className="w-3 h-3 mr-1" />
-                              進行中
-                            </Badge>
-                          )}
+                          </div>
+                          <CardTitle className="text-2xl mb-2">{chapter.title}</CardTitle>
+                          <CardDescription className="text-base">
+                            {chapter.description}
+                          </CardDescription>
                         </div>
+                      </div>
+                    </CardHeader>
 
-                        <CardTitle className="text-xl flex items-center gap-2">
-                          {chapter.title}
-                          {!chapter.isUnlocked && <Lock className="w-5 h-5 text-muted-foreground" />}
-                        </CardTitle>
-
-                        <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
-                          <MapPin className="w-4 h-4" />
-                          <span>{chapter.location}</span>
+                    <CardContent className="space-y-4">
+                      <div>
+                        <div className="flex justify-between text-sm mb-2">
+                          <span className="flex items-center gap-1">
+                            <BookOpen className="w-4 h-4" />
+                            Bài học
+                          </span>
+                          <span className="font-bold">
+                            {chapter.completedLessons} / {chapter.totalLessons}
+                          </span>
                         </div>
-
-                        <CardDescription className="mt-3">
-                          {chapter.description}
-                        </CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="md:ml-12 space-y-4">
-                    {/* Progress */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">課程進度</span>
-                        <span className="font-medium">
-                          {chapter.completedLessons} / {chapter.lessons}
-                        </span>
-                      </div>
-                      <Progress
-                        value={(chapter.completedLessons / chapter.lessons) * 100}
-                        className="h-2"
-                      />
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex items-center justify-between pt-2 border-t">
-                      <div className="flex items-center gap-1 text-sm">
-                        <Sparkles className="w-4 h-4 text-yellow-500" />
-                        <span className="font-medium">{chapter.xpReward} XP</span>
+                        <Progress value={progressPercent} className="h-2" />
                       </div>
 
+                      <div className="flex items-center justify-between pt-2">
+                        <div className="flex items-center gap-2 text-yellow-600">
+                          <Star className="w-4 h-4" />
+                          <span className="font-bold">+{chapter.xpReward} XP</span>
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {chapter.totalLessons} bài học
+                        </div>
+                      </div>
+                    </CardContent>
+
+                    <CardFooter>
                       <Button
+                        className="w-full"
+                        onClick={() => handleStartChapter(chapter)}
                         disabled={!chapter.isUnlocked}
-                        variant={chapter.isCurrent ? 'default' : 'outline'}
+                        variant={chapter.isCompleted ? 'outline' : 'default'}
                       >
                         {chapter.isCompleted ? (
                           <>
                             <Trophy className="mr-2 h-4 w-4" />
-                            重新學習
+                            Học lại
                           </>
                         ) : chapter.isUnlocked ? (
                           <>
-                            <Play className="mr-2 h-4 w-4" />
-                            {chapter.isCurrent ? '繼續學習' : '開始章節'}
+                            <BookOpen className="mr-2 h-4 w-4" />
+                            Bắt đầu chương
                           </>
                         ) : (
                           <>
                             <Lock className="mr-2 h-4 w-4" />
-                            尚未解鎖
+                            Chưa mở khóa
                           </>
                         )}
                       </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    </CardFooter>
+                  </Card>
+
+                  {/* Chapter Number Circle (for desktop) */}
+                  <div className="hidden md:flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-white font-bold text-xl shadow-lg">
+                    {chapter.number}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* Info Card */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>關於故事模式</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-sm text-muted-foreground">
-              • 跟隨故事情節，在真實情境中學習粵語
-            </p>
-            <p className="text-sm text-muted-foreground">
-              • 每個章節聚焦於不同的主題和詞彙
-            </p>
-            <p className="text-sm text-muted-foreground">
-              • 完成章節以解鎖新的地點和挑戰
-            </p>
-            <p className="text-sm text-muted-foreground">
-              • 獲得大量經驗值和特殊獎勵
+        {/* Coming Soon Message */}
+        <Card className="mt-12 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border-indigo-400">
+          <CardContent className="text-center py-8">
+            <ScrollText className="w-12 h-12 text-indigo-500 mx-auto mb-4" />
+            <h3 className="text-xl font-bold mb-2">Thêm chương sắp ra mắt!</h3>
+            <p className="text-muted-foreground">
+              Hành trình học tiếng Trung của bạn sẽ còn nhiều điều thú vị phía trước...
             </p>
           </CardContent>
         </Card>

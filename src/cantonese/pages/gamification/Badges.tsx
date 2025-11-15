@@ -1,222 +1,280 @@
-/**
- * Cantonese Badges Page
- * View and manage achievement badges
- */
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Progress } from '@/components/ui/progress';
 import { useGamification } from '@/components/gamification/GamificationProvider';
 import {
-  Home,
-  Loader2,
-  Lock,
-  Award,
-  Sparkles,
   ArrowLeft,
+  Award,
+  Lock,
   Trophy,
-  Star,
-  Crown,
   Target,
   Flame,
   BookOpen,
+  Star,
+  Crown,
   Zap,
   Heart,
-  Shield
+  Sparkles,
+  Swords,
+  Loader2,
 } from 'lucide-react';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/components/SessionContextProvider';
 
-interface BadgeItem {
+interface Achievement {
   id: string;
   name: string;
   description: string;
   icon: React.ReactNode;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
-  category: 'learning' | 'achievement' | 'social' | 'special';
-  isUnlocked: boolean;
-  unlockedAt?: string;
-  progress?: number;
-  target?: number;
-  requirement: string;
+  category: 'learning' | 'streak' | 'boss' | 'collection' | 'social';
+  tier: 'bronze' | 'silver' | 'gold' | 'platinum';
+  progress: number;
+  target: number;
+  unlocked: boolean;
+  dateUnlocked?: string;
 }
+
+const tierColors = {
+  bronze: 'from-orange-700 to-orange-900',
+  silver: 'from-gray-400 to-gray-600',
+  gold: 'from-yellow-400 to-yellow-600',
+  platinum: 'from-cyan-400 to-blue-600',
+};
+
+const tierBorders = {
+  bronze: 'border-orange-700',
+  silver: 'border-gray-500',
+  gold: 'border-yellow-500',
+  platinum: 'border-cyan-500',
+};
 
 export default function CantoneseBadges() {
   const { session } = useSession();
   const { userProgress, isLoading } = useGamification();
+
+  const [achievements, setAchievements] = useState<Achievement[]>([
+    // Learning Achievements
+    {
+      id: 'vocab-10',
+      name: 'Người mới bắt đầu',
+      description: 'Học 10 từ vựng mới',
+      icon: <BookOpen className="w-6 h-6" />,
+      category: 'learning',
+      tier: 'bronze',
+      progress: 0,
+      target: 10,
+      unlocked: false,
+    },
+    {
+      id: 'vocab-50',
+      name: 'Học giả trẻ',
+      description: 'Học 50 từ vựng mới',
+      icon: <BookOpen className="w-6 h-6" />,
+      category: 'learning',
+      tier: 'silver',
+      progress: 0,
+      target: 50,
+      unlocked: false,
+    },
+    {
+      id: 'vocab-100',
+      name: 'Bậc thầy từ vựng',
+      description: 'Học 100 từ vựng mới',
+      icon: <BookOpen className="w-6 h-6" />,
+      category: 'learning',
+      tier: 'gold',
+      progress: 0,
+      target: 100,
+      unlocked: false,
+    },
+    {
+      id: 'vocab-500',
+      name: 'Từ điển sống',
+      description: 'Học 500 từ vựng mới',
+      icon: <BookOpen className="w-6 h-6" />,
+      category: 'learning',
+      tier: 'platinum',
+      progress: 0,
+      target: 500,
+      unlocked: false,
+    },
+
+    // Streak Achievements
+    {
+      id: 'streak-3',
+      name: 'Kiên trì 3 ngày',
+      description: 'Học liên tục 3 ngày',
+      icon: <Flame className="w-6 h-6" />,
+      category: 'streak',
+      tier: 'bronze',
+      progress: userProgress?.current_streak || 0,
+      target: 3,
+      unlocked: false,
+    },
+    {
+      id: 'streak-7',
+      name: 'Tuần hoàn hảo',
+      description: 'Học liên tục 7 ngày',
+      icon: <Flame className="w-6 h-6" />,
+      category: 'streak',
+      tier: 'silver',
+      progress: userProgress?.current_streak || 0,
+      target: 7,
+      unlocked: false,
+    },
+    {
+      id: 'streak-30',
+      name: 'Tháng thép',
+      description: 'Học liên tục 30 ngày',
+      icon: <Flame className="w-6 h-6" />,
+      category: 'streak',
+      tier: 'gold',
+      progress: userProgress?.current_streak || 0,
+      target: 30,
+      unlocked: false,
+    },
+    {
+      id: 'streak-100',
+      name: 'Huyền thoại',
+      description: 'Học liên tục 100 ngày',
+      icon: <Flame className="w-6 h-6" />,
+      category: 'streak',
+      tier: 'platinum',
+      progress: userProgress?.current_streak || 0,
+      target: 100,
+      unlocked: false,
+    },
+
+    // Boss Battle Achievements
+    {
+      id: 'boss-1',
+      name: 'Sát thủ Boss',
+      description: 'Đánh bại Boss đầu tiên',
+      icon: <Swords className="w-6 h-6" />,
+      category: 'boss',
+      tier: 'bronze',
+      progress: 0,
+      target: 1,
+      unlocked: false,
+    },
+    {
+      id: 'boss-5',
+      name: 'Thợ săn Boss',
+      description: 'Đánh bại 5 Boss',
+      icon: <Swords className="w-6 h-6" />,
+      category: 'boss',
+      tier: 'silver',
+      progress: 0,
+      target: 5,
+      unlocked: false,
+    },
+    {
+      id: 'boss-all',
+      name: 'Chúa tể Boss',
+      description: 'Đánh bại tất cả Boss',
+      icon: <Crown className="w-6 h-6" />,
+      category: 'boss',
+      tier: 'gold',
+      progress: 0,
+      target: 4,
+      unlocked: false,
+    },
+    {
+      id: 'boss-perfect',
+      name: 'Hoàn hảo vô song',
+      description: 'Đánh bại Boss mà không mất HP',
+      icon: <Trophy className="w-6 h-6" />,
+      category: 'boss',
+      tier: 'platinum',
+      progress: 0,
+      target: 1,
+      unlocked: false,
+    },
+
+    // Collection Achievements
+    {
+      id: 'card-10',
+      name: 'Nhà sưu tập',
+      description: 'Thu thập 10 thẻ từ vựng',
+      icon: <Star className="w-6 h-6" />,
+      category: 'collection',
+      tier: 'bronze',
+      progress: 0,
+      target: 10,
+      unlocked: false,
+    },
+    {
+      id: 'card-legendary',
+      name: 'May mắn vàng',
+      description: 'Mở được thẻ Legendary',
+      icon: <Sparkles className="w-6 h-6" />,
+      category: 'collection',
+      tier: 'gold',
+      progress: 0,
+      target: 1,
+      unlocked: false,
+    },
+
+    // XP Achievements
+    {
+      id: 'xp-1000',
+      name: 'Tích lũy XP',
+      description: 'Đạt 1000 XP',
+      icon: <Zap className="w-6 h-6" />,
+      category: 'learning',
+      tier: 'silver',
+      progress: userProgress?.total_xp || 0,
+      target: 1000,
+      unlocked: false,
+    },
+    {
+      id: 'level-10',
+      name: 'Top 10',
+      description: 'Đạt level 10',
+      icon: <Trophy className="w-6 h-6" />,
+      category: 'learning',
+      tier: 'gold',
+      progress: userProgress?.current_level || 0,
+      target: 10,
+      unlocked: false,
+    },
+  ]);
+
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
-  // Mock badges data - will be replaced with real API data
-  const mockBadges: BadgeItem[] = [
-    // Learning Badges
-    {
-      id: 'b1',
-      name: '初學者',
-      description: '完成你的第一個課程',
-      icon: <BookOpen className="w-8 h-8" />,
-      rarity: 'common',
-      category: 'learning',
-      isUnlocked: true,
-      unlockedAt: '3天前',
-      requirement: '完成1個課程'
-    },
-    {
-      id: 'b2',
-      name: '勤學者',
-      description: '完成10個課程',
-      icon: <BookOpen className="w-8 h-8" />,
-      rarity: 'common',
-      category: 'learning',
-      isUnlocked: true,
-      unlockedAt: '1天前',
-      requirement: '完成10個課程'
-    },
-    {
-      id: 'b3',
-      name: '學習大師',
-      description: '完成50個課程',
-      icon: <BookOpen className="w-8 h-8" />,
-      rarity: 'rare',
-      category: 'learning',
-      isUnlocked: false,
-      progress: 25,
-      target: 50,
-      requirement: '完成50個課程'
-    },
-    {
-      id: 'b4',
-      name: '粵語專家',
-      description: '完成100個課程',
-      icon: <Crown className="w-8 h-8" />,
-      rarity: 'epic',
-      category: 'learning',
-      isUnlocked: false,
-      progress: 25,
-      target: 100,
-      requirement: '完成100個課程'
-    },
-
-    // Achievement Badges
-    {
-      id: 'b5',
-      name: '連勝',
-      description: '保持7天連續學習',
-      icon: <Flame className="w-8 h-8" />,
-      rarity: 'rare',
-      category: 'achievement',
-      isUnlocked: false,
-      progress: 3,
-      target: 7,
-      requirement: '連續學習7天'
-    },
-    {
-      id: 'b6',
-      name: '完美主義者',
-      description: '在5個測驗中獲得100分',
-      icon: <Star className="w-8 h-8" />,
-      rarity: 'rare',
-      category: 'achievement',
-      isUnlocked: false,
-      progress: 2,
-      target: 5,
-      requirement: '獲得5次100分'
-    },
-    {
-      id: 'b7',
-      name: 'Boss終結者',
-      description: '擊敗你的第一個Boss',
-      icon: <Trophy className="w-8 h-8" />,
-      rarity: 'epic',
-      category: 'achievement',
-      isUnlocked: false,
-      requirement: '擊敗1個Boss'
-    },
-    {
-      id: 'b8',
-      name: 'Boss大師',
-      description: '擊敗所有Boss',
-      icon: <Crown className="w-8 h-8" />,
-      rarity: 'legendary',
-      category: 'achievement',
-      isUnlocked: false,
-      requirement: '擊敗所有Boss'
-    },
-
-    // Social Badges
-    {
-      id: 'b9',
-      name: '社交達人',
-      description: '邀請3位朋友',
-      icon: <Heart className="w-8 h-8" />,
-      rarity: 'rare',
-      category: 'social',
-      isUnlocked: false,
-      progress: 0,
-      target: 3,
-      requirement: '邀請3位朋友'
-    },
-
-    // Special Badges
-    {
-      id: 'b10',
-      name: '收藏家',
-      description: '收集50張不同的卡片',
-      icon: <Sparkles className="w-8 h-8" />,
-      rarity: 'epic',
-      category: 'special',
-      isUnlocked: false,
-      progress: 15,
-      target: 50,
-      requirement: '收集50張卡片'
-    },
-    {
-      id: 'b11',
-      name: '傳奇獵人',
-      description: '收集一張傳奇卡片',
-      icon: <Crown className="w-8 h-8" />,
-      rarity: 'legendary',
-      category: 'special',
-      isUnlocked: false,
-      requirement: '收集1張傳奇卡片'
-    },
-    {
-      id: 'b12',
-      name: '任務完成者',
-      description: '完成100個任務',
-      icon: <Target className="w-8 h-8" />,
-      rarity: 'epic',
-      category: 'special',
-      isUnlocked: false,
-      progress: 35,
-      target: 100,
-      requirement: '完成100個任務'
-    }
+  const categories = [
+    { id: 'all', name: 'Tất cả', icon: <Award className="w-4 h-4" /> },
+    { id: 'learning', name: 'Học tập', icon: <BookOpen className="w-4 h-4" /> },
+    { id: 'streak', name: 'Streak', icon: <Flame className="w-4 h-4" /> },
+    { id: 'boss', name: 'Boss', icon: <Swords className="w-4 h-4" /> },
+    { id: 'collection', name: 'Sưu tập', icon: <Star className="w-4 h-4" /> },
   ];
 
-  // Require login
+  const filteredAchievements = selectedCategory === 'all'
+    ? achievements
+    : achievements.filter(a => a.category === selectedCategory);
+
+  const unlockedCount = achievements.filter(a => a.unlocked).length;
+  const totalCount = achievements.length;
+
   if (!session?.user) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <main className="container mx-auto p-4 md:p-8 flex-grow flex items-center justify-center">
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto p-4 md:p-8 flex items-center justify-center">
           <Card className="max-w-md">
             <CardContent className="text-center py-12">
               <Lock className="w-16 h-16 text-gray-300 dark:text-gray-700 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">需要登入</h2>
+              <h2 className="text-2xl font-bold mb-2">Yêu cầu đăng nhập</h2>
               <p className="text-muted-foreground mb-6">
-                請登入以查看你的徽章
+                Vui lòng đăng nhập để xem huy hiệu
               </p>
-              <div className="flex gap-3 justify-center">
-                <Button asChild variant="outline">
-                  <Link to="/cantonese">
-                    <Home className="mr-2 h-4 w-4" /> 主頁
-                  </Link>
-                </Button>
-                <Button asChild>
-                  <Link to="/cantonese/login">立即登入</Link>
-                </Button>
-              </div>
+              <Button asChild>
+                <Link to="/cantonese/login">Đăng nhập ngay</Link>
+              </Button>
             </CardContent>
           </Card>
         </main>
@@ -224,261 +282,171 @@ export default function CantoneseBadges() {
     );
   }
 
-  // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <main className="container mx-auto p-4 md:p-8 flex-grow flex items-center justify-center">
-          <div className="text-center">
-            <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
-            <p className="text-muted-foreground">載入徽章中...</p>
-          </div>
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto p-4 md:p-8 flex items-center justify-center">
+          <Loader2 className="w-12 h-12 animate-spin text-primary" />
         </main>
       </div>
     );
   }
 
-  const getRarityColor = (rarity: string) => {
-    switch (rarity) {
-      case 'common': return 'border-gray-400 bg-gray-50 dark:bg-gray-900';
-      case 'rare': return 'border-blue-400 bg-blue-50 dark:bg-blue-950';
-      case 'epic': return 'border-purple-400 bg-purple-50 dark:bg-purple-950';
-      case 'legendary': return 'border-yellow-400 bg-yellow-50 dark:bg-yellow-950';
-      default: return 'border-gray-400';
-    }
-  };
-
-  const getRarityBadgeColor = (rarity: string) => {
-    switch (rarity) {
-      case 'common': return 'bg-gray-500';
-      case 'rare': return 'bg-blue-500';
-      case 'epic': return 'bg-purple-500';
-      case 'legendary': return 'bg-yellow-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
-  const getRarityText = (rarity: string) => {
-    switch (rarity) {
-      case 'common': return '普通';
-      case 'rare': return '稀有';
-      case 'epic': return '史詩';
-      case 'legendary': return '傳奇';
-      default: return rarity;
-    }
-  };
-
-  const unlockedBadges = mockBadges.filter(b => b.isUnlocked);
-  const totalBadges = mockBadges.length;
-
-  const filteredBadges = selectedCategory === 'all'
-    ? mockBadges
-    : mockBadges.filter(b => b.category === selectedCategory);
-
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <main className="container mx-auto p-4 md:p-8 flex-grow">
-        {/* Page Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
-                <Award className="w-8 h-8 text-purple-500" />
-                徽章收藏
-              </h1>
-              <p className="text-muted-foreground mt-1">
-                展示你的成就並追蹤進度
-              </p>
-            </div>
-
-            <div className="flex gap-2">
-              <Button asChild variant="outline">
-                <Link to="/cantonese/gamification">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  返回
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link to="/cantonese">
-                  <Home className="mr-2 h-4 w-4" />
-                  主頁
-                </Link>
-              </Button>
-            </div>
+    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+      <Header />
+      <main className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="flex items-center gap-4 mb-8">
+          <Button asChild variant="outline" size="icon">
+            <Link to="/cantonese/gamification">
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+          </Button>
+          <div className="flex-1">
+            <h1 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
+              <Award className="w-8 h-8 text-amber-500" />
+              Huy Hiệu Thành Tích
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              Mở khóa và khoe huy hiệu thành tích của bạn
+            </p>
           </div>
         </div>
 
-        {/* Badge Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">總徽章</CardTitle>
-              <Award className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {unlockedBadges.length} / {totalBadges}
+        {/* Overall Progress */}
+        <Card className="mb-8 bg-gradient-to-br from-amber-500/10 to-yellow-500/10 border-amber-400">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Trophy className="w-5 h-5" />
+                  Tiến Độ Tổng Thể
+                </CardTitle>
+                <CardDescription>
+                  {unlockedCount} / {totalCount} huy hiệu đã mở khóa
+                </CardDescription>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {Math.round((unlockedBadges.length / totalBadges) * 100)}% 完成
-              </p>
-            </CardContent>
-          </Card>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-amber-500">{unlockedCount}</div>
+                <div className="text-sm text-muted-foreground">Huy hiệu</div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Progress value={(unlockedCount / totalCount) * 100} className="h-3" />
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">稀有徽章</CardTitle>
-              <Star className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {unlockedBadges.filter(b => b.rarity === 'rare').length}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">史詩徽章</CardTitle>
-              <Trophy className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {unlockedBadges.filter(b => b.rarity === 'epic').length}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">傳奇徽章</CardTitle>
-              <Crown className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {unlockedBadges.filter(b => b.rarity === 'legendary').length}
-              </div>
-            </CardContent>
-          </Card>
+        {/* Category Filter */}
+        <div className="flex flex-wrap gap-2 mb-8">
+          {categories.map(cat => (
+            <Button
+              key={cat.id}
+              variant={selectedCategory === cat.id ? 'default' : 'outline'}
+              onClick={() => setSelectedCategory(cat.id)}
+              className="flex items-center gap-2"
+            >
+              {cat.icon}
+              {cat.name}
+            </Button>
+          ))}
         </div>
 
-        {/* Badge Categories Tabs */}
-        <Tabs defaultValue="all" className="space-y-6" onValueChange={setSelectedCategory}>
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="all">全部</TabsTrigger>
-            <TabsTrigger value="learning">學習</TabsTrigger>
-            <TabsTrigger value="achievement">成就</TabsTrigger>
-            <TabsTrigger value="social">社交</TabsTrigger>
-            <TabsTrigger value="special">特殊</TabsTrigger>
-          </TabsList>
+        {/* Achievement Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredAchievements.map(achievement => {
+            const progressPercent = Math.min((achievement.progress / achievement.target) * 100, 100);
+            const isNearComplete = progressPercent >= 75 && !achievement.unlocked;
 
-          <TabsContent value={selectedCategory} className="space-y-4">
-            {/* Badges Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredBadges.map((badge) => (
-                <Card
-                  key={badge.id}
-                  className={`relative overflow-hidden border-2 ${getRarityColor(badge.rarity)} ${
-                    !badge.isUnlocked ? 'opacity-50' : 'hover:shadow-lg transition-shadow'
-                  }`}
-                >
-                  {!badge.isUnlocked && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-10">
-                      <Lock className="w-12 h-12 text-white" />
+            return (
+              <Card
+                key={achievement.id}
+                className={`relative overflow-hidden transition-all ${
+                  achievement.unlocked
+                    ? `bg-gradient-to-br ${tierColors[achievement.tier]} text-white border-2 ${tierBorders[achievement.tier]}`
+                    : 'opacity-75'
+                }`}
+              >
+                {!achievement.unlocked && (
+                  <div className="absolute inset-0 backdrop-blur-[2px] bg-background/40" />
+                )}
+
+                <CardHeader className="relative z-10">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className={`p-3 rounded-lg ${
+                      achievement.unlocked
+                        ? 'bg-white/20'
+                        : 'bg-muted'
+                    }`}>
+                      {achievement.icon}
+                    </div>
+                    <Badge variant={achievement.unlocked ? 'secondary' : 'outline'} className={
+                      achievement.unlocked ? 'bg-white/20 text-white' : ''
+                    }>
+                      {achievement.tier.toUpperCase()}
+                    </Badge>
+                  </div>
+
+                  <CardTitle className={`text-xl ${achievement.unlocked ? 'text-white' : ''}`}>
+                    {achievement.name}
+                  </CardTitle>
+                  <CardDescription className={achievement.unlocked ? 'text-white/80' : ''}>
+                    {achievement.description}
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent className="relative z-10">
+                  {!achievement.unlocked && (
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Tiến độ</span>
+                        <span className="font-bold">
+                          {achievement.progress} / {achievement.target}
+                        </span>
+                      </div>
+                      <Progress
+                        value={progressPercent}
+                        className={`h-2 ${isNearComplete ? 'animate-pulse' : ''}`}
+                      />
+                      {isNearComplete && (
+                        <p className="text-xs text-amber-600 font-medium mt-2">
+                          Gần hoàn thành!
+                        </p>
+                      )}
                     </div>
                   )}
 
-                  <CardHeader>
-                    <div className="flex flex-col items-center text-center space-y-3">
-                      <div className={`p-4 rounded-full ${
-                        badge.isUnlocked
-                          ? getRarityColor(badge.rarity)
-                          : 'bg-gray-200 dark:bg-gray-800'
-                      }`}>
-                        <div className={badge.isUnlocked ? 'text-primary' : 'text-gray-400'}>
-                          {badge.icon}
-                        </div>
-                      </div>
-
-                      <div className="space-y-1">
-                        <CardTitle className="text-lg">{badge.name}</CardTitle>
-                        <Badge className={getRarityBadgeColor(badge.rarity)}>
-                          {getRarityText(badge.rarity)}
-                        </Badge>
-                      </div>
+                  {achievement.unlocked && achievement.dateUnlocked && (
+                    <div className="flex items-center gap-2 text-sm text-white/80">
+                      <Trophy className="w-4 h-4" />
+                      <span>Đã mở khóa {achievement.dateUnlocked}</span>
                     </div>
-                  </CardHeader>
+                  )}
 
-                  <CardContent className="space-y-3">
-                    <p className="text-sm text-center text-muted-foreground">
-                      {badge.description}
-                    </p>
-
-                    <div className="pt-3 border-t">
-                      <p className="text-xs text-muted-foreground text-center mb-2">
-                        {badge.requirement}
-                      </p>
-
-                      {badge.isUnlocked ? (
-                        <div className="flex items-center justify-center gap-1 text-sm text-green-600 dark:text-green-400">
-                          <Sparkles className="w-4 h-4" />
-                          <span>{badge.unlockedAt}</span>
-                        </div>
-                      ) : badge.progress !== undefined && badge.target !== undefined ? (
-                        <div className="space-y-1">
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="text-muted-foreground">進度</span>
-                            <span className="font-medium">
-                              {badge.progress} / {badge.target}
-                            </span>
-                          </div>
-                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
-                            <div
-                              className="bg-primary h-1.5 rounded-full transition-all"
-                              style={{ width: `${(badge.progress / badge.target) * 100}%` }}
-                            />
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="text-center">
-                          <Lock className="w-4 h-4 mx-auto text-muted-foreground" />
-                        </div>
-                      )}
+                  {achievement.unlocked && !achievement.dateUnlocked && (
+                    <div className="flex items-center gap-2 text-sm text-white/80">
+                      <Trophy className="w-4 h-4" />
+                      <span>Đã mở khóa</span>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
 
-            {filteredBadges.length === 0 && (
-              <div className="text-center py-12">
-                <Award className="w-16 h-16 text-gray-300 dark:text-gray-700 mx-auto mb-3" />
-                <p className="text-muted-foreground">此類別中沒有徽章</p>
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
-
-        {/* Info Card */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>如何獲得徽章？</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-sm text-muted-foreground">
-              • 完成課程和測驗以解鎖學習徽章
-            </p>
-            <p className="text-sm text-muted-foreground">
-              • 保持連續學習和獲得高分以獲得成就徽章
-            </p>
-            <p className="text-sm text-muted-foreground">
-              • 邀請朋友以獲得社交徽章
-            </p>
-            <p className="text-sm text-muted-foreground">
-              • 參與遊戲化功能以解鎖特殊徽章
-            </p>
-          </CardContent>
-        </Card>
+        {/* Empty State */}
+        {filteredAchievements.length === 0 && (
+          <Card>
+            <CardContent className="text-center py-16">
+              <Award className="w-16 h-16 text-gray-300 dark:text-gray-700 mx-auto mb-4" />
+              <p className="text-muted-foreground">
+                Không có huy hiệu nào trong danh mục này.
+              </p>
+            </CardContent>
+          </Card>
+        )}
       </main>
     </div>
   );

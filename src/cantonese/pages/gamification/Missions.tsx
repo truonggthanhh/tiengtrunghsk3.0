@@ -1,171 +1,208 @@
-/**
- * Cantonese Missions Page
- * Complete missions to earn XP and rewards
- */
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useGamification } from '@/components/gamification/GamificationProvider';
 import {
-  Home,
-  Loader2,
-  Lock,
-  Target,
-  Sparkles,
   ArrowLeft,
-  CheckCircle2,
+  Target,
+  Lock,
   Trophy,
-  Calendar,
+  CheckCircle2,
   Clock,
+  Zap,
+  Flame,
+  BookOpen,
+  Swords,
   Star,
-  Gift
+  Calendar,
+  Loader2,
 } from 'lucide-react';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/components/SessionContextProvider';
+import confetti from 'canvas-confetti';
 
 interface Mission {
   id: string;
+  type: 'daily' | 'weekly';
   title: string;
   description: string;
-  type: 'daily' | 'weekly' | 'special';
+  icon: React.ReactNode;
   progress: number;
   target: number;
   xpReward: number;
-  bonusReward?: string;
-  isCompleted: boolean;
-  expiresIn?: string;
+  completed: boolean;
+  resetTime?: string; // ISO string
 }
 
 export default function CantoneseMissions() {
   const { session } = useSession();
-  const { userProgress, isLoading } = useGamification();
+  const { userProgress, isLoading, addXP } = useGamification();
 
-  // Mock missions data - will be replaced with real API data
-  const mockMissions: Mission[] = [
-    // Daily Missions
+  const [dailyMissions, setDailyMissions] = useState<Mission[]>([
     {
-      id: 'd1',
-      title: '完成3個課程',
-      description: '完成任何3個粵語課程',
+      id: 'daily-1',
       type: 'daily',
-      progress: 1,
-      target: 3,
-      xpReward: 50,
-      isCompleted: false,
-      expiresIn: '12小時'
-    },
-    {
-      id: 'd2',
-      title: '練習發音',
-      description: '練習發音10次',
-      type: 'daily',
-      progress: 10,
+      title: 'Học 10 từ vựng mới',
+      description: 'Hoàn thành bài học với 10 từ vựng mới',
+      icon: <BookOpen className="w-5 h-5" />,
+      progress: 0,
       target: 10,
-      xpReward: 30,
-      isCompleted: true
+      xpReward: 50,
+      completed: false,
+      resetTime: getEndOfDay(),
     },
     {
-      id: 'd3',
-      title: '學習新詞彙',
-      description: '學習5個新詞彙',
+      id: 'daily-2',
       type: 'daily',
-      progress: 3,
-      target: 5,
-      xpReward: 40,
-      isCompleted: false,
-      expiresIn: '12小時'
-    },
-    // Weekly Missions
-    {
-      id: 'w1',
-      title: '連續學習7天',
-      description: '連續7天登入並完成至少1個課程',
-      type: 'weekly',
-      progress: 3,
-      target: 7,
-      xpReward: 200,
-      bonusReward: '1個稀有卡包',
-      isCompleted: false,
-      expiresIn: '4天'
-    },
-    {
-      id: 'w2',
-      title: '完成20個課程',
-      description: '本週完成20個課程',
-      type: 'weekly',
-      progress: 12,
-      target: 20,
-      xpReward: 150,
-      isCompleted: false,
-      expiresIn: '4天'
-    },
-    {
-      id: 'w3',
-      title: '獲得完美分數',
-      description: '在任何測驗中獲得100分5次',
-      type: 'weekly',
-      progress: 2,
-      target: 5,
-      xpReward: 180,
-      bonusReward: '幸運輪盤次數 x2',
-      isCompleted: false,
-      expiresIn: '4天'
-    },
-    // Special Missions
-    {
-      id: 's1',
-      title: '擊敗首個Boss',
-      description: '擊敗你的第一個Boss戰',
-      type: 'special',
+      title: 'Chiến thắng 1 Boss',
+      description: 'Đánh bại bất kỳ boss nào trong Boss Battles',
+      icon: <Swords className="w-5 h-5" />,
       progress: 0,
       target: 1,
-      xpReward: 300,
-      bonusReward: '1個史詩卡包',
-      isCompleted: false
+      xpReward: 75,
+      completed: false,
+      resetTime: getEndOfDay(),
     },
     {
-      id: 's2',
-      title: '收集大師',
-      description: '收集50張不同的卡片',
-      type: 'special',
-      progress: 15,
+      id: 'daily-3',
+      type: 'daily',
+      title: 'Hoàn thành 5 bài tập',
+      description: 'Làm đúng 5 bài tập bất kỳ',
+      icon: <Target className="w-5 h-5" />,
+      progress: 0,
+      target: 5,
+      xpReward: 30,
+      completed: false,
+      resetTime: getEndOfDay(),
+    },
+    {
+      id: 'daily-4',
+      type: 'daily',
+      title: 'Streak Combo',
+      description: 'Duy trì chuỗi học tập hằng ngày',
+      icon: <Flame className="w-5 h-5" />,
+      progress: userProgress?.current_streak || 0,
+      target: 1,
+      xpReward: 25,
+      completed: false,
+      resetTime: getEndOfDay(),
+    },
+  ]);
+
+  const [weeklyMissions, setWeeklyMissions] = useState<Mission[]>([
+    {
+      id: 'weekly-1',
+      type: 'weekly',
+      title: 'Đại gia từ vựng',
+      description: 'Học 50 từ vựng mới trong tuần',
+      icon: <BookOpen className="w-5 h-5" />,
+      progress: 0,
       target: 50,
+      xpReward: 300,
+      completed: false,
+      resetTime: getEndOfWeek(),
+    },
+    {
+      id: 'weekly-2',
+      type: 'weekly',
+      title: 'Săn Boss',
+      description: 'Đánh bại 5 boss khác nhau',
+      icon: <Trophy className="w-5 h-5" />,
+      progress: 0,
+      target: 5,
+      xpReward: 400,
+      completed: false,
+      resetTime: getEndOfWeek(),
+    },
+    {
+      id: 'weekly-3',
+      type: 'weekly',
+      title: 'Học không ngừng nghỉ',
+      description: 'Học 7 ngày liên tục trong tuần',
+      icon: <Flame className="w-5 h-5" />,
+      progress: 0,
+      target: 7,
       xpReward: 500,
-      bonusReward: '特殊徽章',
-      isCompleted: false
+      completed: false,
+      resetTime: getEndOfWeek(),
+    },
+    {
+      id: 'weekly-4',
+      type: 'weekly',
+      title: 'Bậc thầy thẻ bài',
+      description: 'Thu thập 20 thẻ từ Card Collection',
+      icon: <Star className="w-5 h-5" />,
+      progress: 0,
+      target: 20,
+      xpReward: 350,
+      completed: false,
+      resetTime: getEndOfWeek(),
+    },
+  ]);
+
+  const handleClaimReward = (mission: Mission) => {
+    if (!mission.completed || mission.progress < mission.target) return;
+
+    // Add XP
+    if (addXP) {
+      addXP(mission.xpReward);
     }
-  ];
 
-  const dailyMissions = mockMissions.filter(m => m.type === 'daily');
-  const weeklyMissions = mockMissions.filter(m => m.type === 'weekly');
-  const specialMissions = mockMissions.filter(m => m.type === 'special');
+    // Confetti!
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
 
-  // Require login
+    // Update mission
+    if (mission.type === 'daily') {
+      setDailyMissions(prev => prev.map(m =>
+        m.id === mission.id ? { ...m, completed: true } : m
+      ));
+    } else {
+      setWeeklyMissions(prev => prev.map(m =>
+        m.id === mission.id ? { ...m, completed: true } : m
+      ));
+    }
+  };
+
+  // Simulate mission progress (in real app, would track from actual user actions)
+  useEffect(() => {
+    const simulateProgress = () => {
+      setDailyMissions(prev => prev.map(m => ({
+        ...m,
+        progress: Math.min(m.progress + Math.floor(Math.random() * 2), m.target),
+      })));
+      setWeeklyMissions(prev => prev.map(m => ({
+        ...m,
+        progress: Math.min(m.progress + Math.floor(Math.random() * 3), m.target),
+      })));
+    };
+
+    // Simulate every 10 seconds
+    const interval = setInterval(simulateProgress, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
   if (!session?.user) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <main className="container mx-auto p-4 md:p-8 flex-grow flex items-center justify-center">
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto p-4 md:p-8 flex items-center justify-center">
           <Card className="max-w-md">
             <CardContent className="text-center py-12">
               <Lock className="w-16 h-16 text-gray-300 dark:text-gray-700 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">需要登入</h2>
+              <h2 className="text-2xl font-bold mb-2">Yêu cầu đăng nhập</h2>
               <p className="text-muted-foreground mb-6">
-                請登入以查看任務
+                Vui lòng đăng nhập để xem nhiệm vụ
               </p>
-              <div className="flex gap-3 justify-center">
-                <Button asChild variant="outline">
-                  <Link to="/cantonese">
-                    <Home className="mr-2 h-4 w-4" /> 主頁
-                  </Link>
-                </Button>
-                <Button asChild>
-                  <Link to="/cantonese/login">立即登入</Link>
-                </Button>
-              </div>
+              <Button asChild>
+                <Link to="/cantonese/login">Đăng nhập ngay</Link>
+              </Button>
             </CardContent>
           </Card>
         </main>
@@ -173,234 +210,200 @@ export default function CantoneseMissions() {
     );
   }
 
-  // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <main className="container mx-auto p-4 md:p-8 flex-grow flex items-center justify-center">
-          <div className="text-center">
-            <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
-            <p className="text-muted-foreground">載入任務中...</p>
-          </div>
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto p-4 md:p-8 flex items-center justify-center">
+          <Loader2 className="w-12 h-12 animate-spin text-primary" />
         </main>
       </div>
     );
   }
 
-  const MissionCard = ({ mission }: { mission: Mission }) => {
-    const progressPercentage = (mission.progress / mission.target) * 100;
+  const renderMissionCard = (mission: Mission) => {
+    const progressPercent = (mission.progress / mission.target) * 100;
+    const isCompleted = mission.progress >= mission.target;
 
     return (
-      <Card className={mission.isCompleted ? 'opacity-75 bg-muted/50' : ''}>
+      <Card
+        key={mission.id}
+        className={`relative overflow-hidden transition-all ${
+          isCompleted ? 'bg-gradient-to-br from-green-500/20 to-emerald-500/20 border-green-500' : ''
+        }`}
+      >
+        {isCompleted && !mission.completed && (
+          <div className="absolute top-2 right-2">
+            <Badge className="bg-green-500 animate-pulse">
+              <CheckCircle2 className="w-3 h-3 mr-1" />
+              Hoàn thành!
+            </Badge>
+          </div>
+        )}
+
         <CardHeader>
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <CardTitle className="flex items-center gap-2">
-                {mission.title}
-                {mission.isCompleted && (
-                  <CheckCircle2 className="w-5 h-5 text-green-500" />
-                )}
-              </CardTitle>
-              <CardDescription className="mt-2">{mission.description}</CardDescription>
+          <div className="flex items-start gap-3">
+            <div className={`p-3 rounded-lg ${
+              mission.type === 'daily'
+                ? 'bg-blue-500/20 text-blue-500'
+                : 'bg-purple-500/20 text-purple-500'
+            }`}>
+              {mission.icon}
             </div>
-            {mission.expiresIn && (
-              <Badge variant="outline" className="ml-2">
-                <Clock className="w-3 h-3 mr-1" />
-                {mission.expiresIn}
-              </Badge>
-            )}
+            <div className="flex-1">
+              <CardTitle className="text-lg">{mission.title}</CardTitle>
+              <CardDescription>{mission.description}</CardDescription>
+            </div>
           </div>
         </CardHeader>
 
         <CardContent className="space-y-4">
-          {/* Progress */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">進度</span>
-              <span className="font-medium">
+          <div>
+            <div className="flex justify-between text-sm mb-2">
+              <span>Tiến độ</span>
+              <span className="font-bold">
                 {mission.progress} / {mission.target}
               </span>
             </div>
-            <Progress value={progressPercentage} className="h-2" />
+            <Progress value={progressPercent} className="h-3" />
           </div>
 
-          {/* Rewards */}
-          <div className="flex items-center justify-between pt-2 border-t">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1 text-sm">
-                <Sparkles className="w-4 h-4 text-yellow-500" />
-                <span className="font-medium">{mission.xpReward} XP</span>
-              </div>
-              {mission.bonusReward && (
-                <div className="flex items-center gap-1 text-sm">
-                  <Gift className="w-4 h-4 text-purple-500" />
-                  <span className="text-muted-foreground">{mission.bonusReward}</span>
-                </div>
-              )}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-yellow-600">
+              <Zap className="w-4 h-4" />
+              <span className="font-bold">+{mission.xpReward} XP</span>
             </div>
 
-            <Button
-              size="sm"
-              disabled={!mission.isCompleted}
-              variant={mission.isCompleted ? 'default' : 'outline'}
-            >
-              {mission.isCompleted ? '領取獎勵' : '進行中'}
-            </Button>
+            {mission.resetTime && (
+              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                <Clock className="w-3 h-3" />
+                <span>{getTimeRemaining(mission.resetTime)}</span>
+              </div>
+            )}
           </div>
         </CardContent>
+
+        <CardFooter>
+          <Button
+            className="w-full"
+            disabled={!isCompleted || mission.completed}
+            onClick={() => handleClaimReward(mission)}
+            variant={isCompleted && !mission.completed ? 'default' : 'outline'}
+          >
+            {mission.completed ? (
+              <>
+                <CheckCircle2 className="mr-2 h-4 w-4" />
+                Đã nhận thưởng
+              </>
+            ) : isCompleted ? (
+              <>
+                <Trophy className="mr-2 h-4 w-4" />
+                Nhận thưởng
+              </>
+            ) : (
+              <>
+                <Target className="mr-2 h-4 w-4" />
+                Chưa hoàn thành
+              </>
+            )}
+          </Button>
+        </CardFooter>
       </Card>
     );
   };
 
-  const completedCount = mockMissions.filter(m => m.isCompleted).length;
-  const totalCount = mockMissions.length;
-
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <main className="container mx-auto p-4 md:p-8 flex-grow">
-        {/* Page Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
+    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+      <Header />
+      <main className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <Button asChild variant="outline" size="icon">
+              <Link to="/cantonese/gamification">
+                <ArrowLeft className="h-4 w-4" />
+              </Link>
+            </Button>
             <div>
               <h1 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
-                <Target className="w-8 h-8 text-blue-500" />
-                任務
+                <Target className="w-8 h-8 text-green-500" />
+                Nhiệm Vụ
               </h1>
               <p className="text-muted-foreground mt-1">
-                完成任務以獲得經驗值和獎勵
+                Hoàn thành nhiệm vụ hàng ngày và hàng tuần để nhận XP
               </p>
             </div>
+          </div>
 
-            <div className="flex gap-2">
-              <Button asChild variant="outline">
-                <Link to="/cantonese/gamification">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  返回
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link to="/cantonese">
-                  <Home className="mr-2 h-4 w-4" />
-                  主頁
-                </Link>
-              </Button>
-            </div>
+          {userProgress && (
+            <Badge variant="outline" className="text-lg px-4 py-2 hidden md:flex">
+              <Zap className="w-4 h-4 mr-2 text-yellow-500" />
+              {userProgress.total_xp} XP
+            </Badge>
+          )}
+        </div>
+
+        {/* Daily Missions */}
+        <div className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <Calendar className="w-6 h-6 text-blue-500" />
+            <h2 className="text-2xl font-bold">Nhiệm vụ hàng ngày</h2>
+            <Badge variant="secondary">
+              Làm mới sau: {getTimeRemaining(getEndOfDay())}
+            </Badge>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {dailyMissions.map(renderMissionCard)}
           </div>
         </div>
 
-        {/* Mission Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">總任務</CardTitle>
-              <Target className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalCount}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">已完成</CardTitle>
-              <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">{completedCount}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">每日任務</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {dailyMissions.filter(m => m.isCompleted).length} / {dailyMissions.length}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">本週任務</CardTitle>
-              <Trophy className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {weeklyMissions.filter(m => m.isCompleted).length} / {weeklyMissions.length}
-              </div>
-            </CardContent>
-          </Card>
+        {/* Weekly Missions */}
+        <div>
+          <div className="flex items-center gap-3 mb-6">
+            <Trophy className="w-6 h-6 text-purple-500" />
+            <h2 className="text-2xl font-bold">Nhiệm vụ hàng tuần</h2>
+            <Badge variant="secondary">
+              Làm mới sau: {getTimeRemaining(getEndOfWeek())}
+            </Badge>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {weeklyMissions.map(renderMissionCard)}
+          </div>
         </div>
-
-        {/* Mission Tabs */}
-        <Tabs defaultValue="daily" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="daily" className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              每日任務
-            </TabsTrigger>
-            <TabsTrigger value="weekly" className="flex items-center gap-2">
-              <Trophy className="w-4 h-4" />
-              每週任務
-            </TabsTrigger>
-            <TabsTrigger value="special" className="flex items-center gap-2">
-              <Star className="w-4 h-4" />
-              特殊任務
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Daily Missions */}
-          <TabsContent value="daily" className="space-y-4">
-            {dailyMissions.length > 0 ? (
-              dailyMissions.map(mission => (
-                <MissionCard key={mission.id} mission={mission} />
-              ))
-            ) : (
-              <Card>
-                <CardContent className="text-center py-12">
-                  <Calendar className="w-16 h-16 text-gray-300 dark:text-gray-700 mx-auto mb-3" />
-                  <p className="text-muted-foreground">今天沒有每日任務</p>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-
-          {/* Weekly Missions */}
-          <TabsContent value="weekly" className="space-y-4">
-            {weeklyMissions.length > 0 ? (
-              weeklyMissions.map(mission => (
-                <MissionCard key={mission.id} mission={mission} />
-              ))
-            ) : (
-              <Card>
-                <CardContent className="text-center py-12">
-                  <Trophy className="w-16 h-16 text-gray-300 dark:text-gray-700 mx-auto mb-3" />
-                  <p className="text-muted-foreground">本週沒有任務</p>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-
-          {/* Special Missions */}
-          <TabsContent value="special" className="space-y-4">
-            {specialMissions.length > 0 ? (
-              specialMissions.map(mission => (
-                <MissionCard key={mission.id} mission={mission} />
-              ))
-            ) : (
-              <Card>
-                <CardContent className="text-center py-12">
-                  <Star className="w-16 h-16 text-gray-300 dark:text-gray-700 mx-auto mb-3" />
-                  <p className="text-muted-foreground">沒有特殊任務</p>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-        </Tabs>
       </main>
     </div>
   );
+}
+
+// Helper functions
+function getEndOfDay(): string {
+  const end = new Date();
+  end.setHours(23, 59, 59, 999);
+  return end.toISOString();
+}
+
+function getEndOfWeek(): string {
+  const end = new Date();
+  const day = end.getDay();
+  const diff = 7 - day; // days until Sunday
+  end.setDate(end.getDate() + diff);
+  end.setHours(23, 59, 59, 999);
+  return end.toISOString();
+}
+
+function getTimeRemaining(isoString: string): string {
+  const end = new Date(isoString);
+  const now = new Date();
+  const diff = end.getTime() - now.getTime();
+
+  if (diff <= 0) return 'Đã hết hạn';
+
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+  if (hours > 24) {
+    const days = Math.floor(hours / 24);
+    return `${days} ngày`;
+  }
+
+  return `${hours}h ${minutes}m`;
 }
