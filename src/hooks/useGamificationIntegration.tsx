@@ -77,14 +77,17 @@ export function useGamificationIntegration(): UseGamificationIntegrationReturn {
     try {
       const event: LearningEvent = {
         event_type: 'quiz_complete',
-        metadata: { score, total, ...metadata }
+        metadata: { score, total, correct_count: score, total_count: total, ...metadata }
       };
 
       const result = await recordLearningEvent(event);
 
-      if (result.success) {
-        processGamificationResult(result as GamificationResult);
-      }
+      processGamificationResult({
+        xp_earned: result.xp_earned,
+        level_up: result.level_up,
+        new_level: result.level_after,
+        new_badges: result.badges_unlocked
+      });
     } catch (error) {
       console.error('Failed to track quiz completion:', error);
       // Don't show error to user - gamification is non-critical
@@ -103,9 +106,12 @@ export function useGamificationIntegration(): UseGamificationIntegrationReturn {
 
       const result = await recordLearningEvent(event);
 
-      if (result.success) {
-        processGamificationResult(result as GamificationResult);
-      }
+      processGamificationResult({
+        xp_earned: result.xp_earned,
+        level_up: result.level_up,
+        new_level: result.level_after,
+        new_badges: result.badges_unlocked
+      });
     } catch (error) {
       console.error('Failed to track lesson completion:', error);
     } finally {
@@ -123,9 +129,12 @@ export function useGamificationIntegration(): UseGamificationIntegrationReturn {
 
       const result = await recordLearningEvent(event);
 
-      if (result.success) {
-        processGamificationResult(result as GamificationResult);
-      }
+      processGamificationResult({
+        xp_earned: result.xp_earned,
+        level_up: result.level_up,
+        new_level: result.level_after,
+        new_badges: result.badges_unlocked
+      });
     } catch (error) {
       console.error('Failed to track pronunciation practice:', error);
     } finally {

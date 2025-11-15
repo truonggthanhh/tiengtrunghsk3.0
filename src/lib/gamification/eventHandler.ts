@@ -182,8 +182,10 @@ export async function recordLearningEvent(
 
   switch (event.event_type) {
     case 'quiz_complete':
-      const scorePercentage = event.correct_count / event.total_count;
-      xpEarned = Math.floor(event.total_count * 10 * scorePercentage);
+      const correct = (event.metadata?.correct_count ?? event.metadata?.score ?? 0) as number;
+      const total = (event.metadata?.total_count ?? event.metadata?.total ?? 1) as number;
+      const scorePercentage = total > 0 ? correct / total : 0;
+      xpEarned = Math.floor(total * 10 * scorePercentage);
       break;
     case 'lesson_complete':
       xpEarned = 50;
@@ -241,12 +243,13 @@ export async function recordLearningEvent(
   if (updateError) throw updateError;
 
   return {
-    xp_gained: xpEarned,
-    new_total_xp: newTotalXp,
+    xp_earned: xpEarned,
+    total_xp: newTotalXp,
+    level_before: userProgress.current_level,
+    level_after: newLevel,
     level_up: leveledUp,
-    new_level: newLevel,
     badges_unlocked: [],
-    cards_earned: []
+    missions_updated: []
   };
 }
 
