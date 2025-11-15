@@ -6,7 +6,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import type { UserProgress, GamificationDashboard } from '@/types/gamification';
 import { getUserProgress, getGamificationDashboard } from '@/lib/gamification/eventHandler';
-import { useSession } from '@/components/SessionContextProvider';
+import { supabase } from '@/integrations/supabase/client';
+import type { Session } from '@supabase/supabase-js';
 
 interface GamificationContextType {
   userProgress: UserProgress | null;
@@ -19,7 +20,7 @@ interface GamificationContextType {
 const GamificationContext = createContext<GamificationContextType | undefined>(undefined);
 
 export function GamificationProvider({ children }: { children: ReactNode }) {
-  const { session } = useSession();
+  const [session, setSession] = useState<Session | null>(null);
   const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
   const [dashboard, setDashboard] = useState<GamificationDashboard | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -47,6 +48,21 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
     }
   };
+
+  // Track session changes using supabase auth directly
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     if (session?.user) {
