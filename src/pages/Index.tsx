@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { BookOpen, CheckSquare, Shuffle, FileQuestion, Mic, Puzzle, ArrowRight, ChevronRight, AudioLines, Bot, GraduationCap, BookCopy, PenTool, Music } from "lucide-react";
+import { BookOpen, CheckSquare, Shuffle, FileQuestion, Mic, Puzzle, ArrowRight, ChevronRight, AudioLines, Bot, GraduationCap, BookCopy, PenTool, Music, Gamepad2, Zap, Trophy } from "lucide-react";
 import HeroIllustration from "@/components/HeroIllustration";
 import FeatureSection from "@/components/FeatureSection";
 import TestimonialSection from "@/components/TestimonialSection";
@@ -198,7 +198,7 @@ const Index = () => {
                 </div>
                 <CardHeader className="items-center space-y-6 relative z-10">
                   <div className="flex gap-4 items-center justify-center">
-                    <GamepadIcon className="w-20 h-20 text-white animate-bounce" />
+                    <Gamepad2 className="w-20 h-20 text-white animate-bounce" />
                     <Zap className="w-16 h-16 text-yellow-300 animate-pulse" />
                     <Trophy className="w-20 h-20 text-white animate-bounce" style={{animationDelay: '0.2s'}} />
                   </div>
