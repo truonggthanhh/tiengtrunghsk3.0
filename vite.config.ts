@@ -23,7 +23,7 @@ export default defineConfig(() => ({
         assetFileNames: 'assets/[name]-[hash].[ext]',
         // Manual chunks for better code splitting
         manualChunks: (id) => {
-          // Vendor chunks for large libraries
+          // Only split vendor chunks - let Vite handle app code splitting automatically
           if (id.includes("node_modules")) {
             // React ecosystem
             if (id.includes("react") || id.includes("react-dom") || id.includes("react-router")) {
@@ -54,14 +54,7 @@ export default defineConfig(() => ({
             // All other vendor code
             return "vendor-misc";
           }
-
-          // Split Cantonese and Mandarin app code (with v2 prefix to force new hash)
-          if (id.includes("/cantonese/")) {
-            return "app-cantonese-v2";
-          }
-          if (id.includes("/mandarin/") || id.includes("/msutong/")) {
-            return "app-mandarin-v2";
-          }
+          // App code will be split automatically by Vite based on lazy imports
         },
       },
     },
