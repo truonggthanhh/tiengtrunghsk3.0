@@ -9,6 +9,7 @@ import { ArrowRight, Home } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { usePinyin } from '@/contexts/PinyinContext';
+import { GamificationWrapper, useGamificationTracking } from '@/components/gamification/GamificationWrapper';
 
 // Helper function to shuffle an array
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -24,6 +25,7 @@ const FillInTheBlankPage = () => {
   const { level } = useParams<{ level: string }>();
   const fullVocabulary = useMemo(() => getVocabularyByLevel(level || '1'), [level]);
   const { showPinyin } = usePinyin();
+  const { trackQuizCompletion } = useGamificationTracking();
 
   const [questionCount, setQuestionCount] = useState<number | null>(null);
   const [vocabulary, setVocabulary] = useState<VocabularyWord[]>([]);
@@ -45,6 +47,16 @@ const FillInTheBlankPage = () => {
       setShowResult(true);
     }
   }, [currentIndex, vocabulary.length]);
+
+  useEffect(() => {
+    if (showResult && vocabulary.length > 0) {
+      trackQuizCompletion(correctAnswers, vocabulary.length, {
+        quiz_type: 'fill_blank',
+        level: level,
+        question_count: questionCount,
+      });
+    }
+  }, [showResult, correctAnswers, vocabulary.length, questionCount, level, trackQuizCompletion]);
 
   const handleStart = (count: number) => {
     setQuestionCount(count);
@@ -171,8 +183,9 @@ const FillInTheBlankPage = () => {
   const progressValue = ((currentIndex + 1) / vocabulary.length) * 100;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Header />
+    <GamificationWrapper>
+      <div className="min-h-screen bg-background flex flex-col">
+        <Header />
       <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
         <div className="w-full max-w-2xl bg-card p-6 md:p-8 rounded-xl shadow-lg border">
           <div className="mb-6 text-center">
@@ -240,7 +253,8 @@ const FillInTheBlankPage = () => {
           </div>
         </div>
       </main>
-    </div>
+      </div>
+    </GamificationWrapper>
   );
 };
 
