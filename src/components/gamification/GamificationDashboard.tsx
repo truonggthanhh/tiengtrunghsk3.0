@@ -8,37 +8,38 @@ import BadgeShowcase from './BadgeShowcase';
 import MissionCards from './MissionCards';
 
 const GamificationDashboard = () => {
-  const { userStats, badges, missions } = useGamification();
+  const { dashboard, userProgress, isLoading } = useGamification();
 
-  if (!userStats) {
+  // Don't show dashboard if data is not available
+  if (isLoading || !dashboard || !userProgress) {
     return null;
   }
 
   const stats = [
     {
       title: 'Level',
-      value: userStats.level,
+      value: userProgress.current_level,
       icon: <Trophy className="h-5 w-5" />,
       gradient: 'bg-gradient-vivid',
       shadowColor: 'shadow-pink',
     },
     {
       title: 'Tổng XP',
-      value: userStats.total_xp.toLocaleString(),
+      value: userProgress.total_xp.toLocaleString(),
       icon: <Star className="h-5 w-5" />,
       gradient: 'bg-gradient-sunset',
       shadowColor: 'shadow-orange',
     },
     {
       title: 'Badges',
-      value: badges.filter(b => b.unlocked).length,
+      value: dashboard.badges.unlocked.length,
       icon: <Award className="h-5 w-5" />,
       gradient: 'bg-gradient-colorful',
       shadowColor: 'shadow-purple',
     },
     {
       title: 'Nhiệm vụ hoàn thành',
-      value: missions.filter(m => m.completed).length,
+      value: [...(dashboard.missions.daily || []), ...(dashboard.missions.weekly || []), ...(dashboard.missions.newbie || [])].filter(m => m.completed).length,
       icon: <Target className="h-5 w-5" />,
       gradient: 'bg-gradient-spring',
       shadowColor: 'shadow-cyan',
@@ -79,10 +80,10 @@ const GamificationDashboard = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-primary" />
-            Tiến trình Level {userStats.level}
+            Tiến trình Level {userProgress.current_level}
           </CardTitle>
           <CardDescription>
-            {userStats.current_level_xp.toLocaleString()} / {userStats.xp_to_next_level.toLocaleString()} XP
+            {userProgress.total_xp.toLocaleString()} / {dashboard.level_info.xp_required.toLocaleString()} XP
           </CardDescription>
         </CardHeader>
         <CardContent>

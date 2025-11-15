@@ -33,6 +33,8 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
       setUserProgress(progress);
     } catch (error) {
       console.error('Failed to fetch user progress:', error);
+      // Set default progress for new users or when API is unavailable
+      setUserProgress(null);
     }
   };
 
@@ -44,6 +46,8 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
       setDashboard(dashboardData);
     } catch (error) {
       console.error('Failed to fetch dashboard:', error);
+      // Set default dashboard for new users or when API is unavailable
+      setDashboard(null);
     } finally {
       setIsLoading(false);
     }
