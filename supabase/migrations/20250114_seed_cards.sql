@@ -52,7 +52,7 @@ INSERT INTO cards (card_type, rarity, language, chinese_text, pronunciation, mea
 -- ============================================================================
 ('character', 'legendary', 'mandarin', '侠', 'xiá', 'Hiệp - Người anh hùng', 5, '{"theme": "wuxia", "category": "character"}'),
 ('phrase', 'legendary', 'mandarin', '飞龙在天', 'fēi lóng zài tiān', 'Rồng bay trên trời', 5, '{"theme": "wuxia", "category": "idiom"}'),
-('phrase', 'legendary', 'mandarin', '剑气纵横', 'jiàn qì zòng héng', 'Kiếm khí t종횡횡hoành", 5, '{"theme": "wuxia", "category": "idiom"}'),
+('phrase', 'legendary', 'mandarin', '剑气纵横', 'jiàn qì zòng héng', 'Kiếm khí tung hoành', 5, '{"theme": "wuxia", "category": "idiom"}'),
 
 -- ============================================================================
 -- CANTONESE CARDS - COMMON (Daily Use)
