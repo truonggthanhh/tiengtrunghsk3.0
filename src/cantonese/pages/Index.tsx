@@ -4,8 +4,9 @@ import { BookOpen, Headphones, Keyboard, PenTool, Zap, PlayCircle, Sparkles, Mus
 import { Link } from 'react-router-dom'
 import { useSession } from '@/cantonese/components/providers/SessionContextProvider'
 import { useProfile } from '@/cantonese/components/providers/ProfileProvider'
+import PageWrapper from '@/cantonese/components/layouts/PageWrapper'
 
-export default function Index(){ return <HongKongRetroLanding/> }
+export default function Index(){ return <PageWrapper showBackButton={false}><HongKongRetroLanding/></PageWrapper> }
 
 function HongKongRetroLanding() {
   const { session, isLoading: isSessionLoading } = useSession();
