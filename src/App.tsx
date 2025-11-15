@@ -3,81 +3,89 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import NotFound from "./pages/NotFound";
 import { ThemeProvider } from "./components/ThemeProvider";
-
-// Language Selection
-import LanguageSelection from "./pages/LanguageSelection";
-
-// Mandarin App Pages
-import MandarinIndex from "./pages/Index";
-import DictionaryPage from "./pages/DictionaryPage";
-import SongsPage from "./pages/SongsPage";
-import SongDetail from "./pages/SongDetail";
-import FlashcardPage from "./pages/FlashcardPage";
-import PinyinChoicePage from "./pages/PinyinChoicePage";
-import MeaningChoicePage from "./pages/MeaningChoicePage";
-import FillInTheBlankPage from "./pages/FillInTheBlankPage";
-import SentenceChoicePage from "./pages/SentenceChoicePage";
-import SentenceScramblePage from "./pages/SentenceScramblePage";
-import PronunciationPage from "./pages/PronunciationPage";
-import AiTutorPage from "./pages/AiTutorPage";
-import MsutongPage from "./pages/MsutongPage";
-import MsutongAiTutorPage from "./pages/msutong/AiTutorPage";
-import MsutongSentenceChoicePage from "./pages/msutong/SentenceChoicePage";
-import MsutongSentenceScramblePage from "./pages/msutong/SentenceScramblePage";
-import MsutongFlashcardPage from "./pages/msutong/MsutongFlashcardPage";
-import MsutongPinyinChoicePage from "./pages/msutong/MsutongPinyinChoicePage";
-import MsutongMeaningChoicePage from "./pages/msutong/MsutongMeaningChoicePage";
-import MsutongFillInTheBlankPage from "./pages/msutong/MsutongFillInTheBlankPage";
-import MsutongPronunciationPage from "./pages/msutong/MsutongPronunciationPage";
-import MsutongReadingComprehensionPage from "./pages/msutong/MsutongReadingComprehensionPage";
-import HandwritingPage from "./pages/HandwritingPage";
-import MsutongHandwritingPage from "./pages/msutong/MsutongHandwritingPage";
-import MandarinLogin from "./pages/Login";
-import AdminDashboardPage from "./pages/AdminDashboardPage";
-import ProfilePage from "./pages/ProfilePage";
-import LearningProgressPage from "./pages/LearningProgressPage";
 import { SessionContextProvider } from "./components/SessionContextProvider";
 import { PinyinProvider } from "./contexts/PinyinContext";
 import { GamificationProvider } from "./components/gamification/GamificationProvider";
+import { lazy, Suspense } from "react";
 
-// Cantonese App Pages
-import CantoneseIndex from "./cantonese/pages/Index";
-import CantoneseLogin from "./cantonese/pages/Login";
-import CantoneseDashboard from "./cantonese/pages/Dashboard";
-import CantoneseProfile from "./cantonese/pages/Profile";
-import CantoneseLessons from "./cantonese/pages/Lessons";
-import CantoneseLessonDetail from "./cantonese/pages/LessonDetail";
-import CantonesePractice from "./cantonese/pages/Practice";
-import CantoneseReview from "./cantonese/pages/ReviewPage";
-import CantoneseSongs from "./cantonese/pages/SongsPage";
-import CantoneseSongDetail from "./cantonese/pages/SongDetail";
-import CantoneseLearningProgress from "./cantonese/pages/LearningProgress";
-import CantoneseForgotPassword from "./cantonese/pages/ForgotPassword";
-import CantoneseUpdatePassword from "./cantonese/pages/UpdatePassword";
-import CantoneseBlog from "./cantonese/pages/BlogPage";
-import CantoneseBlogDetail from "./cantonese/pages/BlogDetailPage";
-import MandarinBlog from "./mandarin/pages/BlogPage";
-import MandarinBlogDetail from "./mandarin/pages/BlogDetailPage";
-import MandarinGamificationIndex from "./mandarin/pages/GamificationIndex";
-
-// Cantonese Gamification Pages
-import CantoneseGamificationDashboard from "./cantonese/pages/gamification/index";
-import CantoneseBossBattles from "./cantonese/pages/gamification/BossBattles";
-import CantoneseCardCollection from "./cantonese/pages/gamification/CardCollection";
-import CantoneseLuckyWheel from "./cantonese/pages/gamification/LuckyWheel";
-import CantoneseMissions from "./cantonese/pages/gamification/Missions";
-import CantoneseStoryMode from "./cantonese/pages/gamification/StoryMode";
-import CantoneseBadges from "./cantonese/pages/gamification/Badges";
-
-// Cantonese Components
+// Cantonese Components (keep providers non-lazy)
 import CantonesePageWrapper from "./cantonese/components/layouts/PageWrapper";
 import CantoneseProtectedRoute from "./cantonese/components/ProtectedRoute";
 import CantoneseThemeProvider from "./cantonese/components/providers/ThemeProvider";
 import CantoneseSettingsProvider from "./cantonese/components/providers/SettingsProvider";
 import CantoneseSessionContextProvider from "./cantonese/components/providers/SessionContextProvider";
 import CantoneseProfileProvider from "./cantonese/components/providers/ProfileProvider";
+
+// Loading component
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+  </div>
+);
+
+// Lazy loaded pages
+const NotFound = lazy(() => import("./pages/NotFound"));
+const LanguageSelection = lazy(() => import("./pages/LanguageSelection"));
+
+// Mandarin App Pages
+const MandarinIndex = lazy(() => import("./pages/Index"));
+const DictionaryPage = lazy(() => import("./pages/DictionaryPage"));
+const SongsPage = lazy(() => import("./pages/SongsPage"));
+const SongDetail = lazy(() => import("./pages/SongDetail"));
+const FlashcardPage = lazy(() => import("./pages/FlashcardPage"));
+const PinyinChoicePage = lazy(() => import("./pages/PinyinChoicePage"));
+const MeaningChoicePage = lazy(() => import("./pages/MeaningChoicePage"));
+const FillInTheBlankPage = lazy(() => import("./pages/FillInTheBlankPage"));
+const SentenceChoicePage = lazy(() => import("./pages/SentenceChoicePage"));
+const SentenceScramblePage = lazy(() => import("./pages/SentenceScramblePage"));
+const PronunciationPage = lazy(() => import("./pages/PronunciationPage"));
+const AiTutorPage = lazy(() => import("./pages/AiTutorPage"));
+const MsutongPage = lazy(() => import("./pages/MsutongPage"));
+const MsutongAiTutorPage = lazy(() => import("./pages/msutong/AiTutorPage"));
+const MsutongSentenceChoicePage = lazy(() => import("./pages/msutong/SentenceChoicePage"));
+const MsutongSentenceScramblePage = lazy(() => import("./pages/msutong/SentenceScramblePage"));
+const MsutongFlashcardPage = lazy(() => import("./pages/msutong/MsutongFlashcardPage"));
+const MsutongPinyinChoicePage = lazy(() => import("./pages/msutong/MsutongPinyinChoicePage"));
+const MsutongMeaningChoicePage = lazy(() => import("./pages/msutong/MsutongMeaningChoicePage"));
+const MsutongFillInTheBlankPage = lazy(() => import("./pages/msutong/MsutongFillInTheBlankPage"));
+const MsutongPronunciationPage = lazy(() => import("./pages/msutong/MsutongPronunciationPage"));
+const MsutongReadingComprehensionPage = lazy(() => import("./pages/msutong/MsutongReadingComprehensionPage"));
+const HandwritingPage = lazy(() => import("./pages/HandwritingPage"));
+const MsutongHandwritingPage = lazy(() => import("./pages/msutong/MsutongHandwritingPage"));
+const MandarinLogin = lazy(() => import("./pages/Login"));
+const AdminDashboardPage = lazy(() => import("./pages/AdminDashboardPage"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+const LearningProgressPage = lazy(() => import("./pages/LearningProgressPage"));
+const MandarinBlog = lazy(() => import("./mandarin/pages/BlogPage"));
+const MandarinBlogDetail = lazy(() => import("./mandarin/pages/BlogDetailPage"));
+const MandarinGamificationIndex = lazy(() => import("./mandarin/pages/GamificationIndex"));
+
+// Cantonese App Pages
+const CantoneseIndex = lazy(() => import("./cantonese/pages/Index"));
+const CantoneseLogin = lazy(() => import("./cantonese/pages/Login"));
+const CantoneseDashboard = lazy(() => import("./cantonese/pages/Dashboard"));
+const CantoneseProfile = lazy(() => import("./cantonese/pages/Profile"));
+const CantoneseLessons = lazy(() => import("./cantonese/pages/Lessons"));
+const CantoneseLessonDetail = lazy(() => import("./cantonese/pages/LessonDetail"));
+const CantonesePractice = lazy(() => import("./cantonese/pages/Practice"));
+const CantoneseReview = lazy(() => import("./cantonese/pages/ReviewPage"));
+const CantoneseSongs = lazy(() => import("./cantonese/pages/SongsPage"));
+const CantoneseSongDetail = lazy(() => import("./cantonese/pages/SongDetail"));
+const CantoneseLearningProgress = lazy(() => import("./cantonese/pages/LearningProgress"));
+const CantoneseForgotPassword = lazy(() => import("./cantonese/pages/ForgotPassword"));
+const CantoneseUpdatePassword = lazy(() => import("./cantonese/pages/UpdatePassword"));
+const CantoneseBlog = lazy(() => import("./cantonese/pages/BlogPage"));
+const CantoneseBlogDetail = lazy(() => import("./cantonese/pages/BlogDetailPage"));
+
+// Cantonese Gamification Pages
+const CantoneseGamificationDashboard = lazy(() => import("./cantonese/pages/gamification/index"));
+const CantoneseBossBattles = lazy(() => import("./cantonese/pages/gamification/BossBattles"));
+const CantoneseCardCollection = lazy(() => import("./cantonese/pages/gamification/CardCollection"));
+const CantoneseLuckyWheel = lazy(() => import("./cantonese/pages/gamification/LuckyWheel"));
+const CantoneseMissions = lazy(() => import("./cantonese/pages/gamification/Missions"));
+const CantoneseStoryMode = lazy(() => import("./cantonese/pages/gamification/StoryMode"));
+const CantoneseBadges = lazy(() => import("./cantonese/pages/gamification/Badges"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -100,7 +108,8 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Routes>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
             {/* Language Selection */}
             <Route path="/" element={<LanguageSelection />} />
 
@@ -812,9 +821,10 @@ const App = () => (
 
             {/* 404 Not Found */}
             <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </TooltipProvider>
       </GamificationProvider>
     </ThemeProvider>
   </QueryClientProvider>

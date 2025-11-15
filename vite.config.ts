@@ -14,4 +14,54 @@ export default defineConfig(() => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    // Increase chunk size warning limit (vendor-react is unavoidably large)
+    chunkSizeWarningLimit: 1500,
+    rollupOptions: {
+      output: {
+        // Manual chunks for better code splitting
+        manualChunks: (id) => {
+          // Vendor chunks for large libraries
+          if (id.includes("node_modules")) {
+            // React ecosystem
+            if (id.includes("react") || id.includes("react-dom") || id.includes("react-router")) {
+              return "vendor-react";
+            }
+            // UI libraries
+            if (id.includes("@radix-ui") || id.includes("lucide-react")) {
+              return "vendor-ui";
+            }
+            // Supabase
+            if (id.includes("@supabase")) {
+              return "vendor-supabase";
+            }
+            // Google Generative AI
+            if (id.includes("@google/generative-ai")) {
+              return "vendor-google-ai";
+            }
+            // Other large dependencies
+            if (id.includes("framer-motion")) {
+              return "vendor-framer";
+            }
+            if (id.includes("hanzi-writer") || id.includes("pinyin-pro")) {
+              return "vendor-chinese-tools";
+            }
+            if (id.includes("recharts")) {
+              return "vendor-charts";
+            }
+            // All other vendor code
+            return "vendor-misc";
+          }
+
+          // Split Cantonese and Mandarin app code
+          if (id.includes("/cantonese/")) {
+            return "app-cantonese";
+          }
+          if (id.includes("/mandarin/") || id.includes("/msutong/")) {
+            return "app-mandarin";
+          }
+        },
+      },
+    },
+  },
 }));

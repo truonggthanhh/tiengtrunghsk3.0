@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Home, KeyRound, AlertTriangle, Send, Loader2, RefreshCw, Mic, MicOff, Volume2 } from 'lucide-react';
-import { GoogleGenerativeAI, ChatSession } from '@google/generative-ai';
+import type { ChatSession } from '@google/generative-ai';
 import ChatMessage, { Message } from '@/components/ChatMessage';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Switch } from '@/components/ui/switch';
@@ -55,11 +55,12 @@ const MsutongAiTutorPage = () => {
     }
   }, [messages]);
 
-  const initializeChat = () => {
+  const initializeChat = async () => {
     try {
+      const { GoogleGenerativeAI } = await import('@google/generative-ai');
       const genAI = new GoogleGenerativeAI(apiKey!);
       const systemPrompt = `Bạn là một gia sư tiếng Trung tên là "HaoHao AI". Nhiệm vụ của bạn là giúp người dùng luyện tập theo giáo trình Msutong. Người dùng đã chọn cấp độ: ${level}, quyển: ${books}, và các bài: ${lessons}. Hãy luôn thân thiện, kiên nhẫn và đưa ra những câu trả lời ngắn gọn, dễ hiểu. Khi người dùng nói, bạn sẽ nhận được văn bản phiên âm. Dựa vào đó, hãy đưa ra phản hồi về ngữ pháp, cách dùng từ và cả những lỗi phát âm có thể xảy ra. Bắt đầu cuộc trò chuyện bằng cách chào người dùng và hỏi họ muốn luyện tập kỹ năng gì dựa trên các bài đã chọn. Chỉ trả lời bằng tiếng Việt.`;
-      
+
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", systemInstruction: systemPrompt });
       const session = model.startChat({ history: [] });
       setChatSession(session);
