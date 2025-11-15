@@ -31,11 +31,14 @@ interface Lesson {
 }
 
 interface VocabQuestion {
+  type: 'meaning' | 'pinyin' | 'hanzi' | 'sentence';
   hanzi: string;
   pinyin: string;
   meaning: string;
+  question: string;
   options: string[];
   correctAnswer: string;
+  sentence?: string; // For sentence type questions
 }
 
 interface Chapter {
@@ -45,120 +48,142 @@ interface Chapter {
   location: string;
   description: string;
   icon: string;
+  difficulty: '⭐' | '⭐⭐' | '⭐⭐⭐' | '⭐⭐⭐⭐';
   lessons: Lesson[];
   xpReward: number;
   isUnlocked: boolean;
   isCompleted: boolean;
 }
 
-// Vocabulary database for all chapters
+// VOCABULARY DATABASE - ALL ANSWERS IN VIETNAMESE
+// DIVERSE QUESTION TYPES: meaning, pinyin, hanzi, sentence
+
 const vocabDatabase: Record<string, VocabQuestion[]> = {
+  // CHAPTER 1: BEIJING - ⭐ EASY - Basic greetings
   beijing: [
-    { hanzi: '你好', pinyin: 'nǐ hǎo', meaning: 'Hello', options: ['Hello', 'Goodbye', 'Thanks', 'Sorry'], correctAnswer: 'Hello' },
-    { hanzi: '再见', pinyin: 'zài jiàn', meaning: 'Goodbye', options: ['Hello', 'Goodbye', 'Please', 'Yes'], correctAnswer: 'Goodbye' },
-    { hanzi: '谢谢', pinyin: 'xiè xiè', meaning: 'Thank you', options: ['Sorry', 'Thank you', 'Please', 'Welcome'], correctAnswer: 'Thank you' },
-    { hanzi: '对不起', pinyin: 'duì bu qǐ', meaning: 'Sorry', options: ['Sorry', 'Thanks', 'Hello', 'Yes'], correctAnswer: 'Sorry' },
-    { hanzi: '是', pinyin: 'shì', meaning: 'Yes/To be', options: ['No', 'Yes/To be', 'Maybe', 'Not'], correctAnswer: 'Yes/To be' },
+    { type: 'meaning', hanzi: '你好', pinyin: 'nǐ hǎo', meaning: 'Xin chào', question: 'Chọn nghĩa đúng:', options: ['Xin chào', 'Tạm biệt', 'Cảm ơn', 'Xin lỗi'], correctAnswer: 'Xin chào' },
+    { type: 'pinyin', hanzi: '再见', pinyin: 'zài jiàn', meaning: 'Tạm biệt', question: 'Chọn pinyin đúng:', options: ['zài jiàn', 'xièxiè', 'nǐ hǎo', 'duì bù qǐ'], correctAnswer: 'zài jiàn' },
+    { type: 'meaning', hanzi: '谢谢', pinyin: 'xiè xiè', meaning: 'Cảm ơn', question: 'Chọn nghĩa đúng:', options: ['Xin lỗi', 'Cảm ơn', 'Xin chào', 'Tạm biệt'], correctAnswer: 'Cảm ơn' },
+    { type: 'pinyin', hanzi: '对不起', pinyin: 'duì bu qǐ', meaning: 'Xin lỗi', question: 'Chọn pinyin đúng:', options: ['duì bu qǐ', 'zài jiàn', 'nǐ hǎo', 'xiè xiè'], correctAnswer: 'duì bu qǐ' },
+    { type: 'meaning', hanzi: '是', pinyin: 'shì', meaning: 'Là / Phải', question: 'Chọn nghĩa đúng:', options: ['Không', 'Là / Phải', 'Có thể', 'Chưa'], correctAnswer: 'Là / Phải' },
   ],
+
+  // CHAPTER 2: SHANGHAI - ⭐ EASY - Daily activities
   shanghai: [
-    { hanzi: '吃饭', pinyin: 'chī fàn', meaning: 'To eat', options: ['To eat', 'To drink', 'To sleep', 'To walk'], correctAnswer: 'To eat' },
-    { hanzi: '喝水', pinyin: 'hē shuǐ', meaning: 'To drink water', options: ['To eat', 'To drink water', 'To cook', 'To wash'], correctAnswer: 'To drink water' },
-    { hanzi: '买', pinyin: 'mǎi', meaning: 'To buy', options: ['To sell', 'To buy', 'To eat', 'To drink'], correctAnswer: 'To buy' },
-    { hanzi: '钱', pinyin: 'qián', meaning: 'Money', options: ['Time', 'Money', 'Food', 'Water'], correctAnswer: 'Money' },
-    { hanzi: '多少', pinyin: 'duō shǎo', meaning: 'How much/many', options: ['Where', 'When', 'How much/many', 'Why'], correctAnswer: 'How much/many' },
-    { hanzi: '便宜', pinyin: 'pián yi', meaning: 'Cheap', options: ['Expensive', 'Cheap', 'Good', 'Bad'], correctAnswer: 'Cheap' },
+    { type: 'meaning', hanzi: '吃饭', pinyin: 'chī fàn', meaning: 'Ăn cơm', question: 'Chọn nghĩa đúng:', options: ['Ăn cơm', 'Uống nước', 'Ngủ', 'Đi bộ'], correctAnswer: 'Ăn cơm' },
+    { type: 'pinyin', hanzi: '喝水', pinyin: 'hē shuǐ', meaning: 'Uống nước', question: 'Chọn pinyin đúng:', options: ['hē shuǐ', 'chī fàn', 'mǎi', 'qián'], correctAnswer: 'hē shuǐ' },
+    { type: 'meaning', hanzi: '买', pinyin: 'mǎi', meaning: 'Mua', question: 'Chọn nghĩa đúng:', options: ['Bán', 'Mua', 'Ăn', 'Uống'], correctAnswer: 'Mua' },
+    { type: 'hanzi', hanzi: '钱', pinyin: 'qián', meaning: 'Tiền', question: 'Chọn chữ Hán có nghĩa "Tiền":', options: ['钱', '时', '饭', '水'], correctAnswer: '钱' },
+    { type: 'meaning', hanzi: '多少', pinyin: 'duō shǎo', meaning: 'Bao nhiêu', question: 'Chọn nghĩa đúng:', options: ['Ở đâu', 'Khi nào', 'Bao nhiêu', 'Tại sao'], correctAnswer: 'Bao nhiêu' },
+    { type: 'meaning', hanzi: '便宜', pinyin: 'pián yi', meaning: 'Rẻ', question: 'Chọn nghĩa đúng:', options: ['Đắt', 'Rẻ', 'Tốt', 'Xấu'], correctAnswer: 'Rẻ' },
   ],
+
+  // CHAPTER 3: GREAT WALL - ⭐⭐ MEDIUM - Culture & history
   greatwall: [
-    { hanzi: '历史', pinyin: 'lì shǐ', meaning: 'History', options: ['History', 'Culture', 'Art', 'Science'], correctAnswer: 'History' },
-    { hanzi: '文化', pinyin: 'wén huà', meaning: 'Culture', options: ['History', 'Culture', 'Language', 'Food'], correctAnswer: 'Culture' },
-    { hanzi: '长城', pinyin: 'cháng chéng', meaning: 'Great Wall', options: ['Great Wall', 'Palace', 'Temple', 'Mountain'], correctAnswer: 'Great Wall' },
-    { hanzi: '古老', pinyin: 'gǔ lǎo', meaning: 'Ancient', options: ['Modern', 'Ancient', 'New', 'Young'], correctAnswer: 'Ancient' },
-    { hanzi: '美丽', pinyin: 'měi lì', meaning: 'Beautiful', options: ['Ugly', 'Beautiful', 'Big', 'Small'], correctAnswer: 'Beautiful' },
-    { hanzi: '壮观', pinyin: 'zhuàng guān', meaning: 'Magnificent', options: ['Tiny', 'Magnificent', 'Boring', 'Simple'], correctAnswer: 'Magnificent' },
-    { hanzi: '建筑', pinyin: 'jiàn zhù', meaning: 'Architecture', options: ['Architecture', 'Painting', 'Music', 'Dance'], correctAnswer: 'Architecture' },
+    { type: 'meaning', hanzi: '历史', pinyin: 'lì shǐ', meaning: 'Lịch sử', question: 'Chọn nghĩa đúng:', options: ['Lịch sử', 'Văn hóa', 'Nghệ thuật', 'Khoa học'], correctAnswer: 'Lịch sử' },
+    { type: 'pinyin', hanzi: '文化', pinyin: 'wén huà', meaning: 'Văn hóa', question: 'Chọn pinyin đúng:', options: ['wén huà', 'lì shǐ', 'cháng chéng', 'gǔ lǎo'], correctAnswer: 'wén huà' },
+    { type: 'hanzi', hanzi: '长城', pinyin: 'cháng chéng', meaning: 'Vạn Lý Trường Thành', question: 'Chọn chữ Hán có nghĩa "Vạn Lý Trường Thành":', options: ['长城', '宫殿', '寺庙', '山'], correctAnswer: '长城' },
+    { type: 'meaning', hanzi: '古老', pinyin: 'gǔ lǎo', meaning: 'Cổ xưa', question: 'Chọn nghĩa đúng:', options: ['Hiện đại', 'Cổ xưa', 'Mới', 'Trẻ'], correctAnswer: 'Cổ xưa' },
+    { type: 'sentence', hanzi: '美丽', pinyin: 'měi lì', meaning: 'Đẹp', question: 'Điền từ thích hợp: 这个地方很___。(Nơi này rất đẹp)', sentence: '这个地方很美丽。', options: ['美丽', '古老', '现代', '高'], correctAnswer: '美丽' },
+    { type: 'meaning', hanzi: '壮观', pinyin: 'zhuàng guān', meaning: 'Hùng vĩ', question: 'Chọn nghĩa đúng:', options: ['Nhỏ bé', 'Hùng vĩ', 'Nhàm chán', 'Đơn giản'], correctAnswer: 'Hùng vĩ' },
+    { type: 'pinyin', hanzi: '建筑', pinyin: 'jiàn zhù', meaning: 'Kiến trúc', question: 'Chọn pinyin đúng:', options: ['jiàn zhù', 'huì huà', 'yīn yuè', 'wǔ dǎo'], correctAnswer: 'jiàn zhù' },
   ],
+
+  // CHAPTER 4: XI'AN - ⭐⭐ MEDIUM - Food & taste
   xian: [
-    { hanzi: '面条', pinyin: 'miàn tiáo', meaning: 'Noodles', options: ['Rice', 'Noodles', 'Bread', 'Soup'], correctAnswer: 'Noodles' },
-    { hanzi: '饺子', pinyin: 'jiǎo zi', meaning: 'Dumplings', options: ['Dumplings', 'Noodles', 'Rice', 'Soup'], correctAnswer: 'Dumplings' },
-    { hanzi: '好吃', pinyin: 'hǎo chī', meaning: 'Delicious', options: ['Bad taste', 'Delicious', 'Spicy', 'Sweet'], correctAnswer: 'Delicious' },
-    { hanzi: '辣', pinyin: 'là', meaning: 'Spicy', options: ['Sweet', 'Sour', 'Spicy', 'Salty'], correctAnswer: 'Spicy' },
-    { hanzi: '甜', pinyin: 'tián', meaning: 'Sweet', options: ['Sweet', 'Sour', 'Bitter', 'Salty'], correctAnswer: 'Sweet' },
-    { hanzi: '咸', pinyin: 'xián', meaning: 'Salty', options: ['Sweet', 'Salty', 'Spicy', 'Sour'], correctAnswer: 'Salty' },
-    { hanzi: '酸', pinyin: 'suān', meaning: 'Sour', options: ['Sweet', 'Sour', 'Bitter', 'Salty'], correctAnswer: 'Sour' },
-    { hanzi: '苦', pinyin: 'kǔ', meaning: 'Bitter', options: ['Sweet', 'Sour', 'Bitter', 'Salty'], correctAnswer: 'Bitter' },
+    { type: 'meaning', hanzi: '面条', pinyin: 'miàn tiáo', meaning: 'Mì', question: 'Chọn nghĩa đúng:', options: ['Cơm', 'Mì', 'Bánh mì', 'Súp'], correctAnswer: 'Mì' },
+    { type: 'hanzi', hanzi: '饺子', pinyin: 'jiǎo zi', meaning: 'Bánh bao', question: 'Chọn chữ Hán có nghĩa "Bánh bao":', options: ['饺子', '面条', '米饭', '汤'], correctAnswer: '饺子' },
+    { type: 'sentence', hanzi: '好吃', pinyin: 'hǎo chī', meaning: 'Ngon', question: 'Điền từ thích hợp: 这个菜很___。(Món này rất ngon)', sentence: '这个菜很好吃。', options: ['好吃', '难吃', '甜', '苦'], correctAnswer: '好吃' },
+    { type: 'meaning', hanzi: '辣', pinyin: 'là', meaning: 'Cay', question: 'Chọn nghĩa đúng:', options: ['Ngọt', 'Chua', 'Cay', 'Mặn'], correctAnswer: 'Cay' },
+    { type: 'pinyin', hanzi: '甜', pinyin: 'tián', meaning: 'Ngọt', question: 'Chọn pinyin đúng:', options: ['tián', 'suān', 'kǔ', 'xián'], correctAnswer: 'tián' },
+    { type: 'meaning', hanzi: '咸', pinyin: 'xián', meaning: 'Mặn', question: 'Chọn nghĩa đúng:', options: ['Ngọt', 'Mặn', 'Cay', 'Chua'], correctAnswer: 'Mặn' },
+    { type: 'meaning', hanzi: '酸', pinyin: 'suān', meaning: 'Chua', question: 'Chọn nghĩa đúng:', options: ['Ngọt', 'Chua', 'Đắng', 'Mặn'], correctAnswer: 'Chua' },
+    { type: 'hanzi', hanzi: '苦', pinyin: 'kǔ', meaning: 'Đắng', question: 'Chọn chữ Hán có nghĩa "Đắng":', options: ['苦', '甜', '酸', '咸'], correctAnswer: '苦' },
   ],
+
+  // CHAPTER 5: CHENGDU - ⭐⭐ MEDIUM - Animals & nature
   chengdu: [
-    { hanzi: '熊猫', pinyin: 'xióng māo', meaning: 'Panda', options: ['Panda', 'Tiger', 'Lion', 'Bear'], correctAnswer: 'Panda' },
-    { hanzi: '动物', pinyin: 'dòng wù', meaning: 'Animal', options: ['Plant', 'Animal', 'Person', 'Thing'], correctAnswer: 'Animal' },
-    { hanzi: '可爱', pinyin: 'kě ài', meaning: 'Cute', options: ['Ugly', 'Cute', 'Scary', 'Big'], correctAnswer: 'Cute' },
-    { hanzi: '自然', pinyin: 'zì rán', meaning: 'Nature', options: ['City', 'Nature', 'Building', 'Car'], correctAnswer: 'Nature' },
-    { hanzi: '森林', pinyin: 'sēn lín', meaning: 'Forest', options: ['Desert', 'Ocean', 'Forest', 'Mountain'], correctAnswer: 'Forest' },
-    { hanzi: '竹子', pinyin: 'zhú zi', meaning: 'Bamboo', options: ['Tree', 'Bamboo', 'Grass', 'Flower'], correctAnswer: 'Bamboo' },
-    { hanzi: '保护', pinyin: 'bǎo hù', meaning: 'To protect', options: ['To destroy', 'To protect', 'To sell', 'To eat'], correctAnswer: 'To protect' },
-    { hanzi: '珍稀', pinyin: 'zhēn xī', meaning: 'Rare', options: ['Common', 'Rare', 'Many', 'Few'], correctAnswer: 'Rare' },
-    { hanzi: '可爱的', pinyin: 'kě ài de', meaning: 'Adorable', options: ['Scary', 'Adorable', 'Angry', 'Sad'], correctAnswer: 'Adorable' },
+    { type: 'meaning', hanzi: '熊猫', pinyin: 'xióng māo', meaning: 'Gấu trúc', question: 'Chọn nghĩa đúng:', options: ['Gấu trúc', 'Hổ', 'Sư tử', 'Gấu'], correctAnswer: 'Gấu trúc' },
+    { type: 'sentence', hanzi: '动物', pinyin: 'dòng wù', meaning: 'Động vật', question: 'Điền từ thích hợp: 熊猫是一种___。(Gấu trúc là một loài động vật)', sentence: '熊猫是一种动物。', options: ['动物', '植物', '人', '东西'], correctAnswer: '动物' },
+    { type: 'pinyin', hanzi: '可爱', pinyin: 'kě ài', meaning: 'Dễ thương', question: 'Chọn pinyin đúng:', options: ['kě ài', 'chǒu', 'kě pà', 'dà'], correctAnswer: 'kě ài' },
+    { type: 'hanzi', hanzi: '自然', pinyin: 'zì rán', meaning: 'Thiên nhiên', question: 'Chọn chữ Hán có nghĩa "Thiên nhiên":', options: ['自然', '城市', '建筑', '汽车'], correctAnswer: '自然' },
+    { type: 'meaning', hanzi: '森林', pinyin: 'sēn lín', meaning: 'Rừng', question: 'Chọn nghĩa đúng:', options: ['Sa mạc', 'Đại dương', 'Rừng', 'Núi'], correctAnswer: 'Rừng' },
+    { type: 'meaning', hanzi: '竹子', pinyin: 'zhú zi', meaning: 'Tre', question: 'Chọn nghĩa đúng:', options: ['Cây', 'Tre', 'Cỏ', 'Hoa'], correctAnswer: 'Tre' },
+    { type: 'sentence', hanzi: '保护', pinyin: 'bǎo hù', meaning: 'Bảo vệ', question: 'Điền từ thích hợp: 我们要___大自然。(Chúng ta phải bảo vệ thiên nhiên)', sentence: '我们要保护大自然。', options: ['保护', '破坏', '卖', '吃'], correctAnswer: '保护' },
+    { type: 'pinyin', hanzi: '珍稀', pinyin: 'zhēn xī', meaning: 'Quý hiếm', question: 'Chọn pinyin đúng:', options: ['zhēn xī', 'pǔ tōng', 'duō', 'shǎo'], correctAnswer: 'zhēn xī' },
+    { type: 'meaning', hanzi: '可爱的', pinyin: 'kě ài de', meaning: 'Đáng yêu', question: 'Chọn nghĩa đúng:', options: ['Đáng sợ', 'Đáng yêu', 'Giận dữ', 'Buồn'], correctAnswer: 'Đáng yêu' },
   ],
+
+  // CHAPTER 6: GUILIN - ⭐⭐⭐ HARD - Scenery & travel
   guilin: [
-    { hanzi: '山', pinyin: 'shān', meaning: 'Mountain', options: ['River', 'Mountain', 'Sea', 'Lake'], correctAnswer: 'Mountain' },
-    { hanzi: '水', pinyin: 'shuǐ', meaning: 'Water', options: ['Fire', 'Water', 'Wind', 'Earth'], correctAnswer: 'Water' },
-    { hanzi: '河', pinyin: 'hé', meaning: 'River', options: ['River', 'Sea', 'Lake', 'Ocean'], correctAnswer: 'River' },
-    { hanzi: '风景', pinyin: 'fēng jǐng', meaning: 'Scenery', options: ['Scenery', 'Building', 'Car', 'Food'], correctAnswer: 'Scenery' },
-    { hanzi: '旅游', pinyin: 'lǚ yóu', meaning: 'Tourism/Travel', options: ['Work', 'Study', 'Tourism/Travel', 'Sleep'], correctAnswer: 'Tourism/Travel' },
-    { hanzi: '照相', pinyin: 'zhào xiàng', meaning: 'Take photos', options: ['Draw', 'Take photos', 'Write', 'Sing'], correctAnswer: 'Take photos' },
-    { hanzi: '美景', pinyin: 'měi jǐng', meaning: 'Beautiful view', options: ['Ugly view', 'Beautiful view', 'Dark night', 'Rainy day'], correctAnswer: 'Beautiful view' },
-    { hanzi: '漂亮', pinyin: 'piào liang', meaning: 'Pretty', options: ['Ugly', 'Pretty', 'Big', 'Small'], correctAnswer: 'Pretty' },
-    { hanzi: '自然美', pinyin: 'zì rán měi', meaning: 'Natural beauty', options: ['Artificial', 'Natural beauty', 'City life', 'Modern'], correctAnswer: 'Natural beauty' },
-    { hanzi: '如画', pinyin: 'rú huà', meaning: 'Picturesque', options: ['Ugly', 'Picturesque', 'Boring', 'Plain'], correctAnswer: 'Picturesque' },
+    { type: 'meaning', hanzi: '山', pinyin: 'shān', meaning: 'Núi', question: 'Chọn nghĩa đúng:', options: ['Sông', 'Núi', 'Biển', 'Hồ'], correctAnswer: 'Núi' },
+    { type: 'hanzi', hanzi: '水', pinyin: 'shuǐ', meaning: 'Nước', question: 'Chọn chữ Hán có nghĩa "Nước":', options: ['火', '水', '风', '土'], correctAnswer: '水' },
+    { type: 'sentence', hanzi: '河', pinyin: 'hé', meaning: 'Sông', question: 'Điền từ thích hợp: 桂林的___很美。(Sông ở Quế Lâm rất đẹp)', sentence: '桂林的河很美。', options: ['河', '海', '湖', '洋'], correctAnswer: '河' },
+    { type: 'pinyin', hanzi: '风景', pinyin: 'fēng jǐng', meaning: 'Phong cảnh', question: 'Chọn pinyin đúng:', options: ['fēng jǐng', 'jiàn zhù', 'qì chē', 'shí wù'], correctAnswer: 'fēng jǐng' },
+    { type: 'meaning', hanzi: '旅游', pinyin: 'lǚ yóu', meaning: 'Du lịch', question: 'Chọn nghĩa đúng:', options: ['Làm việc', 'Học tập', 'Du lịch', 'Ngủ'], correctAnswer: 'Du lịch' },
+    { type: 'hanzi', hanzi: '照相', pinyin: 'zhào xiàng', meaning: 'Chụp ảnh', question: 'Chọn chữ Hán có nghĩa "Chụp ảnh":', options: ['画', '照相', '写', '唱'], correctAnswer: '照相' },
+    { type: 'sentence', hanzi: '美景', pinyin: 'měi jǐng', meaning: 'Cảnh đẹp', question: 'Điền từ thích hợp: 这里的___如画。(Cảnh đẹp nơi đây như tranh vẽ)', sentence: '这里的美景如画。', options: ['美景', '丑景', '黑夜', '雨天'], correctAnswer: '美景' },
+    { type: 'meaning', hanzi: '漂亮', pinyin: 'piào liang', meaning: 'Xinh đẹp', question: 'Chọn nghĩa đúng:', options: ['Xấu', 'Xinh đẹp', 'To', 'Nhỏ'], correctAnswer: 'Xinh đẹp' },
+    { type: 'pinyin', hanzi: '自然美', pinyin: 'zì rán měi', meaning: 'Vẻ đẹp tự nhiên', question: 'Chọn pinyin đúng:', options: ['zì rán měi', 'rén gōng', 'chéng shì', 'xiàn dài'], correctAnswer: 'zì rán měi' },
+    { type: 'meaning', hanzi: '如画', pinyin: 'rú huà', meaning: 'Như tranh vẽ', question: 'Chọn nghĩa đúng:', options: ['Xấu xí', 'Như tranh vẽ', 'Nhàm chán', 'Đơn điệu'], correctAnswer: 'Như tranh vẽ' },
   ],
+
+  // CHAPTER 7: HONG KONG - ⭐⭐⭐ HARD - Modern city
   hongkong: [
-    { hanzi: '繁华', pinyin: 'fán huá', meaning: 'Prosperous', options: ['Poor', 'Prosperous', 'Quiet', 'Empty'], correctAnswer: 'Prosperous' },
-    { hanzi: '热闹', pinyin: 'rè nào', meaning: 'Lively/Bustling', options: ['Quiet', 'Lively/Bustling', 'Empty', 'Dark'], correctAnswer: 'Lively/Bustling' },
-    { hanzi: '现代', pinyin: 'xiàn dài', meaning: 'Modern', options: ['Ancient', 'Modern', 'Old', 'Traditional'], correctAnswer: 'Modern' },
-    { hanzi: '高楼', pinyin: 'gāo lóu', meaning: 'Tall building', options: ['Small house', 'Tall building', 'Garden', 'Road'], correctAnswer: 'Tall building' },
-    { hanzi: '购物', pinyin: 'gòu wù', meaning: 'Shopping', options: ['Working', 'Shopping', 'Sleeping', 'Eating'], correctAnswer: 'Shopping' },
-    { hanzi: '美食', pinyin: 'měi shí', meaning: 'Delicious food', options: ['Bad food', 'Delicious food', 'Water', 'Medicine'], correctAnswer: 'Delicious food' },
-    { hanzi: '夜景', pinyin: 'yè jǐng', meaning: 'Night view', options: ['Morning', 'Night view', 'Afternoon', 'Sunset'], correctAnswer: 'Night view' },
-    { hanzi: '国际化', pinyin: 'guó jì huà', meaning: 'International', options: ['Local', 'International', 'Rural', 'Small'], correctAnswer: 'International' },
-    { hanzi: '东西方', pinyin: 'dōng xī fāng', meaning: 'East and West', options: ['North-South', 'East and West', 'Up-Down', 'Left-Right'], correctAnswer: 'East and West' },
-    { hanzi: '融合', pinyin: 'róng hé', meaning: 'Fusion/Blend', options: ['Separate', 'Fusion/Blend', 'Fight', 'Avoid'], correctAnswer: 'Fusion/Blend' },
-    { hanzi: '维多利亚港', pinyin: 'wéi duō lì yà gǎng', meaning: 'Victoria Harbor', options: ['Airport', 'Victoria Harbor', 'Mountain', 'Temple'], correctAnswer: 'Victoria Harbor' },
+    { type: 'meaning', hanzi: '繁华', pinyin: 'fán huá', meaning: 'Phồn hoa', question: 'Chọn nghĩa đúng:', options: ['Nghèo nàn', 'Phồn hoa', 'Yên tĩnh', 'Vắng vẻ'], correctAnswer: 'Phồn hoa' },
+    { type: 'sentence', hanzi: '热闹', pinyin: 'rè nào', meaning: 'Náo nhiệt', question: 'Điền từ thích hợp: 香港很___。(Hồng Kông rất náo nhiệt)', sentence: '香港很热闹。', options: ['热闹', '安静', '空', '暗'], correctAnswer: '热闹' },
+    { type: 'hanzi', hanzi: '现代', pinyin: 'xiàn dài', meaning: 'Hiện đại', question: 'Chọn chữ Hán có nghĩa "Hiện đại":', options: ['古代', '现代', '老', '传统'], correctAnswer: '现代' },
+    { type: 'pinyin', hanzi: '高楼', pinyin: 'gāo lóu', meaning: 'Tòa nhà cao', question: 'Chọn pinyin đúng:', options: ['gāo lóu', 'xiǎo wū', 'huā yuán', 'lù'], correctAnswer: 'gāo lóu' },
+    { type: 'meaning', hanzi: '购物', pinyin: 'gòu wù', meaning: 'Mua sắm', question: 'Chọn nghĩa đúng:', options: ['Làm việc', 'Mua sắm', 'Ngủ', 'Ăn'], correctAnswer: 'Mua sắm' },
+    { type: 'sentence', hanzi: '美食', pinyin: 'měi shí', meaning: 'Ẩm thực ngon', question: 'Điền từ thích hợp: 香港的___很有名。(Ẩm thực Hồng Kông rất nổi tiếng)', sentence: '香港的美食很有名。', options: ['美食', '坏食', '水', '药'], correctAnswer: '美食' },
+    { type: 'hanzi', hanzi: '夜景', pinyin: 'yè jǐng', meaning: 'Cảnh đêm', question: 'Chọn chữ Hán có nghĩa "Cảnh đêm":', options: ['早晨', '夜景', '下午', '日落'], correctAnswer: '夜景' },
+    { type: 'pinyin', hanzi: '国际化', pinyin: 'guó jì huà', meaning: 'Quốc tế hóa', question: 'Chọn pinyin đúng:', options: ['guó jì huà', 'dāng dì', 'nóng cūn', 'xiǎo'], correctAnswer: 'guó jì huà' },
+    { type: 'meaning', hanzi: '东西方', pinyin: 'dōng xī fāng', meaning: 'Đông Tây phương', question: 'Chọn nghĩa đúng:', options: ['Bắc Nam', 'Đông Tây phương', 'Lên Xuống', 'Trái Phải'], correctAnswer: 'Đông Tây phương' },
+    { type: 'sentence', hanzi: '融合', pinyin: 'róng hé', meaning: 'Hòa trộn', question: 'Điền từ thích hợp: 东西文化在这里___。(Văn hóa Đông Tây hòa trộn tại đây)', sentence: '东西文化在这里融合。', options: ['融合', '分开', '打架', '避开'], correctAnswer: '融合' },
+    { type: 'meaning', hanzi: '维多利亚港', pinyin: 'wéi duō lì yà gǎng', meaning: 'Cảng Victoria', question: 'Chọn nghĩa đúng:', options: ['Sân bay', 'Cảng Victoria', 'Núi', 'Chùa'], correctAnswer: 'Cảng Victoria' },
   ],
+
+  // CHAPTER 8: FORBIDDEN CITY - ⭐⭐⭐⭐ VERY HARD - Imperial culture
   forbiddencity: [
-    { hanzi: '皇帝', pinyin: 'huáng dì', meaning: 'Emperor', options: ['Emperor', 'Soldier', 'Farmer', 'Teacher'], correctAnswer: 'Emperor' },
-    { hanzi: '宫殿', pinyin: 'gōng diàn', meaning: 'Palace', options: ['House', 'Palace', 'School', 'Shop'], correctAnswer: 'Palace' },
-    { hanzi: '皇宫', pinyin: 'huáng gōng', meaning: 'Imperial palace', options: ['Temple', 'Imperial palace', 'Market', 'Garden'], correctAnswer: 'Imperial palace' },
-    { hanzi: '古代', pinyin: 'gǔ dài', meaning: 'Ancient times', options: ['Modern', 'Ancient times', 'Future', 'Present'], correctAnswer: 'Ancient times' },
-    { hanzi: '传统', pinyin: 'chuán tǒng', meaning: 'Traditional', options: ['Modern', 'Traditional', 'New', 'Foreign'], correctAnswer: 'Traditional' },
-    { hanzi: '龙', pinyin: 'lóng', meaning: 'Dragon', options: ['Dragon', 'Tiger', 'Bird', 'Fish'], correctAnswer: 'Dragon' },
-    { hanzi: '凤凰', pinyin: 'fèng huáng', meaning: 'Phoenix', options: ['Dragon', 'Phoenix', 'Tiger', 'Lion'], correctAnswer: 'Phoenix' },
-    { hanzi: '金色', pinyin: 'jīn sè', meaning: 'Golden', options: ['Silver', 'Golden', 'Red', 'Blue'], correctAnswer: 'Golden' },
-    { hanzi: '红色', pinyin: 'hóng sè', meaning: 'Red', options: ['Red', 'Blue', 'Green', 'Yellow'], correctAnswer: 'Red' },
-    { hanzi: '威严', pinyin: 'wēi yán', meaning: 'Majestic', options: ['Weak', 'Majestic', 'Small', 'Cute'], correctAnswer: 'Majestic' },
-    { hanzi: '雕刻', pinyin: 'diāo kè', meaning: 'Carving', options: ['Painting', 'Carving', 'Writing', 'Dancing'], correctAnswer: 'Carving' },
-    { hanzi: '艺术', pinyin: 'yì shù', meaning: 'Art', options: ['Science', 'Art', 'Sports', 'Business'], correctAnswer: 'Art' },
+    { type: 'meaning', hanzi: '皇帝', pinyin: 'huáng dì', meaning: 'Hoàng đế', question: 'Chọn nghĩa đúng:', options: ['Hoàng đế', 'Lính', 'Nông dân', 'Giáo viên'], correctAnswer: 'Hoàng đế' },
+    { type: 'sentence', hanzi: '宫殿', pinyin: 'gōng diàn', meaning: 'Cung điện', question: 'Điền từ thích hợp: 这是古代的___。(Đây là cung điện cổ đại)', sentence: '这是古代的宫殿。', options: ['宫殿', '房子', '学校', '商店'], correctAnswer: '宫殿' },
+    { type: 'hanzi', hanzi: '皇宫', pinyin: 'huáng gōng', meaning: 'Hoàng cung', question: 'Chọn chữ Hán có nghĩa "Hoàng cung":', options: ['寺庙', '皇宫', '市场', '花园'], correctAnswer: '皇宫' },
+    { type: 'pinyin', hanzi: '古代', pinyin: 'gǔ dài', meaning: 'Thời cổ đại', question: 'Chọn pinyin đúng:', options: ['gǔ dài', 'xiàn dài', 'wèi lái', 'xiàn zài'], correctAnswer: 'gǔ dài' },
+    { type: 'meaning', hanzi: '传统', pinyin: 'chuán tǒng', meaning: 'Truyền thống', question: 'Chọn nghĩa đúng:', options: ['Hiện đại', 'Truyền thống', 'Mới', 'Ngoại lai'], correctAnswer: 'Truyền thống' },
+    { type: 'sentence', hanzi: '龙', pinyin: 'lóng', meaning: 'Rồng', question: 'Điền từ thích hợp: ___是中国的象征。(Rồng là biểu tượng của Trung Quốc)', sentence: '龙是中国的象征。', options: ['龙', '虎', '鸟', '鱼'], correctAnswer: '龙' },
+    { type: 'hanzi', hanzi: '凤凰', pinyin: 'fèng huáng', meaning: 'Phượng hoàng', question: 'Chọn chữ Hán có nghĩa "Phượng hoàng":', options: ['龙', '凤凰', '虎', '狮'], correctAnswer: '凤凰' },
+    { type: 'pinyin', hanzi: '金色', pinyin: 'jīn sè', meaning: 'Màu vàng', question: 'Chọn pinyin đúng:', options: ['jīn sè', 'yín sè', 'hóng sè', 'lán sè'], correctAnswer: 'jīn sè' },
+    { type: 'meaning', hanzi: '红色', pinyin: 'hóng sè', meaning: 'Màu đỏ', question: 'Chọn nghĩa đúng:', options: ['Màu đỏ', 'Màu xanh', 'Màu lục', 'Màu vàng'], correctAnswer: 'Màu đỏ' },
+    { type: 'sentence', hanzi: '威严', pinyin: 'wēi yán', meaning: 'Uy nghiêm', question: 'Điền từ thích hợp: 皇帝很___。(Hoàng đế rất uy nghiêm)', sentence: '皇帝很威严。', options: ['威严', '软弱', '小', '可爱'], correctAnswer: '威严' },
+    { type: 'hanzi', hanzi: '雕刻', pinyin: 'diāo kè', meaning: 'Chạm khắc', question: 'Chọn chữ Hán có nghĩa "Chạm khắc":', options: ['绘画', '雕刻', '写字', '跳舞'], correctAnswer: '雕刻' },
+    { type: 'meaning', hanzi: '艺术', pinyin: 'yì shù', meaning: 'Nghệ thuật', question: 'Chọn nghĩa đúng:', options: ['Khoa học', 'Nghệ thuật', 'Thể thao', 'Kinh doanh'], correctAnswer: 'Nghệ thuật' },
   ],
+
+  // CHAPTER 9: SUZHOU - ⭐⭐⭐⭐ VERY HARD - Poetry & elegance
   suzhou: [
-    { hanzi: '园林', pinyin: 'yuán lín', meaning: 'Garden', options: ['Garden', 'Forest', 'Desert', 'Ocean'], correctAnswer: 'Garden' },
-    { hanzi: '水乡', pinyin: 'shuǐ xiāng', meaning: 'Water town', options: ['Mountain town', 'Water town', 'Desert town', 'Ice town'], correctAnswer: 'Water town' },
-    { hanzi: '小桥', pinyin: 'xiǎo qiáo', meaning: 'Small bridge', options: ['Big road', 'Small bridge', 'Tall building', 'Deep well'], correctAnswer: 'Small bridge' },
-    { hanzi: '流水', pinyin: 'liú shuǐ', meaning: 'Flowing water', options: ['Still water', 'Flowing water', 'Ice', 'Steam'], correctAnswer: 'Flowing water' },
-    { hanzi: '人家', pinyin: 'rén jiā', meaning: 'Family/household', options: ['Animal', 'Family/household', 'Plant', 'Building'], correctAnswer: 'Family/household' },
-    { hanzi: '江南', pinyin: 'jiāng nán', meaning: 'South of Yangtze', options: ['North', 'South of Yangtze', 'East', 'West'], correctAnswer: 'South of Yangtze' },
-    { hanzi: '诗意', pinyin: 'shī yì', meaning: 'Poetic', options: ['Boring', 'Poetic', 'Ugly', 'Noisy'], correctAnswer: 'Poetic' },
-    { hanzi: '宁静', pinyin: 'níng jìng', meaning: 'Peaceful', options: ['Noisy', 'Peaceful', 'Chaotic', 'Busy'], correctAnswer: 'Peaceful' },
-    { hanzi: '优雅', pinyin: 'yōu yǎ', meaning: 'Elegant', options: ['Rough', 'Elegant', 'Loud', 'Simple'], correctAnswer: 'Elegant' },
+    { type: 'meaning', hanzi: '园林', pinyin: 'yuán lín', meaning: 'Vườn cổ', question: 'Chọn nghĩa đúng:', options: ['Vườn cổ', 'Rừng', 'Sa mạc', 'Đại dương'], correctAnswer: 'Vườn cổ' },
+    { type: 'sentence', hanzi: '水乡', pinyin: 'shuǐ xiāng', meaning: 'Làng nước', question: 'Điền từ thích hợp: 苏州是江南___。(Tô Châu là làng nước Nam Giang)', sentence: '苏州是江南水乡。', options: ['水乡', '山乡', '沙乡', '冰乡'], correctAnswer: '水乡' },
+    { type: 'hanzi', hanzi: '小桥', pinyin: 'xiǎo qiáo', meaning: 'Cầu nhỏ', question: 'Chọn chữ Hán có nghĩa "Cầu nhỏ":', options: ['大路', '小桥', '高楼', '深井'], correctAnswer: '小桥' },
+    { type: 'pinyin', hanzi: '流水', pinyin: 'liú shuǐ', meaning: 'Nước chảy', question: 'Chọn pinyin đúng:', options: ['liú shuǐ', 'jìng shuǐ', 'bīng', 'zhēng qì'], correctAnswer: 'liú shuǐ' },
+    { type: 'meaning', hanzi: '人家', pinyin: 'rén jiā', meaning: 'Nhà cửa', question: 'Chọn nghĩa đúng:', options: ['Động vật', 'Nhà cửa', 'Cây cối', 'Tòa nhà'], correctAnswer: 'Nhà cửa' },
+    { type: 'sentence', hanzi: '江南', pinyin: 'jiāng nán', meaning: 'Nam Giang', question: 'Điền từ thích hợp: ___风景如画。(Phong cảnh Nam Giang như tranh vẽ)', sentence: '江南风景如画。', options: ['江南', '北方', '东方', '西方'], correctAnswer: '江南' },
+    { type: 'hanzi', hanzi: '诗意', pinyin: 'shī yì', meaning: 'Thơ mộng', question: 'Chọn chữ Hán có nghĩa "Thơ mộng":', options: ['无聊', '诗意', '丑', '吵'], correctAnswer: '诗意' },
+    { type: 'pinyin', hanzi: '宁静', pinyin: 'níng jìng', meaning: 'Thanh tĩnh', question: 'Chọn pinyin đúng:', options: ['níng jìng', 'chǎo nào', 'hùn luàn', 'máng'], correctAnswer: 'níng jìng' },
+    { type: 'meaning', hanzi: '优雅', pinyin: 'yōu yǎ', meaning: 'Thanh lịch', question: 'Chọn nghĩa đúng:', options: ['Thô kệch', 'Thanh lịch', 'Ồn ào', 'Đơn giản'], correctAnswer: 'Thanh lịch' },
   ],
+
+  // CHAPTER 10: TIBET - ⭐⭐⭐⭐ VERY HARD - Spirituality
   tibet: [
-    { hanzi: '高原', pinyin: 'gāo yuán', meaning: 'Plateau', options: ['Valley', 'Plateau', 'Beach', 'Plain'], correctAnswer: 'Plateau' },
-    { hanzi: '雪山', pinyin: 'xuě shān', meaning: 'Snow mountain', options: ['Beach', 'Desert', 'Snow mountain', 'Forest'], correctAnswer: 'Snow mountain' },
-    { hanzi: '寺庙', pinyin: 'sì miào', meaning: 'Temple', options: ['School', 'Temple', 'Market', 'Hospital'], correctAnswer: 'Temple' },
-    { hanzi: '信仰', pinyin: 'xìn yǎng', meaning: 'Faith/Belief', options: ['Doubt', 'Faith/Belief', 'Fear', 'Anger'], correctAnswer: 'Faith/Belief' },
-    { hanzi: '神圣', pinyin: 'shén shèng', meaning: 'Sacred', options: ['Common', 'Sacred', 'Dirty', 'Broken'], correctAnswer: 'Sacred' },
-    { hanzi: '虔诚', pinyin: 'qián chéng', meaning: 'Devout', options: ['Lazy', 'Devout', 'Careless', 'Rude'], correctAnswer: 'Devout' },
-    { hanzi: '纯净', pinyin: 'chún jìng', meaning: 'Pure', options: ['Dirty', 'Pure', 'Mixed', 'Polluted'], correctAnswer: 'Pure' },
-    { hanzi: '蓝天', pinyin: 'lán tiān', meaning: 'Blue sky', options: ['Red sky', 'Blue sky', 'Black night', 'Gray cloud'], correctAnswer: 'Blue sky' },
-    { hanzi: '白云', pinyin: 'bái yún', meaning: 'White cloud', options: ['Black smoke', 'White cloud', 'Red fire', 'Blue water'], correctAnswer: 'White cloud' },
-    { hanzi: '朝圣', pinyin: 'cháo shèng', meaning: 'Pilgrimage', options: ['Shopping', 'Pilgrimage', 'Working', 'Playing'], correctAnswer: 'Pilgrimage' },
+    { type: 'meaning', hanzi: '高原', pinyin: 'gāo yuán', meaning: 'Cao nguyên', question: 'Chọn nghĩa đúng:', options: ['Thung lũng', 'Cao nguyên', 'Bãi biển', 'Đồng bằng'], correctAnswer: 'Cao nguyên' },
+    { type: 'sentence', hanzi: '雪山', pinyin: 'xuě shān', meaning: 'Núi tuyết', question: 'Điền từ thích hợp: 西藏有很多___。(Tây Tạng có nhiều núi tuyết)', sentence: '西藏有很多雪山。', options: ['雪山', '海滩', '沙漠', '森林'], correctAnswer: '雪山' },
+    { type: 'hanzi', hanzi: '寺庙', pinyin: 'sì miào', meaning: 'Chùa chiền', question: 'Chọn chữ Hán có nghĩa "Chùa chiền":', options: ['学校', '寺庙', '市场', '医院'], correctAnswer: '寺庙' },
+    { type: 'pinyin', hanzi: '信仰', pinyin: 'xìn yǎng', meaning: 'Tín ngưỡng', question: 'Chọn pinyin đúng:', options: ['xìn yǎng', 'huái yí', 'kǒng jù', 'fèn nù'], correctAnswer: 'xìn yǎng' },
+    { type: 'meaning', hanzi: '神圣', pinyin: 'shén shèng', meaning: 'Thiêng liêng', question: 'Chọn nghĩa đúng:', options: ['Bình thường', 'Thiêng liêng', 'Bẩn', 'Hỏng'], correctAnswer: 'Thiêng liêng' },
+    { type: 'sentence', hanzi: '虔诚', pinyin: 'qián chéng', meaning: 'Sùng đạo', question: 'Điền từ thích hợp: 信徒很___。(Tín đồ rất sùng đạo)', sentence: '信徒很虔诚。', options: ['虔诚', '懒惰', '粗心', '无礼'], correctAnswer: '虔诚' },
+    { type: 'hanzi', hanzi: '纯净', pinyin: 'chún jìng', meaning: 'Trong sạch', question: 'Chọn chữ Hán có nghĩa "Trong sạch":', options: ['脏', '纯净', '混', '污'], correctAnswer: '纯净' },
+    { type: 'pinyin', hanzi: '蓝天', pinyin: 'lán tiān', meaning: 'Bầu trời xanh', question: 'Chọn pinyin đúng:', options: ['lán tiān', 'hóng tiān', 'hēi yè', 'huī yún'], correctAnswer: 'lán tiān' },
+    { type: 'meaning', hanzi: '白云', pinyin: 'bái yún', meaning: 'Mây trắng', question: 'Chọn nghĩa đúng:', options: ['Khói đen', 'Mây trắng', 'Lửa đỏ', 'Nước xanh'], correctAnswer: 'Mây trắng' },
+    { type: 'sentence', hanzi: '朝圣', pinyin: 'cháo shèng', meaning: 'Hành hương', question: 'Điền từ thích hợp: 很多人来西藏___。(Nhiều người đến Tây Tạng hành hương)', sentence: '很多人来西藏朝圣。', options: ['朝圣', '购物', '工作', '玩'], correctAnswer: '朝圣' },
   ],
 };
 
@@ -202,8 +227,9 @@ export default function MandarinStoryMode() {
       number: 1,
       title: 'Chào mừng đến Bắc Kinh',
       location: '北京 (Beijing)',
-      description: 'Bắt đầu hành trình học tiếng Trung tại thủ đô Bắc Kinh. Học các cụm từ chào hỏi và giới thiệu bản thân.',
+      description: 'Bắt đầu hành trình với các cụm từ chào hỏi cơ bản. Từ vựng đơn giản, 2 dạng câu hỏi.',
       icon: '🏛️',
+      difficulty: '⭐',
       lessons: generateLessons('beijing', 5),
       xpReward: 100,
       isUnlocked: true,
@@ -214,8 +240,9 @@ export default function MandarinStoryMode() {
       number: 2,
       title: 'Khám phá Thượng Hải',
       location: '上海 (Shanghai)',
-      description: 'Khám phá thành phố hiện đại Thượng Hải. Học từ vựng về mua sắm, ăn uống và di chuyển.',
+      description: 'Học từ vựng sinh hoạt hàng ngày. Bắt đầu có thêm dạng chọn Hanzi.',
       icon: '🏙️',
+      difficulty: '⭐',
       lessons: generateLessons('shanghai', 6),
       xpReward: 150,
       isUnlocked: true,
@@ -226,8 +253,9 @@ export default function MandarinStoryMode() {
       number: 3,
       title: 'Vạn Lý Trường Thành',
       location: '长城 (Great Wall)',
-      description: 'Tham quan kỳ quan thế giới. Học các từ vựng về lịch sử và văn hóa Trung Quốc.',
+      description: 'Từ vựng về lịch sử và văn hóa. Xuất hiện câu hỏi điền từ vào câu.',
       icon: '🏰',
+      difficulty: '⭐⭐',
       lessons: generateLessons('greatwall', 7),
       xpReward: 200,
       isUnlocked: true,
@@ -238,8 +266,9 @@ export default function MandarinStoryMode() {
       number: 4,
       title: 'Tây An cổ kính',
       location: '西安 (Xi\'an)',
-      description: 'Khám phá thành phố cổ đại Tây An. Học về ẩm thực truyền thống và lịch sử nhà Tần.',
+      description: 'Ẩm thực và các vị. Tăng độ phức tạp với 4 dạng câu hỏi.',
       icon: '🗿',
+      difficulty: '⭐⭐',
       lessons: generateLessons('xian', 8),
       xpReward: 250,
       isUnlocked: true,
@@ -250,8 +279,9 @@ export default function MandarinStoryMode() {
       number: 5,
       title: 'Thành Đô và gấu trúc',
       location: '成都 (Chengdu)',
-      description: 'Ghé thăm Thành Đô, quê hương của gấu trúc. Học từ vựng về động vật và thiên nhiên.',
+      description: 'Động vật và thiên nhiên. Câu hỏi đa dạng hơn, yêu cầu hiểu ngữ cảnh.',
       icon: '🐼',
+      difficulty: '⭐⭐',
       lessons: generateLessons('chengdu', 9),
       xpReward: 300,
       isUnlocked: true,
@@ -262,8 +292,9 @@ export default function MandarinStoryMode() {
       number: 6,
       title: 'Quế Lâm thơ mộng',
       location: '桂林 (Guilin)',
-      description: 'Thưởng ngoạn phong cảnh tuyệt đẹp Quế Lâm. Học từ vựng về thiên nhiên và du lịch.',
+      description: 'Phong cảnh và du lịch. Từ vựng mô tả phức tạp, câu hỏi nâng cao.',
       icon: '⛰️',
+      difficulty: '⭐⭐⭐',
       lessons: generateLessons('guilin', 10),
       xpReward: 350,
       isUnlocked: true,
@@ -274,8 +305,9 @@ export default function MandarinStoryMode() {
       number: 7,
       title: 'Hồng Kông sôi động',
       location: '香港 (Hong Kong)',
-      description: 'Trải nghiệm sự pha trộn văn hóa Đông Tây tại Hồng Kông. Học tiếng Quảng Đông cơ bản.',
+      description: 'Thành phố hiện đại. Từ vựng trừu tượng, nhiều câu phức tạp.',
       icon: '🌃',
+      difficulty: '⭐⭐⭐',
       lessons: generateLessons('hongkong', 11),
       xpReward: 400,
       isUnlocked: true,
@@ -286,8 +318,9 @@ export default function MandarinStoryMode() {
       number: 8,
       title: 'Tử Cấm Thành huyền bí',
       location: '故宫 (Forbidden City)',
-      description: 'Khám phá cung điện hoàng gia cổ xưa. Học từ vựng nâng cao về văn hóa và lịch sử.',
+      description: 'Văn hóa hoàng gia cổ đại. Từ vựng chuyên sâu, câu hỏi khó.',
       icon: '👑',
+      difficulty: '⭐⭐⭐⭐',
       lessons: generateLessons('forbiddencity', 12),
       xpReward: 500,
       isUnlocked: true,
@@ -298,8 +331,9 @@ export default function MandarinStoryMode() {
       number: 9,
       title: 'Tô Châu - Venice phương Đông',
       location: '苏州 (Suzhou)',
-      description: 'Khám phá vườn cổ Tô Châu và kiến trúc truyền thống. Học từ vựng về nghệ thuật và thơ ca.',
+      description: 'Thơ ca và kiến trúc thanh lịch. Từ vựng văn học, độ khó cao.',
       icon: '🏮',
+      difficulty: '⭐⭐⭐⭐',
       lessons: generateLessons('suzhou', 9),
       xpReward: 450,
       isUnlocked: true,
@@ -310,8 +344,9 @@ export default function MandarinStoryMode() {
       number: 10,
       title: 'Tây Tạng linh thiêng',
       location: '西藏 (Tibet)',
-      description: 'Hành hương đến vùng đất thiêng liêng Tây Tạng. Học về văn hóa Phật giáo Tây Tạng.',
+      description: 'Tâm linh và tín ngưỡng. Từ vựng cao cấp nhất, thử thách cuối cùng!',
       icon: '🕉️',
+      difficulty: '⭐⭐⭐⭐',
       lessons: generateLessons('tibet', 10),
       xpReward: 600,
       isUnlocked: true,
@@ -320,20 +355,11 @@ export default function MandarinStoryMode() {
   ]);
 
   const handleStartLesson = (chapter: Chapter, lesson: Lesson) => {
-    if (lesson.completed) {
-      // Replay lesson
-      setPlayingLesson({ chapter, lesson });
-      setCurrentQuestionIndex(0);
-      setScore(0);
-      setShowResult(null);
-      setLessonComplete(false);
-    } else {
-      setPlayingLesson({ chapter, lesson });
-      setCurrentQuestionIndex(0);
-      setScore(0);
-      setShowResult(null);
-      setLessonComplete(false);
-    }
+    setPlayingLesson({ chapter, lesson });
+    setCurrentQuestionIndex(0);
+    setScore(0);
+    setShowResult(null);
+    setLessonComplete(false);
   };
 
   const handleAnswer = (answer: string) => {
@@ -373,7 +399,7 @@ export default function MandarinStoryMode() {
         }));
 
         // Add XP
-        const xpEarned = Math.floor((score / playingLesson.lesson.vocabulary.length) * 50);
+        const xpEarned = Math.floor((score + 1) / playingLesson.lesson.vocabulary.length * 50);
         if (addXP) {
           addXP(xpEarned);
         }
@@ -385,7 +411,7 @@ export default function MandarinStoryMode() {
           origin: { y: 0.6 }
         });
       }
-    }, 1000);
+    }, 1500);
   };
 
   const handleExitLesson = () => {
@@ -436,6 +462,17 @@ export default function MandarinStoryMode() {
     const question = playingLesson.lesson.vocabulary[currentQuestionIndex];
     const progressPercent = ((currentQuestionIndex + 1) / playingLesson.lesson.vocabulary.length) * 100;
 
+    // Get question type icon
+    const getQuestionTypeIcon = (type: string) => {
+      switch(type) {
+        case 'meaning': return '📖';
+        case 'pinyin': return '🔊';
+        case 'hanzi': return '✍️';
+        case 'sentence': return '💬';
+        default: return '❓';
+      }
+    };
+
     return (
       <div className="min-h-screen bg-gradient-to-b from-blue-950 to-background">
         <Header />
@@ -450,11 +487,11 @@ export default function MandarinStoryMode() {
                 {playingLesson.chapter.title} - {playingLesson.lesson.title}
               </h2>
               <p className="text-sm text-gray-300">
-                Câu {currentQuestionIndex + 1}/{playingLesson.lesson.vocabulary.length}
+                Câu {currentQuestionIndex + 1}/{playingLesson.lesson.vocabulary.length} {getQuestionTypeIcon(question.type)}
               </p>
             </div>
             <div className="w-20 text-right">
-              <span className="text-white font-bold">Score: {score}</span>
+              <span className="text-white font-bold">⭐ {score}</span>
             </div>
           </div>
 
@@ -465,9 +502,20 @@ export default function MandarinStoryMode() {
           <Card className="bg-gradient-to-br from-purple-900/50 to-pink-900/50 border-purple-700">
             <CardHeader>
               <CardTitle className="text-center text-white">
-                <div className="text-6xl mb-6 font-bold">{question.hanzi}</div>
-                <div className="text-3xl text-purple-300 mb-4">{question.pinyin}</div>
-                <div className="text-xl text-gray-300">Nghĩa là gì?</div>
+                {question.type === 'meaning' || question.type === 'hanzi' ? (
+                  <>
+                    <div className="text-6xl mb-6 font-bold">{question.hanzi}</div>
+                    <div className="text-3xl text-purple-300 mb-4">{question.pinyin}</div>
+                  </>
+                ) : question.type === 'pinyin' ? (
+                  <>
+                    <div className="text-6xl mb-6 font-bold">{question.hanzi}</div>
+                    <div className="text-2xl text-purple-300 mb-4">Nghĩa: {question.meaning}</div>
+                  </>
+                ) : (
+                  <div className="text-2xl text-purple-300 mb-6">{question.sentence?.replace(question.hanzi, '___')}</div>
+                )}
+                <div className="text-xl text-gray-300 mt-4">{question.question}</div>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -502,7 +550,11 @@ export default function MandarinStoryMode() {
                 <div className={`mt-6 p-4 rounded-lg text-center font-bold text-white ${
                   showResult === 'correct' ? 'bg-green-600' : 'bg-red-600'
                 } animate-pulse`}>
-                  {showResult === 'correct' ? '✓ Chính xác!' : `✗ Sai rồi! Đáp án đúng: ${question.correctAnswer}`}
+                  {showResult === 'correct' ? (
+                    <>✓ Chính xác! <span className="text-yellow-300">+1 sao</span></>
+                  ) : (
+                    <>✗ Sai rồi! Đáp án đúng: <span className="underline">{question.correctAnswer}</span></>
+                  )}
                 </div>
               )}
             </CardContent>
@@ -547,6 +599,11 @@ export default function MandarinStoryMode() {
                   ⭐ Hoàn hảo! Bạn giỏi quá!
                 </div>
               )}
+              {percentage >= 80 && percentage < 100 && (
+                <div className="text-lg font-bold text-blue-600">
+                  👏 Rất tốt! Cố gắng thêm nhé!
+                </div>
+              )}
             </CardContent>
             <CardFooter className="flex gap-3">
               <Button variant="outline" onClick={handleExitLesson} className="flex-1">
@@ -581,7 +638,7 @@ export default function MandarinStoryMode() {
               Chế Độ Câu Chuyện
             </h1>
             <p className="text-muted-foreground mt-1">
-              Hành trình qua 10 địa danh nổi tiếng của Trung Quốc
+              10 chương với độ khó tăng dần - 4 dạng câu hỏi đa dạng 📖🔊✍️💬
             </p>
           </div>
         </div>
@@ -635,12 +692,13 @@ export default function MandarinStoryMode() {
                   <div className="flex items-start gap-4">
                     <div className="text-6xl">{chapter.icon}</div>
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
                         <Badge variant="outline">Chương {chapter.number}</Badge>
                         <Badge variant="secondary" className="flex items-center gap-1">
                           <MapPin className="w-3 h-3" />
                           {chapter.location}
                         </Badge>
+                        <Badge className="bg-yellow-500">{chapter.difficulty}</Badge>
                       </div>
                       <CardTitle className="text-2xl mb-2">{chapter.title}</CardTitle>
                       <CardDescription className="text-base">
