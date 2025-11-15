@@ -101,9 +101,9 @@ INSERT INTO cards (card_type, rarity, language, chinese_text, pronunciation, mea
 -- ============================================================================
 ('npc', 'legendary', 'cantonese', '李小龍', 'lei5 siu2 lung4', 'Lý Tiểu Long - Huyền thoại võ thuật', 5, '{"type": "icon", "category": "martial_arts"}'),
 ('phrase', 'legendary', 'cantonese', '香港精神', 'hoeng1 gong2 zing1 san4', 'Tinh thần Hong Kong', 5, '{"theme": "culture", "category": "spirit"}'),
-('phrase', 'legendary', 'cantonese', '獅子山下', 'si1 zi2 saan1 haa6', 'Dưới núi Sư Tử (tinh thần HK)', 5, '{"theme": "culture", "category": "spirit"}')'
+('phrase', 'legendary', 'cantonese', '獅子山下', 'si1 zi2 saan1 haa6', 'Dưới núi Sư Tử (tinh thần HK)', 5, '{"theme": "culture", "category": "spirit"}');
 
-ON CONFLICT DO NOTHING;
+-- Note: ON CONFLICT DO NOTHING not supported in INSERT VALUES, handled by unique constraints
 
 -- ============================================================================
 -- END OF CARDS SEED DATA
