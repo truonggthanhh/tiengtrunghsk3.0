@@ -1,4 +1,3 @@
-"use client"
 import React from 'react'
 import { useSettings } from '@/cantonese/components/providers/SettingsProvider'
 import { Button } from '@/components/ui/button'
