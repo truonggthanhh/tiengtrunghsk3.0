@@ -544,6 +544,15 @@ function GamificationSection() {
           <p className="text-lg text-pink-600 dark:text-pink-400 mt-2">
             Học tập không nhàm chán! Học Quảng Đông đồng thời tận hưởng niềm vui từ game
           </p>
+          <Link to="/cantonese/gamification">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="mt-8 px-10 py-4 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 text-white text-xl font-bold rounded-full shadow-2xl hover:shadow-pink-500/50 transition-all duration-300 border-2 border-white/30"
+            >
+              🎮 Khám Phá Ngay! 🏆
+            </motion.button>
+          </Link>
         </motion.div>
       </div>
     </section>
