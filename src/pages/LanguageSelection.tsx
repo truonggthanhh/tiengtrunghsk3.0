@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Zap } from 'lucide-react';
+import { Sparkles, Zap, Trophy, Star, Target, Award, TrendingUp, Flame } from 'lucide-react';
 
 const LanguageSelection: React.FC = () => {
   const navigate = useNavigate();
@@ -245,6 +245,90 @@ const LanguageSelection: React.FC = () => {
                 </Button>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Gamification Features Section */}
+          <div className="my-20">
+            <div className="text-center mb-12 space-y-4">
+              <div className="inline-flex items-center gap-2 bg-gradient-vivid text-white px-6 py-3 rounded-full font-bold shadow-pink animate-pulse-glow">
+                <Trophy className="h-5 w-5" />
+                <span>Hệ thống Gamification</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground dark:text-white">
+                Học Vui - Học Hiệu Quả
+              </h2>
+              <p className="text-lg text-muted-foreground dark:text-gray-300 max-w-2xl mx-auto">
+                Mở khóa thành tựu, lên level, thu thập badges và hoàn thành nhiệm vụ khi học tập
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+              <Card className="border-0 bg-gradient-vivid text-white p-6 text-center hover-scale shadow-pink">
+                <CardContent className="p-0 space-y-3">
+                  <div className="flex justify-center">
+                    <TrendingUp className="h-8 w-8" />
+                  </div>
+                  <h3 className="font-bold text-lg">XP & Levels</h3>
+                  <p className="text-sm opacity-90">Nhận XP và lên cấp</p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 bg-gradient-sunset text-white p-6 text-center hover-scale shadow-orange">
+                <CardContent className="p-0 space-y-3">
+                  <div className="flex justify-center">
+                    <Award className="h-8 w-8" />
+                  </div>
+                  <h3 className="font-bold text-lg">Badges</h3>
+                  <p className="text-sm opacity-90">Mở khóa huy hiệu</p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 bg-gradient-colorful text-white p-6 text-center hover-scale shadow-purple">
+                <CardContent className="p-0 space-y-3">
+                  <div className="flex justify-center">
+                    <Target className="h-8 w-8" />
+                  </div>
+                  <h3 className="font-bold text-lg">Missions</h3>
+                  <p className="text-sm opacity-90">Hoàn thành nhiệm vụ</p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 bg-gradient-spring text-white p-6 text-center hover-scale shadow-cyan">
+                <CardContent className="p-0 space-y-3">
+                  <div className="flex justify-center">
+                    <Flame className="h-8 w-8" />
+                  </div>
+                  <h3 className="font-bold text-lg">Streaks</h3>
+                  <p className="text-sm opacity-90">Duy trì chuỗi ngày học</p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 bg-gradient-fire text-white p-6 text-center hover-scale shadow-orange">
+                <CardContent className="p-0 space-y-3">
+                  <div className="flex justify-center">
+                    <Star className="h-8 w-8" />
+                  </div>
+                  <h3 className="font-bold text-lg">Flashcards</h3>
+                  <p className="text-sm opacity-90">Thu thập thẻ học</p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 bg-gradient-ocean text-white p-6 text-center hover-scale shadow-cyan">
+                <CardContent className="p-0 space-y-3">
+                  <div className="flex justify-center">
+                    <Trophy className="h-8 w-8" />
+                  </div>
+                  <h3 className="font-bold text-lg">Leaderboard</h3>
+                  <p className="text-sm opacity-90">Thi đua với bạn bè</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="text-center">
+              <p className="text-muted-foreground dark:text-gray-300 text-lg">
+                🎮 Học tập trở nên thú vị hơn với hệ thống phần thưởng và theo dõi tiến độ tự động
+              </p>
+            </div>
           </div>
 
           {/* Footer with retro text */}

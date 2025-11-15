@@ -8,6 +8,7 @@ import { ArrowRight, Home, CheckCircle2, XCircle } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { usePinyin } from '@/contexts/PinyinContext';
+import { GamificationWrapper, useGamificationTracking } from '@/components/gamification/GamificationWrapper';
 
 const shuffleArray = <T,>(array: T[]): T[] => {
   const newArray = [...array];
@@ -23,6 +24,7 @@ const MsutongSentenceChoicePage = () => {
   const [searchParams] = useSearchParams();
   const level = searchParams.get('level') || 'so-cap';
   const lessonIds = searchParams.get('lessonIds')?.split(',') || [];
+  const { trackQuizCompletion } = useGamificationTracking();
 
   const practiceVocabulary = useMemo(() => getVocabularyByMsutong(level, lessonIds), [level, lessonIds]);
   const distractorVocabulary = useMemo(() => getFullMsutongVocabularyByLevel(level), [level]);
@@ -87,6 +89,16 @@ const MsutongSentenceChoicePage = () => {
       generateOptions();
     }
   }, [currentIndex, generateOptions, questions]);
+
+  useEffect(() => {
+    if (showResult && questions.length > 0) {
+      trackQuizCompletion(correctAnswers, questions.length, {
+        quiz_type: 'msutong_sentence_choice',
+        level: level,
+        question_count: questionCount,
+      });
+    }
+  }, [showResult, correctAnswers, questions.length, questionCount, level, trackQuizCompletion]);
 
   const handleStart = (count: number) => {
     setQuestionCount(count);
@@ -213,87 +225,89 @@ const MsutongSentenceChoicePage = () => {
   const questionSentence = currentQuestion?.sentence.replace(currentQuestion.word.hanzi, '___');
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Header />
-      <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
-        <div className="w-full max-w-2xl">
-          <div className="mb-6 text-center">
-            <h1 className="text-3xl font-bold">Điền Từ Vào Câu (Msutong)</h1>
-            <p className="text-muted-foreground">Chọn từ đúng để hoàn thành câu sau.</p>
-          </div>
-
-          <div className="mb-4">
-            <div className="flex justify-between items-center mb-2 text-muted-foreground">
-              <span>Câu: {currentIndex + 1} / {questions.length}</span>
-              <span>Đúng: {correctAnswers}</span>
+    <GamificationWrapper>
+      <div className="min-h-screen bg-background flex flex-col">
+        <Header />
+        <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
+          <div className="w-full max-w-2xl">
+            <div className="mb-6 text-center">
+              <h1 className="text-3xl font-bold">Điền Từ Vào Câu (Msutong)</h1>
+              <p className="text-muted-foreground">Chọn từ đúng để hoàn thành câu sau.</p>
             </div>
-            <Progress value={progressValue} className="w-full" />
-          </div>
-          
-          <Card className="mb-8 shadow-md bg-gradient-ocean text-white border-0">
-            <CardContent className="p-10 flex flex-col items-center justify-center text-center gap-4">
-              <h2 className="text-4xl md:text-5xl font-bold tracking-wider">{questionSentence}</h2>
-              {showPinyin && currentQuestion?.sentence && (
-                <p className="text-xl font-medium text-white/80 italic">
-                  {/* Show pinyin for the full sentence if available from example data */}
-                  {practiceVocabulary.find(w => w.hanzi === currentQuestion.word.hanzi)?.examples?.find(ex => ex.hanzi === currentQuestion.sentence)?.pinyin || ''}
-                </p>
-              )}
-              <p className="text-lg text-white/90">{currentQuestion?.translation}</p>
-            </CardContent>
-          </Card>
 
-          <div className="grid grid-cols-2 gap-4">
-            {options.map((option, index) => {
-              const isSelected = selectedAnswer === option;
-              const isTheCorrectAnswer = option === currentQuestion.word.hanzi;
-              const optionPinyin = hanziToPinyinMap.get(option);
+            <div className="mb-4">
+              <div className="flex justify-between items-center mb-2 text-muted-foreground">
+                <span>Câu: {currentIndex + 1} / {questions.length}</span>
+                <span>Đúng: {correctAnswers}</span>
+              </div>
+              <Progress value={progressValue} className="w-full" />
+            </div>
 
-              return (
-                <Button
-                  key={index}
-                  onClick={() => handleAnswer(option)}
-                  disabled={!!selectedAnswer}
-                  className={cn(
-                    "h-auto min-h-20 py-3 text-2xl transition-all duration-300 font-bold flex flex-col gap-1",
-                    isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90 text-destructive-foreground border-0",
-                    selectedAnswer && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90 text-white border-0",
-                    !isSelected && !selectedAnswer && "hover:bg-gradient-vivid hover:text-white border-2"
-                  )}
-                  variant="outline"
-                >
-                  <span>{option}</span>
-                  {showPinyin && optionPinyin && (
-                    <span className="text-sm font-medium opacity-80">
-                      {optionPinyin}
-                    </span>
-                  )}
-                  {isSelected && isCorrect === false && <XCircle className="h-6 w-6" />}
-                  {selectedAnswer && isTheCorrectAnswer && <CheckCircle2 className="h-6 w-6" />}
+            <Card className="mb-8 shadow-md bg-gradient-ocean text-white border-0">
+              <CardContent className="p-10 flex flex-col items-center justify-center text-center gap-4">
+                <h2 className="text-4xl md:text-5xl font-bold tracking-wider">{questionSentence}</h2>
+                {showPinyin && currentQuestion?.sentence && (
+                  <p className="text-xl font-medium text-white/80 italic">
+                    {/* Show pinyin for the full sentence if available from example data */}
+                    {practiceVocabulary.find(w => w.hanzi === currentQuestion.word.hanzi)?.examples?.find(ex => ex.hanzi === currentQuestion.sentence)?.pinyin || ''}
+                  </p>
+                )}
+                <p className="text-lg text-white/90">{currentQuestion?.translation}</p>
+              </CardContent>
+            </Card>
+
+            <div className="grid grid-cols-2 gap-4">
+              {options.map((option, index) => {
+                const isSelected = selectedAnswer === option;
+                const isTheCorrectAnswer = option === currentQuestion.word.hanzi;
+                const optionPinyin = hanziToPinyinMap.get(option);
+
+                return (
+                  <Button
+                    key={index}
+                    onClick={() => handleAnswer(option)}
+                    disabled={!!selectedAnswer}
+                    className={cn(
+                      "h-auto min-h-20 py-3 text-2xl transition-all duration-300 font-bold flex flex-col gap-1",
+                      isSelected && isCorrect === false && "bg-destructive hover:bg-destructive/90 text-destructive-foreground border-0",
+                      selectedAnswer && isTheCorrectAnswer && "bg-green-600 hover:bg-green-600/90 text-white border-0",
+                      !isSelected && !selectedAnswer && "hover:bg-gradient-vivid hover:text-white border-2"
+                    )}
+                    variant="outline"
+                  >
+                    <span>{option}</span>
+                    {showPinyin && optionPinyin && (
+                      <span className="text-sm font-medium opacity-80">
+                        {optionPinyin}
+                      </span>
+                    )}
+                    {isSelected && isCorrect === false && <XCircle className="h-6 w-6" />}
+                    {selectedAnswer && isTheCorrectAnswer && <CheckCircle2 className="h-6 w-6" />}
+                  </Button>
+                )
+              })}
+            </div>
+
+            {selectedAnswer && isCorrect === false && (
+              <div className="mt-8 text-center">
+                <Button onClick={goToNextWord} size="lg" className="font-bold">
+                  {currentIndex === questions.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-              )
-            })}
-          </div>
+              </div>
+            )}
 
-          {selectedAnswer && isCorrect === false && (
-            <div className="mt-8 text-center">
-              <Button onClick={goToNextWord} size="lg" className="font-bold">
-                {currentIndex === questions.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}
-                <ArrowRight className="ml-2 h-5 w-5" />
+            <div className="text-center mt-8">
+              <Button asChild variant="secondary" className="font-bold">
+                <Link to="/mandarin/msutong">
+                  <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
+                </Link>
               </Button>
             </div>
-          )}
-
-          <div className="text-center mt-8">
-            <Button asChild variant="secondary" className="font-bold">
-              <Link to="/mandarin/msutong">
-                <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
-              </Link>
-            </Button>
           </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </GamificationWrapper>
   );
 };
 

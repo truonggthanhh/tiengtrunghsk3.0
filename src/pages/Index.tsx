@@ -18,6 +18,7 @@ import TestimonialSection from "@/components/TestimonialSection";
 import CallToActionSection from "@/components/CallToActionSection";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/components/SessionContextProvider";
+import GamificationDashboard from "@/components/gamification/GamificationDashboard";
 
 const exerciseTypes = [
   {
@@ -185,6 +186,13 @@ const Index = () => {
             </div>
           </div>
         </section>
+
+        {/* Gamification Dashboard - Only for logged in users */}
+        {session?.user?.id && (
+          <section className="mb-20">
+            <GamificationDashboard />
+          </section>
+        )}
 
         {/* Songs Section */}
         <section className="py-16 md:py-20 mb-16">
