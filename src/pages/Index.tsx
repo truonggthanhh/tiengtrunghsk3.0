@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { BookOpen, CheckSquare, Shuffle, FileQuestion, Mic, Puzzle, ArrowRight, ChevronRight, AudioLines, Bot, GraduationCap, BookCopy, PenTool, Music, Gamepad2, Zap, Trophy } from "lucide-react";
+import { BookOpen, CheckSquare, Shuffle, FileQuestion, Mic, Puzzle, ArrowRight, ChevronRight, AudioLines, Bot, GraduationCap, BookCopy, PenTool, Music, Gamepad2, Zap, Trophy, Heart } from "lucide-react";
 import HeroIllustration from "@/components/HeroIllustration";
 import FeatureSection from "@/components/FeatureSection";
 import TestimonialSection from "@/components/TestimonialSection";
@@ -412,6 +412,41 @@ const Index = () => {
           </>
         )}
       </main>
+
+      {/* Footer */}
+      <footer className="relative py-12 px-4 border-t-4 border-purple-300 dark:border-purple-500/30">
+        <div className="container mx-auto max-w-7xl">
+          <div className="rounded-3xl p-8 backdrop-blur-md border-2 border-purple-400 dark:border-purple-500 bg-white/90 dark:bg-black/70 shadow-xl dark:shadow-purple-500/20">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              {/* Logo */}
+              <div className="flex items-center gap-4">
+                <div className="h-16 w-16 rounded-2xl border-4 border-cyan-400 dark:border-cyan-500 grid place-items-center bg-gradient-to-br from-purple-400 to-cyan-400 dark:from-purple-500 dark:to-cyan-500 shadow-lg">
+                  <span className="text-4xl font-black">中</span>
+                </div>
+                <div>
+                  <div className="text-2xl font-black text-purple-600 dark:text-purple-400">
+                    學中文 • HỌC TIẾNG TRUNG
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 font-semibold">
+                    普通话 HSK • Msutong
+                  </div>
+                </div>
+              </div>
+
+              {/* Copyright */}
+              <div className="text-center md:text-right">
+                <div className="text-gray-700 dark:text-gray-300 font-semibold">
+                  © {new Date().getFullYear()} • Made with <Heart className="inline h-4 w-4 text-red-500" /> by TiengTrungHSK
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  學習中文 • Chinh phục HSK 🎯
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+
       <MadeWithDyad />
     </div>
   );

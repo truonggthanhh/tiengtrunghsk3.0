@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Zap, Trophy, Star, Target, Award, TrendingUp, Flame } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const LanguageSelection: React.FC = () => {
   const navigate = useNavigate();
@@ -41,6 +42,11 @@ const LanguageSelection: React.FC = () => {
             }}
           />
         ))}
+      </div>
+
+      {/* Theme Toggle - Fixed position top right */}
+      <div className="fixed top-6 right-6 z-50">
+        <ThemeToggle />
       </div>
 
       {/* Main content */}
