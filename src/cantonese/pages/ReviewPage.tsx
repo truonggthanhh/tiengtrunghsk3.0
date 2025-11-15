@@ -6,7 +6,8 @@ import { useSession } from '@/cantonese/components/providers/SessionContextProvi
 import { toast } from 'sonner';
 import { Home, ArrowLeft, CheckCircle2, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import JyutpingToggle from '@/cantonese/components/ui/JyutpingToggle'; // Thêm import
+import JyutpingToggle from '@/cantonese/components/ui/JyutpingToggle';
+import { GamificationWrapper, useGamificationTracking } from '@/components/gamification/GamificationWrapper';
 
 // Lazy load components
 const FillBlank = lazy(() => import('@/cantonese/components/practice/FillBlank'));
@@ -17,6 +18,7 @@ const Reorder = lazy(() => import('@/cantonese/components/practice/Reorder'));
 const ReviewPage = () => {
   const { lessonId } = useParams<{ lessonId: string }>();
   const { session } = useSession();
+  const { trackQuizCompletion } = useGamificationTracking();
   const [testData, setTestData] = useState<any>(null);
   const [hooks, setHooks] = useState<Record<string, any>>({});
   const [results, setResults] = useState<{ score: number; total: number } | null>(null);
@@ -69,6 +71,16 @@ const ReviewPage = () => {
     onError: (err: any) => toast.error(`Lỗi khi lưu kết quả: ${err.message}`),
   });
 
+  useEffect(() => {
+    if (results && results.total > 0) {
+      trackQuizCompletion(results.score, results.total, {
+        quiz_type: 'cantonese_review',
+        lesson_id: lessonId,
+        question_count: results.total,
+      });
+    }
+  }, [results, lessonId, trackQuizCompletion]);
+
   const attachHooks = (type: string, h: any) => {
     setHooks(prev => ({ ...prev, [type]: h }));
   };
@@ -117,8 +129,9 @@ const ReviewPage = () => {
   const canSubmit = !!session?.user?.id; // Kiểm tra xem người dùng đã đăng nhập chưa
 
   return (
-    <Suspense fallback={<div className="p-6">Đang tải bài tập...</div>}>
-      <div className="max-w-3xl mx-auto p-6">
+    <GamificationWrapper>
+      <Suspense fallback={<div className="p-6">Đang tải bài tập...</div>}>
+        <div className="max-w-3xl mx-auto p-6">
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-black">Ôn tập toàn bài</h1>
@@ -168,8 +181,9 @@ const ReviewPage = () => {
             </div>
           </div>
         )}
-      </div>
-    </Suspense>
+        </div>
+      </Suspense>
+    </GamificationWrapper>
   );
 };
 
