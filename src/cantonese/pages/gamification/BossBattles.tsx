@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -318,7 +317,6 @@ export default function CantoneseBossBattles() {
   if (!session?.user) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
         <main className="container mx-auto p-4 md:p-8 flex items-center justify-center">
           <Card className="max-w-md">
             <CardContent className="text-center py-12">
@@ -340,7 +338,6 @@ export default function CantoneseBossBattles() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
         <main className="container mx-auto p-4 md:p-8 flex items-center justify-center">
           <Loader2 className="w-12 h-12 animate-spin text-primary" />
         </main>
@@ -356,7 +353,6 @@ export default function CantoneseBossBattles() {
 
     return (
       <div className="min-h-screen bg-gradient-to-b from-red-950 to-background">
-        <Header />
         <main className="container mx-auto px-4 py-8 max-w-4xl">
           {/* Battle Header */}
           <div className="flex justify-between items-center mb-8">
@@ -458,7 +454,6 @@ export default function CantoneseBossBattles() {
   if (battleComplete && selectedBoss) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
-        <Header />
         <main className="container mx-auto px-4 py-8 max-w-2xl flex items-center justify-center">
           <Card className={`w-full ${victory ? 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border-yellow-500' : 'bg-gradient-to-br from-gray-500/20 to-gray-700/20 border-gray-500'}`}>
             <CardHeader className="text-center">
@@ -519,7 +514,6 @@ export default function CantoneseBossBattles() {
   // Boss Selection Screen
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
-      <Header />
       <main className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">

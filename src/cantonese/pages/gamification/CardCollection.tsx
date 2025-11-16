@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -218,7 +217,6 @@ export default function CantoneseCardCollection() {
   if (!session?.user) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
         <main className="container mx-auto p-4 md:p-8 flex items-center justify-center">
           <Card className="max-w-md">
             <CardContent className="text-center py-12">
@@ -240,7 +238,6 @@ export default function CantoneseCardCollection() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
         <main className="container mx-auto p-4 md:p-8 flex items-center justify-center">
           <Loader2 className="w-12 h-12 animate-spin text-primary" />
         </main>
@@ -252,7 +249,6 @@ export default function CantoneseCardCollection() {
   if (openingPack) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-purple-950 to-background">
-        <Header />
         <main className="container mx-auto px-4 py-8 flex items-center justify-center min-h-[80vh]">
           <div className="text-center">
             <Package className="w-32 h-32 text-purple-500 mx-auto mb-6 animate-bounce" />
@@ -268,7 +264,6 @@ export default function CantoneseCardCollection() {
   if (showResults && revealedCards.length > 0) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
-        <Header />
         <main className="container mx-auto px-4 py-8 max-w-6xl">
           <div className="text-center mb-8">
             <h2 className="text-4xl font-bold mb-2">🎉 Bạn nhận được!</h2>
@@ -335,7 +330,6 @@ export default function CantoneseCardCollection() {
   // Main Collection View
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
-      <Header />
       <main className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
