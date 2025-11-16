@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { useGamification } from '@/components/gamification/GamificationProvider';
+import { useGamification } from '@/cantonese/hooks/useGamification';
 import {
   ArrowLeft,
   Sparkles,
@@ -18,7 +18,7 @@ import {
   Crown,
   Loader2,
 } from 'lucide-react';
-import { useSession } from '@/components/SessionContextProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
 import confetti from 'canvas-confetti';
 
 interface VocabCard {

@@ -4,8 +4,8 @@ import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Gift, Lock, Zap, Star, Trophy, Sparkles } from 'lucide-react';
-import { useSession } from '@/components/SessionContextProvider';
-import { useGamification } from '@/components/gamification/GamificationProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useGamification } from '@/cantonese/hooks/useGamification';
 import confetti from 'canvas-confetti';
 
 interface Prize {
