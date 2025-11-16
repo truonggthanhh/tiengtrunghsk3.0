@@ -96,7 +96,8 @@ const Dashboard = () => {
   useEffect(() => {
     if (!isSessionLoading && !session) {
       toast.error('Vui lòng đăng nhập để truy cập Dashboard.');
-      navigate('/cantonese/login');
+      const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+      navigate(`/cantonese/login?returnUrl=${returnUrl}`);
       return;
     }
     

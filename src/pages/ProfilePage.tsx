@@ -37,7 +37,8 @@ const ProfilePage: React.FC = () => {
   useEffect(() => {
     if (!isSessionLoading) {
       if (!session) {
-        navigate('/mandarin/login');
+        const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+        navigate(`/mandarin/login?returnUrl=${returnUrl}`);
         return;
       }
       loadUserData();

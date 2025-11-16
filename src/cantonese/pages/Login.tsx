@@ -84,11 +84,16 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const { session, isLoading } = useSession();
 
+  // Get returnUrl from query params
+  const params = new URLSearchParams(window.location.search);
+  const returnUrl = params.get('returnUrl') || '/cantonese/lessons';
+
   useEffect(() => {
     if (!isLoading && session) {
-      navigate('/cantonese/lessons');
+      // Redirect to returnUrl after login
+      navigate(returnUrl);
     }
-  }, [session, isLoading, navigate]);
+  }, [session, isLoading, navigate, returnUrl]);
 
   if (isLoading || session) {
     return (
@@ -118,7 +123,7 @@ const LoginPage = () => {
               theme: ThemeSupa,
             }}
             theme="light"
-            redirectTo={window.location.origin + '/cantonese/lessons'}
+            redirectTo={window.location.origin + returnUrl}
             localization={vietnameseLocalization}
             socialLayout="horizontal"
           />
