@@ -17,17 +17,8 @@ const EmailPasswordAuthForm = () => {
   const navigate = useNavigate();
 
   const validatePassword = (password: string): string | null => {
-    if (password.length < 8) {
-      return 'Mật khẩu phải có ít nhất 8 ký tự';
-    }
-    if (!/[A-Z]/.test(password)) {
-      return 'Mật khẩu phải chứa ít nhất một chữ cái viết hoa';
-    }
-    if (!/[a-z]/.test(password)) {
-      return 'Mật khẩu phải chứa ít nhất một chữ cái viết thường';
-    }
-    if (!/[0-9]/.test(password)) {
-      return 'Mật khẩu phải chứa ít nhất một số';
+    if (password.length < 6) {
+      return 'Mật khẩu phải có ít nhất 6 ký tự';
     }
     return null;
   };
@@ -51,11 +42,27 @@ const EmailPasswordAuthForm = () => {
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/cantonese/lessons`,
+            data: {
+              email: email,
+            }
           }
         });
 
+        console.log('Sign up response:', { data, error });
+
         if (error) {
-          toast.error(`Lỗi đăng ký: ${error.message}`);
+          console.error('Sign up error:', error);
+          // Xử lý các loại lỗi phổ biến
+          if (error.message.includes('User already registered')) {
+            toast.error('Email này đã được đăng ký. Vui lòng đăng nhập.');
+            setIsSignUp(false);
+          } else if (error.message.includes('Password should be at least')) {
+            toast.error('Mật khẩu phải có ít nhất 6 ký tự');
+          } else if (error.message.includes('Unable to validate email')) {
+            toast.error('Email không hợp lệ. Vui lòng kiểm tra lại.');
+          } else {
+            toast.error(`Lỗi đăng ký: ${error.message}`);
+          }
         } else {
           // Kiểm tra xem email confirmation có được yêu cầu không
           if (data?.user?.identities && data.user.identities.length === 0) {
@@ -122,12 +129,17 @@ const EmailPasswordAuthForm = () => {
         <Input
           id="password"
           type="password"
-          placeholder={isSignUp ? 'Tạo mật khẩu' : 'Nhập mật khẩu của bạn'}
+          placeholder={isSignUp ? 'Tạo mật khẩu (tối thiểu 6 ký tự)' : 'Nhập mật khẩu của bạn'}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
           className="mt-1 bg-cream dark:bg-black/10 border-ink/15"
         />
+        {isSignUp && (
+          <p className="text-xs text-ink/60 dark:text-cream/60 mt-1">
+            Mật khẩu phải có ít nhất 6 ký tự
+          </p>
+        )}
       </div>
       <Button
         type="submit"

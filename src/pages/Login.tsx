@@ -110,9 +110,10 @@ const Login: React.FC = () => {
                   💡 Hướng dẫn đăng nhập
                 </p>
                 <ul className="text-xs text-purple-800 space-y-1">
-                  <li>✅ <strong>Email/Password:</strong> Đăng nhập hoặc đăng ký bằng email (mật khẩu tối thiểu 6 ký tự)</li>
-                  <li>🔐 <strong>Google OAuth:</strong> Click "Continue with Google" (nếu Google provider đã enable)</li>
-                  <li className="text-orange-700 font-medium">⚠️ Nếu Google báo lỗi, vui lòng dùng Email/Password</li>
+                  <li>✅ <strong>Đăng ký mới:</strong> Nhập email và mật khẩu (tối thiểu 6 ký tự), sau đó kiểm tra email để xác nhận</li>
+                  <li>🔑 <strong>Đã có tài khoản:</strong> Nhập email và mật khẩu để đăng nhập</li>
+                  <li>🔐 <strong>Google OAuth:</strong> Click "Continue with Google" để đăng nhập nhanh</li>
+                  <li className="text-orange-700 font-medium">⚠️ Lưu ý: Mật khẩu cần tối thiểu 6 ký tự</li>
                 </ul>
               </div>
             </CardContent>
