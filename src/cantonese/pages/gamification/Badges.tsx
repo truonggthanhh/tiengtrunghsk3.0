@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { useGamification } from '@/components/gamification/GamificationProvider';
+import { useGamification } from '@/cantonese/hooks/useGamification';
 import {
   ArrowLeft,
   Award,
@@ -22,7 +22,7 @@ import {
   Swords,
   Loader2,
 } from 'lucide-react';
-import { useSession } from '@/components/SessionContextProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
 
 interface Achievement {
   id: string;
