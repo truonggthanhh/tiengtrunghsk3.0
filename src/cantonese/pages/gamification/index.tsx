@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useGamification } from '@/components/gamification/GamificationProvider';
+import { useGamification } from '@/cantonese/hooks/useGamification';
 import XPProgressBar from '@/components/gamification/XPProgressBar';
 import BadgeShowcase from '@/components/gamification/BadgeShowcase';
 import MissionCards from '@/components/gamification/MissionCards';
@@ -90,7 +90,7 @@ const gameFeatures = [
 
 export default function CantoneseGamificationDashboard() {
   const { session } = useSession();
-  const { userProgress, dashboard, isLoading } = useGamification();
+  const { userPoints, isLoading } = useGamification();
 
   // Require login
   if (!session?.user) {
@@ -136,7 +136,7 @@ export default function CantoneseGamificationDashboard() {
   }
 
   // No progress yet (first time)
-  if (!userProgress) {
+  if (!userPoints) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <main className="container mx-auto p-4 md:p-8 flex-grow flex items-center justify-center">
@@ -179,19 +179,19 @@ export default function CantoneseGamificationDashboard() {
             將學習變成刺激冒險！收集卡片、挑戰Boss、旋轉幸運輪盤等等。
           </p>
 
-          {!isLoading && userProgress && (
+          {!isLoading && userPoints && (
             <div className="flex items-center justify-center gap-6 text-lg font-semibold mt-6 flex-wrap">
               <div className="flex items-center gap-2 px-6 py-3 bg-gradient-vivid text-white rounded-full shadow-lg">
                 <Trophy className="w-5 h-5" />
-                <span>等級 {userProgress.current_level}</span>
+                <span>等級 {userPoints.level}</span>
               </div>
               <div className="flex items-center gap-2 px-6 py-3 bg-gradient-sunset text-white rounded-full shadow-lg">
                 <Sparkles className="w-5 h-5" />
-                <span>{userProgress.total_xp.toLocaleString()} XP</span>
+                <span>{userPoints.total_points.toLocaleString()} 分</span>
               </div>
               <div className="flex items-center gap-2 px-6 py-3 bg-gradient-spring text-white rounded-full shadow-lg">
                 <Zap className="w-5 h-5" />
-                <span>{userProgress.current_streak} 天連勝</span>
+                <span>{userPoints.current_streak_days} 天連勝</span>
               </div>
             </div>
           )}
@@ -250,17 +250,17 @@ export default function CantoneseGamificationDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <div className="lg:col-span-2">
             <XPProgressBar
-              currentLevel={userProgress.current_level}
-              currentXP={userProgress.total_xp}
+              currentLevel={userPoints.level}
+              currentXP={userPoints.total_points}
               xpForCurrentLevel={0}
               xpForNextLevel={100}
-              levelTitle={`等級 ${userProgress.current_level}`}
+              levelTitle={`等級 ${userPoints.level}`}
             />
           </div>
 
           <StreakTracker
-            currentStreak={userProgress.current_streak}
-            longestStreak={userProgress.longest_streak}
+            currentStreak={userPoints.current_streak_days}
+            longestStreak={userPoints.longest_streak_days}
           />
         </div>
 
