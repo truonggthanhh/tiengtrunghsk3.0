@@ -11,11 +11,16 @@ const Login: React.FC = () => {
   const { session, isLoading } = useSession();
   const navigate = useNavigate();
 
+  // Get returnUrl from query params
+  const params = new URLSearchParams(window.location.search);
+  const returnUrl = params.get('returnUrl') || '/mandarin';
+
   useEffect(() => {
     if (!isLoading && session) {
-      navigate('/mandarin');
+      // Redirect to returnUrl after login
+      navigate(returnUrl);
     }
-  }, [session, isLoading, navigate]);
+  }, [session, isLoading, navigate, returnUrl]);
 
   if (isLoading) {
     return (
@@ -69,7 +74,7 @@ const Login: React.FC = () => {
                   },
                 }}
                 theme="light"
-                redirectTo={window.location.origin + '/mandarin'}
+                redirectTo={window.location.origin + returnUrl}
                 localization={{
                   variables: {
                     sign_in: {
