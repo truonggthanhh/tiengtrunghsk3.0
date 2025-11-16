@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { useGamification } from '@/components/gamification/GamificationProvider';
 import {
   ArrowLeft,
   ScrollText,
@@ -20,7 +18,8 @@ import {
   X,
   Check,
 } from 'lucide-react';
-import { useSession } from '@/components/SessionContextProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useGamification } from '@/cantonese/hooks/useGamification';
 import confetti from 'canvas-confetti';
 
 interface Lesson {
@@ -625,7 +624,7 @@ const generateLessons = (chapterKey: string, count: number): Lesson[] => {
 
 export default function CantoneseStoryMode() {
   const { session } = useSession();
-  const { userProgress, isLoading, addXP } = useGamification();
+  const { userPoints, isLoading, addPoints } = useGamification();
   const navigate = useNavigate();
 
   // Lesson playing state
@@ -812,10 +811,17 @@ export default function CantoneseStoryMode() {
           return ch;
         }));
 
-        // Add XP
-        const xpEarned = Math.floor((score + 1) / playingLesson.lesson.vocabulary.length * 50);
-        if (addXP) {
-          addXP(xpEarned);
+        // Add points
+        const pointsEarned = Math.floor((score + 1) / playingLesson.lesson.vocabulary.length * 50);
+        if (addPoints) {
+          addPoints({
+            points: pointsEarned,
+            activityType: 'story_lesson_complete',
+            referenceId: playingLesson.lesson.id,
+            description: `Hoàn thành bài ${playingLesson.lesson.title} - ${playingLesson.chapter.title}`
+          }).catch(err => {
+            console.error('Failed to add points:', err);
+          });
         }
 
         // Confetti
