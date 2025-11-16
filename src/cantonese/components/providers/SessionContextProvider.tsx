@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '@/cantonese/integrations/supabase/client';
+import { initUserProgress } from '@/cantonese/lib/initUserProgress';
 
 interface SessionContextType {
   session: Session | null;
@@ -51,10 +52,15 @@ export default function SessionContextProvider({ children }: { children: React.R
     handleOAuthCallback();
 
     // Lắng nghe thay đổi auth state
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       console.log('Auth state changed:', _event, session ? 'Session exists' : 'No session');
       setSession(session);
       setIsLoading(false);
+
+      // Initialize user progress when user signs in for the first time
+      if (_event === 'SIGNED_IN' && session?.user) {
+        await initUserProgress(session.user.id);
+      }
 
       // Clean URL nếu event là SIGNED_IN và có OAuth params
       if (_event === 'SIGNED_IN' && (window.location.hash || window.location.search.includes('code='))) {

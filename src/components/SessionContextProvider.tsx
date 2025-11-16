@@ -2,6 +2,7 @@ import React, { useState, useEffect, createContext, useContext } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { initUserProgress } from '@/lib/initUserProgress';
 
 interface SessionContextType {
   session: Session | null;
@@ -42,10 +43,15 @@ export const SessionContextProvider: React.FC<{ children: React.ReactNode }> = (
 
     handleOAuthCallback();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       console.log('Auth state changed:', _event, session ? 'Session exists' : 'No session');
       setSession(session);
       setIsLoading(false);
+
+      // Initialize user progress when user signs in for the first time
+      if (_event === 'SIGNED_IN' && session?.user) {
+        await initUserProgress(session.user.id);
+      }
 
       // Clean URL nếu event là SIGNED_IN và có OAuth params
       if (_event === 'SIGNED_IN' && (window.location.hash || window.location.search.includes('code='))) {
