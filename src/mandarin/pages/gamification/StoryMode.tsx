@@ -289,6 +289,7 @@ const vocabDatabase: Record<string, VocabQuestion[]> = {
     { type: 'hanzi', hanzi: '豆浆', pinyin: 'dòu jiāng', meaning: 'Sữa đậu nành', question: 'Chọn chữ Hán đúng cho pinyin:', options: ['豆浆', '豆腐', '牛奶', '果汁'], correctAnswer: '豆浆' },
     { type: 'sentence', hanzi: '火锅', pinyin: 'huǒ guō', meaning: 'Lẩu', question: 'Điền từ thích hợp: 冬天吃___很暖和。(Mùa đông ăn lẩu rất ấm)', sentence: '冬天吃火锅很暖和。', options: ['火锅', '冰淇淋', '凉菜', '冷饮'], correctAnswer: '火锅' },
     { type: 'meaning', hanzi: '小吃', pinyin: 'xiǎo chī', meaning: 'Ăn vặt', question: 'Chọn nghĩa đúng:', options: ['Bữa chính', 'Ăn vặt', 'Tiệc lớn', 'Nhịn ăn'], correctAnswer: 'Ăn vặt' },
+    { type: 'pinyin', hanzi: '饮料', pinyin: 'yǐn liào', meaning: 'Đồ uống', question: 'Chọn pinyin đúng:', options: ['yǐn liào', 'chī fàn', 'shí wù', 'xiǎo chī'], correctAnswer: 'yǐn liào' },
   ],
 
   // CHAPTER 5: CHENGDU - ⭐⭐ MEDIUM - Animals & nature (20 questions)
@@ -347,6 +348,7 @@ const vocabDatabase: Record<string, VocabQuestion[]> = {
     { type: 'sentence', hanzi: '湖泊', pinyin: 'hú pō', meaning: 'Hồ nước', question: 'Điền từ thích hợp: 这里有很多美丽的___。(Ở đây có nhiều hồ nước đẹp)', sentence: '这里有很多美丽的湖泊。', options: ['湖泊', '河流', '海洋', '沙漠'], correctAnswer: '湖泊' },
     { type: 'meaning', hanzi: '空气', pinyin: 'kōng qì', meaning: 'Không khí', question: 'Chọn nghĩa đúng:', options: ['Nước', 'Không khí', 'Đất', 'Lửa'], correctAnswer: 'Không khí' },
     { type: 'pinyin', hanzi: '清新', pinyin: 'qīng xīn', meaning: 'Trong lành', question: 'Chọn pinyin đúng:', options: ['qīng xīn', 'wū rǎn', 'zāng', 'chòu'], correctAnswer: 'qīng xīn' },
+    { type: 'hanzi', hanzi: '阳光', pinyin: 'yáng guāng', meaning: 'Ánh nắng mặt trời', question: 'Chọn chữ Hán đúng cho pinyin:', options: ['阳光', '月光', '星光', '灯光'], correctAnswer: '阳光' },
   ],
 
   // CHAPTER 6: GUILIN - ⭐⭐⭐ HARD - Scenery & travel (20 questions)
@@ -405,6 +407,7 @@ const vocabDatabase: Record<string, VocabQuestion[]> = {
     { type: 'sentence', hanzi: '盆地', pinyin: 'pén dì', meaning: 'Lưu vực', question: 'Điền từ thích hợp: 四川___气候温和。(Lưu vực Tứ Xuyên khí hậu ôn hòa)', sentence: '四川盆地气候温和。', options: ['盆地', '平原', '高原', '山地'], correctAnswer: '盆地' },
     { type: 'meaning', hanzi: '天然', pinyin: 'tiān rán', meaning: 'Tự nhiên', question: 'Chọn nghĩa đúng:', options: ['Nhân tạo', 'Tự nhiên', 'Giả mạo', 'Công nghiệp'], correctAnswer: 'Tự nhiên' },
     { type: 'pinyin', hanzi: '壮丽', pinyin: 'zhuàng lì', meaning: 'Hùng vĩ', question: 'Chọn pinyin đúng:', options: ['zhuàng lì', 'xiǎo qiǎo', 'pò jiù', 'chǒu lòu'], correctAnswer: 'zhuàng lì' },
+    { type: 'hanzi', hanzi: '景色', pinyin: 'jǐng sè', meaning: 'Cảnh sắc', question: 'Chọn chữ Hán đúng cho pinyin:', options: ['景色', '建筑', '街道', '交通'], correctAnswer: '景色' },
   ],
 
   // CHAPTER 7: HONG KONG - ⭐⭐⭐ HARD - Modern city (20 questions)
@@ -463,6 +466,7 @@ const vocabDatabase: Record<string, VocabQuestion[]> = {
     { type: 'hanzi', hanzi: '公寓', pinyin: 'gōng yù', meaning: 'Căn hộ', question: 'Chọn chữ Hán đúng cho pinyin:', options: ['公寓', '别墅', '平房', '楼房'], correctAnswer: '公寓' },
     { type: 'sentence', hanzi: '租金', pinyin: 'zū jīn', meaning: 'Tiền thuê', question: 'Điền từ thích hợp: 香港的___很贵。(Tiền thuê nhà ở Hồng Kông rất đắt)', sentence: '香港的租金很贵。', options: ['租金', '房价', '水费', '电费'], correctAnswer: '租金' },
     { type: 'meaning', hanzi: '昂贵', pinyin: 'áng guì', meaning: 'Đắt đỏ', question: 'Chọn nghĩa đúng:', options: ['Rẻ', 'Đắt đỏ', 'Vừa phải', 'Miễn phí'], correctAnswer: 'Đắt đỏ' },
+    { type: 'hanzi', hanzi: '房价', pinyin: 'fáng jià', meaning: 'Giá nhà', question: 'Chọn chữ Hán đúng cho pinyin:', options: ['房价', '房租', '房间', '房子'], correctAnswer: '房价' },
   ],
 
   // CHAPTER 8: FORBIDDEN CITY - ⭐⭐⭐⭐ VERY HARD - Imperial culture (20 questions)
@@ -521,6 +525,7 @@ const vocabDatabase: Record<string, VocabQuestion[]> = {
     { type: 'sentence', hanzi: '太和殿', pinyin: 'tài hé diàn', meaning: 'Thái Hòa Điện', question: 'Điền từ thích hợp: ___是举行大典的地方。(Thái Hòa Điện là nơi tổ chức đại lễ)', sentence: '太和殿是举行大典的地方。', options: ['太和殿', '御花园', '午门', '神武门'], correctAnswer: '太和殿' },
     { type: 'meaning', hanzi: '祭祀', pinyin: 'jì sì', meaning: 'Tế lễ', question: 'Chọn nghĩa đúng:', options: ['Tiệc tùng', 'Tế lễ', 'Hội nghị', 'Hòa nhạc'], correctAnswer: 'Tế lễ' },
     { type: 'pinyin', hanzi: '祖先', pinyin: 'zǔ xiān', meaning: 'Tổ tiên', question: 'Chọn pinyin đúng:', options: ['zǔ xiān', 'hòu dài', 'zǐ sūn', 'qīn rén'], correctAnswer: 'zǔ xiān' },
+    { type: 'hanzi', hanzi: '天坛', pinyin: 'tiān tán', meaning: 'Thiên đàn', question: 'Chọn chữ Hán đúng cho pinyin:', options: ['天坛', '地坛', '日坛', '月坛'], correctAnswer: '天坛' },
   ],
 
   // CHAPTER 9: SUZHOU - ⭐⭐⭐⭐ VERY HARD - Poetry & elegance (20 questions)
@@ -579,6 +584,7 @@ const vocabDatabase: Record<string, VocabQuestion[]> = {
     { type: 'sentence', hanzi: '月门', pinyin: 'yuè mén', meaning: 'Cổng trăng', question: 'Điền từ thích hợp: 园林中的___很精美。(Cổng trăng trong vườn rất tinh xảo)', sentence: '园林中的月门很精美。', options: ['月门', '铁门', '木门', '石门'], correctAnswer: '月门' },
     { type: 'meaning', hanzi: '漏窗', pinyin: 'lòu chuāng', meaning: 'Cửa sổ rỗng', question: 'Chọn nghĩa đúng:', options: ['Cửa kính', 'Cửa sổ rỗng', 'Cửa gỗ', 'Cửa sắt'], correctAnswer: 'Cửa sổ rỗng' },
     { type: 'pinyin', hanzi: '品茗', pinyin: 'pǐn míng', meaning: 'Thưởng trà', question: 'Chọn pinyin đúng:', options: ['pǐn míng', 'hē chá', 'hē jiǔ', 'hē shuǐ'], correctAnswer: 'pǐn míng' },
+    { type: 'hanzi', hanzi: '赏月', pinyin: 'shǎng yuè', meaning: 'Ngắm trăng', question: 'Chọn chữ Hán đúng cho pinyin:', options: ['赏月', '赏花', '赏雪', '赏景'], correctAnswer: '赏月' },
   ],
 
   // CHAPTER 10: TIBET - ⭐⭐⭐⭐ VERY HARD - Spirituality (20 questions)
@@ -637,6 +643,7 @@ const vocabDatabase: Record<string, VocabQuestion[]> = {
     { type: 'sentence', hanzi: '超度', pinyin: 'chāo dù', meaning: 'Siêu độ', question: 'Điền từ thích hợp: 为亡者___。(Siêu độ cho người quá cố)', sentence: '为亡者超度。', options: ['超度', '庆祝', '欢乐', '宴请'], correctAnswer: '超度' },
     { type: 'meaning', hanzi: '法会', pinyin: 'fǎ huì', meaning: 'Pháp hội', question: 'Chọn nghĩa đúng:', options: ['Hội chợ', 'Pháp hội', 'Tiệc tùng', 'Hội nghị'], correctAnswer: 'Pháp hội' },
     { type: 'pinyin', hanzi: '心灵', pinyin: 'xīn líng', meaning: 'Tâm linh', question: 'Chọn pinyin đúng:', options: ['xīn líng', 'ròu tǐ', 'wù zhì', 'cái fù'], correctAnswer: 'xīn líng' },
+    { type: 'hanzi', hanzi: '清净', pinyin: 'qīng jìng', meaning: 'Thanh tịnh', question: 'Chọn chữ Hán đúng cho pinyin:', options: ['清净', '污染', '肮脏', '杂乱'], correctAnswer: '清净' },
   ],
 };
 
