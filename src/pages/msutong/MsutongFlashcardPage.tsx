@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import Flashcard from '@/components/Flashcard';
 import { getVocabularyByMsutong } from '@/data';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Home, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Home, ChevronsLeft, ChevronsRight, ListOrdered, Grid3X3 } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { usePinyin } from '@/contexts/PinyinContext';
 
@@ -17,6 +17,23 @@ const MsutongFlashcardPage = () => {
 
   const fullVocabulary = useMemo(() => getVocabularyByMsutong(level, lessonIds), [level, lessonIds]);
   const { showPinyin } = usePinyin();
+
+  // Build URLs for back navigation
+  const exerciseSelectionUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    params.append('level', level);
+    if (lessonIds.length > 0) params.append('lessonIds', lessonIds.join(','));
+    params.append('step', 'exercise');
+    return `/mandarin/msutong?${params.toString()}`;
+  }, [level, lessonIds]);
+
+  const lessonSelectionUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    params.append('level', level);
+    if (lessonIds.length > 0) params.append('lessonIds', lessonIds.join(','));
+    params.append('step', 'lesson');
+    return `/mandarin/msutong?${params.toString()}`;
+  }, [level, lessonIds]);
 
   const [batchIndex, setBatchIndex] = useState(0);
   const [currentIndexInBatch, setCurrentIndexInBatch] = useState(0);
@@ -143,10 +160,15 @@ const MsutongFlashcardPage = () => {
             </Button>
           </div>
           
-          <div className="text-center mt-8">
+          <div className="flex justify-center gap-4 mt-8 flex-wrap">
             <Button asChild variant="secondary" className="font-bold">
-              <Link to="/mandarin/msutong">
-                <Home className="mr-2 h-4 w-4" /> Chọn bài tập khác
+              <Link to={exerciseSelectionUrl}>
+                <Grid3X3 className="mr-2 h-4 w-4" /> Chọn bài tập khác
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="font-bold">
+              <Link to={lessonSelectionUrl}>
+                <ListOrdered className="mr-2 h-4 w-4" /> Chọn bài khác
               </Link>
             </Button>
           </div>

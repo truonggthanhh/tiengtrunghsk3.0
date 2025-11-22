@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import { getVocabularyByMsutong, getFullMsutongVocabularyByLevel, type VocabularyWord } from '@/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowRight, Home, CheckCircle2, XCircle } from 'lucide-react';
+import { ArrowRight, Home, CheckCircle2, XCircle, Grid3X3, ListOrdered } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { usePinyin } from '@/contexts/PinyinContext';
@@ -28,6 +28,23 @@ const MsutongMeaningChoicePage = () => {
 
   const practiceVocabulary = useMemo(() => getVocabularyByMsutong(level, lessonIds), [level, lessonIds]);
   const distractorVocabulary = useMemo(() => getFullMsutongVocabularyByLevel(level), [level]);
+
+  // Build URLs for back navigation
+  const exerciseSelectionUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    params.append('level', level);
+    if (lessonIds.length > 0) params.append('lessonIds', lessonIds.join(','));
+    params.append('step', 'exercise');
+    return `/mandarin/msutong?${params.toString()}`;
+  }, [level, lessonIds]);
+
+  const lessonSelectionUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    params.append('level', level);
+    if (lessonIds.length > 0) params.append('lessonIds', lessonIds.join(','));
+    params.append('step', 'lesson');
+    return `/mandarin/msutong?${params.toString()}`;
+  }, [level, lessonIds]);
 
   const [questionCount, setQuestionCount] = useState<number | null>(null);
   const [vocabulary, setVocabulary] = useState<VocabularyWord[]>([]);
@@ -187,11 +204,16 @@ const MsutongMeaningChoicePage = () => {
                         <p className="text-muted-foreground mb-6">
                             Bạn đã trả lời đúng {correctAnswers} trên tổng số {vocabulary.length} câu.
                         </p>
-                        <div className="flex gap-4 justify-center">
+                        <div className="flex gap-4 justify-center flex-wrap">
                             <Button onClick={resetToLevelSelection} className="font-bold">Làm lại</Button>
                             <Button asChild variant="secondary" className="font-bold">
-                                <Link to="/mandarin/msutong">
-                                    <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
+                                <Link to={exerciseSelectionUrl}>
+                                    <Grid3X3 className="mr-2 h-4 w-4" /> Chọn bài tập khác
+                                </Link>
+                            </Button>
+                            <Button asChild variant="outline" className="font-bold">
+                                <Link to={lessonSelectionUrl}>
+                                    <ListOrdered className="mr-2 h-4 w-4" /> Chọn bài khác
                                 </Link>
                             </Button>
                         </div>
@@ -266,10 +288,15 @@ const MsutongMeaningChoicePage = () => {
               </div>
             )}
 
-            <div className="text-center mt-8">
+            <div className="flex justify-center gap-4 mt-8 flex-wrap">
               <Button asChild variant="secondary" className="font-bold">
-                <Link to="/mandarin/msutong">
-                  <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
+                <Link to={exerciseSelectionUrl}>
+                  <Grid3X3 className="mr-2 h-4 w-4" /> Chọn bài tập khác
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="font-bold">
+                <Link to={lessonSelectionUrl}>
+                  <ListOrdered className="mr-2 h-4 w-4" /> Chọn bài khác
                 </Link>
               </Button>
             </div>
