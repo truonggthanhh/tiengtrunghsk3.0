@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import { getVocabularyByMsutong, type VocabularyWord } from '@/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowRight, Home, Mic, MicOff } from 'lucide-react';
+import { ArrowRight, Home, Mic, MicOff, Grid3X3, ListOrdered } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { usePinyin } from '@/contexts/PinyinContext';
@@ -31,6 +31,23 @@ const MsutongPronunciationPage = () => {
   const lessonIds = searchParams.get('lessonIds')?.split(',') || [];
 
   const practiceVocabulary = useMemo(() => getVocabularyByMsutong(level, lessonIds), [level, lessonIds]);
+
+  // Build URLs for back navigation
+  const exerciseSelectionUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    params.append('level', level);
+    if (lessonIds.length > 0) params.append('lessonIds', lessonIds.join(','));
+    params.append('step', 'exercise');
+    return `/mandarin/msutong?${params.toString()}`;
+  }, [level, lessonIds]);
+
+  const lessonSelectionUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    params.append('level', level);
+    if (lessonIds.length > 0) params.append('lessonIds', lessonIds.join(','));
+    params.append('step', 'lesson');
+    return `/mandarin/msutong?${params.toString()}`;
+  }, [level, lessonIds]);
 
   const [questionCount, setQuestionCount] = useState<number | null>(null);
   const [vocabulary, setVocabulary] = useState<VocabularyWord[]>([]);
@@ -204,11 +221,16 @@ const MsutongPronunciationPage = () => {
                         <p className="text-muted-foreground mb-6">
                             Bạn đã phát âm đúng {correctAnswers} trên tổng số {vocabulary.length} từ.
                         </p>
-                        <div className="flex gap-4 justify-center">
+                        <div className="flex gap-4 justify-center flex-wrap">
                             <Button onClick={resetToLevelSelection} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">Làm lại</Button>
                             <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
-                                <Link to="/mandarin/msutong">
-                                    <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
+                                <Link to={exerciseSelectionUrl}>
+                                    <Grid3X3 className="mr-2 h-4 w-4" /> Chọn bài tập khác
+                                </Link>
+                            </Button>
+                            <Button asChild variant="outline" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
+                                <Link to={lessonSelectionUrl}>
+                                    <ListOrdered className="mr-2 h-4 w-4" /> Chọn bài khác
                                 </Link>
                             </Button>
                         </div>
@@ -272,10 +294,15 @@ const MsutongPronunciationPage = () => {
             )}
           </div>
 
-          <div className="text-center mt-12">
+          <div className="flex justify-center gap-4 mt-12 flex-wrap">
             <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
-              <Link to="/mandarin/msutong">
-                <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
+              <Link to={exerciseSelectionUrl}>
+                <Grid3X3 className="mr-2 h-4 w-4" /> Chọn bài tập khác
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
+              <Link to={lessonSelectionUrl}>
+                <ListOrdered className="mr-2 h-4 w-4" /> Chọn bài khác
               </Link>
             </Button>
           </div>

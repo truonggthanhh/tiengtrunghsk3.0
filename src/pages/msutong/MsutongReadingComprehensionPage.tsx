@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import { getReadingComprehensionByMsutong, type ReadingComprehensionPassage, type ReadingComprehensionQuestion } from '@/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowRight, Home, CheckCircle2, XCircle, BookText } from 'lucide-react';
+import { ArrowRight, Home, CheckCircle2, XCircle, BookText, Grid3X3, ListOrdered } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { usePinyin } from '@/contexts/PinyinContext';
@@ -25,6 +25,23 @@ const MsutongReadingComprehensionPage = () => {
   const lessonIds = searchParams.get('lessonIds')?.split(',') || [];
 
   const allPassages = useMemo(() => getReadingComprehensionByMsutong(level, lessonIds), [level, lessonIds]);
+
+  // Build URLs for back navigation
+  const exerciseSelectionUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    params.append('level', level);
+    if (lessonIds.length > 0) params.append('lessonIds', lessonIds.join(','));
+    params.append('step', 'exercise');
+    return `/mandarin/msutong?${params.toString()}`;
+  }, [level, lessonIds]);
+
+  const lessonSelectionUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    params.append('level', level);
+    if (lessonIds.length > 0) params.append('lessonIds', lessonIds.join(','));
+    params.append('step', 'lesson');
+    return `/mandarin/msutong?${params.toString()}`;
+  }, [level, lessonIds]);
 
   const [currentPassage, setCurrentPassage] = useState<ReadingComprehensionPassage | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -128,11 +145,16 @@ const MsutongReadingComprehensionPage = () => {
               <p className="text-muted-foreground mb-6">
                 Bạn đã trả lời đúng {score} trên tổng số {currentPassage.questions.length} câu hỏi.
               </p>
-              <div className="flex gap-4 justify-center">
+              <div className="flex gap-4 justify-center flex-wrap">
                 <Button onClick={resetExercise} className="bg-gradient-spring text-white hover:bg-gradient-spring/90 hover:scale-[1.02] transition-all font-bold border-0 shadow-cyan">Làm lại</Button>
                 <Button asChild className="bg-gradient-sunset text-white hover:bg-gradient-sunset/90 hover:scale-[1.02] transition-all font-bold border-0 shadow-pink">
-                  <Link to="/mandarin/msutong">
-                    <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
+                  <Link to={exerciseSelectionUrl}>
+                    <Grid3X3 className="mr-2 h-4 w-4" /> Chọn bài tập khác
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="font-bold">
+                  <Link to={lessonSelectionUrl}>
+                    <ListOrdered className="mr-2 h-4 w-4" /> Chọn bài khác
                   </Link>
                 </Button>
               </div>
@@ -248,10 +270,15 @@ const MsutongReadingComprehensionPage = () => {
             </>
           )}
 
-          <div className="text-center mt-8">
+          <div className="flex justify-center gap-4 mt-8 flex-wrap">
             <Button asChild className="bg-gradient-spring text-white hover:bg-gradient-spring/90 hover:scale-[1.02] transition-all font-bold border-0 shadow-cyan">
-              <Link to="/mandarin/msutong">
-                <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
+              <Link to={exerciseSelectionUrl}>
+                <Grid3X3 className="mr-2 h-4 w-4" /> Chọn bài tập khác
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="font-bold">
+              <Link to={lessonSelectionUrl}>
+                <ListOrdered className="mr-2 h-4 w-4" /> Chọn bài khác
               </Link>
             </Button>
           </div>

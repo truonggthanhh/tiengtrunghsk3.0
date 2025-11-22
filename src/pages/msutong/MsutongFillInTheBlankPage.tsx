@@ -5,7 +5,7 @@ import { getVocabularyByMsutong, type VocabularyWord } from '@/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { ArrowRight, Home } from 'lucide-react';
+import { ArrowRight, Home, Grid3X3, ListOrdered } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { usePinyin } from '@/contexts/PinyinContext';
@@ -28,6 +28,23 @@ const MsutongFillInTheBlankPage = () => {
   const { trackQuizCompletion } = useGamificationTracking();
 
   const practiceVocabulary = useMemo(() => getVocabularyByMsutong(level, lessonIds), [level, lessonIds]);
+
+  // Build URLs for back navigation
+  const exerciseSelectionUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    params.append('level', level);
+    if (lessonIds.length > 0) params.append('lessonIds', lessonIds.join(','));
+    params.append('step', 'exercise');
+    return `/mandarin/msutong?${params.toString()}`;
+  }, [level, lessonIds]);
+
+  const lessonSelectionUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    params.append('level', level);
+    if (lessonIds.length > 0) params.append('lessonIds', lessonIds.join(','));
+    params.append('step', 'lesson');
+    return `/mandarin/msutong?${params.toString()}`;
+  }, [level, lessonIds]);
 
   const [questionCount, setQuestionCount] = useState<number | null>(null);
   const [vocabulary, setVocabulary] = useState<VocabularyWord[]>([]);
@@ -168,11 +185,16 @@ const MsutongFillInTheBlankPage = () => {
                         <p className="text-muted-foreground mb-6">
                             Bạn đã trả lời đúng {correctAnswers} trên tổng số {vocabulary.length} câu.
                         </p>
-                        <div className="flex gap-4 justify-center">
+                        <div className="flex gap-4 justify-center flex-wrap">
                             <Button onClick={resetToLevelSelection} className="font-bold">Làm lại</Button>
                             <Button asChild variant="secondary" className="font-bold">
-                                <Link to="/mandarin/msutong">
-                                    <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
+                                <Link to={exerciseSelectionUrl}>
+                                    <Grid3X3 className="mr-2 h-4 w-4" /> Chọn bài tập khác
+                                </Link>
+                            </Button>
+                            <Button asChild variant="outline" className="font-bold">
+                                <Link to={lessonSelectionUrl}>
+                                    <ListOrdered className="mr-2 h-4 w-4" /> Chọn bài khác
                                 </Link>
                             </Button>
                         </div>
@@ -251,10 +273,15 @@ const MsutongFillInTheBlankPage = () => {
               </div>
             )}
 
-            <div className="text-center mt-8">
+            <div className="flex justify-center gap-4 mt-8 flex-wrap">
               <Button asChild variant="secondary" className="font-bold">
-                <Link to="/mandarin/msutong">
-                  <Home className="mr-2 h-4 w-4" /> Về trang chọn bài
+                <Link to={exerciseSelectionUrl}>
+                  <Grid3X3 className="mr-2 h-4 w-4" /> Chọn bài tập khác
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="font-bold">
+                <Link to={lessonSelectionUrl}>
+                  <ListOrdered className="mr-2 h-4 w-4" /> Chọn bài khác
                 </Link>
               </Button>
             </div>

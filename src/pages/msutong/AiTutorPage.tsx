@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Home, KeyRound, AlertTriangle, Send, Loader2, RefreshCw, Mic, MicOff, Volume2 } from 'lucide-react';
+import { Home, KeyRound, AlertTriangle, Send, Loader2, RefreshCw, Mic, MicOff, Volume2, Grid3X3, ListOrdered } from 'lucide-react';
 import type { ChatSession } from '@google/generative-ai';
 import ChatMessage, { Message } from '@/components/ChatMessage';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -17,6 +17,24 @@ const MsutongAiTutorPage = () => {
   const level = searchParams.get('level') || 'Sơ cấp';
   const books = searchParams.get('books') || 'Không rõ';
   const lessons = searchParams.get('lessons') || 'Không rõ';
+  const lessonIds = searchParams.get('lessonIds')?.split(',') || [];
+
+  // Build URLs for back navigation
+  const exerciseSelectionUrl = React.useMemo(() => {
+    const params = new URLSearchParams();
+    params.append('level', level);
+    if (lessonIds.length > 0) params.append('lessonIds', lessonIds.join(','));
+    params.append('step', 'exercise');
+    return `/mandarin/msutong?${params.toString()}`;
+  }, [level, lessonIds]);
+
+  const lessonSelectionUrl = React.useMemo(() => {
+    const params = new URLSearchParams();
+    params.append('level', level);
+    if (lessonIds.length > 0) params.append('lessonIds', lessonIds.join(','));
+    params.append('step', 'lesson');
+    return `/mandarin/msutong?${params.toString()}`;
+  }, [level, lessonIds]);
 
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [tempApiKey, setTempApiKey] = useState('');
@@ -217,9 +235,10 @@ const MsutongAiTutorPage = () => {
             )}
           </CardFooter>
         </Card>
-        <div className="text-center mt-4 flex gap-4">
+        <div className="text-center mt-4 flex gap-4 flex-wrap justify-center">
           <Button onClick={handleResetApiKey} variant="outline"><RefreshCw className="mr-2 h-4 w-4" /> Đổi API Key</Button>
-          <Button asChild variant="secondary"><Link to="/mandarin/msutong"><Home className="mr-2 h-4 w-4" /> Về trang chủ</Link></Button>
+          <Button asChild variant="secondary"><Link to={exerciseSelectionUrl}><Grid3X3 className="mr-2 h-4 w-4" /> Chọn bài tập khác</Link></Button>
+          <Button asChild variant="outline"><Link to={lessonSelectionUrl}><ListOrdered className="mr-2 h-4 w-4" /> Chọn bài khác</Link></Button>
         </div>
       </main>
     </div>

@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -36,10 +36,44 @@ const exerciseTypes = [
 
 const MsutongPage = () => {
   const { session } = useSession();
+  const [searchParams] = useSearchParams();
   const [step, setStep] = useState<'level' | 'book' | 'lesson' | 'exercise'>('level');
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   const [selectedBooks, setSelectedBooks] = useState<string[]>([]);
   const [selectedLessons, setSelectedLessons] = useState<string[]>([]);
+
+  // Restore state from URL params (for back navigation from exercise pages)
+  useEffect(() => {
+    const levelParam = searchParams.get('level');
+    const lessonIdsParam = searchParams.get('lessonIds');
+    const stepParam = searchParams.get('step') as 'level' | 'book' | 'lesson' | 'exercise' | null;
+
+    if (levelParam) {
+      setSelectedLevel(levelParam);
+
+      if (lessonIdsParam) {
+        const lessonIds = lessonIdsParam.split(',');
+        setSelectedLessons(lessonIds);
+
+        // Extract unique book slugs from lessonIds (format: 'quyen-X-lesson-Y')
+        const bookSlugs = [...new Set(lessonIds.map(id => id.split('-lesson-')[0]))];
+        setSelectedBooks(bookSlugs);
+
+        // Determine which step to show
+        if (stepParam === 'exercise') {
+          setStep('exercise');
+        } else if (stepParam === 'lesson') {
+          setStep('lesson');
+        } else {
+          setStep('exercise'); // Default to exercise selection when lessonIds provided
+        }
+      } else if (stepParam === 'book' || stepParam === 'lesson') {
+        setStep(stepParam);
+      } else {
+        setStep('book'); // Default to book selection when only level provided
+      }
+    }
+  }, [searchParams]);
 
   const handleLevelSelect = (levelSlug: string) => {
     setSelectedLevel(levelSlug);
