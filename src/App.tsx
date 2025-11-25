@@ -17,6 +17,7 @@ import CantoneseThemeProvider from "./cantonese/components/providers/ThemeProvid
 import CantoneseSettingsProvider from "./cantonese/components/providers/SettingsProvider";
 import CantoneseSessionContextProvider from "./cantonese/components/providers/SessionContextProvider";
 import CantoneseProfileProvider from "./cantonese/components/providers/ProfileProvider";
+import CantoneseRouteWrapper from "./cantonese/components/CantoneseRouteWrapper";
 
 // Loading component
 const PageLoader = () => (
@@ -507,22 +508,14 @@ const App = () => (
               />
             </Route>
 
-            {/* Cantonese App Routes */}
+            {/* Cantonese App Routes - Using CantoneseRouteWrapper to reduce duplication */}
             <Route path="/cantonese">
               <Route
                 index
                 element={
-                  <CantoneseThemeProvider>
-                    <CantoneseSettingsProvider>
-                      <CantoneseSessionContextProvider>
-                        <CantoneseProfileProvider>
-                          <CantonesePageWrapper>
-                            <CantoneseIndex />
-                          </CantonesePageWrapper>
-                        </CantoneseProfileProvider>
-                      </CantoneseSessionContextProvider>
-                    </CantoneseSettingsProvider>
-                  </CantoneseThemeProvider>
+                  <CantoneseRouteWrapper>
+                    <CantoneseIndex />
+                  </CantoneseRouteWrapper>
                 }
               />
 
@@ -530,81 +523,41 @@ const App = () => (
               <Route
                 path="login"
                 element={
-                  <CantoneseThemeProvider>
-                    <CantoneseSettingsProvider>
-                      <CantoneseSessionContextProvider>
-                        <CantoneseProfileProvider>
-                          <CantonesePageWrapper>
-                            <CantoneseLogin />
-                          </CantonesePageWrapper>
-                        </CantoneseProfileProvider>
-                      </CantoneseSessionContextProvider>
-                    </CantoneseSettingsProvider>
-                  </CantoneseThemeProvider>
+                  <CantoneseRouteWrapper>
+                    <CantoneseLogin />
+                  </CantoneseRouteWrapper>
                 }
               />
               <Route
                 path="forgot-password"
                 element={
-                  <CantoneseThemeProvider>
-                    <CantoneseSettingsProvider>
-                      <CantoneseSessionContextProvider>
-                        <CantoneseProfileProvider>
-                          <CantonesePageWrapper>
-                            <CantoneseForgotPassword />
-                          </CantonesePageWrapper>
-                        </CantoneseProfileProvider>
-                      </CantoneseSessionContextProvider>
-                    </CantoneseSettingsProvider>
-                  </CantoneseThemeProvider>
+                  <CantoneseRouteWrapper>
+                    <CantoneseForgotPassword />
+                  </CantoneseRouteWrapper>
                 }
               />
               <Route
                 path="update-password"
                 element={
-                  <CantoneseThemeProvider>
-                    <CantoneseSettingsProvider>
-                      <CantoneseSessionContextProvider>
-                        <CantoneseProfileProvider>
-                          <CantonesePageWrapper>
-                            <CantoneseUpdatePassword />
-                          </CantonesePageWrapper>
-                        </CantoneseProfileProvider>
-                      </CantoneseSessionContextProvider>
-                    </CantoneseSettingsProvider>
-                  </CantoneseThemeProvider>
+                  <CantoneseRouteWrapper>
+                    <CantoneseUpdatePassword />
+                  </CantoneseRouteWrapper>
                 }
               />
               <Route
                 path="lessons"
                 element={
-                  <CantoneseThemeProvider>
-                    <CantoneseSettingsProvider>
-                      <CantoneseSessionContextProvider>
-                        <CantoneseProfileProvider>
-                          <CantonesePageWrapper>
-                            <CantoneseLessons />
-                          </CantonesePageWrapper>
-                        </CantoneseProfileProvider>
-                      </CantoneseSessionContextProvider>
-                    </CantoneseSettingsProvider>
-                  </CantoneseThemeProvider>
+                  <CantoneseRouteWrapper>
+                    <CantoneseLessons />
+                  </CantoneseRouteWrapper>
                 }
               />
               <Route
                 path="lessons/:lessonId"
                 element={
-                  <CantoneseThemeProvider>
-                    <CantoneseSettingsProvider>
-                      <CantoneseSessionContextProvider>
-                        <CantoneseProfileProvider>
-                          <CantonesePageWrapper>
-                            <CantoneseLessonDetail />
-                          </CantonesePageWrapper>
-                        </CantoneseProfileProvider>
-                      </CantoneseSessionContextProvider>
-                    </CantoneseSettingsProvider>
-                  </CantoneseThemeProvider>
+                  <CantoneseRouteWrapper>
+                    <CantoneseLessonDetail />
+                  </CantoneseRouteWrapper>
                 }
               />
               <Route

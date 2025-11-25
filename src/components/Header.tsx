@@ -23,7 +23,9 @@ const Header = () => {
           .single();
 
         if (error) {
-          console.error('Failed to check admin status:', error);
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Failed to check admin status:', error);
+          }
           setIsAdmin(false);
           return;
         }
