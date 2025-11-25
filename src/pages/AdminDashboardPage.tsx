@@ -161,14 +161,25 @@ const AdminDashboardPage: React.FC = () => {
   };
 
   // API Key Management
+  // ⚠️ SECURITY WARNING: Storing API keys in localStorage is NOT secure for production
+  // localStorage is vulnerable to XSS attacks. For production, API keys should be:
+  // 1. Stored server-side in environment variables or secure vault
+  // 2. API calls should go through a backend proxy that manages keys securely
+  // 3. Never expose keys to client-side JavaScript
+  // This implementation is for development/testing only
   const handleSaveApiKey = () => {
     if (!apiKey.trim()) {
       toast.error('Lỗi', { description: 'Vui lòng nhập API key' });
       return;
     }
+    // TODO: Move to secure server-side storage
     localStorage.setItem('gemini_api_key', apiKey);
     setSavedApiKey(apiKey);
     toast.success('Đã lưu', { description: 'API key đã được lưu thành công' });
+    toast.warning('Cảnh báo bảo mật', {
+      description: 'API key lưu trong trình duyệt không an toàn cho production. Chỉ dùng cho testing.',
+      duration: 5000
+    });
   };
 
   const handleClearApiKey = () => {
