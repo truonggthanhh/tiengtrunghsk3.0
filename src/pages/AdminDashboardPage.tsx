@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import { useSession } from '@/components/SessionContextProvider';
@@ -73,16 +73,20 @@ const AdminDashboardPage: React.FC = () => {
   // Document Upload
   const [documentFile, setDocumentFile] = useState<File | null>(null);
 
+  // Memoize returnUrl để tránh tính toán lại khi component re-render do tab switch
+  const returnUrl = useMemo(() => {
+    return encodeURIComponent(window.location.pathname + window.location.search);
+  }, []);
+
   useEffect(() => {
     if (!isSessionLoading) {
       if (!session) {
-        const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
         navigate(`/mandarin/login?returnUrl=${returnUrl}`);
         return;
       }
       fetchUserProfile(session.user.id);
     }
-  }, [session, isSessionLoading, navigate]);
+  }, [session, isSessionLoading, navigate, returnUrl]);
 
   // Load saved API key
   useEffect(() => {

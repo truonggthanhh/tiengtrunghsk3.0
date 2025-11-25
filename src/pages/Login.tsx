@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,9 +11,11 @@ const Login: React.FC = () => {
   const { session, isLoading } = useSession();
   const navigate = useNavigate();
 
-  // Get returnUrl from query params
-  const params = new URLSearchParams(window.location.search);
-  const returnUrl = params.get('returnUrl') || '/mandarin';
+  // Get returnUrl from query params - memoize để tránh trigger useEffect khi tab switch
+  const returnUrl = useMemo(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('returnUrl') || '/mandarin';
+  }, []); // Empty dependency array - chỉ tính toán 1 lần khi component mount
 
   useEffect(() => {
     if (!isLoading && session) {
