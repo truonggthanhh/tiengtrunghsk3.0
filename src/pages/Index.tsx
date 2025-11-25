@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { BookOpen, CheckSquare, Shuffle, FileQuestion, Mic, Puzzle, ArrowRight, ChevronRight, AudioLines, Bot, GraduationCap, BookCopy, PenTool, Music, Gamepad2, Zap, Trophy, Heart } from "lucide-react";
+import { BookOpen, CheckSquare, Shuffle, FileQuestion, Mic, Puzzle, ArrowRight, ChevronRight, AudioLines, Bot, GraduationCap, BookCopy, PenTool, Music, Gamepad2, Zap, Trophy, Heart, BarChart3, Sparkles } from "lucide-react";
 import HeroIllustration from "@/components/HeroIllustration";
 import FeatureSection from "@/components/FeatureSection";
 import TestimonialSection from "@/components/TestimonialSection";
@@ -83,6 +83,15 @@ const exerciseTypes = [
     isAvailable: true,
     gradient: "bg-gradient-tropical",
     shadowColor: "shadow-purple",
+  },
+  {
+    slug: "enhanced-pronunciation",
+    title: "Luyện phát âm với AI",
+    description: "Phát âm với SRS và chấm điểm tự động",
+    icon: <Sparkles />,
+    isAvailable: true,
+    gradient: "bg-gradient-sunset",
+    shadowColor: "shadow-pink",
   },
   {
     slug: "handwriting-practice",
@@ -246,6 +255,34 @@ const Index = () => {
                 <CardFooter className="pt-4 relative z-10 flex justify-center">
                   <Button className="bg-white text-red-600 hover:bg-gray-50 font-semibold rounded-xl h-12 px-8 shadow-lg text-lg">
                     Khám phá ngay <ChevronRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </CardFooter>
+              </Card>
+            </Link>
+          </div>
+        </section>
+
+        {/* Analytics Section */}
+        <section className="py-16 md:py-20 mb-16">
+          <div className="max-w-4xl mx-auto">
+            <Link to="/mandarin/analytics">
+              <Card className="flex flex-col text-center cursor-pointer border-0 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white p-8 hover-scale shadow-xl overflow-hidden relative group">
+                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                <div className="absolute top-0 right-0 bg-green-400 text-purple-900 px-4 py-2 rounded-bl-3xl text-sm font-bold shadow-lg z-10">
+                  MỚI! 📊
+                </div>
+                <CardHeader className="items-center space-y-4 relative z-10">
+                  <div className="bg-white/20 p-6 rounded-2xl backdrop-blur-sm animate-float">
+                    <BarChart3 className="w-16 h-16 text-white" />
+                  </div>
+                  <CardTitle className="text-3xl md:text-4xl font-bold text-white">📊 Thống Kê Học Tập</CardTitle>
+                  <CardDescription className="text-lg leading-relaxed text-white/90 max-w-2xl">
+                    Xem chi tiết tiến độ học tập, điểm yếu cần cải thiện, và phân tích hiệu quả với SRS thông minh
+                  </CardDescription>
+                </CardHeader>
+                <CardFooter className="pt-4 relative z-10 flex justify-center">
+                  <Button className="bg-white text-indigo-600 hover:bg-gray-50 font-semibold rounded-xl h-12 px-8 shadow-lg text-lg">
+                    Xem thống kê <ChevronRight className="ml-2 h-5 w-5" />
                   </Button>
                 </CardFooter>
               </Card>

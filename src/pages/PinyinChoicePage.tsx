@@ -9,6 +9,8 @@ import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { usePinyin } from '@/contexts/PinyinContext';
 import { GamificationWrapper, useGamificationTracking } from '@/components/gamification/GamificationWrapper';
+import { useSRS } from '@/hooks/useSRS';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 // Helper function to shuffle an array
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -41,6 +43,12 @@ const PinyinChoicePage = () => {
   // Gamification tracking
   const { trackQuizCompletion } = useGamificationTracking();
 
+  // SRS and Analytics hooks
+  const { updateReview, calculateQuality, getMixedVocabulary } = useSRS();
+  const { startSession, completeSession, recordAnswer } = useAnalytics();
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
+
   const currentWord = useMemo(() => vocabulary[currentIndex], [vocabulary, currentIndex]);
 
   const generateOptions = useCallback(() => {
@@ -62,6 +70,7 @@ const PinyinChoicePage = () => {
   const goToNextWord = useCallback(() => {
     setSelectedPinyin(null);
     setIsCorrect(null);
+    setQuestionStartTime(Date.now()); // Reset timer for next question
     if (currentIndex < vocabulary.length - 1) {
       setCurrentIndex(prev => prev + 1);
     } else {
@@ -83,23 +92,46 @@ const PinyinChoicePage = () => {
         level: level,
         question_count: questionCount,
       });
-    }
-  }, [showResult, correctAnswers, vocabulary.length, questionCount, level, trackQuizCompletion]);
 
-  const handleStart = (count: number) => {
+      // Complete analytics session
+      if (sessionId) {
+        const duration = Math.floor((Date.now() - questionStartTime) / 1000);
+        completeSession(sessionId, correctAnswers, duration);
+      }
+    }
+  }, [showResult, correctAnswers, vocabulary.length, questionCount, level, trackQuizCompletion, sessionId, questionStartTime, completeSession]);
+
+  const handleStart = async (count: number) => {
     setQuestionCount(count);
-    const shuffledFullVocab = shuffleArray(fullVocabulary);
-    const slicedVocab = shuffledFullVocab.slice(0, count);
-    setVocabulary(slicedVocab);
-    
+
+    // Get mixed vocabulary (SRS due reviews + new words)
+    const mixedVocab = await getMixedVocabulary(
+      fullVocabulary,
+      'mandarin',
+      `hsk${level}`,
+      count
+    );
+    setVocabulary(mixedVocab);
+
     setCurrentIndex(0);
     setCorrectAnswers(0);
     setShowResult(false);
     setSelectedPinyin(null);
     setIsCorrect(null);
+    setQuestionStartTime(Date.now());
+
+    // Start analytics session
+    const sid = await startSession(
+      'pinyin_choice',
+      'mandarin',
+      `hsk${level}`,
+      count,
+      { question_count: count }
+    );
+    setSessionId(sid);
   };
 
-  const handleAnswer = (pinyin: string) => {
+  const handleAnswer = async (pinyin: string) => {
     if (selectedPinyin) return;
 
     // Clear any existing timeout
@@ -107,9 +139,41 @@ const PinyinChoicePage = () => {
       clearTimeout(timeoutRef.current);
     }
 
-    setSelectedPinyin(pinyin);
     const correct = pinyin === currentWord.pinyin;
+    const responseTime = Date.now() - questionStartTime;
+
+    setSelectedPinyin(pinyin);
     setIsCorrect(correct);
+
+    // Update SRS
+    const quality = calculateQuality(correct, responseTime);
+    await updateReview({
+      wordId: currentWord.id,
+      wordType: 'mandarin',
+      level: `hsk${level}`,
+      hanzi: currentWord.hanzi,
+      pinyin: currentWord.pinyin,
+      isCorrect: correct,
+      quality
+    });
+
+    // Record answer for analytics
+    if (sessionId) {
+      await recordAnswer(
+        sessionId,
+        {
+          word_id: currentWord.id,
+          hanzi: currentWord.hanzi,
+          pinyin: currentWord.pinyin,
+          correct_answer: currentWord.pinyin,
+          user_answer: pinyin,
+          is_correct: correct,
+          response_time_ms: responseTime
+        },
+        'pinyin_choice'
+      );
+    }
+
     if (correct) {
       setCorrectAnswers(prev => prev + 1);
       timeoutRef.current = setTimeout(() => {

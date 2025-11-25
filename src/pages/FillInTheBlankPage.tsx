@@ -10,6 +10,8 @@ import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { usePinyin } from '@/contexts/PinyinContext';
 import { GamificationWrapper, useGamificationTracking } from '@/components/gamification/GamificationWrapper';
+import { useSRS } from '@/hooks/useSRS';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 // Helper function to shuffle an array
 const shuffleArray = <T,>(array: T[]): T[] => {
