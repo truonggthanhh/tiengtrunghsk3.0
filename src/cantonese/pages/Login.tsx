@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
@@ -84,9 +84,11 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const { session, isLoading } = useSession();
 
-  // Get returnUrl from query params
-  const params = new URLSearchParams(window.location.search);
-  const returnUrl = params.get('returnUrl') || '/cantonese/lessons';
+  // Get returnUrl from query params - memoize để tránh trigger useEffect khi tab switch
+  const returnUrl = useMemo(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('returnUrl') || '/cantonese/lessons';
+  }, []); // Empty dependency array - chỉ tính toán 1 lần khi component mount
 
   useEffect(() => {
     if (!isLoading && session) {

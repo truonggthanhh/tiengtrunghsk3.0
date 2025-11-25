@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import { useSession } from '@/components/SessionContextProvider';
@@ -34,16 +34,20 @@ const ProfilePage: React.FC = () => {
   const [stats, setStats] = useState<ExerciseStats[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
 
+  // Memoize returnUrl để tránh tính toán lại khi component re-render do tab switch
+  const returnUrl = useMemo(() => {
+    return encodeURIComponent(window.location.pathname + window.location.search);
+  }, []);
+
   useEffect(() => {
     if (!isSessionLoading) {
       if (!session) {
-        const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
         navigate(`/mandarin/login?returnUrl=${returnUrl}`);
         return;
       }
       loadUserData();
     }
-  }, [session, isSessionLoading, navigate]);
+  }, [session, isSessionLoading, navigate, returnUrl]);
 
   const loadUserData = async () => {
     if (!session?.user) return;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/cantonese/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -93,14 +93,18 @@ const Dashboard = () => {
   const [isUserAdmin, setIsUserAdmin] = useState(false);
   const [isCheckingRole, setIsCheckingRole] = useState(true);
 
+  // Memoize returnUrl để tránh tính toán lại khi component re-render do tab switch
+  const returnUrl = useMemo(() => {
+    return encodeURIComponent(window.location.pathname + window.location.search);
+  }, []);
+
   useEffect(() => {
     if (!isSessionLoading && !session) {
       toast.error('Vui lòng đăng nhập để truy cập Dashboard.');
-      const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
       navigate(`/cantonese/login?returnUrl=${returnUrl}`);
       return;
     }
-    
+
     if (session) {
       const checkAdminRole = async () => {
         setIsCheckingRole(true);
@@ -115,7 +119,7 @@ const Dashboard = () => {
       };
       checkAdminRole();
     }
-  }, [session, isSessionLoading, navigate]);
+  }, [session, isSessionLoading, navigate, returnUrl]);
 
   if (isSessionLoading || isCheckingRole) {
     return <div className="p-6">Đang kiểm tra quyền truy cập...</div>;
