@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import { getVocabularyByLevel, type VocabularyWord } from '@/data';
@@ -34,6 +34,9 @@ const PinyinChoicePage = () => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [showResult, setShowResult] = useState(false);
+
+  // Ref to store timeout ID for cleanup
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Gamification tracking
   const { trackQuizCompletion } = useGamificationTracking();
@@ -99,16 +102,31 @@ const PinyinChoicePage = () => {
   const handleAnswer = (pinyin: string) => {
     if (selectedPinyin) return;
 
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     setSelectedPinyin(pinyin);
     const correct = pinyin === currentWord.pinyin;
     setIsCorrect(correct);
     if (correct) {
       setCorrectAnswers(prev => prev + 1);
-      setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         goToNextWord();
+        timeoutRef.current = null;
       }, 1200);
     }
   };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
   
   const resetToLevelSelection = () => {
     setQuestionCount(null);

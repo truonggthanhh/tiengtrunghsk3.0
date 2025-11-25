@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import { getVocabularyByLevel, type VocabularyWord } from '@/data';
@@ -35,6 +35,9 @@ const MeaningChoicePage = () => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [showResult, setShowResult] = useState(false);
+
+  // Ref to store timeout ID for cleanup
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const currentWord = useMemo(() => vocabulary[currentIndex], [vocabulary, currentIndex]);
 
@@ -96,17 +99,32 @@ const MeaningChoicePage = () => {
   const handleAnswer = (meaning: string) => {
     if (selectedMeaning) return;
 
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     setSelectedMeaning(meaning);
     const correct = meaning === currentWord.meaning;
     setIsCorrect(correct);
     if (correct) {
       setCorrectAnswers(prev => prev + 1);
-      setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         goToNextWord();
+        timeoutRef.current = null;
       }, 1200);
     }
   };
-  
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
   const resetToLevelSelection = () => {
     setQuestionCount(null);
     setVocabulary([]);

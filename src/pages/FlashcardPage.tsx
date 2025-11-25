@@ -47,7 +47,9 @@ const FlashcardPage = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [currentBatchVocabulary]);
+    // goToNextWord and goToPreviousWord use functional setState, so they don't need to be in dependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const goToNextBatch = () => {
     if (batchIndex < totalBatches - 1) {
