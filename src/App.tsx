@@ -8,6 +8,7 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import { SessionContextProvider } from "./components/SessionContextProvider";
 import { PinyinProvider } from "./contexts/PinyinContext";
 import { GamificationProvider } from "./components/gamification/GamificationProvider";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 // Cantonese Components (keep providers non-lazy)
 import CantonesePageWrapper from "./cantonese/components/layouts/PageWrapper";
@@ -116,8 +117,9 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
+            <ErrorBoundary>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
             {/* Language Selection */}
             <Route path="/" element={<LanguageSelection />} />
 
@@ -891,6 +893,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
+            </ErrorBoundary>
           </BrowserRouter>
         </TooltipProvider>
       </GamificationProvider>
