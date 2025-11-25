@@ -9,6 +9,8 @@ import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { usePinyin } from '@/contexts/PinyinContext';
 import { GamificationWrapper, useGamificationTracking } from '@/components/gamification/GamificationWrapper';
+import { useSRS } from '@/hooks/useSRS';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 // Helper function to shuffle an array
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -25,6 +27,12 @@ const MeaningChoicePage = () => {
   const fullVocabulary = useMemo(() => getVocabularyByLevel(level || '1'), [level]);
   const { showPinyin } = usePinyin();
   const { trackQuizCompletion } = useGamificationTracking();
+
+  // SRS and Analytics hooks
+  const { updateReview, calculateQuality, getMixedVocabulary } = useSRS();
+  const { startSession, completeSession, recordAnswer } = useAnalytics();
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
 
   const [questionCount, setQuestionCount] = useState<number | null>(null);
   const [vocabulary, setVocabulary] = useState<VocabularyWord[]>([]);
