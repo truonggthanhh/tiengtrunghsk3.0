@@ -62,6 +62,8 @@ const LearningProgressPage = lazy(() => import("./pages/LearningProgressPage"));
 const MandarinBlog = lazy(() => import("./mandarin/pages/BlogPage"));
 const MandarinBlogDetail = lazy(() => import("./mandarin/pages/BlogDetailPage"));
 const MandarinGamificationIndex = lazy(() => import("./mandarin/pages/GamificationIndex"));
+const AnalyticsPage = lazy(() => import("./pages/AnalyticsPage"));
+const EnhancedPronunciationPage = lazy(() => import("./pages/EnhancedPronunciationPage"));
 
 // Mandarin Gamification Pages
 const MandarinBossBattles = lazy(() => import("./mandarin/pages/gamification/BossBattles"));
@@ -87,6 +89,8 @@ const CantoneseForgotPassword = lazy(() => import("./cantonese/pages/ForgotPassw
 const CantoneseUpdatePassword = lazy(() => import("./cantonese/pages/UpdatePassword"));
 const CantoneseBlog = lazy(() => import("./cantonese/pages/BlogPage"));
 const CantoneseBlogDetail = lazy(() => import("./cantonese/pages/BlogDetailPage"));
+const CantoneseAnalyticsPage = lazy(() => import("./cantonese/pages/AnalyticsPage"));
+const CantoneseEnhancedPronunciationPage = lazy(() => import("./cantonese/pages/EnhancedPronunciationPage"));
 
 // Cantonese Gamification Pages
 const CantoneseGamificationDashboard = lazy(() => import("./cantonese/pages/gamification/index"));
@@ -231,6 +235,18 @@ const App = () => (
                 }
               />
 
+              {/* Analytics Route */}
+              <Route
+                path="analytics"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <AnalyticsPage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+
               {/* HSK Routes */}
               <Route
                 path="hsk/:level/flashcard"
@@ -298,6 +314,16 @@ const App = () => (
                   <SessionContextProvider>
                     <PinyinProvider>
                       <PronunciationPage />
+                    </PinyinProvider>
+                  </SessionContextProvider>
+                }
+              />
+              <Route
+                path="hsk/:level/enhanced-pronunciation"
+                element={
+                  <SessionContextProvider>
+                    <PinyinProvider>
+                      <EnhancedPronunciationPage />
                     </PinyinProvider>
                   </SessionContextProvider>
                 }
@@ -654,6 +680,26 @@ const App = () => (
                       </CantoneseSessionContextProvider>
                     </CantoneseSettingsProvider>
                   </CantoneseThemeProvider>
+                }
+              />
+
+              {/* Analytics Route */}
+              <Route
+                path="analytics"
+                element={
+                  <CantoneseRouteWrapper>
+                    <CantoneseAnalyticsPage />
+                  </CantoneseRouteWrapper>
+                }
+              />
+
+              {/* Enhanced Pronunciation Route */}
+              <Route
+                path=":level/enhanced-pronunciation"
+                element={
+                  <CantoneseRouteWrapper>
+                    <CantoneseEnhancedPronunciationPage />
+                  </CantoneseRouteWrapper>
                 }
               />
 
