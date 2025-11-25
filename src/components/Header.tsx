@@ -21,7 +21,13 @@ const Header = () => {
           .select('is_admin')
           .eq('id', session.user.id)
           .single();
-        
+
+        if (error) {
+          console.error('Failed to check admin status:', error);
+          setIsAdmin(false);
+          return;
+        }
+
         if (profile && profile.is_admin) {
           setIsAdmin(true);
         } else {
