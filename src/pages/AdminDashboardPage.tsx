@@ -43,12 +43,24 @@ const extractVideoId = (url: string) => {
   return match ? match[1] : null;
 };
 
+interface AuthUser {
+  email: string;
+}
+
+interface UserProfileData {
+  id: string;
+  first_name: string | null;
+  last_name: string | null;
+  is_admin: boolean;
+  auth_users: AuthUser | null;
+}
+
 interface UserProfile {
   id: string;
   first_name: string | null;
   last_name: string | null;
   is_admin: boolean;
-  email: string; // Assuming email can be fetched or is part of the profile
+  email: string;
 }
 
 const AdminDashboardPage: React.FC = () => {
@@ -125,12 +137,12 @@ const AdminDashboardPage: React.FC = () => {
       setError('Không thể tải danh sách người dùng: ' + usersError.message);
       toast.error('Lỗi tải người dùng', { description: usersError.message });
     } else {
-      const formattedUsers: UserProfile[] = usersData.map(profile => ({
+      const formattedUsers: UserProfile[] = (usersData as UserProfileData[]).map(profile => ({
         id: profile.id,
         first_name: profile.first_name,
         last_name: profile.last_name,
         is_admin: profile.is_admin,
-        email: (profile.auth_users as any)?.email || 'N/A', // Access email from nested object
+        email: profile.auth_users?.email || 'N/A',
       }));
       setUsers(formattedUsers);
     }

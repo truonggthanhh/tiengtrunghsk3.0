@@ -12,8 +12,25 @@ interface FlashcardProps {
 const Flashcard: React.FC<FlashcardProps> = ({ hanzi, pinyin, meaning, showPinyin = true }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
+  const handleToggle = () => setIsFlipped(!isFlipped);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleToggle();
+    }
+  };
+
   return (
-    <div className="flashcard-container w-full h-64 md:h-80 cursor-pointer" onClick={() => setIsFlipped(!isFlipped)}>
+    <div
+      className="flashcard-container w-full h-64 md:h-80 cursor-pointer"
+      onClick={handleToggle}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-label={`Flashcard: ${hanzi}. Click or press Enter to flip and see the meaning`}
+      aria-pressed={isFlipped}
+    >
       <div className={cn('flashcard', { 'is-flipped': isFlipped })}>
         <div className="flashcard-face flashcard-front">
           <Card className="w-full h-full flex items-center justify-center border-2 bg-gradient-colorful text-white">
