@@ -29,6 +29,12 @@ const FillInTheBlankPage = () => {
   const { showPinyin } = usePinyin();
   const { trackQuizCompletion } = useGamificationTracking();
 
+  // SRS and Analytics hooks
+  const { updateReview, calculateQuality, getMixedVocabulary } = useSRS();
+  const { startSession, completeSession, recordAnswer } = useAnalytics();
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now());
+
   const [questionCount, setQuestionCount] = useState<number | null>(null);
   const [vocabulary, setVocabulary] = useState<VocabularyWord[]>([]);
   
@@ -46,6 +52,7 @@ const FillInTheBlankPage = () => {
   const goToNextWord = useCallback(() => {
     setInputValue('');
     setAnswerStatus(null);
+    setQuestionStartTime(Date.now()); // Reset timer for next question
     if (currentIndex < vocabulary.length - 1) {
       setCurrentIndex(prev => prev + 1);
     } else {
@@ -63,20 +70,39 @@ const FillInTheBlankPage = () => {
     }
   }, [showResult, correctAnswers, vocabulary.length, questionCount, level, trackQuizCompletion]);
 
-  const handleStart = (count: number) => {
+  // Complete analytics session when quiz finishes
+  useEffect(() => {
+    if (showResult && sessionId) {
+      const duration = Math.floor((Date.now() - questionStartTime) / 1000);
+      completeSession(sessionId, correctAnswers, duration);
+    }
+  }, [showResult, sessionId, questionStartTime, correctAnswers, completeSession]);
+
+  const handleStart = async (count: number) => {
     setQuestionCount(count);
-    const shuffledFullVocab = shuffleArray(fullVocabulary);
-    const slicedVocab = shuffledFullVocab.slice(0, count);
-    setVocabulary(slicedVocab);
-    
+
+    // Use SRS to get mixed vocabulary (due reviews + new words)
+    const mixedVocab = await getMixedVocabulary(
+      fullVocabulary,
+      'mandarin',
+      `hsk${level}`,
+      count
+    );
+    setVocabulary(mixedVocab);
+
+    // Start analytics session
+    const sid = await startSession('fill_blank', 'mandarin', `hsk${level}`, count);
+    setSessionId(sid);
+
     setCurrentIndex(0);
     setCorrectAnswers(0);
     setShowResult(false);
     setInputValue('');
     setAnswerStatus(null);
+    setQuestionStartTime(Date.now());
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (answerStatus || !inputValue.trim()) return;
 
@@ -86,11 +112,46 @@ const FillInTheBlankPage = () => {
     }
 
     const isCorrect = inputValue.trim() === currentWord.hanzi;
+
+    // Calculate response time and quality
+    const responseTime = Date.now() - questionStartTime;
+    const quality = calculateQuality(isCorrect, responseTime);
+
+    // Update SRS review
+    await updateReview({
+      wordId: currentWord.id,
+      wordType: 'mandarin',
+      level: `hsk${level}`,
+      hanzi: currentWord.hanzi,
+      pinyin: currentWord.pinyin,
+      isCorrect,
+      quality
+    });
+
+    // Record answer for analytics
+    if (sessionId) {
+      await recordAnswer(
+        sessionId,
+        {
+          word_id: currentWord.id,
+          word: currentWord.hanzi,
+          pinyin: currentWord.pinyin,
+          meaning: currentWord.meaning,
+          user_answer: inputValue.trim(),
+          correct_answer: currentWord.hanzi,
+          is_correct: isCorrect,
+          response_time_ms: responseTime
+        },
+        'fill_blank'
+      );
+    }
+
     if (isCorrect) {
       setAnswerStatus('correct');
       setCorrectAnswers(prev => prev + 1);
       timeoutRef.current = setTimeout(() => {
         goToNextWord();
+        setQuestionStartTime(Date.now()); // Reset timer for next question
         timeoutRef.current = null;
       }, 1500);
     } else {
