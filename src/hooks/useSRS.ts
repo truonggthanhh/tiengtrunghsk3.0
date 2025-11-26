@@ -45,7 +45,8 @@ export const useSRS = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error('User not authenticated');
+        // Not authenticated - return empty, no error
+        return [];
       }
 
       const { data, error: rpcError } = await supabase.rpc('get_due_reviews', {
@@ -55,13 +56,17 @@ export const useSRS = () => {
         p_limit: limit
       });
 
-      if (rpcError) throw rpcError;
+      if (rpcError) {
+        // If RPC function doesn't exist (migration not run), return empty
+        console.warn('SRS not available (migration may not be run):', rpcError.message);
+        return [];
+      }
 
       return data || [];
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch due reviews';
       setError(errorMessage);
-      console.error('Error fetching due reviews:', err);
+      console.warn('Error fetching due reviews:', err);
       return [];
     } finally {
       setLoading(false);
@@ -78,7 +83,8 @@ export const useSRS = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error('User not authenticated');
+        // Not authenticated - silently fail, no error
+        return false;
       }
 
       const { error: rpcError } = await supabase.rpc('update_srs_review', {
@@ -93,13 +99,17 @@ export const useSRS = () => {
         p_quality: params.quality
       });
 
-      if (rpcError) throw rpcError;
+      if (rpcError) {
+        // If RPC function doesn't exist, just log and continue
+        console.warn('SRS update not available (migration may not be run):', rpcError.message);
+        return false;
+      }
 
       return true;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update review';
       setError(errorMessage);
-      console.error('Error updating SRS review:', err);
+      console.warn('Error updating SRS review:', err);
       return false;
     } finally {
       setLoading(false);
@@ -220,30 +230,37 @@ export const useSRS = () => {
     level: string,
     totalCount: number
   ): Promise<VocabularyWord[]> => {
-    // Get due reviews
-    const dueReviews = await getDueReviews(wordType, level, Math.ceil(totalCount * 0.7));
+    try {
+      // Get due reviews (will return empty if migration not run)
+      const dueReviews = await getDueReviews(wordType, level, Math.ceil(totalCount * 0.7));
 
-    // Convert due reviews to VocabularyWord format
-    const dueWords = allVocabulary.filter(word =>
-      dueReviews.some(review => review.word_id === word.id)
-    );
+      // Convert due reviews to VocabularyWord format
+      const dueWords = allVocabulary.filter(word =>
+        dueReviews.some(review => review.word_id === word.id)
+      );
 
-    // If we have enough due reviews, return them
-    if (dueWords.length >= totalCount) {
-      return dueWords.slice(0, totalCount);
+      // If we have enough due reviews, return them
+      if (dueWords.length >= totalCount) {
+        return dueWords.slice(0, totalCount);
+      }
+
+      // Otherwise, mix with new words
+      const reviewedWordIds = new Set(dueReviews.map(r => r.word_id));
+      const newWords = allVocabulary.filter(word => !reviewedWordIds.has(word.id));
+
+      // Shuffle new words
+      const shuffledNewWords = [...newWords].sort(() => Math.random() - 0.5);
+
+      // Combine due reviews and new words
+      const mixed = [...dueWords, ...shuffledNewWords].slice(0, totalCount);
+
+      return mixed;
+    } catch (err) {
+      // Fallback to random selection if SRS fails
+      console.warn('SRS not available, falling back to random selection:', err);
+      const shuffled = [...allVocabulary].sort(() => Math.random() - 0.5);
+      return shuffled.slice(0, totalCount);
     }
-
-    // Otherwise, mix with new words
-    const reviewedWordIds = new Set(dueReviews.map(r => r.word_id));
-    const newWords = allVocabulary.filter(word => !reviewedWordIds.has(word.id));
-
-    // Shuffle new words
-    const shuffledNewWords = [...newWords].sort(() => Math.random() - 0.5);
-
-    // Combine due reviews and new words
-    const mixed = [...dueWords, ...shuffledNewWords].slice(0, totalCount);
-
-    return mixed;
   }, [getDueReviews]);
 
   return {
