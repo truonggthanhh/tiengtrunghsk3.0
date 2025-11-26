@@ -36,12 +36,26 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    let isMounted = true;
+
     async function getProfileAndRole() {
       console.log('[ProfileProvider] Starting - Session:', session ? `✓ User: ${session.user.email}` : '✗ No session');
       setIsLoadingProfile(true);
 
+      // Add timeout to prevent infinite loading (10 seconds max)
+      timeoutId = setTimeout(() => {
+        if (isMounted) {
+          console.warn('[ProfileProvider] ⏱️ Timeout: Profile loading took too long, falling back to default state');
+          setProfile(null);
+          setIsAdmin(false);
+          setIsLoadingProfile(false);
+        }
+      }, 10000);
+
       if (!session?.user) {
         console.log('[ProfileProvider] No session, clearing profile state');
+        clearTimeout(timeoutId);
         setProfile(null);
         setIsAdmin(false);
         setIsLoadingProfile(false);
@@ -58,6 +72,8 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
 
         if (profileError) {
           console.error('[ProfileProvider] ❌ Error fetching profile:', profileError);
+          console.warn('[ProfileProvider] ⚠️ Continuing without profile data (app will still work)');
+          clearTimeout(timeoutId);
           setProfile(null);
           setIsAdmin(false);
           setIsLoadingProfile(false);
@@ -104,6 +120,7 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
 
           if (insertError) {
             console.error('[ProfileProvider] ❌ Error creating profile:', insertError);
+            console.warn('[ProfileProvider] ⚠️ Continuing without profile creation (app will still work)');
           } else {
             console.log('[ProfileProvider] ✓ Profile created');
           }
@@ -135,16 +152,27 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
 
       } catch (err) {
         console.error('[ProfileProvider] ❌ Unexpected error:', err);
+        console.warn('[ProfileProvider] ⚠️ Continuing without profile data (app will still work)');
+        clearTimeout(timeoutId);
         setProfile(null);
         setIsAdmin(false);
       } finally {
-        setIsLoadingProfile(false);
+        clearTimeout(timeoutId);
+        if (isMounted) {
+          setIsLoadingProfile(false);
+        }
       }
     }
 
     if (!isLoadingSession) {
       getProfileAndRole();
     }
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+      clearTimeout(timeoutId);
+    };
   }, [session, isLoadingSession]);
 
   return (
