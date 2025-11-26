@@ -73,7 +73,8 @@ export const useAnalytics = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error('User not authenticated');
+        // Not authenticated - silently return null
+        return null;
       }
 
       const { data, error: insertError } = await supabase
@@ -92,13 +93,17 @@ export const useAnalytics = () => {
         .select('id')
         .single();
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        // Table doesn't exist (migration not run) - just warn and continue
+        console.warn('Analytics not available (migration may not be run):', insertError.message);
+        return null;
+      }
 
       return data.id;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to start session';
       setError(errorMessage);
-      console.error('Error starting session:', err);
+      console.warn('Error starting session:', err);
       return null;
     } finally {
       setLoading(false);
@@ -113,17 +118,27 @@ export const useAnalytics = () => {
     correctAnswers: number,
     durationSeconds?: number
   ): Promise<boolean> => {
+    if (!sessionId) return false; // No session to complete
+
     setLoading(true);
     setError(null);
 
     try {
-      const { data: session } = await supabase
+      const { data: session, error: selectError } = await supabase
         .from('practice_sessions')
         .select('total_questions')
         .eq('id', sessionId)
         .single();
 
-      if (!session) throw new Error('Session not found');
+      if (selectError) {
+        console.warn('Analytics not available:', selectError.message);
+        return false;
+      }
+
+      if (!session) {
+        console.warn('Session not found');
+        return false;
+      }
 
       const accuracy = (correctAnswers / session.total_questions) * 100;
 
@@ -137,13 +152,16 @@ export const useAnalytics = () => {
         })
         .eq('id', sessionId);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.warn('Failed to complete session:', updateError.message);
+        return false;
+      }
 
       return true;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to complete session';
       setError(errorMessage);
-      console.error('Error completing session:', err);
+      console.warn('Error completing session:', err);
       return false;
     } finally {
       setLoading(false);
@@ -158,10 +176,13 @@ export const useAnalytics = () => {
     answer: SessionAnswer,
     questionType: string
   ): Promise<boolean> => {
+    if (!sessionId) return false; // No session to record to
+
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        throw new Error('User not authenticated');
+        // Not authenticated - silently fail
+        return false;
       }
 
       const { error: insertError } = await supabase
@@ -180,11 +201,14 @@ export const useAnalytics = () => {
           question_type: questionType
         });
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        console.warn('Analytics not available:', insertError.message);
+        return false;
+      }
 
       return true;
     } catch (err) {
-      console.error('Error recording answer:', err);
+      console.warn('Error recording answer:', err);
       return false;
     }
   }, []);

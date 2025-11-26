@@ -68,6 +68,7 @@ const MeaningChoicePage = () => {
   const goToNextWord = useCallback(() => {
     setSelectedMeaning(null);
     setIsCorrect(null);
+    setQuestionStartTime(Date.now()); // Reset timer for next question
     if (currentIndex < vocabulary.length - 1) {
       setCurrentIndex(prev => prev + 1);
     } else {
@@ -91,20 +92,39 @@ const MeaningChoicePage = () => {
     }
   }, [showResult, correctAnswers, vocabulary.length, questionCount, level, trackQuizCompletion]);
 
-  const handleStart = (count: number) => {
+  // Complete analytics session when quiz finishes
+  useEffect(() => {
+    if (showResult && sessionId) {
+      const duration = Math.floor((Date.now() - questionStartTime) / 1000);
+      completeSession(sessionId, correctAnswers, duration);
+    }
+  }, [showResult, sessionId, questionStartTime, correctAnswers, completeSession]);
+
+  const handleStart = async (count: number) => {
     setQuestionCount(count);
-    const shuffledFullVocab = shuffleArray(fullVocabulary);
-    const slicedVocab = shuffledFullVocab.slice(0, count);
-    setVocabulary(slicedVocab);
-    
+
+    // Use SRS to get mixed vocabulary (due reviews + new words)
+    const mixedVocab = await getMixedVocabulary(
+      fullVocabulary,
+      'mandarin',
+      `hsk${level}`,
+      count
+    );
+    setVocabulary(mixedVocab);
+
+    // Start analytics session
+    const sid = await startSession('meaning_choice', 'mandarin', `hsk${level}`, count);
+    setSessionId(sid);
+
     setCurrentIndex(0);
     setCorrectAnswers(0);
     setShowResult(false);
     setSelectedMeaning(null);
     setIsCorrect(null);
+    setQuestionStartTime(Date.now());
   };
 
-  const handleAnswer = (meaning: string) => {
+  const handleAnswer = async (meaning: string) => {
     if (selectedMeaning) return;
 
     // Clear any existing timeout
@@ -115,10 +135,45 @@ const MeaningChoicePage = () => {
     setSelectedMeaning(meaning);
     const correct = meaning === currentWord.meaning;
     setIsCorrect(correct);
+
+    // Calculate response time and quality
+    const responseTime = Date.now() - questionStartTime;
+    const quality = calculateQuality(correct, responseTime);
+
+    // Update SRS review
+    await updateReview({
+      wordId: currentWord.id,
+      wordType: 'mandarin',
+      level: `hsk${level}`,
+      hanzi: currentWord.hanzi,
+      pinyin: currentWord.pinyin,
+      isCorrect: correct,
+      quality
+    });
+
+    // Record answer for analytics
+    if (sessionId) {
+      await recordAnswer(
+        sessionId,
+        {
+          word_id: currentWord.id,
+          word: currentWord.hanzi,
+          pinyin: currentWord.pinyin,
+          meaning: currentWord.meaning,
+          user_answer: meaning,
+          correct_answer: currentWord.meaning,
+          is_correct: correct,
+          response_time_ms: responseTime
+        },
+        'meaning_choice'
+      );
+    }
+
     if (correct) {
       setCorrectAnswers(prev => prev + 1);
       timeoutRef.current = setTimeout(() => {
         goToNextWord();
+        setQuestionStartTime(Date.now()); // Reset timer for next question
         timeoutRef.current = null;
       }, 1200);
     }
