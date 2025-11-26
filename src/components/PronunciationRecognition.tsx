@@ -54,7 +54,8 @@ const PronunciationRecognition: React.FC<PronunciationRecognitionProps> = ({
     if (!SpeechRecognition) {
       setIsSupported(false);
       toast.error('Trình duyệt không hỗ trợ nhận dạng giọng nói', {
-        description: 'Vui lòng sử dụng Chrome hoặc Edge'
+        description: '⚠️ Vui lòng sử dụng Chrome hoặc Edge. Firefox/Safari không hỗ trợ đầy đủ.',
+        duration: 10000
       });
       return;
     }
@@ -95,18 +96,42 @@ const PronunciationRecognition: React.FC<PronunciationRecognitionProps> = ({
       console.error('Speech recognition error:', event.error);
       setIsListening(false);
 
-      if (event.error === 'no-speech') {
-        toast.error('Không nhận được âm thanh', {
-          description: 'Vui lòng thử lại và nói to hơn'
-        });
-      } else if (event.error === 'audio-capture') {
-        toast.error('Không thể truy cập microphone', {
-          description: 'Vui lòng cho phép truy cập microphone'
-        });
-      } else {
-        toast.error('Lỗi nhận dạng giọng nói', {
-          description: event.error
-        });
+      // Provide detailed error messages based on error type
+      switch (event.error) {
+        case 'no-speech':
+          toast.error('Không nhận được âm thanh', {
+            description: '🎤 Vui lòng thử lại và nói to hơn. Đảm bảo microphone hoạt động tốt.'
+          });
+          break;
+        case 'audio-capture':
+          toast.error('Không thể truy cập microphone', {
+            description: '⚠️ Vui lòng cho phép truy cập microphone trong cài đặt trình duyệt'
+          });
+          break;
+        case 'not-allowed':
+          toast.error('Quyền microphone bị từ chối', {
+            description: '🔒 Vui lòng cấp quyền microphone cho trang web này'
+          });
+          break;
+        case 'network':
+          toast.error('Lỗi kết nối mạng', {
+            description: '🌐 Kiểm tra kết nối internet của bạn và thử lại'
+          });
+          break;
+        case 'aborted':
+          toast.info('Đã dừng nhận dạng', {
+            description: 'Bạn có thể thử lại bất cứ lúc nào'
+          });
+          break;
+        case 'service-not-allowed':
+          toast.error('Dịch vụ nhận dạng không khả dụng', {
+            description: '❌ Trình duyệt không hỗ trợ hoặc dịch vụ bị chặn. Thử Chrome/Edge.'
+          });
+          break;
+        default:
+          toast.error('Lỗi nhận dạng giọng nói', {
+            description: `⚠️ ${event.error || 'Lỗi không xác định'}. Vui lòng thử lại hoặc reload trang.`
+          });
       }
     };
 
@@ -203,11 +228,23 @@ const PronunciationRecognition: React.FC<PronunciationRecognitionProps> = ({
 
   if (!isSupported) {
     return (
-      <Card className={cn('w-full', className)}>
+      <Card className={cn('w-full border-2 border-yellow-500 bg-yellow-50 dark:bg-yellow-950', className)}>
         <CardContent className="p-6">
-          <div className="flex items-center justify-center gap-3 text-muted-foreground">
-            <AlertCircle className="h-5 w-5" />
-            <p>Tính năng nhận dạng giọng nói không được hỗ trợ trên trình duyệt này</p>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 text-yellow-700 dark:text-yellow-300">
+              <AlertCircle className="h-6 w-6" />
+              <p className="font-semibold text-lg">Trình duyệt không hỗ trợ nhận dạng giọng nói</p>
+            </div>
+            <div className="text-sm text-yellow-600 dark:text-yellow-400 space-y-2">
+              <p>📱 <strong>Trình duyệt được hỗ trợ:</strong></p>
+              <ul className="list-disc list-inside ml-4 space-y-1">
+                <li>✅ Google Chrome (Desktop & Mobile)</li>
+                <li>✅ Microsoft Edge (Desktop & Mobile)</li>
+                <li>⚠️ Safari (iOS/macOS - hỗ trợ hạn chế)</li>
+                <li>❌ Firefox (chưa hỗ trợ Web Speech API)</li>
+              </ul>
+              <p className="mt-3">💡 <strong>Khuyến nghị:</strong> Sử dụng Chrome hoặc Edge để có trải nghiệm tốt nhất!</p>
+            </div>
           </div>
         </CardContent>
       </Card>
