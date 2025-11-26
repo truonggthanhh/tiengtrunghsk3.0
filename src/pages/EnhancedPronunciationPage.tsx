@@ -34,31 +34,42 @@ const EnhancedPronunciationPage: React.FC = () => {
   const progress = vocabulary.length > 0 ? ((currentIndex + 1) / vocabulary.length) * 100 : 0;
 
   const handleStart = async (count: number) => {
-    setQuestionCount(count);
+    try {
+      setQuestionCount(count);
 
-    // Get mixed vocabulary (SRS + new words)
-    const mixedVocab = await getMixedVocabulary(
-      fullVocabulary,
-      'mandarin',
-      `hsk${level}`,
-      count
-    );
+      // Get mixed vocabulary (SRS + new words)
+      const mixedVocab = await getMixedVocabulary(
+        fullVocabulary,
+        'mandarin',
+        `hsk${level}`,
+        count
+      );
 
-    setVocabulary(mixedVocab);
-    setCurrentIndex(0);
-    setCorrectAnswers(0);
-    setShowResult(false);
-    setStartTime(Date.now());
+      setVocabulary(mixedVocab);
+      setCurrentIndex(0);
+      setCorrectAnswers(0);
+      setShowResult(false);
+      setStartTime(Date.now());
 
-    // Start analytics session
-    const sid = await startSession(
-      'pronunciation',
-      'mandarin',
-      `hsk${level}`,
-      count,
-      { question_count: count }
-    );
-    setSessionId(sid);
+      // Start analytics session
+      const sid = await startSession(
+        'pronunciation',
+        'mandarin',
+        `hsk${level}`,
+        count,
+        { question_count: count }
+      );
+      setSessionId(sid);
+    } catch (error) {
+      console.warn('Error starting pronunciation session:', error);
+      // Fallback: use shuffled vocabulary if SRS fails
+      const shuffled = [...fullVocabulary].sort(() => Math.random() - 0.5);
+      setVocabulary(shuffled.slice(0, count));
+      setCurrentIndex(0);
+      setCorrectAnswers(0);
+      setShowResult(false);
+      setStartTime(Date.now());
+    }
   };
 
   const handlePronunciationResult = async (result: {
@@ -66,40 +77,48 @@ const EnhancedPronunciationPage: React.FC = () => {
     confidence: number;
     isCorrect: boolean;
   }) => {
-    const responseTime = Date.now() - startTime;
+    try {
+      const responseTime = Date.now() - startTime;
 
-    // Update SRS
-    const quality = calculateQuality(result.isCorrect, responseTime);
-    await updateReview({
-      wordId: currentWord.id,
-      wordType: 'mandarin',
-      level: `hsk${level}`,
-      hanzi: currentWord.hanzi,
-      pinyin: currentWord.pinyin,
-      isCorrect: result.isCorrect,
-      quality
-    });
+      // Update SRS
+      const quality = calculateQuality(result.isCorrect, responseTime);
+      await updateReview({
+        wordId: currentWord.id,
+        wordType: 'mandarin',
+        level: `hsk${level}`,
+        hanzi: currentWord.hanzi,
+        pinyin: currentWord.pinyin,
+        isCorrect: result.isCorrect,
+        quality
+      });
 
-    // Record answer for analytics
-    if (sessionId) {
-      await recordAnswer(
-        sessionId,
-        {
-          word_id: currentWord.id,
-          hanzi: currentWord.hanzi,
-          pinyin: currentWord.pinyin,
-          correct_answer: currentWord.hanzi,
-          user_answer: result.recognized,
-          is_correct: result.isCorrect,
-          response_time_ms: responseTime
-        },
-        'pronunciation'
-      );
-    }
+      // Record answer for analytics
+      if (sessionId) {
+        await recordAnswer(
+          sessionId,
+          {
+            word_id: currentWord.id,
+            hanzi: currentWord.hanzi,
+            pinyin: currentWord.pinyin,
+            correct_answer: currentWord.hanzi,
+            user_answer: result.recognized,
+            is_correct: result.isCorrect,
+            response_time_ms: responseTime
+          },
+          'pronunciation'
+        );
+      }
 
-    // Update correct count
-    if (result.isCorrect) {
-      setCorrectAnswers(prev => prev + 1);
+      // Update correct count
+      if (result.isCorrect) {
+        setCorrectAnswers(prev => prev + 1);
+      }
+    } catch (error) {
+      console.warn('Error recording pronunciation result:', error);
+      // Still count correct answers even if tracking fails
+      if (result.isCorrect) {
+        setCorrectAnswers(prev => prev + 1);
+      }
     }
 
     // Auto advance after 2 seconds
@@ -120,10 +139,14 @@ const EnhancedPronunciationPage: React.FC = () => {
   const finishSession = async () => {
     setShowResult(true);
 
-    // Complete analytics session
-    if (sessionId) {
-      const duration = Math.floor((Date.now() - startTime) / 1000);
-      await completeSession(sessionId, correctAnswers, duration);
+    try {
+      // Complete analytics session
+      if (sessionId) {
+        const duration = Math.floor((Date.now() - startTime) / 1000);
+        await completeSession(sessionId, correctAnswers, duration);
+      }
+    } catch (error) {
+      console.warn('Error completing session:', error);
     }
 
     // Show completion toast
@@ -249,7 +272,18 @@ const EnhancedPronunciationPage: React.FC = () => {
     );
   }
 
-  // Practice screen
+  // Practice screen - Safety check for currentWord
+  if (!currentWord) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Header />
+        <div className="text-center">
+          <p className="text-muted-foreground">Đang tải từ vựng...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800">
       <Header />
