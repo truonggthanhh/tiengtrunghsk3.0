@@ -48,6 +48,87 @@ const PronunciationRecognition: React.FC<PronunciationRecognitionProps> = ({
   const recognitionRef = useRef<any>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  /**
+   * Calculate Levenshtein distance between two strings
+   * Used for pronunciation similarity scoring
+   */
+  const levenshteinDistance = useCallback((str1: string, str2: string): number => {
+    const len1 = str1.length;
+    const len2 = str2.length;
+    const matrix: number[][] = [];
+
+    // Initialize matrix
+    for (let i = 0; i <= len1; i++) {
+      matrix[i] = [i];
+    }
+    for (let j = 0; j <= len2; j++) {
+      matrix[0][j] = j;
+    }
+
+    // Calculate distances
+    for (let i = 1; i <= len1; i++) {
+      for (let j = 1; j <= len2; j++) {
+        const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j] + 1,      // deletion
+          matrix[i][j - 1] + 1,      // insertion
+          matrix[i - 1][j - 1] + cost // substitution
+        );
+      }
+    }
+
+    return matrix[len1][len2];
+  }, []);
+
+  /**
+   * Calculate pronunciation score based on string similarity
+   * Returns a score from 0-100 based on how similar the recognized text is to expected
+   */
+  const calculatePronunciationScore = useCallback((recognized: string, expected: string): number => {
+    // Normalize both strings
+    const normalizeText = (str: string) =>
+      str.replace(/[^\p{L}\p{N}]/gu, '').toLowerCase();
+
+    const normalizedRecognized = normalizeText(recognized);
+    const normalizedExpected = normalizeText(expected);
+
+    // If exact match, return 100%
+    if (normalizedRecognized === normalizedExpected) {
+      return 100;
+    }
+
+    // If completely empty, return 0%
+    if (!normalizedRecognized) {
+      return 0;
+    }
+
+    // Calculate similarity using Levenshtein distance
+    const distance = levenshteinDistance(normalizedRecognized, normalizedExpected);
+    const maxLength = Math.max(normalizedRecognized.length, normalizedExpected.length);
+
+    // Convert distance to similarity percentage
+    // Similarity = (1 - distance/maxLength) * 100
+    const similarity = ((maxLength - distance) / maxLength) * 100;
+
+    // Apply bonus for getting characters in right positions
+    let positionBonus = 0;
+    const minLen = Math.min(normalizedRecognized.length, normalizedExpected.length);
+    for (let i = 0; i < minLen; i++) {
+      if (normalizedRecognized[i] === normalizedExpected[i]) {
+        positionBonus += 5; // 5% bonus per correct position
+      }
+    }
+
+    // Calculate final score (weighted average)
+    let finalScore = similarity * 0.7 + Math.min(positionBonus, 30) * 0.3;
+
+    // Ensure score is between 0 and 100
+    finalScore = Math.max(0, Math.min(100, finalScore));
+
+    // Round to 1 decimal place
+    return Math.round(finalScore * 10) / 10;
+  }, [levenshteinDistance]);
+
   // Check if Speech Recognition is supported
   useEffect(() => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -73,20 +154,22 @@ const PronunciationRecognition: React.FC<PronunciationRecognitionProps> = ({
 
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript;
-      const confidenceScore = event.results[0][0].confidence * 100;
+
+      // Calculate pronunciation score based on similarity
+      const pronunciationScore = calculatePronunciationScore(transcript, text);
 
       setRecognizedText(transcript);
-      setConfidence(confidenceScore);
+      setConfidence(pronunciationScore); // Use pronunciation score instead of API confidence
 
-      // Check if pronunciation matches
-      const isCorrect = checkPronunciation(transcript, text);
+      // Check if pronunciation is correct (>= 80%)
+      const isCorrect = pronunciationScore >= 80;
       setResult(isCorrect ? 'correct' : 'incorrect');
 
       // Callback
       if (onResult) {
         onResult({
           recognized: transcript,
-          confidence: confidenceScore,
+          confidence: pronunciationScore, // Return pronunciation score
           isCorrect
         });
       }
@@ -146,23 +229,7 @@ const PronunciationRecognition: React.FC<PronunciationRecognitionProps> = ({
         recognitionRef.current.abort();
       }
     };
-  }, [language, text, onResult]);
-
-  /**
-   * Check if recognized text matches expected pronunciation
-   * This is a basic implementation - can be improved with fuzzy matching
-   */
-  const checkPronunciation = (recognized: string, expected: string): boolean => {
-    // Normalize both strings (remove spaces, punctuation, lowercase)
-    const normalizeText = (str: string) =>
-      str.replace(/[^\p{L}\p{N}]/gu, '').toLowerCase();
-
-    const normalizedRecognized = normalizeText(recognized);
-    const normalizedExpected = normalizeText(expected);
-
-    // Check if they match
-    return normalizedRecognized === normalizedExpected;
-  };
+  }, [language, text, calculatePronunciationScore]);
 
   /**
    * Start listening to user's pronunciation
@@ -309,13 +376,18 @@ const PronunciationRecognition: React.FC<PronunciationRecognitionProps> = ({
               <span className="text-lg font-semibold">{recognizedText}</span>
             </div>
 
-            {/* Confidence score */}
+            {/* Pronunciation score */}
             <div className="space-y-1">
               <div className="flex items-center justify-between text-sm">
-                <span className="font-medium">Độ chính xác:</span>
+                <span className="font-medium">Điểm phát âm:</span>
                 <span className="font-semibold">{confidence.toFixed(1)}%</span>
               </div>
-              <Progress value={confidence} className="h-2" />
+              <Progress value={confidence} className={cn(
+                "h-2",
+                confidence >= 80 && "bg-green-100 [&>div]:bg-green-600",
+                confidence >= 60 && confidence < 80 && "bg-yellow-100 [&>div]:bg-yellow-600",
+                confidence < 60 && "bg-red-100 [&>div]:bg-red-600"
+              )} />
             </div>
 
             {/* Result indicator */}
