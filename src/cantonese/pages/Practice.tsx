@@ -9,6 +9,7 @@ import { useSession } from '@/cantonese/components/providers/SessionContextProvi
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CheckCircle2, XCircle, Home, ArrowLeft } from 'lucide-react'; // Import icons for results and navigation
 import JyutpingToggle from '@/cantonese/components/ui/JyutpingToggle'; // Import JyutpingToggle
+import { useAnalytics } from '@/hooks/useAnalytics'; // Import Analytics hook
 
 // Lazy load components
 const Flashcard = lazy(() => import('@/cantonese/components/practice/Flashcard'));
@@ -22,6 +23,11 @@ const PracticePage = () => {
   const { lessonId, type } = useParams<{ lessonId: string, type: string }>();
   const { session, isLoading: isSessionLoading } = useSession();
   const queryClient = useQueryClient();
+
+  // Analytics hooks
+  const { startSession, completeSession } = useAnalytics();
+  const [analyticsSessionId, setAnalyticsSessionId] = useState<string | null>(null);
+
   const [fullData, setFullData] = useState<any>(null);
   const [displayData, setDisplayData] = useState<any>(null);
   const [selectedQuantity, setSelectedQuantity] = useState<string>('10');
@@ -75,13 +81,37 @@ const PracticePage = () => {
       setFullData(exercisePayload);
       if (exercisePayload) { // Only set quantity and start time if payload is not null
         const defaultQty = Math.min(10, exercisePayload.items?.length || 10);
-        setSelectedQuantity(String(defaultQty)); 
+        setSelectedQuantity(String(defaultQty));
         setStartTime(Date.now()); // Set start time when exercise data is loaded
         setShowResults(false); // Hide results when new exercise loads
         setLastSavedScore(null);
+
+        // Start analytics session
+        const initAnalyticsSession = async () => {
+          const sessionTypeMap: { [key: string]: string } = {
+            'FLASHCARD': 'flashcard',
+            'FILL_BLANK': 'fill_blank',
+            'MULTICHOICE': 'multiple_choice',
+            'TRUE_FALSE': 'true_false',
+            'REORDER': 'sentence_reorder',
+            'HANZI_WRITE': 'hanzi_writing'
+          };
+
+          const sessionType = sessionTypeMap[type?.toUpperCase() || ''] || 'practice';
+          const sid = await startSession(
+            sessionType,
+            'cantonese',
+            lessonId || 'unknown',
+            exercisePayload.items?.length || 0,
+            { lesson_id: lessonId, exercise_type: type }
+          );
+          setAnalyticsSessionId(sid);
+        };
+
+        initAnalyticsSession();
       }
     }
-  }, [exercisePayload]); // Chỉ phụ thuộc vào exercisePayload
+  }, [exercisePayload, type, lessonId, startSession]); // Dependencies
 
   useEffect(() => {
     if (fullData?.items) {
@@ -98,6 +128,7 @@ const PracticePage = () => {
 
   useHotkeys({ onPrev: prev, onNext: next, onFlip: flip, onPick: pick });
 
+  // Fallback: Keep old exercise_sessions saving for backward compatibility
   const saveSessionMutation = useMutation({
     mutationFn: async (sessionData: { lesson_id: string; user_id: string; type: string; count: number; score: number; total: number; answers: any; duration_seconds?: number }) => {
       const { data, error } = await supabase.from('exercise_sessions').insert([sessionData]).select();
@@ -106,12 +137,9 @@ const PracticePage = () => {
     },
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['exercise_sessions', lessonId] });
-      toast.success('Đã lưu kết quả làm bài!');
-      setLastSavedScore({ score: variables.score, total: variables.total });
-      setShowResults(true); // Show results after successful save
     },
     onError: (err) => {
-      toast.error(`Lỗi khi lưu kết quả: ${err.message}`);
+      console.warn('Exercise session save failed (non-critical):', err.message);
     },
   });
 
@@ -134,7 +162,15 @@ const PracticePage = () => {
       return;
     }
 
-    // If user is logged in, save the session
+    // Complete analytics session (new system)
+    if (analyticsSessionId) {
+      const success = await completeSession(analyticsSessionId, score, duration_seconds);
+      if (success) {
+        toast.success('Đã lưu kết quả làm bài!');
+      }
+    }
+
+    // Also save to old exercise_sessions table for backward compatibility
     if (session?.user?.id) {
       saveSessionMutation.mutate({
         lesson_id: lessonId,
@@ -146,10 +182,13 @@ const PracticePage = () => {
         answers,
         duration_seconds,
       });
-    } else {
-      // If not logged in, just show results locally
-      setLastSavedScore({ score, total });
-      setShowResults(true);
+    }
+
+    // Show results
+    setLastSavedScore({ score, total });
+    setShowResults(true);
+
+    if (!session?.user?.id) {
       toast.info('Đăng nhập để lưu kết quả của bạn!');
     }
   }
