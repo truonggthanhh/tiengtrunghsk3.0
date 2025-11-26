@@ -30,6 +30,8 @@ const CantoneseEnhancedPronunciationPage: React.FC = () => {
   const [showResult, setShowResult] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [startTime, setStartTime] = useState<number>(0);
+  const [hasAnswered, setHasAnswered] = useState(false);
+  const [lastResult, setLastResult] = useState<{ recognized: string; confidence: number; isCorrect: boolean } | null>(null);
 
   const currentWord = useMemo(() => vocabulary[currentIndex], [vocabulary, currentIndex]);
   const progress = vocabulary.length > 0 ? ((currentIndex + 1) / vocabulary.length) * 100 : 0;
@@ -51,6 +53,8 @@ const CantoneseEnhancedPronunciationPage: React.FC = () => {
       setCorrectAnswers(0);
       setShowResult(false);
       setStartTime(Date.now());
+      setHasAnswered(false);
+      setLastResult(null);
 
       // Start analytics session
       const sid = await startSession(
@@ -78,6 +82,10 @@ const CantoneseEnhancedPronunciationPage: React.FC = () => {
     confidence: number;
     isCorrect: boolean;
   }) => {
+    // Store result for display
+    setLastResult(result);
+    setHasAnswered(true);
+
     try {
       const responseTime = Date.now() - startTime;
 
@@ -121,14 +129,13 @@ const CantoneseEnhancedPronunciationPage: React.FC = () => {
         setCorrectAnswers(prev => prev + 1);
       }
     }
-
-    // Auto advance after 2 seconds
-    setTimeout(() => {
-      goToNextWord();
-    }, 2000);
   };
 
   const goToNextWord = () => {
+    // Reset answer state
+    setHasAnswered(false);
+    setLastResult(null);
+
     if (currentIndex < vocabulary.length - 1) {
       setCurrentIndex(prev => prev + 1);
       setStartTime(Date.now());
@@ -314,17 +321,52 @@ const CantoneseEnhancedPronunciationPage: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Skip Button */}
-          <div className="flex justify-center mt-6">
-            <Button
-              variant="outline"
-              onClick={goToNextWord}
-              className="gap-2"
-            >
-              跳過 (Bỏ qua)
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </div>
+          {/* Result Display & Action Buttons */}
+          {hasAnswered && lastResult ? (
+            <div className="mt-6 space-y-4">
+              {/* Big Result Card */}
+              <Card className={`border-2 ${lastResult.isCorrect ? 'border-green-500 bg-green-50 dark:bg-green-950' : 'border-red-500 bg-red-50 dark:bg-red-950'}`}>
+                <CardContent className="p-6 text-center space-y-3">
+                  <div className={`text-3xl font-bold ${lastResult.isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
+                    {lastResult.isCorrect ? '✅ 啱喇！(Chính xác!)' : '❌ 未啱 (Chưa đúng)'}
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">你讀咗 (Bạn đã đọc): <span className="font-bold text-foreground">{lastResult.recognized}</span></p>
+                    <p className="text-sm text-muted-foreground">可信度 (Độ tin cậy): <span className="font-bold text-foreground">{lastResult.confidence.toFixed(1)}%</span></p>
+                  </div>
+                  {!lastResult.isCorrect && (
+                    <p className="text-sm text-muted-foreground mt-2">
+                      💡 正確答案 (Đáp án đúng): <span className="font-bold text-lg text-foreground">{currentWord.hanzi}</span>
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Next Word Button */}
+              <div className="flex justify-center gap-3">
+                <Button
+                  size="lg"
+                  onClick={goToNextWord}
+                  className="bg-primary hover:bg-primary/90 text-white font-bold px-8"
+                >
+                  {currentIndex === vocabulary.length - 1 ? '睇結果 (Xem kết quả)' : '下一個字 (Từ tiếp theo)'}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </div>
+            </div>
+          ) : (
+            /* Skip Button - Only show when not answered yet */
+            <div className="flex justify-center mt-6">
+              <Button
+                variant="outline"
+                onClick={goToNextWord}
+                className="gap-2"
+              >
+                跳過 (Bỏ qua)
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </CantoneseRouteWrapper>
