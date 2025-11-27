@@ -151,7 +151,7 @@ async function extractVocabularyFromPDF(pdfUrl: string): Promise<string> {
 
   console.log('   🤖 Extracting vocabulary with Gemini...');
 
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
   const result = await model.generateContent([
     {
@@ -184,7 +184,7 @@ Chỉ trả về danh sách từ vựng, KHÔNG thêm giải thích hay comment.
 
 async function generateExercise(vocabulary: string, type: string) {
   const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-pro',
+    model: 'gemini-2.5-flash',
     generationConfig: {
       temperature: 0.7,
       topP: 0.95,
