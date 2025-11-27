@@ -309,9 +309,6 @@ const PinyinChoicePage = () => {
             <Card className="mb-8 shadow-md bg-gradient-colorful text-white">
               <CardContent className="p-10 flex flex-col items-center justify-center space-y-4">
                 <h2 className="text-7xl md:text-8xl font-bold">{currentWord?.hanzi}</h2>
-                {!selectedPinyin && (
-                  <p className="text-2xl md:text-3xl font-medium text-white/80">{currentWord?.pinyin}</p>
-                )}
                 {selectedPinyin && (
                   <div className="text-center space-y-2">
                     <p className="text-2xl md:text-3xl font-semibold text-white">{currentWord?.pinyin}</p>
