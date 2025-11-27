@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { BookOpen, CheckSquare, Shuffle, FileQuestion, Mic, Puzzle, ArrowRight, ChevronRight, AudioLines, Bot, GraduationCap, BookCopy, PenTool, Music, Gamepad2, Zap, Trophy, Heart, BarChart3, Sparkles } from "lucide-react";
+import { BookOpen, CheckSquare, Shuffle, FileQuestion, Mic, Puzzle, ArrowRight, ChevronRight, AudioLines, Bot, GraduationCap, BookCopy, PenTool, Music, Gamepad2, Zap, Trophy, Heart, BarChart3, Sparkles, Globe } from "lucide-react";
 import HeroIllustration from "@/components/HeroIllustration";
 import FeatureSection from "@/components/FeatureSection";
 import TestimonialSection from "@/components/TestimonialSection";
@@ -136,7 +136,15 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto p-4 md:p-8">
-        
+        {/* Back to Main Language Selection */}
+        <div className="mb-6">
+          <Button asChild variant="outline" className="font-bold">
+            <Link to="/">
+              <Globe className="mr-2 h-4 w-4" /> Chọn ngôn ngữ khác
+            </Link>
+          </Button>
+        </div>
+
         {/* Hero Section - Colorful Animated Gradient */}
         <section className="relative py-20 md:py-32 mb-20 bg-gradient-tropical animate-gradient text-white overflow-hidden rounded-3xl">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.15),transparent_60%)]" />
