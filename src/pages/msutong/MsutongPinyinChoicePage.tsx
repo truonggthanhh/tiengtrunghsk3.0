@@ -248,9 +248,6 @@ const MsutongPinyinChoicePage = () => {
             <Card className="mb-8 bg-gradient-colorful text-white border-0">
               <CardContent className="p-10 flex flex-col items-center justify-center gap-4">
                 <h2 className="text-7xl md:text-8xl font-bold">{currentWord?.hanzi}</h2>
-                {showPinyin && !selectedPinyin && (
-                  <p className="text-2xl text-white/90">{currentWord?.pinyin}</p>
-                )}
                 {selectedPinyin && (
                   <div className="text-center">
                     <p className="text-2xl text-white/90 mb-2">{currentWord?.pinyin}</p>
