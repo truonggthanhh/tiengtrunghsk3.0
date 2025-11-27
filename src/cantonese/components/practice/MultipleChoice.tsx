@@ -3,6 +3,11 @@ import React from 'react'
 import JyutpingText from '@/cantonese/components/JyutpingText'
 import { cn } from '@/lib/utils'
 
+// Helper function to check if text contains Chinese characters
+const containsChinese = (text: string): boolean => {
+  return /[\u4e00-\u9fff]/.test(text);
+};
+
 export default function MultipleChoice({data,hotkeyControls, onAttach, showAnswers}:{data:any,hotkeyControls?:{setPick:(f:(i:number)=>void)=>void}, onAttach?:(h:any)=>void, showAnswers?: boolean}){
   const [picked,setPicked]=React.useState<number[]>([]);
 
@@ -33,7 +38,7 @@ export default function MultipleChoice({data,hotkeyControls, onAttach, showAnswe
       {data.items.map((it:any,idx:number)=>(
         <div key={idx} className="p-6 bg-white dark:bg-black/20 rounded-2xl border border-ink/10 shadow-[0_10px_0_#d7c8b6]">
           <div className="mb-3 text-sm text-ink/70 dark:text-cream/70">Câu {idx + 1}</div>
-          <JyutpingText jyutping={it.questionJyutping} className="mb-4 font-semibold text-lg" tag="div">
+          <JyutpingText jyutping={containsChinese(it.question) ? it.questionJyutping : undefined} className="mb-4 font-semibold text-lg" tag="div">
             {it.question}
           </JyutpingText>
           <div className="grid gap-3">
@@ -63,7 +68,7 @@ export default function MultipleChoice({data,hotkeyControls, onAttach, showAnswe
                   }`}>
                     {String.fromCharCode(65 + i)}
                   </span>
-                  <JyutpingText jyutping={it.choicesJyutping?.[i]} tag="span">{c}</JyutpingText>
+                  <JyutpingText jyutping={containsChinese(c) ? it.choicesJyutping?.[i] : undefined} tag="span">{c}</JyutpingText>
                 </label>
               )
             })}
