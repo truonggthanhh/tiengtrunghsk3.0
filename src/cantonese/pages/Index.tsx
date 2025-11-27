@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { BookOpen, Headphones, Keyboard, PenTool, Zap, PlayCircle, Sparkles, Music, ListChecks, ToggleRight, Star, Volume2, Flame, Heart, ShoppingBag, Trophy, Award, Target, TrendingUp } from 'lucide-react'
+import { BookOpen, Headphones, Keyboard, PenTool, Zap, PlayCircle, Sparkles, Music, ListChecks, ToggleRight, Star, Volume2, Flame, Heart, ShoppingBag, Trophy, Award, Target, TrendingUp, Globe } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useSession } from '@/cantonese/components/providers/SessionContextProvider'
 import { useProfile } from '@/cantonese/components/providers/ProfileProvider'
@@ -37,6 +37,14 @@ function HongKongRetroLanding() {
 
       {/* Background glow effect */}
       <div className="fixed inset-0 bg-gradient-to-br from-pink-50 via-white to-orange-50 dark:bg-[radial-gradient(ellipse_at_top,_rgba(255,16,240,0.15)_0%,_rgba(0,0,0,1)_50%)]" />
+
+      {/* Back to Main Language Selection */}
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <Link to="/" className="inline-flex items-center gap-2 px-4 py-2 border-2 border-pink-500 dark:border-pink-400 rounded-lg text-pink-700 dark:text-pink-300 font-bold hover:bg-pink-100 dark:hover:bg-pink-900/30 transition-colors">
+          <Globe className="h-4 w-4" />
+          Chọn ngôn ngữ khác
+        </Link>
+      </div>
 
       <Hero />
       <MarketSection />

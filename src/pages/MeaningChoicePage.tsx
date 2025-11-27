@@ -175,8 +175,17 @@ const MeaningChoicePage = () => {
         goToNextWord();
         setQuestionStartTime(Date.now()); // Reset timer for next question
         timeoutRef.current = null;
-      }, 1200);
+      }, 2500);
     }
+  };
+
+  const handleNextQuestion = () => {
+    // Clear timeout when user manually clicks next
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    goToNextWord();
   };
 
   // Cleanup timeout on unmount
@@ -337,9 +346,9 @@ const MeaningChoicePage = () => {
               })}
             </div>
 
-            {selectedMeaning && isCorrect === false && (
+            {selectedMeaning && (
               <div className="mt-8 text-center">
-                <Button onClick={goToNextWord} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">
+                <Button onClick={handleNextQuestion} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">
                   {currentIndex === vocabulary.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>

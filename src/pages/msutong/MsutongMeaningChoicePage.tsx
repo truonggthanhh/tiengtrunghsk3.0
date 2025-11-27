@@ -119,9 +119,6 @@ const MsutongMeaningChoicePage = () => {
     setIsCorrect(correct);
     if (correct) {
       setCorrectAnswers(prev => prev + 1);
-      setTimeout(() => {
-        goToNextWord();
-      }, 1200);
     }
   };
   
@@ -279,7 +276,7 @@ const MsutongMeaningChoicePage = () => {
               })}
             </div>
 
-            {selectedMeaning && isCorrect === false && (
+            {selectedMeaning && (
               <div className="mt-8 text-center">
                 <Button onClick={goToNextWord} size="lg" className="font-bold">
                   {currentIndex === vocabulary.length - 1 ? 'Xem kết quả' : 'Câu tiếp theo'}
