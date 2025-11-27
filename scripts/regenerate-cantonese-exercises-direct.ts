@@ -151,7 +151,7 @@ LƯU Ý: Chỉ thêm jyutping cho các đáp án có chữ Hán, đáp án tiế
 }
 
 async function fetchLessons() {
-  const url = `${SUPABASE_URL}/rest/v1/lessons?select=id,title,user_id,content,vocabulary_list&order=created_at.desc&limit=20`;
+  const url = `${SUPABASE_URL}/rest/v1/lessons?select=id,title,user_id,dialogues,vocabulary&order=created_at.desc&limit=20`;
 
   const response = await fetch(url, {
     headers: {
@@ -162,7 +162,8 @@ async function fetchLessons() {
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch lessons: ${response.statusText}`);
+    const errorText = await response.text();
+    throw new Error(`Failed to fetch lessons: ${response.status} ${response.statusText} - ${errorText}`);
   }
 
   return await response.json();
@@ -263,8 +264,21 @@ async function main() {
   for (const lesson of lessons) {
     console.log(`\n📝 Processing: ${lesson.title}`);
 
-    const content = lesson.content || lesson.vocabulary_list || '';
-    if (!content) {
+    // Combine dialogues and vocabulary into content string
+    let content = '';
+    if (lesson.dialogues) {
+      content += typeof lesson.dialogues === 'string'
+        ? lesson.dialogues
+        : JSON.stringify(lesson.dialogues, null, 2);
+    }
+    if (lesson.vocabulary) {
+      content += '\n\nVOCABULARY:\n';
+      content += typeof lesson.vocabulary === 'string'
+        ? lesson.vocabulary
+        : JSON.stringify(lesson.vocabulary, null, 2);
+    }
+
+    if (!content.trim()) {
       console.log('   ⚠️  No content, skipping');
       continue;
     }
