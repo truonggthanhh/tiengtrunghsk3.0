@@ -1,10 +1,9 @@
 /**
  * Script để regenerate lại các bài tập Cantonese
  * Tập trung vào kiểm tra ngôn ngữ 100% thay vì hỏi về nội dung hội thoại
+ * Version sử dụng native fetch API trực tiếp
  */
 
-import { createClient } from '@supabase/supabase-js';
-import Anthropic from '@anthropic-ai/sdk';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 
@@ -24,20 +23,9 @@ try {
   console.log('⚠️  Could not load .env file, using environment variables');
 }
 
-// Khởi tạo clients với custom fetch
-const supabase = createClient(
-  process.env.VITE_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    global: {
-      fetch: fetch.bind(globalThis)
-    }
-  }
-);
-
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!
-});
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL!;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY!;
 
 // Prompt mới tập trung vào kiểm tra ngôn ngữ
 const LANGUAGE_FOCUSED_SYSTEM_PROMPT = `Bạn là một chuyên gia giảng dạy tiếng Quảng Đông (Cantonese).
@@ -85,102 +73,6 @@ VÍ DỤ CÂU HỎI TỒI (hỏi về nội dung):
 ❌ "Câu chuyện nói về điều gì?"
 
 Hãy tạo bài tập theo nguyên tắc trên, tập trung 100% vào kiểm tra ngôn ngữ.`;
-
-async function regenerateExercisesForLesson(lessonId: string) {
-  console.log(`\n🔄 Regenerating exercises for lesson: ${lessonId}`);
-
-  try {
-    // 1. Lấy thông tin bài học
-    const { data: lesson, error: lessonError } = await supabase
-      .from('lessons')
-      .select('*')
-      .eq('id', lessonId)
-      .single();
-
-    if (lessonError) throw lessonError;
-    if (!lesson) throw new Error('Lesson not found');
-
-    console.log(`📚 Lesson: ${lesson.title}`);
-
-    // 2. Lấy nội dung bài học
-    const content = lesson.content || lesson.vocabulary_list || '';
-    if (!content) {
-      console.log('⚠️ No content found, skipping...');
-      return;
-    }
-
-    // 3. Tạo bài tập mới với prompt tập trung ngôn ngữ
-    const exerciseTypes = ['FLASHCARD', 'FILL_BLANK', 'MULTICHOICE', 'TRUE_FALSE', 'REORDER', 'HANZI_WRITE'];
-
-    for (const type of exerciseTypes) {
-      console.log(`  📝 Generating ${type}...`);
-
-      const contentPreview = content.substring(0, 3000);
-      const userPrompt = `Dựa trên nội dung bài học sau, hãy tạo 10-15 bài tập dạng ${type}.
-
-BÀI HỌC:
-${contentPreview}
-
-YÊU CẦU:
-- Tập trung 100% vào kiểm tra NGÔN NGỮ (từ vựng, ngữ pháp, phiên âm)
-- KHÔNG hỏi về nội dung hội thoại
-- Trả về JSON format với cấu trúc phù hợp cho từng dạng bài
-
-${getExerciseFormatInstructions(type)}`;
-
-      const response = await anthropic.messages.create({
-        model: 'claude-3-5-sonnet-20241022',
-        max_tokens: 4096,
-        system: LANGUAGE_FOCUSED_SYSTEM_PROMPT,
-        messages: [{
-          role: 'user',
-          content: userPrompt
-        }]
-      });
-
-      const textContent = response.content.find(c => c.type === 'text');
-      if (!textContent || textContent.type !== 'text') {
-        console.log(`    ⚠️ No text response for ${type}`);
-        continue;
-      }
-
-      // Parse JSON từ response
-      const jsonMatch = textContent.text.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) {
-        console.log(`    ⚠️ No valid JSON found for ${type}`);
-        continue;
-      }
-
-      const payload = JSON.parse(jsonMatch[0]);
-
-      // 4. Lưu vào database (upsert)
-      const { error: upsertError } = await supabase
-        .from('exercises')
-        .upsert({
-          lesson_id: lessonId,
-          user_id: lesson.user_id,
-          type: type,
-          payload: payload
-        }, {
-          onConflict: 'lesson_id,type,user_id'
-        });
-
-      if (upsertError) {
-        console.log(`    ❌ Error saving ${type}:`, upsertError.message);
-      } else {
-        console.log(`    ✅ Saved ${type}`);
-      }
-
-      // Delay để tránh rate limit
-      await new Promise(resolve => setTimeout(resolve, 2000));
-    }
-
-    console.log(`✅ Completed lesson: ${lessonId}\n`);
-
-  } catch (error: any) {
-    console.error(`❌ Error for lesson ${lessonId}:`, error.message);
-  }
-}
 
 function getExerciseFormatInstructions(type: string): string {
   const formats: Record<string, string> = {
@@ -258,35 +150,153 @@ LƯU Ý: Chỉ thêm jyutping cho các đáp án có chữ Hán, đáp án tiế
   return formats[type] || '';
 }
 
+async function fetchLessons() {
+  const url = `${SUPABASE_URL}/rest/v1/lessons?select=id,title,user_id,content,vocabulary_list&order=created_at.desc&limit=20`;
+
+  const response = await fetch(url, {
+    headers: {
+      'apikey': SUPABASE_SERVICE_KEY,
+      'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch lessons: ${response.statusText}`);
+  }
+
+  return await response.json();
+}
+
+async function generateExercise(lessonContent: string, type: string) {
+  const contentPreview = lessonContent.substring(0, 3000);
+  const userPrompt = `Dựa trên nội dung bài học sau, hãy tạo 10-15 bài tập dạng ${type}.
+
+BÀI HỌC:
+${contentPreview}
+
+YÊU CẦU:
+- Tập trung 100% vào kiểm tra NGÔN NGỮ (từ vựng, ngữ pháp, phiên âm)
+- KHÔNG hỏi về nội dung hội thoại
+- Trả về JSON format với cấu trúc phù hợp cho từng dạng bài
+
+${getExerciseFormatInstructions(type)}`;
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: 'claude-3-5-sonnet-20241022',
+      max_tokens: 4096,
+      system: LANGUAGE_FOCUSED_SYSTEM_PROMPT,
+      messages: [{
+        role: 'user',
+        content: userPrompt
+      }]
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Anthropic API error: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  const textContent = data.content.find((c: any) => c.type === 'text');
+
+  if (!textContent) {
+    throw new Error('No text content in response');
+  }
+
+  // Parse JSON
+  const jsonMatch = textContent.text.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) {
+    throw new Error('No JSON found in response');
+  }
+
+  return JSON.parse(jsonMatch[0]);
+}
+
+async function saveExercise(lessonId: string, userId: string, type: string, payload: any) {
+  const url = `${SUPABASE_URL}/rest/v1/exercises`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_SERVICE_KEY,
+      'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'resolution=merge-duplicates'
+    },
+    body: JSON.stringify({
+      lesson_id: lessonId,
+      user_id: userId,
+      type: type,
+      payload: payload
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to save exercise: ${response.statusText}`);
+  }
+
+  return true;
+}
+
 async function main() {
   console.log('🚀 Starting Cantonese Exercise Regeneration\n');
   console.log('Focus: 100% Language Testing (No Content Questions)\n');
 
-  // Lấy danh sách lessons cần regenerate
-  const { data: lessons, error } = await supabase
-    .from('lessons')
-    .select('id, title, user_id')
-    .order('created_at', { ascending: false })
-    .limit(20);
+  // Lấy danh sách lessons
+  console.log('📚 Fetching lessons...');
+  const lessons = await fetchLessons();
+  console.log(`✅ Found ${lessons.length} lessons\n`);
 
-  if (error) {
-    console.error('❌ Error fetching lessons:', error);
-    process.exit(1);
-  }
+  const exerciseTypes = ['FLASHCARD', 'FILL_BLANK', 'MULTICHOICE', 'TRUE_FALSE', 'REORDER', 'HANZI_WRITE'];
 
-  if (!lessons || lessons.length === 0) {
-    console.log('⚠️ No lessons found');
-    process.exit(0);
-  }
-
-  console.log(`📊 Found ${lessons.length} lessons to regenerate\n`);
+  let totalProcessed = 0;
+  let totalSuccess = 0;
 
   for (const lesson of lessons) {
-    await regenerateExercisesForLesson(lesson.id);
+    console.log(`\n📝 Processing: ${lesson.title}`);
+
+    const content = lesson.content || lesson.vocabulary_list || '';
+    if (!content) {
+      console.log('   ⚠️  No content, skipping');
+      continue;
+    }
+
+    for (const type of exerciseTypes) {
+      try {
+        console.log(`   ⏳ Generating ${type}...`);
+
+        const payload = await generateExercise(content, type);
+        await saveExercise(lesson.id, lesson.user_id, type, payload);
+
+        console.log(`   ✅ ${type} saved`);
+        totalSuccess++;
+
+        // Delay 2s để tránh rate limit
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+      } catch (error: any) {
+        console.log(`   ❌ ${type} failed: ${error.message}`);
+      }
+
+      totalProcessed++;
+    }
   }
 
-  console.log('\n✨ All done! Exercise regeneration completed.\n');
+  console.log('\n\n🎉 Regeneration Complete!');
+  console.log(`   Total processed: ${totalProcessed}`);
+  console.log(`   Successful: ${totalSuccess}`);
+  console.log(`   Failed: ${totalProcessed - totalSuccess}`);
 }
 
-// Run script
-main().catch(console.error);
+main().catch(error => {
+  console.error('\n❌ Fatal error:', error);
+  process.exit(1);
+});
