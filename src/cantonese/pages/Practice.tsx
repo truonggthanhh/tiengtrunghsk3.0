@@ -49,6 +49,9 @@ const PracticePage = () => {
       return data;
     },
     enabled: !!lessonId,
+    staleTime: Infinity, // Data never becomes stale
+    refetchOnWindowFocus: false, // Don't refetch when window regains focus
+    refetchOnMount: false, // Don't refetch when component mounts
   });
 
   // 2. Derive queryUserId once lesson is loaded
@@ -69,11 +72,14 @@ const PracticePage = () => {
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
-      
+
       if (error) throw error;
       return data?.payload;
     },
     enabled: !!lessonId && !!type && !!queryUserId, // Enable only when queryUserId is ready
+    staleTime: Infinity, // Data never becomes stale
+    refetchOnWindowFocus: false, // Don't refetch when window regains focus
+    refetchOnMount: false, // Don't refetch when component mounts
   });
 
   useEffect(() => {
