@@ -40,35 +40,17 @@ const PracticePage = () => {
   const [showResults, setShowResults] = useState(false); // State to show results component
   const [lastSavedScore, setLastSavedScore] = useState<{ score: number, total: number } | null>(null);
 
-  // 1. Fetch lesson details first
-  const { data: lesson, isLoading: isLoadingLesson, error: errorLessonData } = useQuery({
-    queryKey: ['lesson_for_practice', lessonId],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('lessons').select('user_id').eq('id', lessonId).single();
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!lessonId,
-    staleTime: Infinity, // Data never becomes stale
-    refetchOnWindowFocus: false, // Don't refetch when window regains focus
-    refetchOnMount: false, // Don't refetch when component mounts
-  });
-
-  // 2. Derive queryUserId once lesson is loaded
-  // ALWAYS use lesson.user_id because exercises belong to the lesson creator
-  const queryUserId = !isLoadingLesson && lesson ? lesson.user_id : null;
-
-  // 3. Fetch exercise data from Supabase
+  // Fetch exercise data from Supabase
+  // NOTE: Removed user_id filter because exercises are public
   const { data: exercisePayload, isLoading: isLoadingExercise, error: errorExercise } = useQuery({
-    queryKey: ['exercise', lessonId, type, queryUserId], // Use derived queryUserId
+    queryKey: ['exercise', lessonId, type],
     queryFn: async () => {
-      if (!lessonId || !type || !queryUserId) return null; // Ensure queryUserId is available
+      if (!lessonId || !type) return null;
       const { data, error } = await supabase
         .from('exercises')
         .select('payload')
         .eq('lesson_id', lessonId)
         .eq('type', type?.toUpperCase())
-        .eq('user_id', queryUserId)
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -76,7 +58,7 @@ const PracticePage = () => {
       if (error) throw error;
       return data?.payload;
     },
-    enabled: !!lessonId && !!type && !!queryUserId, // Enable only when queryUserId is ready
+    enabled: !!lessonId && !!type,
     staleTime: Infinity, // Data never becomes stale
     refetchOnWindowFocus: false, // Don't refetch when window regains focus
     refetchOnMount: false, // Don't refetch when component mounts
@@ -202,7 +184,7 @@ const PracticePage = () => {
   const attachHooks = (h: any) => setExerciseHooks(h);
   const controls = { setFlip, setPrev, setNext, setPick };
 
-  if (isSessionLoading || isLoadingLesson || isLoadingExercise) {
+  if (isSessionLoading || isLoadingExercise) {
     return (
       <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white flex items-center justify-center">
         <div className="text-center">
@@ -213,11 +195,11 @@ const PracticePage = () => {
     );
   }
 
-  if (errorExercise || errorLessonData) {
+  if (errorExercise) {
     return (
       <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white flex items-center justify-center">
         <div className="text-center p-6">
-          <p className="text-lg font-medium text-red-600 dark:text-red-400">Lỗi tải bài tập: {errorExercise?.message || errorLessonData?.message}</p>
+          <p className="text-lg font-medium text-red-600 dark:text-red-400">Lỗi tải bài tập: {errorExercise?.message}</p>
         </div>
       </div>
     );
