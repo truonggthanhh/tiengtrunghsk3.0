@@ -4,7 +4,7 @@ import HanziWriter from 'hanzi-writer'
 import { Button } from '@/components/ui/button'
 import { useSettings } from '@/cantonese/components/providers/SettingsProvider' // Import useSettings
 
-export default function HanziPractice({ data }: { data: { char: string; hint?: string; jyutping?: string } }) {
+export default function HanziPractice({ data, onComplete }: { data: { char: string; hint?: string; jyutping?: string }, onComplete?: () => void }) {
   const ref = React.useRef<HTMLDivElement | null>(null)
   const writerRef = React.useRef<HanziWriter | null>(null)
   const [animationPlayed, setAnimationPlayed] = React.useState(false)
@@ -63,7 +63,14 @@ export default function HanziPractice({ data }: { data: { char: string; hint?: s
 
   const startPractice = () => {
     if (writerRef.current) {
-      writerRef.current.quiz();
+      writerRef.current.quiz({
+        onComplete: () => {
+          setQuizActive(false);
+          if (onComplete) {
+            onComplete();
+          }
+        }
+      });
       setQuizActive(true);
     }
   };

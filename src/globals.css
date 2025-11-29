@@ -433,4 +433,46 @@
       0 2px 4px -1px rgba(0, 0, 0, 0.3),
       inset 0 0 0 1px rgba(255, 255, 255, 0.05);
   }
+
+  /* Hanzi Practice Grid Background (米字格) */
+  .hanzi-grid-background {
+    position: relative;
+    background-color: #fdfcfb;
+  }
+
+  .hanzi-grid-background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+      /* Vertical center line */
+      linear-gradient(to right, transparent calc(50% - 0.5px), rgba(209, 74, 65, 0.15) calc(50% - 0.5px), rgba(209, 74, 65, 0.15) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      /* Horizontal center line */
+      linear-gradient(to bottom, transparent calc(50% - 0.5px), rgba(209, 74, 65, 0.15) calc(50% - 0.5px), rgba(209, 74, 65, 0.15) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      /* Diagonal from top-left to bottom-right */
+      linear-gradient(135deg, transparent calc(50% - 0.3px), rgba(31, 111, 94, 0.1) calc(50% - 0.3px), rgba(31, 111, 94, 0.1) calc(50% + 0.3px), transparent calc(50% + 0.3px)),
+      /* Diagonal from top-right to bottom-left */
+      linear-gradient(45deg, transparent calc(50% - 0.3px), rgba(31, 111, 94, 0.1) calc(50% - 0.3px), rgba(31, 111, 94, 0.1) calc(50% + 0.3px), transparent calc(50% + 0.3px));
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .dark .hanzi-grid-background {
+    background-color: #1a1410;
+  }
+
+  .dark .hanzi-grid-background::before {
+    background-image:
+      /* Vertical center line */
+      linear-gradient(to right, transparent calc(50% - 0.5px), rgba(209, 74, 65, 0.25) calc(50% - 0.5px), rgba(209, 74, 65, 0.25) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      /* Horizontal center line */
+      linear-gradient(to bottom, transparent calc(50% - 0.5px), rgba(209, 74, 65, 0.25) calc(50% - 0.5px), rgba(209, 74, 65, 0.25) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      /* Diagonal from top-left to bottom-right */
+      linear-gradient(135deg, transparent calc(50% - 0.3px), rgba(31, 111, 94, 0.15) calc(50% - 0.3px), rgba(31, 111, 94, 0.15) calc(50% + 0.3px), transparent calc(50% + 0.3px)),
+      /* Diagonal from top-right to bottom-left */
+      linear-gradient(45deg, transparent calc(50% - 0.3px), rgba(31, 111, 94, 0.15) calc(50% - 0.3px), rgba(31, 111, 94, 0.15) calc(50% + 0.3px), transparent calc(50% + 0.3px));
+  }
 }
