@@ -359,7 +359,8 @@ const PracticeResults = ({ score, total, lessonId, type }: { score: number; tota
           Quay lại bài học
         </Link>
         <Link
-          to={`/cantonese/practice/${lessonId}/${type}`}
+          to={`/cantonese/practice/${lessonId}/${type}?retry=${Date.now()}`}
+          reloadDocument
           className="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-bold bg-gradient-to-br from-purple-500 to-pink-600 text-white border-2 border-purple-400 dark:border-pink-500 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all"
         >
           Làm lại

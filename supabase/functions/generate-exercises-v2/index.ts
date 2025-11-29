@@ -179,7 +179,13 @@ serve(async (req) => {
 
     for (const type of exerciseTypes) {
       const contentPreview = content.substring(0, 3000)
-      const userPrompt = `Dựa trên nội dung bài học sau, hãy tạo 10-15 bài tập dạng ${type}.
+
+      // For HANZI_WRITE, request more characters (30-50)
+      const quantity = type === 'HANZI_WRITE'
+        ? '30-50 chữ Hán unique (tất cả các chữ quan trọng trong bài)'
+        : '10-15 bài tập';
+
+      const userPrompt = `Dựa trên nội dung bài học sau, hãy tạo ${quantity} dạng ${type}.
 
 BÀI HỌC:
 ${contentPreview}
@@ -188,6 +194,7 @@ YÊU CẦU:
 - Tập trung 100% vào kiểm tra NGÔN NGỮ (từ vựng, ngữ pháp, phiên âm)
 - KHÔNG hỏi về nội dung hội thoại
 - Trả về JSON format với cấu trúc phù hợp cho từng dạng bài
+${type === 'HANZI_WRITE' ? '- Trích xuất TẤT CẢ các chữ Hán unique (không trùng lặp) trong bài học, bao gồm cả chữ trong từ vựng và câu ví dụ' : ''}
 
 ${getExerciseFormatInstructions(type)}`
 
