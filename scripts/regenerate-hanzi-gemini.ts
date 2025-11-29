@@ -77,34 +77,86 @@ Format JSON:
 QUAN TRỌNG: Chỉ trả về JSON, KHÔNG thêm text nào khác.`;
 }
 
-async function regenerateHanziForLesson(lessonId: string) {
-  console.log(`\n🔄 Regenerating HANZI_WRITE for lesson: ${lessonId}`);
+async function extractVocabularyFromPDF(pdfUrl: string): Promise<string> {
+  console.log('   📄 Downloading PDF...');
+
+  // Download PDF
+  const pdfResponse = await fetch(pdfUrl);
+  if (!pdfResponse.ok) {
+    throw new Error(`Failed to download PDF: ${pdfResponse.status}`);
+  }
+
+  const pdfBuffer = await pdfResponse.arrayBuffer();
+  const pdfBase64 = Buffer.from(pdfBuffer).toString('base64');
+
+  console.log('   🤖 Extracting vocabulary with Gemini...');
+
+  // Use Gemini to extract vocabulary from PDF
+  const result = await model.generateContent([
+    {
+      inlineData: {
+        data: pdfBase64,
+        mimeType: 'application/pdf'
+      }
+    },
+    {
+      text: `Hãy trích xuất TẤT CẢ từ vựng tiếng Quảng Đông từ PDF này.
+
+Với mỗi từ, trả về format:
+Chữ Hán (Jyutping) - Nghĩa tiếng Việt
+
+Ví dụ:
+你好 (nei5 hou2) - Xin chào
+早晨 (zou2 san4) - Buổi sáng
+
+Chỉ trả về danh sách từ vựng, KHÔNG thêm giải thích hay comment.`
+    }
+  ]);
+
+  const response = result.response;
+  return response.text();
+}
+
+async function regenerateHanziForLesson(lessonId: string, pdfUrl: string, userId: string, title: string) {
+  console.log(`\n🔄 Regenerating HANZI_WRITE for lesson: ${title}`);
 
   try {
-    // 1. Lấy thông tin bài học
-    const { data: lesson, error: lessonError } = await supabase
-      .from('lessons')
-      .select('*')
-      .eq('id', lessonId)
-      .single();
+    // 1. Extract vocabulary từ PDF
+    const vocabulary = await extractVocabularyFromPDF(pdfUrl);
+    console.log(`   ✅ Extracted vocabulary (${vocabulary.split('\n').length} lines)`);
 
-    if (lessonError) throw lessonError;
-    if (!lesson) throw new Error('Lesson not found');
+    // 2. Generate HANZI_WRITE exercise với Gemini
+    console.log(`   📝 Generating HANZI_WRITE with Gemini...`);
 
-    console.log(`📚 Lesson: ${lesson.title}`);
+    const prompt = `${SYSTEM_PROMPT}
 
-    // 2. Lấy nội dung bài học
-    const content = lesson.content || lesson.vocabulary_list || '';
-    if (!content) {
-      console.log('⚠️ No content found, skipping...');
-      return;
+Dựa trên danh sách từ vựng sau, hãy TRÍCH XUẤT TẤT CẢ các chữ Hán.
+
+VOCABULARY:
+${vocabulary}
+
+YÊU CẦU QUAN TRỌNG:
+1. Với mỗi từ vựng (word/phrase), tách thành từng chữ Hán riêng biệt
+2. Lấy TẤT CẢ các chữ Hán unique (không trùng lặp)
+3. Mỗi chữ Hán chỉ xuất hiện 1 lần
+
+VÍ DỤ:
+- "你好 (nei5 hou2)" → Tách thành 2 items: {"character":"你","jyutping":"nei5","meaning":"bạn"} và {"character":"好","jyutping":"hou2","meaning":"tốt"}
+- "早晨 (zou2 san4)" → Tách thành 2 items: {"character":"早","jyutping":"zou2","meaning":"sớm"} và {"character":"晨","jyutping":"san4","meaning":"buổi sáng"}
+
+Format JSON:
+{
+  "items": [
+    {
+      "character": "字",
+      "jyutping": "zi6",
+      "meaning": "chữ",
+      "strokes": 6
     }
+  ]
+}
 
-    // 3. Generate HANZI_WRITE exercise với Gemini
-    console.log(`  📝 Generating HANZI_WRITE with Gemini...`);
-
-    const contentPreview = content.substring(0, 3000);
-    const prompt = getHanziWritePrompt(contentPreview);
+QUAN TRỌNG: Chỉ trả về JSON, KHÔNG thêm text nào khác.`;
 
     const result = await model.generateContent(prompt);
     const response = result.response;
@@ -129,12 +181,12 @@ async function regenerateHanziForLesson(lessonId: string) {
       console.log(`    🔤 Sample: ${sample}${characterCount > 10 ? '...' : ''}`);
     }
 
-    // 4. Lưu vào database (upsert)
+    // 3. Lưu vào database (upsert)
     const { error: upsertError } = await supabase
       .from('exercises')
       .upsert({
         lesson_id: lessonId,
-        user_id: lesson.user_id,
+        user_id: userId,
         type: 'HANZI_WRITE',
         payload: payload
       }, {
@@ -147,22 +199,23 @@ async function regenerateHanziForLesson(lessonId: string) {
       console.log(`    ✅ Saved successfully`);
     }
 
-    console.log(`✅ Completed lesson: ${lessonId}`);
+    console.log(`✅ Completed lesson: ${title}`);
 
   } catch (error: any) {
-    console.error(`❌ Error for lesson ${lessonId}:`, error.message);
+    console.error(`❌ Error for lesson ${title}:`, error.message);
   }
 }
 
 async function main() {
   console.log('🚀 Starting HANZI_WRITE Regeneration for Cantonese');
   console.log('🤖 Using: Gemini 2.0 Flash (FREE)\n');
-  console.log('Focus: Extract ALL characters from vocabulary sections\n');
+  console.log('Focus: Extract ALL characters from PDF vocabulary\n');
 
-  // Lấy danh sách lessons
+  // Lấy danh sách lessons có PDF
   const { data: lessons, error } = await supabase
     .from('lessons')
-    .select('id, title, user_id')
+    .select('id, title, user_id, pdf_url')
+    .not('pdf_url', 'is', null)
     .order('created_at', { ascending: false })
     .limit(30);
 
@@ -172,17 +225,17 @@ async function main() {
   }
 
   if (!lessons || lessons.length === 0) {
-    console.log('⚠️ No lessons found');
+    console.log('⚠️ No lessons with PDF found');
     process.exit(0);
   }
 
-  console.log(`📊 Found ${lessons.length} lessons to regenerate\n`);
+  console.log(`📊 Found ${lessons.length} lessons with PDF to regenerate\n`);
 
   for (const lesson of lessons) {
-    await regenerateHanziForLesson(lesson.id);
+    await regenerateHanziForLesson(lesson.id, lesson.pdf_url, lesson.user_id, lesson.title);
 
     // Delay để tránh rate limit
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 3000));
   }
 
   console.log('\n✨ All done! HANZI_WRITE regeneration completed.\n');
