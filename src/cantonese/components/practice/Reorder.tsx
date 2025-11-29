@@ -44,10 +44,34 @@ function SortableItem({ item, showJyutping }: { item: WordItem; showJyutping: bo
 
 export default function Reorder({data, onAttach, showAnswers}:{data:any, onAttach?:(h:any)=>void, showAnswers?: boolean}){
   const { showJyutping } = useSettings();
-  
+
+  // Normalize data to support both old (words/solution) and new (shuffled/correct) formats
+  const normalizedData = React.useMemo(() => {
+    if (!data?.items) return { items: [] };
+
+    return {
+      ...data,
+      items: data.items.map((item: any) => {
+        // If item already has words/solution, use it
+        if (item.words && item.solution) {
+          return item;
+        }
+
+        // Otherwise, convert from shuffled/correct format
+        return {
+          words: item.shuffled || [],
+          wordsJyutping: item.shuffledJyutping || [],
+          solution: item.correct || [],
+          solutionJyutping: item.correctJyutping || [],
+          translation: item.translation
+        };
+      })
+    };
+  }, [data]);
+
   const [answers, setAnswers] = React.useState<WordItem[][]>(() => {
-    if (!data?.items) return [];
-    return data.items.map((it: any, itemIdx: number) => {
+    if (!normalizedData?.items) return [];
+    return normalizedData.items.map((it: any, itemIdx: number) => {
       const combined = it.words.map((word: string, i: number) => ({
         word,
         jyutping: it.wordsJyutping?.[i] || '',
@@ -58,8 +82,8 @@ export default function Reorder({data, onAttach, showAnswers}:{data:any, onAttac
   });
 
   React.useEffect(() => {
-    if (data?.items) {
-      setAnswers(data.items.map((it: any, itemIdx: number) => {
+    if (normalizedData?.items) {
+      setAnswers(normalizedData.items.map((it: any, itemIdx: number) => {
         const combined = it.words.map((word: string, i: number) => ({
           word,
           jyutping: it.wordsJyutping?.[i] || '',
@@ -68,7 +92,7 @@ export default function Reorder({data, onAttach, showAnswers}:{data:any, onAttac
         return shuffle(combined);
       }));
     }
-  }, [data.items]);
+  }, [normalizedData.items]);
 
 
   const sensors = useSensors(
@@ -99,34 +123,37 @@ export default function Reorder({data, onAttach, showAnswers}:{data:any, onAttac
   }
 
   function isCorrect(idx:number){
-    if (!answers[idx] || !data.items[idx]) return false;
-    return answers[idx].map(item => item.word).join(' ') === data.items[idx].solution.join(' ');
+    if (!answers[idx] || !normalizedData.items[idx]) return false;
+    return answers[idx].map(item => item.word).join(' ') === normalizedData.items[idx].solution.join(' ');
   }
 
-  const score = data.items.reduce((s:any,_:any,idx:number)=> s + (isCorrect(idx)?1:0), 0)
-  
-  React.useEffect(()=>{ 
+  const score = normalizedData.items.reduce((s:any,_:any,idx:number)=> s + (isCorrect(idx)?1:0), 0)
+
+  React.useEffect(()=>{
     if(onAttach){
-      onAttach({ 
-        getScore:()=>({score,total:data.items.length}),
+      onAttach({
+        getScore:()=>({score,total:normalizedData.items.length}),
         getAnswers:()=>answers.map(ans => ans.map(item => item.word))
-      }) 
+      })
     }
-  },[answers,data,onAttach, score])
+  },[answers,normalizedData,onAttach, score])
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-4">
-      {data.items.map((_:any,idx:number)=>(
+      {normalizedData.items.map((item:any,idx:number)=>(
         <div key={idx} className="p-6 bg-white dark:bg-black/20 rounded-2xl border border-ink/10 shadow-[0_10px_0_#d7c8b6]">
           <div className="mb-3 text-sm text-ink/70 dark:text-cream/70">Câu {idx + 1}</div>
           <div className="text-lg font-medium text-ink mb-4">Sắp xếp thành câu đúng nghĩa:</div>
-          <DndContext 
-            sensors={sensors} 
-            collisionDetection={closestCenter} 
+          {item.translation && (
+            <div className="mb-4 text-sm text-ink/70 dark:text-cream/70 italic">"{item.translation}"</div>
+          )}
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
             onDragEnd={!showAnswers ? (event) => handleDragEnd(event, idx) : undefined}
           >
-            <SortableContext 
-              items={answers[idx]?.map(item => item.id) || []} 
+            <SortableContext
+              items={answers[idx]?.map(item => item.id) || []}
               strategy={rectSortingStrategy}
             >
               <div className="flex flex-wrap gap-2">
@@ -140,7 +167,7 @@ export default function Reorder({data, onAttach, showAnswers}:{data:any, onAttac
             <div className={`mt-4 text-sm font-semibold ${isCorrect(idx) ? 'text-jade' : 'text-verm'}`}>
               {isCorrect(idx) ? '✅ Bạn đã sắp xếp đúng!' : '❌ Sắp xếp chưa đúng.'}
               {!isCorrect(idx) && (
-                <div className="mt-1 font-normal text-ink/80">Đáp án đúng: <span className="font-semibold text-jade">{data.items[idx].solution.join(' ')}</span></div>
+                <div className="mt-1 font-normal text-ink/80">Đáp án đúng: <span className="font-semibold text-jade">{normalizedData.items[idx].solution.join(' ')}</span></div>
               )}
             </div>
           ) : (
@@ -150,7 +177,7 @@ export default function Reorder({data, onAttach, showAnswers}:{data:any, onAttac
           )}
         </div>
       ))}
-      {showAnswers === undefined && <div className="font-semibold text-ink dark:text-cream mt-6">Điểm: {score}/{data.items.length}</div>}
+      {showAnswers === undefined && <div className="font-semibold text-ink dark:text-cream mt-6">Điểm: {score}/{normalizedData.items.length}</div>}
     </div>
   )
 }
