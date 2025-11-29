@@ -180,12 +180,30 @@ serve(async (req) => {
     for (const type of exerciseTypes) {
       const contentPreview = content.substring(0, 3000)
 
-      // For HANZI_WRITE, request more characters (30-50)
-      const quantity = type === 'HANZI_WRITE'
-        ? '30-50 chữ Hán unique (tất cả các chữ quan trọng trong bài)'
-        : '10-15 bài tập';
+      // For HANZI_WRITE, give special instructions
+      let userPrompt = '';
+      if (type === 'HANZI_WRITE') {
+        userPrompt = `Dựa trên nội dung bài học sau, hãy TRÍCH XUẤT TẤT CẢ các chữ Hán từ PHẦN TỪ VỰNG.
 
-      const userPrompt = `Dựa trên nội dung bài học sau, hãy tạo ${quantity} dạng ${type}.
+BÀI HỌC:
+${contentPreview}
+
+YÊU CẦU QUAN TRỌNG:
+1. Tìm tất cả các bảng từ vựng trong bài (thường có 2 bảng từ vựng cho 2 đoạn hội thoại)
+2. Với mỗi từ vựng (word/phrase), tách thành từng chữ Hán riêng biệt
+3. Lấy TẤT CẢ các chữ Hán unique (không trùng lặp)
+4. KHÔNG bỏ sót bất kỳ chữ nào trong danh sách từ vựng
+5. Mỗi chữ Hán chỉ xuất hiện 1 lần
+
+VÍ DỤ MINH HỌA:
+- Từ vựng: "你好" → Tách thành 2 items: {"character":"你","jyutping":"nei5","meaning":"bạn"} và {"character":"好","jyutping":"hou2","meaning":"tốt"}
+- Từ vựng: "早晨" → Tách thành 2 items: {"character":"早","jyutping":"zou2","meaning":"sớm"} và {"character":"晨","jyutping":"san4","meaning":"buổi sáng"}
+- Nếu chữ "你" đã xuất hiện trong từ "你好", KHÔNG thêm lại khi gặp "你們"
+
+${getExerciseFormatInstructions(type)}`;
+      } else {
+        const quantity = '10-15 bài tập';
+        userPrompt = `Dựa trên nội dung bài học sau, hãy tạo ${quantity} dạng ${type}.
 
 BÀI HỌC:
 ${contentPreview}
@@ -194,9 +212,9 @@ YÊU CẦU:
 - Tập trung 100% vào kiểm tra NGÔN NGỮ (từ vựng, ngữ pháp, phiên âm)
 - KHÔNG hỏi về nội dung hội thoại
 - Trả về JSON format với cấu trúc phù hợp cho từng dạng bài
-${type === 'HANZI_WRITE' ? '- Trích xuất TẤT CẢ các chữ Hán unique (không trùng lặp) trong bài học, bao gồm cả chữ trong từ vựng và câu ví dụ' : ''}
 
-${getExerciseFormatInstructions(type)}`
+${getExerciseFormatInstructions(type)}`;
+      }
 
       const response = await anthropic.messages.create({
         model: 'claude-3-5-sonnet-20241022',
