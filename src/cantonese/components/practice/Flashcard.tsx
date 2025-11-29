@@ -6,7 +6,13 @@ import SpeakerButton from '@/cantonese/components/SpeakerButton' // Import Speak
 
 export default function Flashcard({data,hotkeyControls}:{data:any,hotkeyControls?:{setFlip:(f:()=>void)=>void,setPrev:(f:()=>void)=>void,setNext:(f:()=>void)=>void}}){
   const [i,setI]=React.useState(0)
-  const item=data.items[i]
+  const rawItem=data.items[i]
+  // Support both old format (front/back) and new format (word/vi)
+  const item = {
+    word: rawItem.word || rawItem.front,
+    jyutping: rawItem.jyutping || rawItem.frontJyutping,
+    vi: rawItem.vi || rawItem.back
+  }
   const [flipped,setFlipped]=React.useState(false)
   const {showJyutping}=useSettings()
 
