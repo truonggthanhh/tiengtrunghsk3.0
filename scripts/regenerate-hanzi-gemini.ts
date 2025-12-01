@@ -181,20 +181,26 @@ QUAN TRỌNG: Chỉ trả về JSON, KHÔNG thêm text nào khác.`;
       console.log(`    🔤 Sample: ${sample}${characterCount > 10 ? '...' : ''}`);
     }
 
-    // 3. Lưu vào database (upsert)
-    const { error: upsertError } = await supabase
+    // 3. Xóa exercise cũ nếu có
+    await supabase
       .from('exercises')
-      .upsert({
+      .delete()
+      .eq('lesson_id', lessonId)
+      .eq('user_id', userId)
+      .eq('type', 'HANZI_WRITE');
+
+    // 4. Insert exercise mới
+    const { error: insertError } = await supabase
+      .from('exercises')
+      .insert({
         lesson_id: lessonId,
         user_id: userId,
         type: 'HANZI_WRITE',
         payload: payload
-      }, {
-        onConflict: 'lesson_id,type,user_id'
       });
 
-    if (upsertError) {
-      console.log(`    ❌ Error saving:`, upsertError.message);
+    if (insertError) {
+      console.log(`    ❌ Error saving:`, insertError.message);
     } else {
       console.log(`    ✅ Saved successfully`);
     }
