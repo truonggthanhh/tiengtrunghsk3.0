@@ -5,7 +5,7 @@ import { getVocabularyByLevel, type VocabularyWord } from '@/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { ArrowRight, Home } from 'lucide-react';
+import { ArrowRight, Home, Lightbulb } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { usePinyin } from '@/contexts/PinyinContext';
@@ -43,6 +43,7 @@ const FillInTheBlankPage = () => {
   const [answerStatus, setAnswerStatus] = useState<'correct' | 'incorrect' | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [showResult, setShowResult] = useState(false);
+  const [showHint, setShowHint] = useState(false);
 
   // Ref to store timeout ID for cleanup
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -52,6 +53,7 @@ const FillInTheBlankPage = () => {
   const goToNextWord = useCallback(() => {
     setInputValue('');
     setAnswerStatus(null);
+    setShowHint(false);
     setQuestionStartTime(Date.now()); // Reset timer for next question
     if (currentIndex < vocabulary.length - 1) {
       setCurrentIndex(prev => prev + 1);
@@ -285,9 +287,28 @@ const FillInTheBlankPage = () => {
           <Card className="mb-8 shadow-md bg-gradient-fire text-white">
             <CardContent className="p-10 flex flex-col items-center justify-center gap-4">
               <p className="text-4xl font-semibold text-white">{currentWord?.pinyin}</p>
-              <p className="text-2xl text-white/90">{currentWord?.meaning}</p>
+              {(showHint || answerStatus) ? (
+                <p className="text-2xl text-white/90">{currentWord?.meaning}</p>
+              ) : (
+                <p className="text-lg opacity-80 italic">Nghĩa tiếng Việt đã được ẩn</p>
+              )}
             </CardContent>
           </Card>
+
+          {!answerStatus && !showHint && (
+            <div className="mb-4 text-center">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowHint(true)}
+                className="font-bold"
+                size="sm"
+              >
+                <Lightbulb className="mr-2 h-4 w-4" />
+                Gợi ý đáp án
+              </Button>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
@@ -301,7 +322,7 @@ const FillInTheBlankPage = () => {
               )}
               disabled={!!answerStatus}
             />
-            
+
             {answerStatus !== 'correct' && (
               <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold" size="lg" disabled={!!answerStatus}>
                 Kiểm tra
