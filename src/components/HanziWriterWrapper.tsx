@@ -29,6 +29,8 @@ const HanziWriterWrapper: React.FC<HanziWriterWrapperProps> = ({ character, writ
         delayBetweenStrokes: 500,
         showOutline: true,
         highlightOnComplete: true,
+        strokeColor: '#1A1A1A',
+        radicalColor: '#D14A41', // Bộ thủ màu đỏ
         // By removing charDataLoader, HanziWriter will use its default CDN fetching
         onLoadError: (err) => {
             console.error('HanziWriter load error:', err);
@@ -61,7 +63,7 @@ const HanziWriterWrapper: React.FC<HanziWriterWrapperProps> = ({ character, writ
     };
   }, [character, writerRef, onWriterLoaded, onWriterError]);
 
-  return <div ref={containerRef} id="hanzi-writer-wrapper-container" />;
+  return <div ref={containerRef} id="hanzi-writer-wrapper-container" className="hanzi-grid-background border-2 border-ink/15 rounded-xl p-2 inline-block" />;
 };
 
 export default HanziWriterWrapper;
