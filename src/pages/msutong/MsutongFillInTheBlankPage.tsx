@@ -5,7 +5,7 @@ import { getVocabularyByMsutong, type VocabularyWord } from '@/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { ArrowRight, Home, Grid3X3, ListOrdered } from 'lucide-react';
+import { ArrowRight, Home, Grid3X3, ListOrdered, Lightbulb } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { usePinyin } from '@/contexts/PinyinContext';
@@ -54,12 +54,14 @@ const MsutongFillInTheBlankPage = () => {
   const [answerStatus, setAnswerStatus] = useState<'correct' | 'incorrect' | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [showResult, setShowResult] = useState(false);
+  const [showHint, setShowHint] = useState(false);
 
   const currentWord = useMemo(() => vocabulary[currentIndex], [vocabulary, currentIndex]);
 
   const goToNextWord = useCallback(() => {
     setInputValue('');
     setAnswerStatus(null);
+    setShowHint(false);
     if (currentIndex < vocabulary.length - 1) {
       setCurrentIndex(prev => prev + 1);
     } else {
@@ -233,9 +235,28 @@ const MsutongFillInTheBlankPage = () => {
                 ) : (
                   <p className="text-lg opacity-80 italic">Pinyin sẽ hiển thị sau khi kiểm tra</p>
                 )}
-                <p className="text-2xl">{currentWord?.meaning}</p>
+                {(showHint || answerStatus) ? (
+                  <p className="text-2xl">{currentWord?.meaning}</p>
+                ) : (
+                  <p className="text-lg opacity-80 italic">Nghĩa tiếng Việt đã được ẩn</p>
+                )}
               </CardContent>
             </Card>
+
+            {!answerStatus && !showHint && (
+              <div className="mb-4 text-center">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowHint(true)}
+                  className="font-bold"
+                  size="sm"
+                >
+                  <Lightbulb className="mr-2 h-4 w-4" />
+                  Gợi ý đáp án
+                </Button>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <Input
