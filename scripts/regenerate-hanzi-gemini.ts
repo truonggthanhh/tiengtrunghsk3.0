@@ -36,7 +36,7 @@ const supabase = createClient(
 );
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const SYSTEM_PROMPT = `Bạn là một chuyên gia giảng dạy tiếng Quảng Đông (Cantonese).
 
@@ -208,7 +208,7 @@ QUAN TRỌNG: Chỉ trả về JSON, KHÔNG thêm text nào khác.`;
 
 async function main() {
   console.log('🚀 Starting HANZI_WRITE Regeneration for Cantonese');
-  console.log('🤖 Using: Gemini 2.0 Flash (FREE)\n');
+  console.log('🤖 Using: Gemini 1.5 Flash (Stable, Higher Quota)\n');
   console.log('Focus: Extract ALL characters from PDF vocabulary\n');
 
   // Lấy danh sách lessons có PDF
@@ -234,8 +234,8 @@ async function main() {
   for (const lesson of lessons) {
     await regenerateHanziForLesson(lesson.id, lesson.pdf_url, lesson.user_id, lesson.title);
 
-    // Delay để tránh rate limit
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    // Delay để tránh rate limit (tăng lên 10s cho an toàn)
+    await new Promise(resolve => setTimeout(resolve, 10000));
   }
 
   console.log('\n✨ All done! HANZI_WRITE regeneration completed.\n');
