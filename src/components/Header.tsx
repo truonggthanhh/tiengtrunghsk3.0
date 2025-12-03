@@ -18,7 +18,7 @@ const Header = () => {
       if (session?.user) {
         const { data: profile, error } = await supabase
           .from('profiles')
-          .select('is_admin')
+          .select('role')
           .eq('id', session.user.id)
           .single();
 
@@ -30,7 +30,7 @@ const Header = () => {
           return;
         }
 
-        if (profile && profile.is_admin) {
+        if (profile && profile.role === 'admin') {
           setIsAdmin(true);
         } else {
           setIsAdmin(false);

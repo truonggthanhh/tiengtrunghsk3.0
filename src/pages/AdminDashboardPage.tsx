@@ -51,7 +51,7 @@ interface UserProfileData {
   id: string;
   first_name: string | null;
   last_name: string | null;
-  is_admin: boolean;
+  role: string;
   auth_users: AuthUser | null;
 }
 
@@ -59,7 +59,7 @@ interface UserProfile {
   id: string;
   first_name: string | null;
   last_name: string | null;
-  is_admin: boolean;
+  role: string;
   email: string;
 }
 
@@ -119,11 +119,11 @@ const AdminDashboardPage: React.FC = () => {
   const fetchUserProfile = async (userId: string) => {
     const { data: profileData, error: profileError } = await supabase
       .from('profiles')
-      .select('is_admin')
+      .select('role')
       .eq('id', userId)
       .single();
 
-    if (profileError || !profileData?.is_admin) {
+    if (profileError || profileData?.role !== 'admin') {
       setError('Bạn không có quyền truy cập trang này.');
       setIsLoadingUsers(false);
       toast.error('Truy cập bị từ chối', { description: 'Bạn không có quyền quản trị.' });
@@ -143,7 +143,7 @@ const AdminDashboardPage: React.FC = () => {
     // Fetch profiles
     const { data: profilesData, error: profilesError } = await supabase
       .from('profiles')
-      .select('id, first_name, last_name, is_admin');
+      .select('id, first_name, last_name, role');
 
     if (profilesError) {
       setError('Không thể tải danh sách người dùng: ' + profilesError.message);
@@ -170,7 +170,7 @@ const AdminDashboardPage: React.FC = () => {
       id: profile.id,
       first_name: profile.first_name,
       last_name: profile.last_name,
-      is_admin: profile.is_admin,
+      role: profile.role,
       email: emailMap.get(profile.id) || 'N/A',
     }));
 
@@ -178,15 +178,17 @@ const AdminDashboardPage: React.FC = () => {
     setIsLoadingUsers(false);
   };
 
-  const handleAdminToggle = async (userId: string, currentStatus: boolean) => {
+  const handleAdminToggle = async (userId: string, currentRole: string) => {
     if (session?.user.id === userId) {
       toast.error('Không thể thay đổi quyền của chính mình', { description: 'Bạn không thể tự gỡ bỏ quyền quản trị của mình.' });
       return;
     }
 
+    const newRole = currentRole === 'admin' ? 'user' : 'admin';
+
     const { error: updateError } = await supabase
       .from('profiles')
-      .update({ is_admin: !currentStatus })
+      .update({ role: newRole })
       .eq('id', userId);
 
     if (updateError) {
@@ -194,10 +196,10 @@ const AdminDashboardPage: React.FC = () => {
     } else {
       setUsers(prevUsers =>
         prevUsers.map(user =>
-          user.id === userId ? { ...user, is_admin: !currentStatus } : user
+          user.id === userId ? { ...user, role: newRole } : user
         )
       );
-      toast.success('Cập nhật thành công', { description: `Quyền quản trị của người dùng đã được thay đổi thành ${!currentStatus ? 'admin' : 'người dùng thường'}.` });
+      toast.success('Cập nhật thành công', { description: `Quyền quản trị của người dùng đã được thay đổi thành ${newRole === 'admin' ? 'admin' : 'người dùng thường'}.` });
     }
   };
 
@@ -424,8 +426,8 @@ const AdminDashboardPage: React.FC = () => {
                             <div className="flex items-center justify-center">
                               <Switch
                                 id={`admin-toggle-${user.id}`}
-                                checked={user.is_admin}
-                                onCheckedChange={() => handleAdminToggle(user.id, user.is_admin)}
+                                checked={user.role === 'admin'}
+                                onCheckedChange={() => handleAdminToggle(user.id, user.role)}
                                 disabled={session?.user.id === user.id}
                               />
                               <Label htmlFor={`admin-toggle-${user.id}`} className="sr-only">Toggle admin status for {user.first_name}</Label>

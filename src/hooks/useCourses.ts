@@ -161,13 +161,13 @@ export const useCheckCourseAccess = (courseId: string | undefined) => {
       // Check if admin
       const { data: profile } = await supabase
         .from('profiles')
-        .select('is_admin')
+        .select('role')
         .eq('id', userId)
         .single();
 
       return {
         hasAccess: data as boolean,
-        isAdmin: profile?.is_admin || false,
+        isAdmin: profile?.role === 'admin',
       };
     },
     enabled: !!userId && !!courseId,
