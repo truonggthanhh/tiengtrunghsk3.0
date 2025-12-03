@@ -139,23 +139,42 @@ const AdminDashboardPage: React.FC = () => {
       setIsLoadingUsers(true);
     }
     setError(null);
-    const { data: usersData, error: usersError } = await supabase
-      .from('profiles')
-      .select('id, first_name, last_name, is_admin, auth_users(email)'); // Fetch email from auth.users
 
-    if (usersError) {
-      setError('Không thể tải danh sách người dùng: ' + usersError.message);
-      toast.error('Lỗi tải người dùng', { description: usersError.message });
-    } else {
-      const formattedUsers: UserProfile[] = (usersData as UserProfileData[]).map(profile => ({
-        id: profile.id,
-        first_name: profile.first_name,
-        last_name: profile.last_name,
-        is_admin: profile.is_admin,
-        email: profile.auth_users?.email || 'N/A',
-      }));
-      setUsers(formattedUsers);
+    // Fetch profiles
+    const { data: profilesData, error: profilesError } = await supabase
+      .from('profiles')
+      .select('id, first_name, last_name, is_admin');
+
+    if (profilesError) {
+      setError('Không thể tải danh sách người dùng: ' + profilesError.message);
+      toast.error('Lỗi tải người dùng', { description: profilesError.message });
+      setIsLoadingUsers(false);
+      return;
     }
+
+    // Fetch emails from auth_users view
+    const { data: emailsData, error: emailsError } = await supabase
+      .from('auth_users')
+      .select('id, email');
+
+    // Create a map of user IDs to emails for quick lookup
+    const emailMap = new Map<string, string>();
+    if (!emailsError && emailsData) {
+      emailsData.forEach(user => {
+        emailMap.set(user.id, user.email || 'N/A');
+      });
+    }
+
+    // Combine profiles with emails
+    const formattedUsers: UserProfile[] = profilesData.map(profile => ({
+      id: profile.id,
+      first_name: profile.first_name,
+      last_name: profile.last_name,
+      is_admin: profile.is_admin,
+      email: emailMap.get(profile.id) || 'N/A',
+    }));
+
+    setUsers(formattedUsers);
     setIsLoadingUsers(false);
   };
 
