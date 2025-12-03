@@ -1,6 +1,17 @@
+/**
+ * @deprecated This file is deprecated. Use useCourses.ts instead.
+ *
+ * This file provides backward compatibility for existing code.
+ * New code should use:
+ * - useCourses() for fetching courses
+ * - useCoursesWithAccess() for courses with access status
+ * - useCheckCourseAccess(courseId) for checking individual course access
+ */
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@/components/SessionContextProvider';
+import { useCourseByLegacyType, useCheckCourseAccess } from './useCourses';
 
 export type CourseType =
   | 'hsk_1' | 'hsk_2' | 'hsk_3' | 'hsk_4' | 'hsk_5' | 'hsk_6'
@@ -16,48 +27,33 @@ export interface CourseAccess {
 }
 
 /**
+ * @deprecated Use useCheckCourseAccess(courseId) from useCourses.ts instead
+ *
  * Hook để check xem user có access vào 1 course cụ thể không
+ * Provides backward compatibility by mapping legacy course_type to course_id
  */
 export const useCourseAccess = (courseType: CourseType) => {
   const { session } = useSession();
   const userId = session?.user?.id;
 
+  // Get course by legacy type
+  const { data: course } = useCourseByLegacyType(courseType);
+
+  // Check access using new hook
+  const { data: accessCheck } = useCheckCourseAccess(course?.id);
+
   return useQuery({
     queryKey: ['courseAccess', userId, courseType],
     queryFn: async () => {
-      if (!userId) {
+      if (!userId || !course) {
         return { hasAccess: false, isAdmin: false };
       }
 
-      // Check if user is admin
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', userId)
-        .single();
-
-      const isAdmin = profile?.role === 'admin';
-
-      // Admins always have access
-      if (isAdmin) {
-        return { hasAccess: true, isAdmin: true };
-      }
-
-      // Check via RPC function
-      const { data, error } = await supabase.rpc('check_course_access', {
-        p_user_id: userId,
-        p_course_type: courseType,
-      });
-
-      if (error) {
-        console.error('Error checking course access:', error);
-        return { hasAccess: false, isAdmin: false };
-      }
-
-      return { hasAccess: data as boolean, isAdmin: false };
+      // Return cached access check result
+      return accessCheck || { hasAccess: false, isAdmin: false };
     },
-    enabled: !!userId,
-    staleTime: 5 * 60 * 1000, // Cache 5 phút
+    enabled: !!userId && !!course,
+    staleTime: 5 * 60 * 1000,
   });
 };
 
