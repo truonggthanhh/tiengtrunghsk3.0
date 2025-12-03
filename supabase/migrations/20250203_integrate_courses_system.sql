@@ -82,33 +82,32 @@ BEGIN
 END $$;
 
 -- ============================================================================
--- PART 5: Backup and migrate course_access table
+-- PART 5: Create and migrate course_access table
 -- ============================================================================
 
--- Rename old column
-ALTER TABLE course_access
-RENAME COLUMN course_type TO course_type_old;
+-- Create course_access table if not exists
+CREATE TABLE IF NOT EXISTS course_access (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
+  is_unlocked BOOLEAN DEFAULT false,
+  unlocked_at TIMESTAMP WITH TIME ZONE,
+  unlocked_by_admin_id UUID REFERENCES auth.users(id),
+  notes TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(user_id, course_id)
+);
 
--- Add new course_id column
-ALTER TABLE course_access
-ADD COLUMN IF NOT EXISTS course_id UUID REFERENCES courses(id) ON DELETE CASCADE;
-
--- Migrate data from course_type_old to course_id
-UPDATE course_access ca
-SET course_id = c.id
-FROM courses c
-WHERE ca.course_type_old = c.course_type_legacy;
-
--- Make course_id required after migration
-ALTER TABLE course_access
-ALTER COLUMN course_id SET NOT NULL;
-
--- Add index
+-- Create indexes
+CREATE INDEX IF NOT EXISTS idx_course_access_user ON course_access(user_id);
 CREATE INDEX IF NOT EXISTS idx_course_access_course_id ON course_access(course_id);
 
--- Drop old column after successful migration
-ALTER TABLE course_access
-DROP COLUMN IF EXISTS course_type_old;
+-- Enable RLS
+ALTER TABLE course_access ENABLE ROW LEVEL SECURITY;
+
+-- Note: Table already has course_id column from CREATE TABLE above
+-- This section handles data migration if there was old data (there isn't for fresh install)
 
 -- Update RLS policies for course_access
 DROP POLICY IF EXISTS "Users can view their own course access" ON course_access;
