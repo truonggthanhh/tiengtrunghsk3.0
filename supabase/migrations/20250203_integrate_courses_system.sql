@@ -125,7 +125,7 @@ USING (
   EXISTS (
     SELECT 1 FROM profiles
     WHERE profiles.id = auth.uid()
-    AND profiles.is_admin = true
+    AND profiles.role = 'admin'
   )
 );
 
@@ -153,7 +153,7 @@ AS $$
   SELECT CASE
     WHEN EXISTS (
       SELECT 1 FROM profiles
-      WHERE id = p_user_id AND is_admin = true
+      WHERE id = p_user_id AND role = 'admin'
     ) THEN true
     -- Check if course is free
     WHEN EXISTS (
