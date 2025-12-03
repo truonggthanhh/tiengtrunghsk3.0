@@ -85,6 +85,9 @@ const AdminDashboardPage: React.FC = () => {
   // Document Upload
   const [documentFile, setDocumentFile] = useState<File | null>(null);
 
+  // Track if we've already fetched data to prevent re-fetching on tab switch
+  const hasFetchedRef = React.useRef(false);
+
   // Memoize returnUrl để tránh tính toán lại khi component re-render do tab switch
   const returnUrl = useMemo(() => {
     return encodeURIComponent(window.location.pathname + window.location.search);
@@ -96,9 +99,13 @@ const AdminDashboardPage: React.FC = () => {
         navigate(`/mandarin/login?returnUrl=${returnUrl}`);
         return;
       }
-      fetchUserProfile(session.user.id);
+      // Only fetch once when component mounts
+      if (!hasFetchedRef.current) {
+        hasFetchedRef.current = true;
+        fetchUserProfile(session.user.id);
+      }
     }
-  }, [session, isSessionLoading, navigate, returnUrl]);
+  }, [session?.user?.id, isSessionLoading, navigate, returnUrl]);
 
   // Load saved API key
   useEffect(() => {
@@ -127,7 +134,10 @@ const AdminDashboardPage: React.FC = () => {
   };
 
   const fetchUsers = async () => {
-    setIsLoadingUsers(true);
+    // Only show loading spinner if we don't have data yet
+    if (users.length === 0) {
+      setIsLoadingUsers(true);
+    }
     setError(null);
     const { data: usersData, error: usersError } = await supabase
       .from('profiles')
