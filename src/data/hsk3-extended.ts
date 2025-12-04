@@ -200,8 +200,7 @@ export const hsk3ExtendedVocabulary: VocabularyWord[] = [
   { id: 20197, hanzi: "实在", pinyin: "shízài", meaning: "Thật sự, quả thật", examples: [{ hanzi: "实在对不起。", pinyin: "Shízài duìbuqǐ.", translation: "Thật sự xin lỗi." }, { hanzi: "他实在是个好人。", pinyin: "Tā shízài shì gè hǎorén.", translation: "Anh ấy thật sự là người tốt." }] },
   { id: 20198, hanzi: "实现", pinyin: "shíxiàn", meaning: "Thực hiện", examples: [{ hanzi: "梦想实现了。", pinyin: "Mèngxiǎng shíxiàn le.", translation: "Ước mơ đã thành hiện thực." }, { hanzi: "这个目标很难实现。", pinyin: "Zhège mùbiāo hěn nán shíxiàn.", translation: "Mục tiêu này rất khó thực hiện." }] },
   { id: 20199, hanzi: "使", pinyin: "shǐ", meaning: "Khiến, làm cho", examples: [{ hanzi: "这使我很高兴。", pinyin: "Zhè shǐ wǒ hěn gāoxìng.", translation: "Điều này làm tôi rất vui." }, { hanzi: "他使我感动。", pinyin: "Tā shǐ wǒ gǎndòng.", translation: "Anh ấy khiến tôi cảm động." }] },
-  { id: 20200, hanzi: "使用", pinyin: "shǐyòng", meaning: "Sử dụng", examples: [{ hanzi: "请使用中文。", pinyin: "Qǐng shǐyòng Zhōngwén.", translation: "Hãy sử dụng tiếng Trung." }, { hanzi: "这个很好使用。", pinyin: "Zhège hěn hǎo shǐyòng.", translation: "Cái này rất dễ sử dụng." }] }
-
+  { id: 20200, hanzi: "使用", pinyin: "shǐyòng", meaning: "Sử dụng", examples: [{ hanzi: "请使用中文。", pinyin: "Qǐng shǐyòng Zhōngwén.", translation: "Hãy sử dụng tiếng Trung." }, { hanzi: "这个很好使用。", pinyin: "Zhège hěn hǎo shǐyòng.", translation: "Cái này rất dễ sử dụng." }] },
   // New HSK vocabulary from Excel
   { id: 20201, hanzi: "爱心", pinyin: "Āixīn", meaning: "tình yêu" },
   { id: 20202, hanzi: "安排", pinyin: "ānpái", meaning: "sắp xếp, bố trí" },

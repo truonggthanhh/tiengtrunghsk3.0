@@ -200,8 +200,7 @@ export const hsk4ExtendedVocabulary: VocabularyWord[] = [
   { id: 30197, hanzi: "纪律", pinyin: "jìlǜ", meaning: "Kỷ luật", examples: [{ hanzi: "遵守纪律。", pinyin: "Zūnshǒu jìlǜ.", translation: "Tuân thủ kỷ luật." }, { hanzi: "纪律很严格。", pinyin: "Jìlǜ hěn yángé.", translation: "Kỷ luật rất nghiêm ngặt." }] },
   { id: 30198, hanzi: "纪念", pinyin: "jìniàn", meaning: "Kỷ niệm", examples: [{ hanzi: "这是纪念品。", pinyin: "Zhè shì jìniànpǐn.", translation: "Đây là quà lưu niệm." }, { hanzi: "纪念日快乐。", pinyin: "Jìniàn rì kuàilè.", translation: "Chúc mừng ngày kỷ niệm." }] },
   { id: 30199, hanzi: "记录", pinyin: "jìlù", meaning: "Ghi chép", examples: [{ hanzi: "请记录下来。", pinyin: "Qǐng jìlù xiàlái.", translation: "Hãy ghi chép lại." }, { hanzi: "他创造了新记录。", pinyin: "Tā chuàngzào le xīn jìlù.", translation: "Anh ấy đã tạo ra kỷ lục mới." }] },
-  { id: 30200, hanzi: "记忆", pinyin: "jìyì", meaning: "Ký ức", examples: [{ hanzi: "这是美好的记忆。", pinyin: "Zhè shì měihǎo de jìyì.", translation: "Đây là ký ức đẹp." }, { hanzi: "我的记忆力不好。", pinyin: "Wǒ de jìyìlì bù hǎo.", translation: "Trí nhớ của tôi không tốt." }] }
-
+  { id: 30200, hanzi: "记忆", pinyin: "jìyì", meaning: "Ký ức", examples: [{ hanzi: "这是美好的记忆。", pinyin: "Zhè shì měihǎo de jìyì.", translation: "Đây là ký ức đẹp." }, { hanzi: "我的记忆力不好。", pinyin: "Wǒ de jìyìlì bù hǎo.", translation: "Trí nhớ của tôi không tốt." }] },
   // New HSK vocabulary from Excel
   { id: 30201, hanzi: "阿姨", pinyin: "āyí", meaning: "cô, dì" },
   { id: 30202, hanzi: "啊", pinyin: "ā", meaning: "quá, nhé, đấy" },

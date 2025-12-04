@@ -1514,7 +1514,7 @@ export const hsk2ExtendedVocabulary: VocabularyWord[] = [
       { hanzi: "这里很热闹。", pinyin: "Zhèlǐ hěn rènao.", translation: "Nơi đây rất nhộn nhịp." },
       { hanzi: "春节很热闹。", pinyin: "Chūnjié hěn rènao.", translation: "Tết rất nhộn nhịp." }
     ]
-  }
+  },
 
   // New HSK vocabulary from Excel
   { id: 10151, hanzi: "啊", pinyin: "ā", meaning: "a, chà, à" },
