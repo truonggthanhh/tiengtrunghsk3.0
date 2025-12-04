@@ -100,8 +100,7 @@ export const hsk6ExtendedVocabulary: VocabularyWord[] = [
   { id: 50097, hanzi: "三思而行", pinyin: "sān sī ér xíng", meaning: "Suy nghĩ ba lần rồi mới làm", examples: [{ hanzi: "做决定要三思而行。", pinyin: "Zuò juédìng yào sān sī ér xíng.", translation: "Quyết định phải suy nghĩ kỹ." }, { hanzi: "遇事要三思而行。", pinyin: "Yù shì yào sān sī ér xíng.", translation: "Gặp việc phải cân nhắc kỹ." }] },
   { id: 50098, hanzi: "舍己为人", pinyin: "shě jǐ wèi rén", meaning: "Hy sinh bản thân vì người khác", examples: [{ hanzi: "他有舍己为人的精神。", pinyin: "Tā yǒu shě jǐ wèi rén de jīngshén.", translation: "Anh ấy có tinh thần vì người." }, { hanzi: "舍己为人是高尚的品德。", pinyin: "Shě jǐ wèi rén shì gāoshàng de pǐndé.", translation: "Hy sinh vì người là đức tính cao quý." }] },
   { id: 50099, hanzi: "深入浅出", pinyin: "shēn rù qiǎn chū", meaning: "Giải thích sâu sắc dễ hiểu", examples: [{ hanzi: "老师讲课深入浅出。", pinyin: "Lǎoshī jiǎngkè shēn rù qiǎn chū.", translation: "Giáo viên giảng bài dễ hiểu." }, { hanzi: "这本书写得深入浅出。", pinyin: "Zhè běn shū xiě de shēn rù qiǎn chū.", translation: "Cuốn sách này viết dễ hiểu." }] },
-  { id: 50100, hanzi: "生机勃勃", pinyin: "shēng jī bó bó", meaning: "Tràn đầy sức sống", examples: [{ hanzi: "春天万物生机勃勃。", pinyin: "Chūntiān wànwù shēng jī bó bó.", translation: "Mùa xuân muôn vật tràn đầy sinh khí." }, { hanzi: "这座城市生机勃勃。", pinyin: "Zhè zuò chéngshì shēng jī bó bó.", translation: "Thành phố này đầy sức sống." }] }
-
+  { id: 50100, hanzi: "生机勃勃", pinyin: "shēng jī bó bó", meaning: "Tràn đầy sức sống", examples: [{ hanzi: "春天万物生机勃勃。", pinyin: "Chūntiān wànwù shēng jī bó bó.", translation: "Mùa xuân muôn vật tràn đầy sinh khí." }, { hanzi: "这座城市生机勃勃。", pinyin: "Zhè zuò chéngshì shēng jī bó bó.", translation: "Thành phố này đầy sức sống." }] },
   // New HSK vocabulary from Excel
   { id: 50101, hanzi: "挨着", pinyin: "āi zhe", meaning: "bên cạnh, kế bên" },
   { id: 50102, hanzi: "挨打", pinyin: "ái dǎ", meaning: "bị đánh, chịu đòn" },

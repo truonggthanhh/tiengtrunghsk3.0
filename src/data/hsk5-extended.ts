@@ -150,8 +150,7 @@ export const hsk5ExtendedVocabulary: VocabularyWord[] = [
   { id: 40147, hanzi: "单位", pinyin: "dānwèi", meaning: "Đơn vị", examples: [{ hanzi: "工作单位。", pinyin: "Gōngzuò dānwèi.", translation: "Đơn vị công tác." }, { hanzi: "计量单位。", pinyin: "Jìliàng dānwèi.", translation: "Đơn vị đo lường." }] },
   { id: 40148, hanzi: "单元", pinyin: "dānyuán", meaning: "Đơn nguyên", examples: [{ hanzi: "第一单元。", pinyin: "Dì yī dānyuán.", translation: "Đơn nguyên thứ nhất." }, { hanzi: "住宅单元。", pinyin: "Zhùzhái dānyuán.", translation: "Căn hộ." }] },
   { id: 40149, hanzi: "胆小鬼", pinyin: "dǎnxiǎoguǐ", meaning: "Người nhát gan", examples: [{ hanzi: "你是胆小鬼。", pinyin: "Nǐ shì dǎnxiǎoguǐ.", translation: "Bạn là người nhút nhát." }, { hanzi: "别当胆小鬼。", pinyin: "Bié dāng dǎnxiǎoguǐ.", translation: "Đừng làm kẻ nhát gan." }] },
-  { id: 40150, hanzi: "淡", pinyin: "dàn", meaning: "Nhạt", examples: [{ hanzi: "颜色很淡。", pinyin: "Yánsè hěn dàn.", translation: "Màu rất nhạt." }, { hanzi: "味道太淡了。", pinyin: "Wèidào tài dàn le.", translation: "Vị quá nhạt." }, { hanzi: "淡水。", pinyin: "Dànshuǐ.", translation: "Nước ngọt." }] }
-
+  { id: 40150, hanzi: "淡", pinyin: "dàn", meaning: "Nhạt", examples: [{ hanzi: "颜色很淡。", pinyin: "Yánsè hěn dàn.", translation: "Màu rất nhạt." }, { hanzi: "味道太淡了。", pinyin: "Wèidào tài dàn le.", translation: "Vị quá nhạt." }, { hanzi: "淡水。", pinyin: "Dànshuǐ.", translation: "Nước ngọt." }] },
   // New HSK vocabulary from Excel
   { id: 40151, hanzi: "岸上", pinyin: "àn shàng", meaning: "trên bờ" },
   { id: 40152, hanzi: "按摩", pinyin: "ànmó", meaning: "mát-xa, xoa bóp" },
