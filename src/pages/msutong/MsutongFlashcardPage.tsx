@@ -4,11 +4,19 @@ import Header from '@/components/Header';
 import Flashcard from '@/components/Flashcard';
 import { getVocabularyByMsutong } from '@/data';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Home, ChevronsLeft, ChevronsRight, ListOrdered, Grid3X3 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Home, ChevronsLeft, ChevronsRight, ListOrdered, Grid3X3, BookmarkCheck } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { usePinyin } from '@/contexts/PinyinContext';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const BATCH_SIZE = 10;
+const STORAGE_KEY_PREFIX = 'flashcard_progress_msutong_';
 
 const MsutongFlashcardPage = () => {
   const [searchParams] = useSearchParams();
@@ -37,8 +45,47 @@ const MsutongFlashcardPage = () => {
 
   const [batchIndex, setBatchIndex] = useState(0);
   const [currentIndexInBatch, setCurrentIndexInBatch] = useState(0);
+  const [savedBatchIndex, setSavedBatchIndex] = useState<number | null>(null);
 
   const totalBatches = Math.ceil(fullVocabulary.length / BATCH_SIZE);
+
+  // Create a unique storage key based on level and lessons
+  const storageKey = useMemo(() => {
+    return `${STORAGE_KEY_PREFIX}${level}_${lessonIds.join('_')}`;
+  }, [level, lessonIds]);
+
+  // Load saved progress on mount
+  useEffect(() => {
+    const saved = localStorage.getItem(storageKey);
+    if (saved) {
+      const savedBatch = parseInt(saved, 10);
+      if (!isNaN(savedBatch) && savedBatch >= 0 && savedBatch < totalBatches) {
+        setSavedBatchIndex(savedBatch);
+      }
+    }
+  }, [storageKey, totalBatches]);
+
+  // Save progress when batch changes
+  useEffect(() => {
+    if (batchIndex > 0) {
+      localStorage.setItem(storageKey, batchIndex.toString());
+    }
+  }, [storageKey, batchIndex]);
+
+  // Function to resume from saved batch
+  const resumeFromSaved = () => {
+    if (savedBatchIndex !== null) {
+      setBatchIndex(savedBatchIndex);
+      setCurrentIndexInBatch(0);
+      setSavedBatchIndex(null);
+    }
+  };
+
+  // Function to jump to specific batch
+  const jumpToBatch = (batch: number) => {
+    setBatchIndex(batch);
+    setCurrentIndexInBatch(0);
+  };
 
   const currentBatchVocabulary = useMemo(() => {
     const start = batchIndex * BATCH_SIZE;
@@ -133,9 +180,47 @@ const MsutongFlashcardPage = () => {
           />
 
           <div className="mt-8">
-            <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-muted-foreground">Tiến độ đợt này</span>
-                <span className="text-sm font-semibold">Đợt {batchIndex + 1} / {totalBatches}</span>
+            {/* Resume button if there's saved progress */}
+            {savedBatchIndex !== null && savedBatchIndex !== batchIndex && (
+              <div className="mb-4 p-3 bg-primary/10 rounded-lg border border-primary/20">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <span className="text-sm text-muted-foreground">
+                    📍 Bạn đã học đến đợt {savedBatchIndex + 1}
+                  </span>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={resumeFromSaved}
+                    className="font-bold"
+                  >
+                    <BookmarkCheck className="mr-2 h-4 w-4" />
+                    Tiếp tục học
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Batch selector */}
+            <div className="flex justify-between items-center mb-2 gap-4">
+              <span className="text-sm text-muted-foreground">Tiến độ đợt này</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Đợt:</span>
+                <Select
+                  value={batchIndex.toString()}
+                  onValueChange={(value) => jumpToBatch(parseInt(value, 10))}
+                >
+                  <SelectTrigger className="w-[120px] h-8">
+                    <SelectValue placeholder="Chọn đợt" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px]">
+                    {Array.from({ length: totalBatches }, (_, i) => (
+                      <SelectItem key={i} value={i.toString()}>
+                        Đợt {i + 1} / {totalBatches}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <Progress value={progressValue} className="w-full mb-4" />
             <div className="flex justify-between items-center mb-6">
