@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import { getVocabularyByMsutong, getFullMsutongVocabularyByLevel, type VocabularyWord } from '@/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowRight, Home, CheckCircle2, XCircle, Grid3X3, ListOrdered } from 'lucide-react';
+import { ArrowRight, Home, CheckCircle2, XCircle, Grid3X3, ListOrdered, Lightbulb } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { usePinyin } from '@/contexts/PinyinContext';
@@ -65,6 +65,7 @@ const MsutongSentenceChoicePage = () => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [showResult, setShowResult] = useState(false);
+  const [showHint, setShowHint] = useState(false);
 
   const currentQuestion = useMemo(() => questions[currentIndex], [questions, currentIndex]);
 
@@ -94,6 +95,7 @@ const MsutongSentenceChoicePage = () => {
   const goToNextWord = useCallback(() => {
     setSelectedAnswer(null);
     setIsCorrect(null);
+    setShowHint(false);
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(prev => prev + 1);
     } else {
@@ -122,12 +124,13 @@ const MsutongSentenceChoicePage = () => {
     const shuffledQuestions = shuffleArray(allAvailableQuestions);
     const selectedQuestions = shuffledQuestions.slice(0, count);
     setQuestions(selectedQuestions);
-    
+
     setCurrentIndex(0);
     setCorrectAnswers(0);
     setShowResult(false);
     setSelectedAnswer(null);
     setIsCorrect(null);
+    setShowHint(false);
   };
   
   const handleAnswer = (answer: string) => {
@@ -150,6 +153,7 @@ const MsutongSentenceChoicePage = () => {
     setCurrentIndex(0);
     setCorrectAnswers(0);
     setShowResult(false);
+    setShowHint(false);
   };
 
   if (allAvailableQuestions.length === 0) {
@@ -274,9 +278,28 @@ const MsutongSentenceChoicePage = () => {
                     {practiceVocabulary.find(w => w.hanzi === currentQuestion.word.hanzi)?.examples?.find(ex => ex.hanzi === currentQuestion.sentence)?.pinyin || ''}
                   </p>
                 )}
-                <p className="text-lg text-white/90">{currentQuestion?.translation}</p>
+                {(showHint || selectedAnswer) ? (
+                  <p className="text-lg text-white/90">{currentQuestion?.translation}</p>
+                ) : (
+                  <p className="text-lg text-white/70 italic">Nghĩa tiếng Việt đã được ẩn</p>
+                )}
               </CardContent>
             </Card>
+
+            {!selectedAnswer && !showHint && (
+              <div className="mb-4 text-center">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowHint(true)}
+                  className="font-bold"
+                  size="sm"
+                >
+                  <Lightbulb className="mr-2 h-4 w-4" />
+                  Gợi ý đáp án
+                </Button>
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-4">
               {options.map((option, index) => {
