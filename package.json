@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "check-dictionary": "npx tsx scripts/check-dictionary.ts",
     "fix-dictionary": "npx tsx scripts/check-dictionary.ts --fix --delete",
-    "check-dictionary-errors": "npx tsx scripts/check-dictionary-errors.ts"
+    "check-dictionary-errors": "npx tsx scripts/check-dictionary-errors.ts",
+    "check-dictionary-full": "npx tsx scripts/check-dictionary-full.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
