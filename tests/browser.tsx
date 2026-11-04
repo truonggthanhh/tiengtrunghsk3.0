@@ -1,3 +1,6 @@
+import MandarinBlogList from '../src/mandarin/pages/BlogPage';
+import CantoneseBlogList from '../src/cantonese/pages/BlogPage';
+import CantoneseSongDetail from '../src/cantonese/pages/SongDetail';
 import MandarinFlashcardPage from '../src/pages/FlashcardPage';
 import SongLibrary from '../src/components/learning/SongLibrary';
 import DictionaryPage from '../src/pages/DictionaryPage';
@@ -628,6 +631,64 @@ await check('HSK flashcard keyboard shortcuts leave search inputs alone and chan
   await until(() => Boolean(host.textContent?.includes('Flashcards HSK 2')));
   assert(host.querySelector('[role="combobox"]')?.textContent?.startsWith('Đợt 1'), 'A new HSK level must start in a valid first batch');
 });
+for (const language of ['mandarin', 'cantonese'] as const) for (const kind of ['songs', 'blog'] as const) {
+  await check(`${language} ${kind} library recovers initial fetch failures and keeps loaded content during failed refreshes`, async () => {
+    const sdk = language === 'mandarin' ? mandarin : cantonese;
+    const query = client();
+    let failing = true;
+    const record = kind === 'songs' ? { id: 'song-one', title: 'Bài hát đã tải', artist: 'Nghệ sĩ' } : { ...post, title: 'Bài viết đã tải', excerpt: 'Nội dung hiện có', profiles: null };
+    const title = record.title;
+    sdk.from = (() => {
+      const builder = new Proxy({}, { get: (_target, name) => name === 'then' ? (resolve: (value: unknown) => void) => setTimeout(() => resolve(failing ? { data: null, error: { message: 'TypeError: Failed to fetch' } } : { data: [record], error: null }), 20) : () => builder });
+      return builder;
+    }) as never;
+    try {
+      const Blog = language === 'mandarin' ? MandarinBlogList : CantoneseBlogList;
+      root.render(<QueryClientProvider client={query}><MemoryRouter>{kind === 'songs' ? <SongLibrary language={language} /> : <Blog />}</MemoryRouter></QueryClientProvider>);
+      await until(() => Boolean(host.querySelector('[role="alert"]')));
+      assert(!host.textContent?.includes('TypeError'), 'Initial network failures must have a readable message and a retry action');
+      failing = false; clickText('Thử lại');
+      await until(() => Boolean(host.textContent?.includes(title)));
+      failing = true;
+      const key = kind === 'songs' ? language === 'mandarin' ? ['songs'] : ['cantonese', 'songs'] : language === 'mandarin' ? ['blog-posts', 'mandarin'] : ['cantonese', 'blog-posts', 'cantonese'];
+      await query.refetchQueries({ queryKey: key });
+      await until(() => Boolean(host.textContent?.includes('Đang hiển thị nội dung đã tải trước đó')));
+      assert(host.textContent?.includes(title), 'A failed background refresh must not hide previously loaded content');
+      assert(!host.textContent?.includes('TypeError'), 'Raw fetch errors must not replace content');
+      failing = false; clickText('Thử lại');
+      await until(() => !host.textContent?.includes('Đang hiển thị nội dung đã tải trước đó'));
+      assert(host.textContent?.includes(title), 'Retry must keep the library usable');
+    } finally { mockClient(sdk, language); }
+  });
+  await check(`${language} ${kind} details keep loaded content when refreshing fails`, async () => {
+    const sdk = language === 'mandarin' ? mandarin : cantonese;
+    const Context = language === 'mandarin' ? MandarinSessionContext : CantoneseSessionContext;
+    const query = client();
+    let failing = false;
+    const song = { id: 'song-one', title: 'Bài hát vẫn còn', artist: 'Nghệ sĩ', youtube_video_id: null, lrc: '' };
+    const article = { ...post, title: 'Bài viết vẫn còn', profiles: null };
+    sdk.from = ((table: string) => {
+      const content = table === 'songs' || table === 'blog_posts';
+      const builder = new Proxy({}, { get: (_target, name) => name === 'then' ? (resolve: (value: unknown) => void) => setTimeout(() => resolve(content && failing ? { data: null, error: { message: 'TypeError: Failed to fetch' } } : { data: table === 'songs' ? song : table === 'blog_posts' ? article : [], error: null }), 20) : () => builder });
+      return builder;
+    }) as never;
+    try {
+      const Blog = language === 'mandarin' ? MandarinBlog : CantoneseBlog;
+      const Song = language === 'mandarin' ? SongDetail : CantoneseSongDetail;
+      const route = kind === 'songs' ? '/songs/:songId' : '/blog/:slug';
+      root.render(<QueryClientProvider client={query}><MemoryRouter initialEntries={[kind === 'songs' ? '/songs/song-one' : '/blog/sample']}><Context.Provider value={{ session: null, isLoading: false }}><Routes><Route path={route} element={kind === 'songs' ? <Song /> : <Blog />} /></Routes></Context.Provider></MemoryRouter></QueryClientProvider>);
+      const title = kind === 'songs' ? song.title : article.title;
+      await until(() => Boolean(host.textContent?.includes(title)));
+      const key = kind === 'songs' ? language === 'mandarin' ? ['song', 'song-one'] : ['cantonese', 'song', 'song-one'] : language === 'mandarin' ? ['blog-post', 'sample'] : ['cantonese', 'blog-post', 'sample'];
+      failing = true; await query.refetchQueries({ queryKey: key });
+      await until(() => Boolean(host.textContent?.includes('Đang hiển thị nội dung đã tải trước đó')));
+      assert(host.textContent?.includes(title), 'Details must stay visible after a failed refresh');
+      failing = false; clickText('Thử lại');
+      await until(() => !host.textContent?.includes('Đang hiển thị nội dung đã tải trước đó'));
+      assert(host.textContent?.includes(title), 'Successful retry must retain the original content');
+    } finally { mockClient(sdk, language); }
+  });
+}
 (window as unknown as { __showDesignRoute: (path: string, dark: boolean) => Promise<void> }).__showDesignRoute = async (path, dark) => {
   const { default: App } = await import('../src/App');
   localStorage.setItem('theme', dark ? 'dark' : 'light');

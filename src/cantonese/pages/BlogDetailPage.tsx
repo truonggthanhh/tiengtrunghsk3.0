@@ -1,3 +1,4 @@
+import ContentLoadNotice from '@/components/learning/ContentLoadNotice';
 import { oneRelation } from '@/lib/relations';
 import React, { useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
@@ -47,9 +48,11 @@ const BlogDetailPage = () => {
 
   const isAdmin = userProfile?.role === 'admin';
 
-  const { data: post, isLoading, error } = useQuery<BlogPost>({
+  const { data: post, isLoading, error, refetch, isFetching } = useQuery<BlogPost>({
     queryKey: ['cantonese', 'blog-post', slug],
-    queryFn: async () => {
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
+    queryFn: async ({ signal }) => {
       const { data, error } = await supabase
         .from('blog_posts')
         .select(`
@@ -67,7 +70,7 @@ const BlogDetailPage = () => {
         .eq('slug', slug)
         .eq('language', 'cantonese')
         .eq('status', 'published')
-        .single();
+        .abortSignal(signal).single();
 
       if (error) throw error;
       return { ...data, profiles: oneRelation(data.profiles) };
@@ -103,21 +106,16 @@ const BlogDetailPage = () => {
     );
   }
 
-  if (error || !post) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-red-600 dark:text-red-400 p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">
-          {error ? `Lỗi: ${error.message}` : 'Không tìm thấy bài viết'}
-        </div>
-      </div>
-    );
+  if (error && !post) {
+    return <main className="learning-container py-10"><ContentLoadNotice resource="bài viết" error={error} retry={() => refetch()} pending={isFetching} /></main>;
   }
-
+  if (!post) return <main className="learning-container py-10"><p>Không tìm thấy bài viết.</p></main>;
 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50/50 via-purple-50/30 to-pink-50/50 dark:from-gray-950 dark:via-cyan-950/10 dark:to-purple-950/10">
       <div className="max-w-4xl mx-auto p-4 md:p-8">
+        {error && <ContentLoadNotice cached resource="bài viết" error={error} retry={() => refetch()} pending={isFetching} />}
         {/* Back Button */}
         <Button asChild variant="ghost" className="mb-6">
           <Link to="/cantonese/blog" className="flex items-center gap-2">

@@ -1,3 +1,4 @@
+import ContentLoadNotice from '@/components/learning/ContentLoadNotice';
 import { loadYouTubeApi, type YouTubePlayer } from '@/lib/youtube';
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
@@ -39,10 +40,12 @@ const SongDetail = () => {
   const lyricsContainerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<HTMLDivElement>(null);
 
-  const { data: song, isLoading, error } = useQuery({
+  const { data: song, isLoading, error, refetch, isFetching } = useQuery({
     queryKey: ['song', songId],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('songs').select('*').eq('id', songId).single();
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
+    queryFn: async ({ signal }) => {
+      const { data, error } = await supabase.from('songs').select('*').eq('id', songId).abortSignal(signal).single();
       if (error) throw error;
       return data;
     },
@@ -123,14 +126,8 @@ const SongDetail = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-pink-50 dark:from-gray-950 dark:via-red-950/20 dark:to-orange-950/20 flex items-center justify-center">
-        <div className="text-center p-6">
-          <p className="text-lg font-medium text-red-600 dark:text-red-400">Lỗi tải bài hát: {error.message}</p>
-        </div>
-      </div>
-    );
+  if (error && !song) {
+    return <main className="learning-container py-10"><ContentLoadNotice resource="bài hát" error={error} retry={() => refetch()} pending={isFetching} /></main>;
   }
 
   if (!song) {
@@ -144,6 +141,7 @@ const SongDetail = () => {
   return (
     <main className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-pink-50 dark:from-gray-950 dark:via-red-950/20 dark:to-orange-950/20 transition-colors">
       <div className="max-w-7xl mx-auto p-4 md:p-8">
+        {error && <ContentLoadNotice cached resource="bài hát" error={error} retry={() => refetch()} pending={isFetching} />}
         {/* Navigation */}
         <div className="flex gap-2 mb-6">
           <Link

@@ -50,7 +50,7 @@ Browser and handler tests mock Supabase. They establish local behavior, not live
 - ESLint: zero errors, zero warnings.
 - TypeScript: frontend, Vite configuration, maintenance scripts, and Node regression tests.
 - Node: 16 regression tests passed; none skipped.
-- Chromium: 44 regression cases passed at widths 320, 390, 768, and 1440 pixels. The route smoke case mounts 20 actual application routes; other cases cover both languages, account changes, auth failures, admin mutations, profile saves, notebooks, navigation/search, libraries, flashcard controls, cached review remounts, and YouTube cleanup.
+- Chromium: the UI redesign passed 44 regression cases at widths 320, 390, 768, and 1440 pixels. Content recovery coverage extends the suite to 52 cases, verified at desktop and mobile widths. The route smoke case mounts 20 actual application routes; other cases cover both languages, account changes, auth failures, admin mutations, profile saves, notebooks, navigation/search, libraries, flashcard controls, cached review remounts, and YouTube cleanup.
 - Backend calls in these tests are mocked. Live Supabase/OAuth/AI and production hosting remain outside the verified results above.
 
 The prepared source is available in the cloud checkout. Updated startup and verification instructions were saved to the environment draft. Publication is a separate platform action; no Publish tool is available in this chat. No production data was mutated.
@@ -78,3 +78,17 @@ Production build succeeds. Vite still reports large shared chunks; this upgrade 
 ## Visual and UX redesign
 
 See [UX_UI_UPGRADE.md](UX_UI_UPGRADE.md) for the shipped interfaces, interaction changes, screenshots, verification commands, and limits. The redesign uses shared navigation and learning libraries for both languages and does not change backend roles or production data.
+
+
+## Content loading recovery — Supabase availability
+
+The reported song/blog loading failure affected both languages. The owner confirmed that the Supabase projects needed restoration and that songs and posts reappeared after restoring the service. Opening a REST root without API headers is not a test of the application's authenticated REST request; the SDK sends the configured public API key automatically.
+
+- Song/blog lists and detail pages now provide a readable failure state and an explicit retry action.
+- A failed background refresh keeps already loaded content visible with a notice; a connection failure is not rendered as a newly empty library.
+- Content queries may refetch on reconnect/window focus according to query freshness. Existing automatic retry defaults remain in effect.
+- Song lists request only ID, title, and artist; lyrics are fetched by the detail page.
+- Eight browser regressions cover initial failure/retry and failed background refreshes for both lists and detail pages in both languages.
+- Supabase projects, API keys, server routing, and production records were not changed.
+
+The final source passes lint, TypeScript, build, 16 Node tests, and 52 browser cases at desktop/mobile widths. Backend responses in automated tests are mocked. Live recovery was confirmed by the owner; direct production checks remain blocked by the cloud environment's network policy.

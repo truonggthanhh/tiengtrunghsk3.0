@@ -1,3 +1,4 @@
+import ContentLoadNotice from '@/components/learning/ContentLoadNotice';
 import { normalizeSearchText as fold } from '@/lib/searchText';
 import { oneRelation } from '@/lib/relations';
 import React, { useState } from 'react';
@@ -28,9 +29,11 @@ interface BlogPost {
 const BlogPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { data: posts, isLoading, error } = useQuery<BlogPost[]>({
+  const { data: posts, isLoading, error, refetch, isFetching } = useQuery<BlogPost[]>({
     queryKey: ['cantonese', 'blog-posts', 'cantonese'],
-    queryFn: async () => {
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
+    queryFn: async ({ signal }) => {
       const { data, error } = await supabase
         .from('blog_posts')
         .select(`
@@ -47,7 +50,7 @@ const BlogPage = () => {
         `)
         .eq('language', 'cantonese')
         .eq('status', 'published')
-        .order('published_at', { ascending: false });
+        .order('published_at', { ascending: false }).abortSignal(signal);
 
       if (error) throw error;
       return (data ?? []).map(post => ({ ...post, profiles: oneRelation(post.profiles) }));
@@ -69,19 +72,14 @@ const BlogPage = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-red-600 dark:text-red-400 p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">
-          Lỗi tải bài viết: {error.message}
-        </div>
-      </div>
-    );
+  if (error && !posts) {
+    return <main className="learning-container py-10"><ContentLoadNotice resource="bài viết" error={error} retry={() => refetch()} pending={isFetching} /></main>;
   }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="learning-container py-8 sm:py-12">
+        {error && <ContentLoadNotice cached resource="bài viết" error={error} retry={() => refetch()} pending={isFetching} />}
         {/* Header */}
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center gap-4 mb-4">
