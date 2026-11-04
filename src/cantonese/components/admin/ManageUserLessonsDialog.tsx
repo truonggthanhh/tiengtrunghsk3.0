@@ -29,8 +29,9 @@ const ManageUserLessonsDialog = ({ user, onClose }: ManageUserLessonsDialogProps
   const [selectedLessonIds, setSelectedLessonIds] = useState<Set<string>>(new Set());
 
   // Query 1: Fetch ALL lessons (for admin to choose from)
-  const { data: allLessons, isLoading: isLoadingAllLessons } = useQuery<Lesson[]>({
+  const { data: allLessons, isLoading: isLoadingAllLessons, error: lessonsError } = useQuery<Lesson[]>({
     queryKey: ['cantonese', 'all_lessons_for_admin'],
+    enabled: Boolean(user),
     queryFn: async () => {
       const { data, error } = await supabase.from('lessons').select('id, title').order('position', { ascending: true });
       if (error) throw error;
@@ -39,7 +40,7 @@ const ManageUserLessonsDialog = ({ user, onClose }: ManageUserLessonsDialogProps
   });
 
   // Query 2: Fetch lessons currently assigned to the selected user
-  const { data: userAssignedLessons, isLoading: isLoadingUserLessons } = useQuery<{ lesson_id: string }[]>({
+  const { data: userAssignedLessons, isLoading: isLoadingUserLessons, error: accessError } = useQuery<{ lesson_id: string }[]>({
     queryKey: ['cantonese', 'user_lesson_access', user?.id],
     queryFn: async () => {
       if (!user) return [];
@@ -52,11 +53,12 @@ const ManageUserLessonsDialog = ({ user, onClose }: ManageUserLessonsDialogProps
 
   // Effect to initialize the checkboxes based on fetched user data
   useEffect(() => {
+    setSelectedLessonIds(new Set());
     if (userAssignedLessons) {
       const initialIds = new Set(userAssignedLessons.map(l => l.lesson_id));
       setSelectedLessonIds(initialIds);
     }
-  }, [userAssignedLessons]);
+  }, [userAssignedLessons, user?.id]);
 
   const mutation = useMutation({
     mutationFn: async ({ userId, lessonIds }: { userId: string; lessonIds: string[] }) => {
@@ -97,7 +99,7 @@ const ManageUserLessonsDialog = ({ user, onClose }: ManageUserLessonsDialogProps
   const isLoading = isLoadingAllLessons || isLoadingUserLessons;
 
   return (
-    <Dialog open={!!user} onOpenChange={(isOpen) => !isOpen && onClose()}>
+    <Dialog open={!!user} onOpenChange={(isOpen) => !isOpen && !mutation.isPending && onClose()}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Quản lý bài học</DialogTitle>
@@ -106,7 +108,7 @@ const ManageUserLessonsDialog = ({ user, onClose }: ManageUserLessonsDialogProps
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
-          {isLoading ? (
+          {(lessonsError || accessError) ? <p role="alert" className="p-3 text-sm text-destructive">Không thể tải quyền bài học. Vui lòng đóng và thử lại.</p> : isLoading ? (
             <div className="flex justify-center items-center h-40">
               <Loader2 className="h-8 w-8 animate-spin" />
             </div>
@@ -118,6 +120,7 @@ const ManageUserLessonsDialog = ({ user, onClose }: ManageUserLessonsDialogProps
                     <Checkbox
                       id={`lesson-${lesson.id}`}
                       checked={selectedLessonIds.has(lesson.id)}
+                      disabled={mutation.isPending}
                       onCheckedChange={(checked) => handleCheckboxChange(lesson.id, !!checked)}
                     />
                     <label
@@ -133,8 +136,8 @@ const ManageUserLessonsDialog = ({ user, onClose }: ManageUserLessonsDialogProps
           )}
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Hủy</Button>
-          <Button onClick={handleSave} disabled={mutation.isPending}>
+          <Button variant="outline" disabled={mutation.isPending} onClick={onClose}>Hủy</Button>
+          <Button onClick={handleSave} disabled={mutation.isPending || isLoading || Boolean(lessonsError || accessError)}>
             {mutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Lưu thay đổi
           </Button>

@@ -1,3 +1,4 @@
+import { useSignOut } from '@/hooks/useSignOut';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
@@ -18,25 +19,15 @@ import { toast } from 'sonner';
 export default function UserMenu() {
   const { session, isLoading: isSessionLoading } = useSession();
   const { profile, isLoadingProfile, isAdmin } = useProfile();
-  const navigate = useNavigate();
+  const { signOut: handleLogout, pending: signingOut } = useSignOut('cantonese');
 
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast.error(`Lỗi khi đăng xuất: ${error.message}`);
-    } else {
-      toast.success('Đã đăng xuất thành công!');
-      navigate('/cantonese');
-    }
-  };
-
-  if (isSessionLoading || isLoadingProfile) {
+  if (isSessionLoading) {
     return <div className="h-9 w-24 animate-pulse rounded-xl bg-ink/10 dark:bg-white/10" />;
   }
 
   if (!session) {
     return (
-      <Link to="/cantonese/login" className="rounded-xl px-4 py-2 text-ink dark:text-cream bg-white dark:bg-black/40 hover:bg-white/90 dark:hover:bg-black/60 transition shadow-md border border-ink/10 dark:border-white/10">
+      <Link to={`/cantonese/login?returnUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`} className="rounded-xl px-4 py-2 text-ink dark:text-cream bg-white dark:bg-black/40 hover:bg-white/90 dark:hover:bg-black/60 transition shadow-md border border-ink/10 dark:border-white/10">
         Đăng nhập
       </Link>
     );
@@ -48,8 +39,8 @@ export default function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="rounded-xl px-4 py-2 text-ink dark:text-cream bg-white dark:bg-black/40 hover:bg-white/90 dark:hover:bg-black/60 transition shadow-md border border-ink/10 dark:border-white/10">
-          <User className="h-4 w-4 mr-2" /> {displayName}
+        <Button aria-label={`Tài khoản: ${displayName}`} variant="outline" className="rounded-xl px-4 py-2 text-ink dark:text-cream bg-white dark:bg-black/40 hover:bg-white/90 dark:hover:bg-black/60 transition shadow-md border border-ink/10 dark:border-white/10">
+          <User className="h-4 w-4 mr-2" /><span className="hidden max-w-24 truncate sm:inline sm:max-w-40">{displayName}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 bg-white dark:bg-gray-900 border border-ink/10 dark:border-white/20 shadow-lg">
@@ -73,7 +64,7 @@ export default function UserMenu() {
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator className="bg-ink/10 dark:bg-white/20" />
-        <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-verm hover:bg-verm/10 dark:hover:bg-verm/20">
+        <DropdownMenuItem disabled={signingOut} onClick={event => { event.preventDefault(); void handleLogout(); }} className="cursor-pointer text-verm hover:bg-verm/10 dark:hover:bg-verm/20">
           <LogOut className="h-4 w-4 mr-2" /> Đăng xuất
         </DropdownMenuItem>
       </DropdownMenuContent>

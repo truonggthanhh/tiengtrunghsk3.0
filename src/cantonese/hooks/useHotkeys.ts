@@ -16,7 +16,7 @@ export default function useHotkeys(opts:Opts){
     function onKey(e:KeyboardEvent){
       const target = e.target instanceof HTMLElement ? e.target : null;
       if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey || e.isComposing ||
-          target?.isContentEditable || target?.closest('input, textarea, select, [contenteditable="true"]')) return;
+          target?.isContentEditable || target?.closest('input, textarea, select, button, a, summary, [role="button"], [role="combobox"], [contenteditable="true"]')) return;
       if(e.key==='ArrowLeft'){ opts.onPrev?.(); }
       else if(e.key==='ArrowRight'){ opts.onNext?.(); }
       else if(e.key===' '){ e.preventDefault(); opts.onFlip?.(); }

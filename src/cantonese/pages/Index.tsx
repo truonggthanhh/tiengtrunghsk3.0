@@ -1,3 +1,4 @@
+import NotebookPromo from '@/components/learning/NotebookPromo';
 import React from 'react'
 import { motion } from 'framer-motion'
 import { BookOpen, Headphones, Keyboard, PenTool, Zap, PlayCircle, Sparkles, Music, ListChecks, ToggleRight, Star, Volume2, Flame, Heart, ShoppingBag, Trophy, Award, Target, TrendingUp, Globe } from 'lucide-react'
@@ -11,7 +12,7 @@ function HongKongRetroLanding() {
   const { session, isLoading: isSessionLoading } = useSession();
   const { isAdmin, isLoadingProfile } = useProfile();
 
-  if (isSessionLoading || isLoadingProfile) {
+  if (isSessionLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
         <div className="text-cyan-600 dark:text-cyan-400 text-2xl font-bold animate-pulse">
@@ -46,6 +47,7 @@ function HongKongRetroLanding() {
         </Link>
       </div>
 
+      <NotebookPromo language="cantonese" />
       <Hero />
       <MarketSection />
       <GamificationSection />

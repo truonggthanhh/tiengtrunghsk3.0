@@ -49,8 +49,27 @@ Browser and handler tests mock Supabase. They establish local behavior, not live
 
 - ESLint: zero errors, zero warnings.
 - TypeScript: frontend, Vite configuration, maintenance scripts, and Node regression tests.
-- Node: 9 regression tests passed; none skipped.
-- Chromium: 10 regression tests passed, including mounting 5 actual application routes, a cached review remount, and YouTube cleanup.
+- Node: 14 regression tests passed; none skipped.
+- Chromium: 31 regression cases passed at the desktop viewport and again at a 390 × 844 mobile viewport. The route smoke case mounts 13 actual application routes; other cases cover both languages, account changes, auth failures, admin mutations, profile saves, notebooks, flashcard controls, cached review remounts, and YouTube cleanup.
 - Backend calls in these tests are mocked. Live Supabase/OAuth/AI and production hosting remain outside the verified results above.
 
 The prepared source is available in the cloud checkout. Updated startup and verification instructions were saved to the environment draft. Publication is a separate platform action; no Publish tool is available in this chat. No production data was mutated.
+
+
+## Learning, account, and administration upgrade — 2026-11-04
+
+- Both language sections now share validated email login, signup, confirmation resend, Google error handling, and password recovery screens. Login returns to a safe page in the same language; password reset is available at `/mandarin/forgot-password` and `/cantonese/forgot-password`.
+- Session initialization subscribes before reading the initial session, ignores late initial responses, times out stalled initialization, and clears the relevant query caches on account changes, including changes between provider remounts. SDK auth callback detection is restricted to the matching language's routes. Progress initialization stops on failed lookups instead of inserting after a read error.
+- Profile editing validates avatar URLs and names, preserves unsaved drafts during refetches, verifies the current account and the updated row, and invalidates the appropriate language's profile cache. Logout recovers from failures and prevents repeated requests.
+- User management checks the current server profile role, keys queries and UI state by the acting account, supports name/full-ID search, role filters, and 20-row pages. Role changes require confirmation, prohibit editing one's own role, recheck the acting administrator, and use a conditional update. Email display degrades gracefully when the existing `auth_users` view is unavailable. Backend RLS remains the enforcement boundary; browser checks do not replace it.
+- `/mandarin/notebook` and `/cantonese/notebook` provide separate local vocabulary notebooks per language and signed-in account (or guest). Save from dictionary/flashcards, add/edit/remove words, search without Vietnamese accents, filter weak/unreviewed words, review up to 20 words with flashcards or meaning questions, retry missed words, and export/import validated JSON backups. Capacity is 1,000 words per notebook. Data is stored in this browser; it is not synchronized through Supabase. Storage failures show a warning so learners can export before leaving.
+- Headers and the Cantonese navigation now fit mobile screens; shared theme handling avoids language-switch resets. Flashcard child buttons and keyboard controls no longer flip cards unintentionally; dictionary and speaker controls have improved dark-mode contrast. Saved Jyutping settings survive initial mount.
+- Mandarin course access now follows the actual asynchronous access query instead of freezing its initial denied state.
+
+### Verification and deployment notes
+
+Run the commands above, plus `HSK_TEST_MOBILE=1 npm run test:browser` for the mobile viewport. The 31 browser cases are the same cases at two viewport sizes, not 62 distinct scenarios. They use mocked Supabase responses. No production users or records were changed.
+
+Live Google sign-in, confirmation email delivery, password recovery, RPC behavior, and database RLS have not been verified against either production Supabase project. Each project's Auth URL configuration must allow its intended production destinations in its own language namespace, including `/mandarin/update-password` or `/cantonese/update-password`. Existing backend/demo limitations listed above still apply.
+
+Production build succeeds. Vite still reports large shared chunks; this upgrade does not claim a measured performance improvement. Source is prepared for GitHub; Vercel deployment is handled by the repository owner.

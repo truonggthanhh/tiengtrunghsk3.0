@@ -76,18 +76,19 @@ const SpeakerButton: React.FC<SpeakerButtonProps> = ({
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       aria-label="Nghe phát âm"
       className={cn(
         'inline-flex items-center justify-center w-10 h-10 rounded-full',
-        'bg-white/20 hover:bg-white/30 transition-all',
+        'bg-white/20 text-white hover:bg-white/30 transition-all',
         'focus:outline-none focus:ring-2 focus:ring-white/50',
         isSpeaking && 'bg-white/40',
         className
       )}
-      title="Nghe phát âm (Mandarin)"
+      title={language === 'zh-HK' ? 'Nghe phát âm (Quảng Đông)' : 'Nghe phát âm (tiếng Trung)'}
     >
-      <Volume2 className={cn('h-5 w-5 text-white', isSpeaking && 'animate-pulse')} />
+      <Volume2 className={cn('h-5 w-5 text-current', isSpeaking && 'animate-pulse')} />
     </button>
   );
 };

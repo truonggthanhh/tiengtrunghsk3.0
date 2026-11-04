@@ -36,25 +36,16 @@ export const useCourseAccess = (courseType: CourseType) => {
   const { session } = useSession();
   const userId = session?.user?.id;
 
-  // Get course by legacy type
-  const { data: course } = useCourseByLegacyType(courseType);
-
-  // Check access using new hook
-  const { data: accessCheck } = useCheckCourseAccess(course?.id);
-
-  return useQuery({
-    queryKey: ['courseAccess', userId, courseType],
-    queryFn: async () => {
-      if (!userId || !course) {
-        return { hasAccess: false, isAdmin: false };
-      }
-
-      // Return cached access check result
-      return accessCheck || { hasAccess: false, isAdmin: false };
-    },
-    enabled: !!userId && !!course,
-    staleTime: 5 * 60 * 1000,
-  });
+  const courseQuery = useCourseByLegacyType(courseType);
+  const accessQuery = useCheckCourseAccess(courseQuery.data?.id);
+  // Derive from the real access query; a second cache could freeze the initial false value.
+  return {
+    ...accessQuery,
+    data: accessQuery.data ?? { hasAccess: false, isAdmin: false },
+    isLoading: courseQuery.isLoading || accessQuery.isLoading,
+    isError: courseQuery.isError || accessQuery.isError,
+    error: courseQuery.error ?? accessQuery.error,
+  };
 };
 
 /**

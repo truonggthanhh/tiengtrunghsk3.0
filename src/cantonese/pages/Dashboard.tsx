@@ -1,3 +1,6 @@
+import UserManagement from '@/components/admin/UserManagement';
+import type { ManagedUser } from '@/lib/adminUsers';
+import { useAdminAccess } from '@/hooks/useAdminAccess';
 import type { Song } from '@/types/song';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -91,8 +94,9 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { session, isLoading: isSessionLoading } = useSession();
   const [activeTab, setActiveTab] = useState('lessons');
-  const [isUserAdmin, setIsUserAdmin] = useState(false);
-  const [isCheckingRole, setIsCheckingRole] = useState(true);
+  const access = useAdminAccess(supabase, 'cantonese', session, isSessionLoading);
+  const isUserAdmin = access.data === true;
+  const isCheckingRole = access.isLoading;
 
   // Memoize returnUrl để tránh tính toán lại khi component re-render do tab switch
   const returnUrl = useMemo(() => {
@@ -100,31 +104,15 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    if (!isSessionLoading && !session) {
-      toast.error('Vui lòng đăng nhập để truy cập Dashboard.');
-      navigate(`/cantonese/login?returnUrl=${returnUrl}`);
-      return;
-    }
+    if (!isSessionLoading && !session) navigate(`/cantonese/login?returnUrl=${returnUrl}`, { replace: true });
+  }, [isSessionLoading, session, navigate, returnUrl]);
 
-    if (session) {
-      const checkAdminRole = async () => {
-        setIsCheckingRole(true);
-        const { data, error } = await supabase.rpc('get_my_role');
-        if (error) {
-          console.error("Lỗi khi kiểm tra vai trò admin:", error);
-          setIsUserAdmin(false);
-        } else {
-          setIsUserAdmin(data === 'admin');
-        }
-        setIsCheckingRole(false);
-      };
-      checkAdminRole();
-    }
-  }, [session, isSessionLoading, navigate, returnUrl]);
-
-  if (isSessionLoading || isCheckingRole) {
+  if (isSessionLoading || isCheckingRole || !session) {
     return <div className="p-6">Đang kiểm tra quyền truy cập...</div>;
   }
+
+  if (access.error) return <div role="alert" className="mx-auto max-w-lg space-y-4 p-6"><p>Không thể kiểm tra quyền truy cập.</p><Button onClick={() => access.refetch()}>Thử lại</Button></div>;
+  if (!isUserAdmin) return <div role="alert" className="mx-auto max-w-lg space-y-4 p-6"><h1 className="text-xl font-bold">Khu vực quản trị</h1><p>Bạn cần quyền quản trị để quản lý nội dung và tài khoản.</p><Button asChild variant="outline"><Link to="/cantonese">Về trang học</Link></Button></div>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50/50 via-purple-50/30 to-pink-50/50 dark:from-gray-950 dark:via-cyan-950/10 dark:to-purple-950/10">
@@ -1015,88 +1003,8 @@ const SongManager = () => {
 };
 
 const UserManager = () => {
-  const [selectedUserForLessons, setSelectedUserForLessons] = useState<Profile | null>(null);
-
-  const { data: profiles, isLoading, error } = useQuery<Profile[]>({
-    queryKey: ['cantonese', 'allProfiles'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('profiles').select('id, first_name, last_name, role, updated_at');
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  return (
-    <>
-      <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-gray-200/50 dark:border-gray-800/50 shadow-xl">
-        <CardHeader className="border-b border-gray-200 dark:border-gray-800 bg-gradient-to-r from-pink-500/10 via-cyan-500/10 to-purple-500/10">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-500 to-cyan-500 grid place-items-center shadow-lg">
-              <Users className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <CardTitle className="text-2xl font-black text-gray-900 dark:text-white">Danh sách Người dùng</CardTitle>
-              <CardDescription className="text-gray-600 dark:text-gray-400">Quản lý quyền truy cập ngôn ngữ và bài học cho từng người dùng.</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="p-6">
-          {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-pink-500 border-t-transparent mb-4"></div>
-                <p className="text-gray-600 dark:text-gray-400">Đang tải...</p>
-              </div>
-            </div>
-          ) : error ? (
-            <div className="text-red-600 dark:text-red-400 p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">Lỗi tải danh sách người dùng.</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow className="border-gray-200 dark:border-gray-800">
-                    <TableHead className="font-bold text-gray-900 dark:text-white">Họ và Tên</TableHead>
-                    <TableHead className="font-bold text-gray-900 dark:text-white">Vai trò</TableHead>
-                    <TableHead className="font-bold text-gray-900 dark:text-white">Ngày cập nhật</TableHead>
-                    <TableHead className="font-bold text-gray-900 dark:text-white">Hành động</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {profiles?.map((p) => (
-                    <TableRow key={p.id} className="border-gray-200 dark:border-gray-800 hover:bg-pink-50/50 dark:hover:bg-pink-900/10 transition-colors">
-                      <TableCell className="font-medium text-gray-900 dark:text-white">{p.first_name || ''} {p.last_name || ''}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={p.role === 'admin' ? 'default' : 'secondary'}
-                          className={p.role === 'admin' ? 'bg-gradient-to-r from-pink-500 to-cyan-500 text-white' : ''}
-                        >
-                          {p.role}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-gray-600 dark:text-gray-400">{new Date(p.updated_at).toLocaleString()}</TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setSelectedUserForLessons(p)}
-                            className="hover:bg-pink-50 dark:hover:bg-pink-900/20 border-pink-300 dark:border-pink-700"
-                          >
-                            <BookOpen className="h-4 w-4 mr-2" /> Bài học
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-      <ManageUserLessonsDialog user={selectedUserForLessons} onClose={() => setSelectedUserForLessons(null)} />
-    </>
-  );
+  const [selected, setSelected] = useState<ManagedUser | null>(null);
+  return <><UserManagement language="cantonese" renderActions={user => <Button variant="outline" size="sm" onClick={() => setSelected(user)}><BookOpen className="mr-2 h-4 w-4" />Bài học</Button>} /><ManageUserLessonsDialog user={selected} onClose={() => setSelected(null)} /></>;
 };
 
 export default Dashboard;

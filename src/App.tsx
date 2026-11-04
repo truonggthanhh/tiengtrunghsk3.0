@@ -26,6 +26,10 @@ const PageLoader = () => (
   </div>
 );
 
+const VocabularyNotebook = lazy(() => import('./pages/VocabularyNotebook'));
+const MandarinForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const MandarinUpdatePassword = lazy(() => import('./pages/UpdatePassword'));
+
 // Lazy loaded pages
 const NotFound = lazy(() => import("./pages/NotFound"));
 const LanguageSelection = lazy(() => import("./pages/LanguageSelection"));
@@ -130,6 +134,9 @@ const App = () => (
 
             {/* Mandarin App Routes */}
             <Route path="/mandarin">
+              <Route path="notebook" element={<SessionContextProvider><PinyinProvider><VocabularyNotebook language="mandarin" /></PinyinProvider></SessionContextProvider>} />
+              <Route path="forgot-password" element={<SessionContextProvider><MandarinForgotPassword /></SessionContextProvider>} />
+              <Route path="update-password" element={<SessionContextProvider><MandarinUpdatePassword /></SessionContextProvider>} />
               <Route
                 index
                 element={
@@ -536,6 +543,7 @@ const App = () => (
 
             {/* Cantonese App Routes - Using CantoneseRouteWrapper to reduce duplication */}
             <Route path="/cantonese">
+              <Route path="notebook" element={<CantoneseRouteWrapper><VocabularyNotebook language="cantonese" /></CantoneseRouteWrapper>} />
               <Route
                 index
                 element={

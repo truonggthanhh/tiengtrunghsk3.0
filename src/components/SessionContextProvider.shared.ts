@@ -3,6 +3,7 @@ import { createContext,useContext } from 'react';
 interface SessionContextType {
   session: Session | null;
   isLoading: boolean;
+  error?: string | null;
 }
 
 export const SessionContext = createContext<SessionContextType | undefined>(undefined);

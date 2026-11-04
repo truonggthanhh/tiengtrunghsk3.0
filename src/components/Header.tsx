@@ -1,69 +1,32 @@
+import { useAdminAccess } from '@/hooks/useAdminAccess';
+import { useSignOut } from '@/hooks/useSignOut';
 import { ThemeToggle } from "./ThemeToggle";
 import { Link } from "react-router-dom";
 import { useSession } from '@/components/SessionContextProvider.shared';
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { LogOut, UserCog, Languages, User, BarChart2, BookOpen, Newspaper } from "lucide-react";
+import { BookMarked, LogOut, UserCog, Languages, User, BarChart2, BookOpen, Newspaper } from "lucide-react";
 import { toast } from "sonner";
 import { usePinyin } from '@/contexts/PinyinContext.shared';
 
 const Header = () => {
   const { session, isLoading } = useSession();
-  const [isAdmin, setIsAdmin] = useState(false);
+  const access = useAdminAccess(supabase, 'mandarin', session, isLoading);
+  const isAdmin = access.data === true;
   const { showPinyin, togglePinyin } = usePinyin();
-
-  useEffect(() => {
-    const checkAdminStatus = async () => {
-      if (session?.user) {
-        const { data: profile, error } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', session.user.id)
-          .single();
-
-        if (error) {
-          if (process.env.NODE_ENV === 'development') {
-            console.error('Failed to check admin status:', error);
-          }
-          setIsAdmin(false);
-          return;
-        }
-
-        if (profile && profile.role === 'admin') {
-          setIsAdmin(true);
-        } else {
-          setIsAdmin(false);
-        }
-      } else {
-        setIsAdmin(false);
-      }
-    };
-
-    if (!isLoading) {
-      checkAdminStatus();
-    }
-  }, [session, isLoading]);
-
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast.error("Đăng xuất thất bại", { description: error.message });
-    } else {
-      toast.success("Đăng xuất thành công", { description: "Bạn đã đăng xuất khỏi tài khoản." });
-    }
-  };
+  const { signOut: handleLogout, pending: signingOut } = useSignOut('mandarin');
 
   return (
     <header className="py-4 px-6 border-b sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 shadow-sm">
-      <div className="container mx-auto flex justify-between items-center">
+      <div className="container mx-auto flex flex-wrap items-center justify-between gap-3">
         <Link
           to="/mandarin"
-          className="text-2xl md:text-2xl font-bold text-primary hover:text-primary/80 transition-colors"
+          className="text-lg md:text-2xl font-bold text-primary hover:text-primary/80 transition-colors"
         >
           TIẾNG TRUNG HAOHAO
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex max-w-full flex-wrap items-center gap-2">
           {/* Pinyin Toggle Button */}
           <Button
             variant={showPinyin ? "default" : "outline"}
@@ -75,6 +38,7 @@ const Header = () => {
             <span className="hidden sm:inline">{showPinyin ? 'Có Pinyin' : 'Không Pinyin'}</span>
           </Button>
 
+          <Button asChild variant="ghost" size="sm"><Link to="/mandarin/notebook" aria-label="Sổ từ cá nhân" className="flex items-center gap-2"><BookMarked className="h-4 w-4" /><span className="hidden sm:inline">Sổ từ</span></Link></Button>
           {/* Dictionary - Available to everyone */}
           <Button asChild variant="ghost" size="sm">
             <Link to="/mandarin/dictionary" className="flex items-center gap-2">
@@ -122,6 +86,8 @@ const Header = () => {
               variant="ghost"
               size="sm"
               onClick={handleLogout}
+              disabled={signingOut}
+              aria-label={signingOut ? 'Đang đăng xuất' : 'Đăng xuất'}
               className="flex items-center gap-2"
             >
               <LogOut className="h-4 w-4" />
@@ -133,7 +99,7 @@ const Header = () => {
               variant="ghost"
               size="sm"
             >
-              <Link to="/mandarin/login">Đăng nhập</Link>
+              <Link to={`/mandarin/login?returnUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`}>Đăng nhập</Link>
             </Button>
           )}
           <ThemeToggle />

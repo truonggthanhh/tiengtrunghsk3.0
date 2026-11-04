@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import SaveWordButton from '@/components/learning/SaveWordButton';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import SpeakerButton from '@/components/SpeakerButton';
@@ -13,9 +14,11 @@ interface FlashcardProps {
 const Flashcard: React.FC<FlashcardProps> = ({ hanzi, pinyin, meaning, showPinyin = true }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
-  const handleToggle = () => setIsFlipped(!isFlipped);
+  useEffect(() => { setIsFlipped(false); }, [hanzi, pinyin, meaning]);
+  const handleToggle = () => setIsFlipped(value => !value);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.target !== e.currentTarget) return;
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       handleToggle();
@@ -23,6 +26,8 @@ const Flashcard: React.FC<FlashcardProps> = ({ hanzi, pinyin, meaning, showPinyi
   };
 
   return (
+    <>
+    <div className="mb-3 flex justify-end"><SaveWordButton language="mandarin" hanzi={hanzi} pronunciation={pinyin} meaning={meaning} /></div>
     <div
       className="flashcard-container w-full h-64 md:h-80 cursor-pointer"
       onClick={handleToggle}
@@ -63,6 +68,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ hanzi, pinyin, meaning, showPinyi
         </div>
       </div>
     </div>
+    </>
   );
 };
 

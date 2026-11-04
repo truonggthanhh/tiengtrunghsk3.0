@@ -1,3 +1,4 @@
+import NotebookPromo from '@/components/learning/NotebookPromo';
 import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
@@ -135,6 +136,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
+      <NotebookPromo language="mandarin" />
       <main className="container mx-auto p-4 md:p-8">
         {/* Back to Main Language Selection */}
         <div className="mb-6">

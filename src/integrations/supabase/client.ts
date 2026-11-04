@@ -1,3 +1,4 @@
+import { isAuthRouteForLanguage } from '@/lib/auth/navigation';
 import { createClient } from '@supabase/supabase-js';
 
 // Normally, these values should come from environment variables.
@@ -13,7 +14,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     flowType: 'pkce',
     autoRefreshToken: true,
-    detectSessionInUrl: true,
+    detectSessionInUrl: typeof window !== 'undefined' && isAuthRouteForLanguage(window.location.pathname, 'mandarin'),
     persistSession: true,
   },
 });

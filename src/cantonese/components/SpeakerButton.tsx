@@ -77,6 +77,7 @@ const SpeakerButton: React.FC<SpeakerButtonProps> = ({
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       aria-label="Nghe phát âm"
       className={cn(

@@ -7,12 +7,13 @@ import { supabase } from '@/integrations/supabase/client';
 export async function initUserProgress(userId: string): Promise<void> {
   try {
     // Check if user progress already exists
-    const { data: existing } = await supabase
+    const { data: existing, error: lookupError } = await supabase
       .from('user_progress')
       .select('user_id')
       .eq('user_id', userId)
       .maybeSingle();
 
+    if (lookupError) { console.error('Could not check existing progress:', lookupError); return; }
     if (existing) {
       console.log('User progress already exists');
       return;

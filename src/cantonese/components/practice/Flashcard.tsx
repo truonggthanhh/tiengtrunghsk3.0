@@ -1,3 +1,4 @@
+import SaveWordButton from '@/components/learning/SaveWordButton';
 import { flashcardSchema, type ExerciseHooks } from '@/cantonese/lib/exercisePayload';
 import React from 'react'
 import { useSettings } from '../providers/SettingsProvider.shared';
@@ -30,10 +31,17 @@ export default function Flashcard({data: rawData,hotkeyControls,onAttach}:{data:
     hotkeyControls?.setNext(()=>next)
   },[hotkeyControls,flip,prev,next])
 
+  if (!data.items.length) return <p className="p-6 text-center">Chưa có từ vựng cho bài học này.</p>;
+
   return (
     <div className="max-w-xl mx-auto p-6">
-      <div className="mb-3 text-sm text-ink/70 dark:text-cream/70">{i+1}/{data.items.length}</div>
-      <motion.button
+      <div className="mb-3 flex items-center justify-between gap-3"><span className="text-sm text-muted-foreground">{i+1}/{data.items.length}</span>{item.word && item.vi && <SaveWordButton language="cantonese" hanzi={item.word} pronunciation={item.jyutping} meaning={item.vi} />}</div>
+      <motion.div
+        role="button"
+        tabIndex={0}
+        aria-label="Lật thẻ từ vựng"
+        aria-pressed={flipped}
+        onKeyDown={event => { if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); event.stopPropagation(); flip(); } }}
         onClick={flip}
         className="relative w-full rounded-3xl border-2 border-ink/10 bg-white dark:bg-black/20 p-6 text-left text-ink shadow-[0_20px_0_#d7c8b6] transition-all duration-200 ease-in-out transform hover:-translate-y-1 active:translate-y-0"
         whileTap={{ scale: 0.98 }}
@@ -52,7 +60,7 @@ export default function Flashcard({data: rawData,hotkeyControls,onAttach}:{data:
             {showJyutping && item.jyutping && <div className="mt-1 text-sm text-black/70 dark:text-white/70">{item.jyutping}</div>} {/* Jyutping on back (already there) */}
           </div>
         )}
-      </motion.button>
+      </motion.div>
       <div className="mt-6 flex justify-between">
         <button disabled={i===0} onClick={prev} className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition text-sm disabled:opacity-50">Trước</button>
         <button disabled={i===data.items.length-1} onClick={next} className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition text-sm disabled:opacity-50">Sau</button>

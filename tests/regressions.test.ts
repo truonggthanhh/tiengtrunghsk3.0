@@ -119,3 +119,57 @@ test('maintenance dictionary validators accept hyphens without corrupting pinyin
   assert.equal(context.isValidHanzi('你好').valid, true);
   assert.equal(context.isValidPinyin('bad!').valid, false);
 });
+
+test('login return destinations stay inside their language and never loop back to auth', async () => {
+  const { safeReturnPath, isAuthRouteForLanguage } = await import('../src/lib/auth/navigation');
+  assert.equal(safeReturnPath('/mandarin/hsk/2/flashcard?count=10#word', 'mandarin'), '/mandarin/hsk/2/flashcard?count=10#word');
+  for (const value of ['//evil.test', 'https://evil.test', '/cantonese/lessons', '/mandarin/../../evil', '/mandarin/login?returnUrl=/mandarin/login', '/mandarin/forgot-password', '/mandarin\\evil', '/mandarin/\nfoo']) assert.equal(safeReturnPath(value, 'mandarin'), '/mandarin', value);
+  assert.equal(isAuthRouteForLanguage('/cantonese/login', 'mandarin'), false);
+  assert.equal(isAuthRouteForLanguage('/cantonese/login', 'cantonese'), true);
+  assert.equal(isAuthRouteForLanguage('/mandarinish', 'mandarin'), false);
+});
+
+test('OAuth cleanup preserves route filters, state, and ordinary anchors', async () => {
+  const { cleanAuthUrl } = await import('../src/lib/auth/navigation');
+  assert.equal(cleanAuthUrl('https://app.test/cantonese/lessons?lessonIds=1,2&code=abc&state=oauth#lesson'), '/cantonese/lessons?lessonIds=1%2C2#lesson');
+  assert.equal(cleanAuthUrl('https://app.test/mandarin/hsk/1?returnUrl=%2Fmandarin#word'), '/mandarin/hsk/1?returnUrl=%2Fmandarin#word');
+  const cleaned = cleanAuthUrl('https://app.test/cantonese/update-password?theme=dark#access_token=secret&refresh_token=other&type=recovery&keep=yes');
+  assert.equal(cleaned, '/cantonese/update-password?theme=dark#keep=yes');
+  assert.ok(!cleaned.includes('secret'));
+});
+
+test('private query invalidation keeps the other language intact', async () => {
+  const { isLanguageQuery } = await import('../src/lib/auth/navigation');
+  assert.equal(isLanguageQuery(['cantonese', 'admin-users'], 'mandarin'), false);
+  assert.equal(isLanguageQuery(['blog-comments', 'cantonese', 'id'], 'mandarin'), false);
+  assert.equal(isLanguageQuery(['userPoints', 'old-user'], 'mandarin'), true);
+  assert.equal(isLanguageQuery(['blog-comments', 'mandarin', 'id'], 'mandarin'), true);
+});
+
+test('admin user filters escape PostgREST punctuation and distinguish exact UUID lookups', async () => {
+  const { userNameFilter, isFullUserId, userDisplayName } = await import('../src/lib/adminUsers');
+  assert.equal(isFullUserId('00000000-0000-0000-0000-000000000001'), true);
+  assert.equal(isFullUserId('00000000'), false);
+  assert.ok(userNameFilter('Lan Anh').includes('and(or('));
+  assert.ok(userNameFilter('a"b%').includes('a\\"b\\%'));
+  assert.equal(userDisplayName({ first_name: null, last_name: null }), 'Chưa có tên');
+});
+
+test('notebook imports validate language, totals, size, and duplicate identities', async () => {
+  const { parseNotebookFile, mergeNotebookWords, notebookMatches, notebookKey, reviewChoices } = await import('../src/lib/notebook');
+  const first = { id: 'one', hanzi: '你好', pronunciation: 'nǐ hǎo', meaning: 'Xin chào', createdAt: '2026-11-04T00:00:00.000Z', attempts: 2, correct: 1 };
+  const second = { ...first, id: 'two', hanzi: '再见', meaning: 'Tạm biệt' };
+  const text = JSON.stringify({ version: 1, language: 'mandarin', words: [first, { ...first, id: 'duplicate' }, second] });
+  assert.equal(parseNotebookFile(text, 'mandarin').length, 2);
+  assert.throws(() => parseNotebookFile(text, 'cantonese'), /ngôn ngữ khác/);
+  assert.throws(() => parseNotebookFile('x'.repeat(1_000_001), 'mandarin'), /quá lớn/);
+  assert.throws(() => parseNotebookFile('{broken', 'mandarin'), /JSON/);
+  assert.throws(() => parseNotebookFile(JSON.stringify({ version: 1, language: 'mandarin', words: [{ ...first, correct: 10 }] }), 'mandarin'), /không hợp lệ/);
+  assert.equal(mergeNotebookWords([first], [first, second]).length, 2);
+  assert.equal(notebookMatches(first, 'xin chao'), true);
+  assert.notEqual(notebookKey('mandarin', 'A'), notebookKey('cantonese', 'A'));
+  assert.notEqual(notebookKey('mandarin', 'A'), notebookKey('mandarin', 'B'));
+  const choices = reviewChoices(first, [first, second, { ...second, id: 'third' }], () => 0.5);
+  assert.equal(new Set(choices).size, choices.length);
+  assert.ok(choices.includes(first.meaning));
+});

@@ -1,3 +1,5 @@
+import UserManagement from '@/components/admin/UserManagement';
+import { useAdminAccess } from '@/hooks/useAdminAccess';
 import type { Song } from '@/types/song';
 import { toError } from '@/lib/errors';
 import React, { useEffect, useState, useMemo } from 'react';
@@ -68,10 +70,6 @@ interface UserProfile {
 const AdminDashboardPage: React.FC = () => {
   const { session, isLoading: isSessionLoading } = useSession();
   const navigate = useNavigate();
-  const [users, setUsers] = useState<UserProfile[]>([]);
-  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   // API Key Management
   const [apiKey, setApiKey] = useState('');
   const [savedApiKey, setSavedApiKey] = useState('');
@@ -87,86 +85,12 @@ const AdminDashboardPage: React.FC = () => {
   // Document Upload
   const [documentFile, setDocumentFile] = useState<File | null>(null);
 
-  // Track if we've already fetched data to prevent re-fetching on tab switch
-  const hasFetchedRef = React.useRef(false);
-
-  // Memoize returnUrl để tránh tính toán lại khi component re-render do tab switch
-  const returnUrl = useMemo(() => {
-    return encodeURIComponent(window.location.pathname + window.location.search);
-  }, []);
-
+  const access = useAdminAccess(supabase, 'mandarin', session, isSessionLoading);
+  const isLoadingUsers = access.isLoading;
+  const error = access.error ? 'Không thể kiểm tra quyền quản trị. Vui lòng thử lại.' : (!isSessionLoading && session && !access.isLoading && !access.data ? 'Bạn không có quyền truy cập trang này.' : null);
   useEffect(() => {
-const fetchUserProfile = async (userId: string) => {
-    const { data: profileData, error: profileError } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', userId)
-      .single();
-
-    if (profileError || profileData?.role !== 'admin') {
-      setError('Bạn không có quyền truy cập trang này.');
-      setIsLoadingUsers(false);
-      toast.error('Truy cập bị từ chối', { description: 'Bạn không có quyền quản trị.' });
-      navigate('/mandarin'); // Redirect non-admin users
-      return;
-    }
-    fetchUsers();
-  };
-const fetchUsers = async () => {
-    // Only show loading spinner if we don't have data yet
-    setIsLoadingUsers(true);
-    setError(null);
-
-    // Fetch profiles
-    const { data: profilesData, error: profilesError } = await supabase
-      .from('profiles')
-      .select('id, first_name, last_name, role');
-
-    if (profilesError) {
-      setError('Không thể tải danh sách người dùng: ' + profilesError.message);
-      toast.error('Lỗi tải người dùng', { description: profilesError.message });
-      setIsLoadingUsers(false);
-      return;
-    }
-
-    // Fetch emails from auth_users view
-    const { data: emailsData, error: emailsError } = await supabase
-      .from('auth_users')
-      .select('id, email');
-
-    // Create a map of user IDs to emails for quick lookup
-    const emailMap = new Map<string, string>();
-    if (!emailsError && emailsData) {
-      emailsData.forEach(user => {
-        emailMap.set(user.id, user.email || 'N/A');
-      });
-    }
-
-    // Combine profiles with emails
-    const formattedUsers: UserProfile[] = profilesData.map(profile => ({
-      id: profile.id,
-      first_name: profile.first_name,
-      last_name: profile.last_name,
-      role: profile.role,
-      email: emailMap.get(profile.id) || 'N/A',
-    }));
-
-    setUsers(formattedUsers);
-    setIsLoadingUsers(false);
-  };
-
-    if (!isSessionLoading) {
-      if (!session) {
-        navigate(`/mandarin/login?returnUrl=${returnUrl}`);
-        return;
-      }
-      // Only fetch once when component mounts
-      if (!hasFetchedRef.current) {
-        hasFetchedRef.current = true;
-        fetchUserProfile(session.user.id);
-      }
-    }
-  }, [session, isSessionLoading, navigate, returnUrl]);
+    if (!isSessionLoading && !session) navigate('/mandarin/login?returnUrl=%2Fmandarin%2Fadmin', { replace: true });
+  }, [isSessionLoading, session, navigate]);
 
   // Load saved API key
   useEffect(() => {
@@ -180,31 +104,6 @@ const fetchUsers = async () => {
 
 
 
-
-  const handleAdminToggle = async (userId: string, currentRole: string) => {
-    if (session?.user.id === userId) {
-      toast.error('Không thể thay đổi quyền của chính mình', { description: 'Bạn không thể tự gỡ bỏ quyền quản trị của mình.' });
-      return;
-    }
-
-    const newRole = currentRole === 'admin' ? 'user' : 'admin';
-
-    const { error: updateError } = await supabase
-      .from('profiles')
-      .update({ role: newRole })
-      .eq('id', userId);
-
-    if (updateError) {
-      toast.error('Cập nhật thất bại', { description: updateError.message });
-    } else {
-      setUsers(prevUsers =>
-        prevUsers.map(user =>
-          user.id === userId ? { ...user, role: newRole } : user
-        )
-      );
-      toast.success('Cập nhật thành công', { description: `Quyền quản trị của người dùng đã được thay đổi thành ${newRole === 'admin' ? 'admin' : 'người dùng thường'}.` });
-    }
-  };
 
   // API Key Management
   // ⚠️ SECURITY WARNING: Storing API keys in localStorage is NOT secure for production
@@ -305,7 +204,7 @@ const fetchUsers = async () => {
     }
   };
 
-  if (isSessionLoading || isLoadingUsers) {
+  if (isSessionLoading || isLoadingUsers || !session) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
@@ -326,6 +225,7 @@ const fetchUsers = async () => {
               <CardDescription>{error}</CardDescription>
             </CardHeader>
             <CardContent>
+              <Button variant="outline" onClick={() => access.refetch()}>Thử lại</Button>
               <Button asChild variant="secondary" className="font-bold">
                 <Link to="/mandarin">
                   <Home className="mr-2 h-4 w-4" /> Quay lại trang chủ
@@ -355,41 +255,41 @@ const fetchUsers = async () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6">
-            <Tabs defaultValue="songs" className="w-full">
-              <TabsList className="grid w-full grid-cols-9 mb-6">
-                <TabsTrigger value="songs" className="flex items-center gap-2">
+            <Tabs defaultValue="users" className="w-full">
+              <TabsList className="mb-6 flex h-auto w-full justify-start gap-1 overflow-x-auto">
+                <TabsTrigger value="songs" aria-label="Bài hát" className="flex items-center gap-2">
                   <Music className="h-4 w-4" />
                   <span className="hidden sm:inline">Bài hát</span>
                 </TabsTrigger>
-                <TabsTrigger value="blog" className="flex items-center gap-2">
+                <TabsTrigger value="blog" aria-label="Blog" className="flex items-center gap-2">
                   <Newspaper className="h-4 w-4" />
                   <span className="hidden sm:inline">Blog</span>
                 </TabsTrigger>
-                <TabsTrigger value="courses" className="flex items-center gap-2">
+                <TabsTrigger value="courses" aria-label="Quản lý khóa học" className="flex items-center gap-2">
                   <BookOpen className="h-4 w-4" />
                   <span className="hidden sm:inline">Quản lý khóa học</span>
                 </TabsTrigger>
-                <TabsTrigger value="users" className="flex items-center gap-2">
+                <TabsTrigger value="users" aria-label="Người dùng" className="flex items-center gap-2">
                   <UserCog className="h-4 w-4" />
                   <span className="hidden sm:inline">Người dùng</span>
                 </TabsTrigger>
-                <TabsTrigger value="courseaccess" className="flex items-center gap-2">
+                <TabsTrigger value="courseaccess" aria-label="Quyền khóa học" className="flex items-center gap-2">
                   <Lock className="h-4 w-4" />
                   <span className="hidden sm:inline">Quyền khóa học</span>
                 </TabsTrigger>
-                <TabsTrigger value="apikey" className="flex items-center gap-2">
+                <TabsTrigger value="apikey" aria-label="API Key" className="flex items-center gap-2">
                   <Key className="h-4 w-4" />
                   <span className="hidden sm:inline">API Key</span>
                 </TabsTrigger>
-                <TabsTrigger value="ai" className="flex items-center gap-2">
+                <TabsTrigger value="ai" aria-label="AI Generator" className="flex items-center gap-2">
                   <Sparkles className="h-4 w-4" />
                   <span className="hidden sm:inline">AI Generator</span>
                 </TabsTrigger>
-                <TabsTrigger value="vocabulary" className="flex items-center gap-2">
+                <TabsTrigger value="vocabulary" aria-label="Từ vựng" className="flex items-center gap-2">
                   <Upload className="h-4 w-4" />
                   <span className="hidden sm:inline">Từ vựng</span>
                 </TabsTrigger>
-                <TabsTrigger value="documents" className="flex items-center gap-2">
+                <TabsTrigger value="documents" aria-label="Tài liệu" className="flex items-center gap-2">
                   <FileText className="h-4 w-4" />
                   <span className="hidden sm:inline">Tài liệu</span>
                 </TabsTrigger>
@@ -411,40 +311,7 @@ const fetchUsers = async () => {
               </TabsContent>
 
               {/* Users Management Tab */}
-              <TabsContent value="users" className="space-y-4">
-                <div className="rounded-lg border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Tên</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>ID</TableHead>
-                        <TableHead className="text-center">Quản trị viên</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {users.map(user => (
-                        <TableRow key={user.id}>
-                          <TableCell className="font-medium">{user.first_name} {user.last_name}</TableCell>
-                          <TableCell>{user.email}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm">{user.id.substring(0, 8)}...</TableCell>
-                          <TableCell className="text-center">
-                            <div className="flex items-center justify-center">
-                              <Switch
-                                id={`admin-toggle-${user.id}`}
-                                checked={user.role === 'admin'}
-                                onCheckedChange={() => handleAdminToggle(user.id, user.role)}
-                                disabled={session?.user.id === user.id}
-                              />
-                              <Label htmlFor={`admin-toggle-${user.id}`} className="sr-only">Toggle admin status for {user.first_name}</Label>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </TabsContent>
+              <TabsContent value="users" className="space-y-4"><UserManagement language="mandarin" /></TabsContent>
 
               {/* Course Access Management Tab */}
               <TabsContent value="courseaccess" className="space-y-4">

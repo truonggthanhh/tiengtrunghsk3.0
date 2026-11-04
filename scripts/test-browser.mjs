@@ -30,6 +30,7 @@ try {
   };
   const call = (method, params = {}) => new Promise((resolve, reject) => { const n = ++id; pending.set(n, { resolve, reject }); socket.send(JSON.stringify({ id: n, method, params })); });
   await call('Runtime.enable');
+  if (process.env.HSK_TEST_MOBILE === '1') await call('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
   await call('Page.navigate', { url: 'http://127.0.0.1:4174/tests/browser.html' });
   let results;
   for (let i = 0; i < 200; i++) {

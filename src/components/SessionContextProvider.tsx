@@ -1,75 +1,10 @@
-import { SessionContext, useSession } from './SessionContextProvider.shared';
-import React, { useState, useEffect, createContext, useContext } from 'react';
-import { Session } from '@supabase/supabase-js';
+import type { ReactNode } from 'react';
+import { SessionContext } from './SessionContextProvider.shared';
 import { supabase } from '@/integrations/supabase/client';
-import { useNavigate } from 'react-router-dom';
 import { initUserProgress } from '@/lib/initUserProgress';
+import { useAuthSession } from '@/hooks/useAuthSession';
 
-interface SessionContextType {
-  session: Session | null;
-  isLoading: boolean;
+export function SessionContextProvider({ children }: { children: ReactNode }) {
+  const state = useAuthSession(supabase, 'mandarin', initUserProgress);
+  return <SessionContext.Provider value={state}>{children}</SessionContext.Provider>;
 }
-
-
-
-export const SessionContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [session, setSession] = useState<Session | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    // Xử lý OAuth callback - tự động detect tokens trong URL
-    const handleOAuthCallback = async () => {
-      try {
-        // getSession() sẽ tự động xử lý tokens trong URL hash/query
-        const { data: { session }, error } = await supabase.auth.getSession();
-
-        if (error) {
-          console.error('Error getting session:', error);
-        }
-
-        setSession(session);
-
-        // Nếu có session và URL có hash/query params, clean up URL
-        if (session && (window.location.hash || window.location.search.includes('code='))) {
-          // Clean URL sau khi process OAuth callback
-          window.history.replaceState({}, document.title, window.location.pathname);
-        }
-      } catch (error) {
-        console.error('Error in OAuth callback handling:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    handleOAuthCallback();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log('Auth state changed:', _event, session ? 'Session exists' : 'No session');
-      setSession(session);
-      setIsLoading(false);
-
-      // Initialize user progress when user signs in for the first time
-      if (_event === 'SIGNED_IN' && session?.user) {
-        setTimeout(() => { void initUserProgress(session.user.id); }, 0);
-      }
-
-      // Clean URL nếu event là SIGNED_IN và có OAuth params
-      if (_event === 'SIGNED_IN' && (window.location.hash || window.location.search.includes('code='))) {
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-
-      if (_event === 'SIGNED_OUT') {
-        navigate('/mandarin/login');
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
-  return (
-    <SessionContext.Provider value={{ session, isLoading }}>
-      {children}
-    </SessionContext.Provider>
-  );
-};

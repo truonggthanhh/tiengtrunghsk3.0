@@ -1,3 +1,5 @@
+import { useQuery } from '@tanstack/react-query';
+import ProfileEditor from '@/components/auth/ProfileEditor';
 import { toError } from '@/lib/errors';
 import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -26,14 +28,24 @@ interface ExerciseStats {
   last_practiced_at: string;
 }
 
-const ProfilePage: React.FC = () => {
+const ProfileContent: React.FC = () => {
   const { session, isLoading: isSessionLoading } = useSession();
   const navigate = useNavigate();
   const { getAllStats } = useProgressTracking();
 
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [stats, setStats] = useState<ExerciseStats[]>([]);
-  const [isLoadingData, setIsLoadingData] = useState(true);
+  const profileQuery = useQuery({
+    queryKey: ['mandarin', 'current-profile', session?.user.id],
+    enabled: !isSessionLoading && Boolean(session),
+    queryFn: async ({ signal }) => {
+      const { data, error } = await supabase.from('profiles').select('first_name, last_name').eq('id', session!.user.id).abortSignal(signal).maybeSingle();
+      if (error) throw error;
+      return { first_name: data?.first_name ?? null, last_name: data?.last_name ?? null, email: session!.user.email ?? '' };
+    }, retry: false,
+  });
+  const profile = profileQuery.data;
+  const statsQuery = useQuery({ queryKey: ['mandarin', 'exercise-stats', session?.user.id], queryFn: async () => (await getAllStats() ?? []) as ExerciseStats[], enabled: !isSessionLoading && Boolean(session) });
+  const stats = statsQuery.data ?? [];
+  const isLoadingData = profileQuery.isLoading || statsQuery.isLoading;
 
   // Memoize returnUrl để tránh tính toán lại khi component re-render do tab switch
   const returnUrl = useMemo(() => {
@@ -41,49 +53,10 @@ const ProfilePage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-const loadUserData = async () => {
-    if (!session?.user) return;
+    if (!isSessionLoading && !session) navigate(`/mandarin/login?returnUrl=${returnUrl}`, { replace: true });
+  }, [isSessionLoading, session, navigate, returnUrl]);
 
-    setIsLoadingData(true);
-    try {
-      // Load profile
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('first_name, last_name')
-        .eq('id', session.user.id)
-        .single();
-
-      setProfile({
-        first_name: profileData?.first_name || null,
-        last_name: profileData?.last_name || null,
-        email: session.user.email || '',
-      });
-
-      // Load stats
-      const statsData = await getAllStats();
-      if (statsData) {
-        setStats(statsData as ExerciseStats[]);
-      }
-    } catch (caughtError: unknown) {
-      const error = toError(caughtError);
-      console.error('Error loading user data:', error);
-    } finally {
-      setIsLoadingData(false);
-    }
-  };
-
-    if (!isSessionLoading) {
-      if (!session) {
-        navigate(`/mandarin/login?returnUrl=${returnUrl}`);
-        return;
-      }
-      loadUserData();
-    }
-  }, [session, isSessionLoading, navigate, returnUrl, getAllStats]);
-
-
-
-  if (isSessionLoading || isLoadingData) {
+  if (isSessionLoading || isLoadingData || !session) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-cyan-50 flex items-center justify-center">
         <Loader2 className="h-10 w-10 animate-spin text-purple-600" />
@@ -91,6 +64,8 @@ const loadUserData = async () => {
       </div>
     );
   }
+
+  if (profileQuery.error) return <div role="alert" className="mx-auto max-w-lg space-y-4 p-6"><p>Không thể tải hồ sơ.</p><Button onClick={() => profileQuery.refetch()}>Thử lại</Button></div>;
 
   const totalAttempts = stats.reduce((sum, stat) => sum + stat.total_attempts, 0);
   const totalCorrect = stats.reduce((sum, stat) => sum + stat.correct_answers, 0);
@@ -119,6 +94,7 @@ const loadUserData = async () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-cyan-50 flex flex-col">
       <Header />
+      {session && profile && <div className="container mx-auto px-4 pt-6"><ProfileEditor client={supabase} language="mandarin" session={session} profile={profile} /></div>}
       <main className="container mx-auto p-4 md:p-8 flex-grow">
         {/* Profile Header */}
         <Card className="w-full max-w-4xl mx-auto mb-8 border-0 shadow-2xl bg-white/90 backdrop-blur-lg overflow-hidden">
@@ -249,4 +225,7 @@ const loadUserData = async () => {
   );
 };
 
-export default ProfilePage;
+export default function ProfilePage() {
+  const { session } = useSession();
+  return <ProfileContent key={session?.user.id ?? 'anonymous'} />;
+}

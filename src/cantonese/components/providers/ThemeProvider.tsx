@@ -1,25 +1,23 @@
-import { ThemeCtx, useTheme } from './ThemeProvider.shared';
-import React from 'react'
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useTheme as useSiteTheme } from 'next-themes';
+import { ThemeCtx } from './ThemeProvider.shared';
 
-type Ctx = { dark:boolean; toggle:()=>void }
-
-
-
-
-export default function ThemeProvider({children}:{children:React.ReactNode}){
-  const [dark,setDark]=React.useState(false)
-
-  React.useEffect(()=>{
-    const saved = localStorage.getItem('theme.dark')
-    if(saved){ setDark(saved==='1') }
-  },[])
-  
-  React.useEffect(()=>{
-    if(typeof document!=='undefined'){
-      document.documentElement.classList.toggle('dark', dark)
-    }
-    localStorage.setItem('theme.dark', dark?'1':'0')
-  },[dark])
-
-  return <ThemeCtx.Provider value={{dark,toggle:()=>setDark(d=>!d)}}>{children}</ThemeCtx.Provider>
+export default function ThemeProvider({ children }: { children: ReactNode }) {
+  const { resolvedTheme, theme, forcedTheme, setTheme } = useSiteTheme();
+  const [fallbackDark, setFallbackDark] = useState(() => {
+    try { return localStorage.getItem('theme.dark') === '1'; } catch { return false; }
+  });
+  const shared = Boolean(setTheme);
+  const dark = shared ? (forcedTheme ?? resolvedTheme ?? theme) === 'dark' : fallbackDark;
+  useEffect(() => {
+    if (shared) return;
+    document.documentElement.classList.toggle('dark', fallbackDark);
+    try { localStorage.setItem('theme.dark', fallbackDark ? '1' : '0'); } catch { /* Keep the current session preference. */ }
+  }, [shared, fallbackDark]);
+  const toggle = useCallback(() => {
+    if (setTheme) setTheme(dark ? 'light' : 'dark');
+    else setFallbackDark(value => !value);
+  }, [setTheme, dark]);
+  const value = useMemo(() => ({ dark, toggle }), [dark, toggle]);
+  return <ThemeCtx.Provider value={value}>{children}</ThemeCtx.Provider>;
 }

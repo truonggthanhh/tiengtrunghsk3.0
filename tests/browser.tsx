@@ -19,6 +19,20 @@ import { Progress } from '../src/components/ui/progress';
 
 import ReviewPage from '../src/cantonese/pages/ReviewPage';
 import SongDetail from '../src/pages/SongDetail';
+import '../src/globals.css';
+import type { Session, AuthChangeEvent } from '@supabase/supabase-js';
+import { useLearningSession } from '../src/hooks/useLearningSession';
+import LoginScreen from '../src/components/auth/LoginScreen';
+import PasswordRecoveryScreen from '../src/components/auth/PasswordRecoveryScreen';
+import UserManagement from '../src/components/admin/UserManagement';
+import VocabularyNotebook from '../src/pages/VocabularyNotebook';
+import { SessionContext as MandarinSessionContext } from '../src/components/SessionContextProvider.shared';
+import { SessionContext as CantoneseSessionContext } from '../src/cantonese/components/providers/SessionContextProvider.shared';
+import { notebookKey, notebookSnapshot, updateNotebook } from '../src/lib/notebook';
+import ProfileEditor from '../src/components/auth/ProfileEditor';
+import { useQuery } from '@tanstack/react-query';
+import { useCourseAccess } from '../src/hooks/useCourseAccess';
+import MandarinFlashcard from '../src/components/Flashcard';
 const results: { name: string; passed: boolean; error?: string }[] = [];
 const host = document.getElementById('root')!;
 let root = createRoot(host);
@@ -164,11 +178,292 @@ await check('Main app routes mount with their actual providers', async () => {
   const { default: App } = await import('../src/App');
   history.replaceState(null, '', '/');
   root.render(<App />);
-  for (const [path, expected] of [['/', 'Chọn phương ngữ'], ['/mandarin', 'HSK'], ['/cantonese', 'Quảng Đông'], ['/mandarin/blog/sample', 'Regression blog'], ['/cantonese/blog/sample', 'Regression blog']]) {
+  for (const [path, expected] of [['/', 'Chọn phương ngữ'], ['/mandarin', 'HSK'], ['/cantonese', 'Quảng Đông'], ['/mandarin/blog/sample', 'Regression blog'], ['/cantonese/blog/sample', 'Regression blog'], ['/mandarin/notebook', 'Sổ từ tiếng Trung'], ['/cantonese/notebook', 'Sổ từ Quảng Đông'], ['/mandarin/forgot-password', 'Quên mật khẩu'], ['/cantonese/forgot-password', 'Quên mật khẩu'], ['/mandarin/update-password', 'Liên kết không hợp lệ'], ['/cantonese/update-password', 'Liên kết không hợp lệ'], ['/mandarin/login', 'Chào mừng bạn trở lại'], ['/cantonese/login', 'Chào mừng bạn trở lại']]) {
     history.pushState(null, '', path);
     window.dispatchEvent(new PopStateEvent('popstate'));
+    await delay(50);
     await until(() => Boolean(host.textContent?.includes(expected)));
     assert(!host.textContent?.includes('Oops! Có lỗi xảy ra'), `Route crashed: ${path}`);
+    assert(document.documentElement.scrollWidth <= window.innerWidth + 2, `Route overflows viewport: ${path} (${document.documentElement.scrollWidth}/${window.innerWidth})`);
   }
 });
+
+function fakeSession(id: string): Session {
+  return { access_token: 'test-only-access', refresh_token: 'test-only-refresh', token_type: 'bearer', expires_in: 3600,
+    user: { id, aud: 'authenticated', created_at: '2026-11-04T00:00:00Z', email: `${id}@example.test`, app_metadata: {}, user_metadata: {} } };
+}
+function setInput(selector: string, value: string) {
+  const input = host.querySelector<HTMLInputElement>(selector);
+  assert(input, `Missing input: ${selector}`);
+  Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, value);
+  input!.dispatchEvent(new Event('input', { bubbles: true }));
+}
+function clickText(text: string, scope: ParentNode = host) {
+  const button = [...scope.querySelectorAll<HTMLButtonElement>('button')].find(item => item.textContent?.trim() === text);
+  assert(button, `Missing button: ${text}`); button!.click();
+}
+export function AuthProbe({ language }: { language: 'mandarin' | 'cantonese' }) {
+  const { session, isLoading } = useLearningSession(language);
+  return <output>{isLoading ? 'loading' : session?.user.id ?? 'signed-out'}</output>;
+}
+for (const language of ['mandarin', 'cantonese'] as const) {
+  const sdk = language === 'mandarin' ? mandarin : cantonese;
+  const Provider = language === 'mandarin' ? MandarinSession : CantoneseSession;
+  await check(`${language} auth: stale initial response cannot undo sign-out or keep private caches`, async () => {
+    const listeners = new Set<(event: AuthChangeEvent, session: Session | null) => void>();
+    let initial!: (result: unknown) => void;
+    sdk.auth.getSession = (() => new Promise(resolve => { initial = resolve; })) as never;
+    sdk.auth.onAuthStateChange = ((callback: (event: AuthChangeEvent, session: Session | null) => void) => { listeners.add(callback); return { data: { subscription: { unsubscribe: () => listeners.delete(callback) } } }; }) as never;
+    const query = client();
+    const privateKey = language === 'mandarin' ? ['userPoints', 'old'] : ['cantonese', 'private', 'old'];
+    const otherKey = language === 'mandarin' ? ['cantonese', 'keep'] : ['mandarin', 'keep'];
+    query.setQueryData(privateKey, 'private'); query.setQueryData(otherKey, 'keep');
+    try {
+      root.render(<QueryClientProvider client={query}><Provider><AuthProbe language={language} /></Provider></QueryClientProvider>);
+      await until(() => listeners.size > 0);
+      for (const callback of listeners) assert(callback('SIGNED_IN', fakeSession('old')) === undefined, 'Auth callback must return synchronously');
+      await until(() => host.querySelector('output')?.textContent === 'old');
+      for (const callback of listeners) callback('SIGNED_OUT', null);
+      initial({ data: { session: fakeSession('old') }, error: null });
+      await until(() => host.querySelector('output')?.textContent === 'signed-out');
+      assert(query.getQueryData(privateKey) === undefined, 'Private data must be removed on sign-out');
+      assert(query.getQueryData(otherKey) === 'keep', 'Other language cache must survive');
+    } finally { mockClient(sdk, language); }
+  });
+  await check(`${language} login: trimmed email, visible password, failure recovery, and duplicate-submit guard`, async () => {
+    let calls = 0; let submittedEmail = ''; let settle!: (result: unknown) => void;
+    sdk.auth.signInWithPassword = ((input: { email: string }) => { calls++; submittedEmail = input.email; return new Promise(resolve => { settle = resolve; }); }) as never;
+    root.render(<MemoryRouter><LoginScreen client={sdk} language={language} session={null} isLoading={false} /></MemoryRouter>);
+    await delay(30);
+    setInput('#auth-email', 'Learner@example.test'); setInput('#auth-password', 'secret-password');
+    await delay(10);
+    host.querySelector<HTMLButtonElement>('[aria-label="Hiện mật khẩu"]')!.click();
+    await delay(10); assert(host.querySelector<HTMLInputElement>('#auth-password')?.type === 'text', 'Password toggle must work');
+    const form = host.querySelector('form')!;
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    assert(calls === 1 && submittedEmail === 'Learner@example.test', 'Only one request may be sent');
+    settle({ data: { session: null }, error: new Error('Invalid login credentials') });
+    await until(() => Boolean(host.querySelector('[role="alert"]')?.textContent?.includes('Email hoặc mật khẩu')));
+    assert(!host.querySelector<HTMLButtonElement>('button[type="submit"]')!.disabled, 'Form must unlock after failure');
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    assert(calls === 2, 'A failed login must be retryable');
+    settle({ data: { session: fakeSession('new') }, error: null });
+    await until(() => Boolean(host.textContent?.includes('Đăng nhập thành công')));
+  });
+  await check(`${language} signup: password confirmation and email verification without premature login`, async () => {
+    let calls = 0;
+    sdk.auth.signUp = (() => { calls++; return Promise.resolve({ data: { user: { identities: [{}] }, session: null }, error: null }); }) as never;
+    root.render(<MemoryRouter><LoginScreen client={sdk} language={language} session={null} isLoading={false} /></MemoryRouter>);
+    await delay(20); clickText('Tạo tài khoản'); await delay(20);
+    setInput('#auth-email', 'new@example.test'); setInput('#auth-password', 'password12'); setInput('#auth-confirmation', 'password34'); await delay(10);
+    host.querySelector('form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    await until(() => Boolean(host.textContent?.includes('Mật khẩu xác nhận không khớp')));
+    assert(calls === 0, 'Mismatched passwords must never reach the SDK');
+    setInput('#auth-confirmation', 'password12'); await delay(10);
+    host.querySelector('form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    await until(() => Boolean(host.textContent?.includes('Hãy mở email')));
+    assert(calls === 1 && host.textContent?.includes('Gửi lại email xác nhận'), 'Verification must be clearly actionable');
+  });
+  await check(`${language} password recovery: network rejection unlocks the form`, async () => {
+    sdk.auth.resetPasswordForEmail = (() => Promise.reject(new Error('Network fetch failed'))) as never;
+    root.render(<MemoryRouter><PasswordRecoveryScreen client={sdk} language={language} session={null} isLoading={false} /></MemoryRouter>);
+    await delay(20); setInput('#reset-email', 'user@example.test'); await delay(10);
+    host.querySelector('form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    await until(() => Boolean(host.querySelector('[role="alert"]')?.textContent?.includes('Kết nối')));
+    assert(!host.querySelector<HTMLButtonElement>('button[type="submit"]')!.disabled, 'Recovery must unlock after network error');
+  });
+  await check(`${language} notebook: add/search words, grade once, and retry only missed words`, async () => {
+    updateNotebook(notebookKey(language), () => []);
+    root.render(<MemoryRouter><VocabularyNotebook language={language} /></MemoryRouter>);
+    await delay(30);
+    for (const word of [{ hanzi: '你好', pronunciation: 'hello', meaning: 'Xin chào' }, { hanzi: '再见', pronunciation: 'bye', meaning: 'Tạm biệt' }]) {
+      setInput('#notebook-hanzi', word.hanzi); setInput('#notebook-pronunciation', word.pronunciation); setInput('#notebook-meaning', word.meaning); await delay(10);
+      host.querySelector('form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })); await delay(30);
+    }
+    assert(host.querySelectorAll('article').length === 2, 'Both saved words must render');
+    setInput('[aria-label="Tìm trong sổ từ"]', 'xin chao'); await delay(20);
+    assert(host.querySelectorAll('article').length === 1, 'Vietnamese search should work without accents');
+    setInput('[aria-label="Tìm trong sổ từ"]', ''); await delay(20); clickText('Luyện chọn nghĩa'); await delay(20);
+    const first = host.querySelector('[aria-label="Ôn sổ từ"] h2')!.textContent!;
+    const wrong = first === '你好' ? 'Tạm biệt' : 'Xin chào';
+    clickText(wrong); clickText(wrong); await delay(20);
+    assert(notebookSnapshot(notebookKey(language)).words.find(word => word.hanzi === first)?.attempts === 1, 'Double clicks must count only once');
+    clickText('Từ tiếp theo'); await delay(20);
+    const second = host.querySelector('[aria-label="Ôn sổ từ"] h2')!.textContent!;
+    clickText(second === '你好' ? 'Xin chào' : 'Tạm biệt'); await delay(20); clickText('Xem kết quả'); await delay(20);
+    assert(host.textContent?.includes('1/2'), 'Summary must reflect the actual answers');
+    clickText('Ôn lại từ chưa nhớ'); await delay(20);
+    assert(host.querySelector('[aria-label="Ôn sổ từ"] h2')!.textContent === first, 'Only the missed word should repeat');
+    assert(host.querySelectorAll('[aria-label="Ôn sổ từ"] button').length >= 3, 'Retry keeps distractors from the original word set');
+  });
+  await check(`${language} notebook: switching accounts hides private words immediately`, async () => {
+    const Context = language === 'mandarin' ? MandarinSessionContext : CantoneseSessionContext;
+    updateNotebook(notebookKey(language, 'A'), () => [{ id: 'private', hanzi: '私密词', pronunciation: 'private', meaning: 'Private word', createdAt: '2026-11-04T00:00:00.000Z', attempts: 0, correct: 0 }]);
+    updateNotebook(notebookKey(language, 'B'), () => []);
+    const render = (id: string) => root.render(<MemoryRouter><Context.Provider value={{ session: fakeSession(id), isLoading: false }}><VocabularyNotebook language={language} /></Context.Provider></MemoryRouter>);
+    render('A'); await until(() => Boolean(host.textContent?.includes('私密词')));
+    render('B'); await delay(40);
+    assert(!host.textContent?.includes('私密词'), 'Another account must not see the previous account notebook');
+  });
+}
+
+function adminFixture(sdk: typeof mandarin, allow = true) {
+  const actor = fakeSession('00000000-0000-0000-0000-000000000001');
+  const ordinary = fakeSession('00000000-0000-0000-0000-000000000099');
+  const rows = [{ id: actor.user.id, first_name: 'Admin', last_name: 'Tester', role: allow ? 'admin' : 'user' },
+    ...Array.from({ length: 20 }, (_, i) => ({ id: `00000000-0000-0000-0000-${String(i + 2).padStart(12, '0')}`, first_name: `Learner ${i + 1}`, last_name: 'Test', role: 'user' }))];
+  let lists = 0; const writes: string[] = [];
+  sdk.auth.getUser = (() => Promise.resolve({ data: { user: actor.user }, error: null })) as never;
+  sdk.from = ((table: string) => {
+    const filters: Record<string, unknown> = {};
+    let singular = false; let update: { role: string } | null = null; let range = [0, 19]; let pattern = '';
+    const builder = new Proxy({}, { get: (_target, name) => {
+      if (name === 'then') return (resolve: (value: unknown) => void) => setTimeout(() => {
+        if (table === 'auth_users') return resolve({ data: rows.map(row => ({ id: row.id, email: `${row.first_name.replace(/ /g, '')}@example.test` })), error: null });
+        if (update) {
+          const row = rows.find(item => item.id === filters.id && item.role === filters.role);
+          if (row) { row.role = update.role; writes.push(row.id); }
+          return resolve({ data: row ? { id: row.id, role: row.role } : null, error: null });
+        }
+        if (singular) return resolve({ data: { role: filters.id === actor.user.id && allow ? 'admin' : 'user' }, error: null });
+        lists++;
+        let selected = rows.filter(row => !filters.role || row.role === filters.role);
+        if (filters.id) selected = selected.filter(row => row.id === filters.id);
+        if (pattern) {
+          const parts = [...pattern.matchAll(/first_name\.ilike\."%([^"%]+)%"/g)].map(match => match[1].toLowerCase());
+          selected = selected.filter(row => parts.every(part => `${row.first_name} ${row.last_name}`.toLowerCase().includes(part)));
+        }
+        resolve({ data: selected.slice(range[0], range[1] + 1), count: selected.length, error: null });
+      }, singular && filters.id === actor.user.id ? 60 : 15);
+      if (name === 'eq') return (key: string, value: unknown) => { filters[key] = value; return builder; };
+      if (name === 'range') return (start: number, end: number) => { range = [start, end]; return builder; };
+      if (name === 'or') return (value: string) => { pattern = value; return builder; };
+      if (name === 'maybeSingle' || name === 'single') return () => { singular = true; return builder; };
+      if (name === 'update') return (value: { role: string }) => { update = value; return builder; };
+      return () => builder;
+    } });
+    return builder;
+  }) as never;
+  return { actor, ordinary, rows, writes, lists: () => lists };
+}
+for (const language of ['mandarin', 'cantonese'] as const) {
+  const sdk = language === 'mandarin' ? mandarin : cantonese;
+  const Context = language === 'mandarin' ? MandarinSessionContext : CantoneseSessionContext;
+  await check(`${language} user management: pagination, search, self protection, and confirmed role changes`, async () => {
+    const fixture = adminFixture(sdk);
+    try {
+      root.render(<QueryClientProvider client={client()}><Context.Provider value={{ session: fixture.actor, isLoading: false }}><UserManagement language={language} /></Context.Provider></QueryClientProvider>);
+      await until(() => host.querySelectorAll('tbody tr').length === 20);
+      const ownRow = [...host.querySelectorAll('tbody tr')].find(row => row.textContent?.includes('(Bạn)'))!;
+      assert(ownRow.querySelector<HTMLButtonElement>('button')!.disabled, 'Admins must not change their own role');
+      const target = [...host.querySelectorAll('tbody tr')].find(row => row.querySelector('td')?.textContent === 'Learner 1 Test')!;
+      target.querySelector<HTMLButtonElement>('button')!.click(); await delay(30);
+      assert(fixture.writes.length === 0, 'Opening confirmation must not change permissions');
+      clickText('Hủy', document); await delay(30);
+      assert(fixture.writes.length === 0, 'Cancelling must not change permissions');
+      target.querySelector<HTMLButtonElement>('button')!.click(); await delay(30);
+      const confirm = [...document.querySelectorAll<HTMLButtonElement>('button')].find(button => button.textContent?.trim() === 'Xác nhận đổi quyền')!;
+      confirm.click(); confirm.click();
+      await until(() => fixture.writes.length === 1 && !document.querySelector('[role="alertdialog"]'));
+      assert(fixture.rows[1].role === 'admin', 'Confirmed role change must be persisted');
+      assert(fixture.writes.length === 1, 'Rapid confirm clicks must not duplicate mutations');
+      await until(() => ![...host.querySelectorAll<HTMLButtonElement>('button')].find(button => button.textContent === 'Sau')!.disabled);
+      clickText('Sau'); await until(() => Boolean(host.textContent?.includes('Trang 2 / 2')) && host.querySelectorAll('tbody tr').length === 1);
+      setInput('[aria-label="Tìm người dùng"]', 'Nobody');
+      await until(() => Boolean(host.textContent?.includes('Không tìm thấy người dùng phù hợp')));
+    } finally { mockClient(sdk, language); }
+  });
+  await check(`${language} user management: a late admin response cannot expose data to the next account`, async () => {
+    const fixture = adminFixture(sdk);
+    const query = client();
+    const render = (session: Session) => root.render(<QueryClientProvider client={query}><Context.Provider value={{ session, isLoading: false }}><UserManagement language={language} /></Context.Provider></QueryClientProvider>);
+    try {
+      render(fixture.actor); await delay(8); render(fixture.ordinary);
+      await until(() => Boolean(host.textContent?.includes('Chỉ quản trị viên')));
+      await delay(100);
+      assert(host.querySelector('table') === null && fixture.lists() === 0, 'No user list may be fetched/rendered for the next non-admin account');
+    } finally { mockClient(sdk, language); }
+  });
+}
+
+export function ProfileEditorHarness({ language, session }: { language: 'mandarin' | 'cantonese'; session: Session }) {
+  const sdk = language === 'mandarin' ? mandarin : cantonese;
+  const profile = useQuery({ queryKey: [language, 'current-profile', session.user.id], queryFn: async () => {
+    const { data } = await sdk.from('profiles').select('first_name,last_name,avatar_url').eq('id', session.user.id).maybeSingle();
+    return data;
+  } });
+  return profile.data ? <ProfileEditor key={session.user.id} client={sdk} language={language} session={session} profile={profile.data} /> : <p>Loading editor</p>;
+}
+for (const language of ['mandarin', 'cantonese'] as const) {
+  await check(`${language} profile: validate avatar, preserve drafts on refetch, and verify saving`, async () => {
+    const sdk = language === 'mandarin' ? mandarin : cantonese;
+    const account = fakeSession('profile-user');
+    const stored = { id: account.user.id, first_name: 'Original', last_name: 'Name', avatar_url: '' };
+    let writes = 0;
+    sdk.auth.getUser = (() => Promise.resolve({ data: { user: account.user }, error: null })) as never;
+    sdk.from = (() => {
+      let update: Partial<typeof stored> | null = null;
+      const builder = new Proxy({}, { get: (_target, name) => {
+        if (name === 'then') return (resolve: (value: unknown) => void) => setTimeout(() => { if (update) { Object.assign(stored, update); writes++; } resolve({ data: { ...stored }, error: null }); }, 20);
+        if (name === 'update') return (value: Partial<typeof stored>) => { update = value; return builder; };
+        return () => builder;
+      } }); return builder;
+    }) as never;
+    const query = client();
+    try {
+      root.render(<QueryClientProvider client={query}><ProfileEditorHarness language={language} session={account} /></QueryClientProvider>);
+      await until(() => Boolean(host.querySelector('#profile-first')));
+      setInput('#profile-first', 'Updated'); setInput('#profile-avatar', 'javascript:alert(1)'); await delay(15);
+      host.querySelector('form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      await until(() => Boolean(host.querySelector('[role="alert"]')?.textContent?.includes('http')));
+      assert(writes === 0, 'Invalid avatar protocol must not reach the backend');
+      stored.first_name = 'Changed remotely';
+      await query.invalidateQueries({ queryKey: [language, 'current-profile', account.user.id] });
+      assert(host.querySelector<HTMLInputElement>('#profile-first')!.value === 'Updated', 'Background refresh must not overwrite a draft');
+      setInput('#profile-avatar', 'https://example.test/avatar.png'); await delay(15);
+      const form = host.querySelector('form')!; form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })); form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      await until(() => Boolean(host.textContent?.includes('Đã lưu thông tin cá nhân')));
+      assert(writes === 1 && stored.first_name === 'Updated', 'Save must update the intended account once');
+      assert(host.querySelector<HTMLInputElement>('#profile-first')!.value === 'Updated', 'Saved profile must remain visible');
+    } finally { mockClient(sdk, language); }
+  });
+}
+export function CourseAccessProbe() {
+  const access = useCourseAccess('hsk_1');
+  return <output>{access.isLoading ? 'loading' : access.data.hasAccess ? 'unlocked' : 'locked'}</output>;
+}
+await check('Mandarin course access follows the actual async result instead of caching initial denial', async () => {
+  let allowed = true;
+  mandarin.rpc = (() => new Promise(resolve => setTimeout(() => resolve({ data: allowed, error: null }), 70))) as never;
+  mandarin.from = ((table: string) => {
+    const builder = new Proxy({}, { get: (_target, name) => name === 'then' ? (resolve: (value: unknown) => void) => setTimeout(() => resolve({ data: table === 'courses' ? { id: 'course-one' } : { role: 'user' }, error: null }), 20) : () => builder });
+    return builder;
+  }) as never;
+  const query = client();
+  try {
+    root.render(<QueryClientProvider client={query}><MandarinSessionContext.Provider value={{ session: fakeSession('learner'), isLoading: false }}><CourseAccessProbe /></MandarinSessionContext.Provider></QueryClientProvider>);
+    await until(() => host.querySelector('output')?.textContent === 'unlocked');
+    allowed = false;
+    await query.invalidateQueries({ queryKey: ['checkCourseAccess', 'learner', 'course-one'] });
+    await until(() => host.querySelector('output')?.textContent === 'locked');
+  } finally { mockClient(mandarin, 'mandarin'); }
+});
+
+for (const language of ['mandarin', 'cantonese'] as const) {
+  await check(`${language} flashcards: save to notebook without flipping and keep child keyboard actions separate`, async () => {
+    updateNotebook(notebookKey(language), () => []);
+    root.render(language === 'mandarin' ? <MandarinFlashcard hanzi="你好" pinyin="nǐ hǎo" meaning="Xin chào" /> : <Flashcard data={{ items: [{ word: '你好', jyutping: 'nei5 hou2', vi: 'Xin chào' }] }} />);
+    await delay(25);
+    host.querySelector<HTMLButtonElement>('[aria-label="Lưu từ 你好"]')!.click();
+    await until(() => notebookSnapshot(notebookKey(language)).words.length === 1);
+    const flip = host.querySelector('[role="button"]')!;
+    assert(flip.getAttribute('aria-pressed') === 'false', 'Saving must not flip the flashcard');
+    const sound = host.querySelector<HTMLButtonElement>('[aria-label="Nghe phát âm"]');
+    assert(sound, 'Audio control must have an accessible label');
+    sound!.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true }));
+    await delay(20);
+    assert(flip.getAttribute('aria-pressed') === 'false', 'Child button keyboard events must not flip the parent');
+  });
+}
 (window as unknown as { __regressionResults: typeof results }).__regressionResults = results;
