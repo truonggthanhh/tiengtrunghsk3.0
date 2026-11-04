@@ -1,3 +1,5 @@
+import Header from '@/components/Header';
+import RouteExperience from '@/components/layout/RouteExperience';
 import React, { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -21,8 +23,10 @@ import CantoneseRouteWrapper from "./cantonese/components/CantoneseRouteWrapper"
 
 // Loading component
 const PageLoader = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+  <div role="status" aria-live="polite" className="flex min-h-[70vh] flex-col items-center justify-center gap-5 bg-background px-6">
+    <span className="learning-brand-mark" aria-hidden="true">學</span>
+    <div className="text-center"><p className="text-sm font-semibold">Đang mở không gian học tập…</p><p className="mt-2 text-xs text-muted-foreground">Sẵn sàng cho một điều mới.</p></div>
+    <span className="h-5 w-5 animate-spin rounded-full border-2 border-primary/20 border-t-primary" aria-hidden="true" />
   </div>
 );
 
@@ -126,6 +130,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <RouteExperience />
             <ErrorBoundary>
               <Suspense fallback={<PageLoader />}>
                 <Routes>
@@ -134,9 +139,9 @@ const App = () => (
 
             {/* Mandarin App Routes */}
             <Route path="/mandarin">
-              <Route path="notebook" element={<SessionContextProvider><PinyinProvider><VocabularyNotebook language="mandarin" /></PinyinProvider></SessionContextProvider>} />
-              <Route path="forgot-password" element={<SessionContextProvider><MandarinForgotPassword /></SessionContextProvider>} />
-              <Route path="update-password" element={<SessionContextProvider><MandarinUpdatePassword /></SessionContextProvider>} />
+              <Route path="notebook" element={<SessionContextProvider><PinyinProvider><Header /><VocabularyNotebook language="mandarin" /></PinyinProvider></SessionContextProvider>} />
+              <Route path="forgot-password" element={<SessionContextProvider><PinyinProvider><Header /><MandarinForgotPassword /></PinyinProvider></SessionContextProvider>} />
+              <Route path="update-password" element={<SessionContextProvider><PinyinProvider><Header /><MandarinUpdatePassword /></PinyinProvider></SessionContextProvider>} />
               <Route
                 index
                 element={
@@ -152,6 +157,7 @@ const App = () => (
                 element={
                   <SessionContextProvider>
                     <PinyinProvider>
+                      <Header />
                       <MandarinLogin />
                     </PinyinProvider>
                   </SessionContextProvider>
@@ -192,6 +198,7 @@ const App = () => (
                 element={
                   <SessionContextProvider>
                     <PinyinProvider>
+                      <Header />
                       <DictionaryPage />
                     </PinyinProvider>
                   </SessionContextProvider>
@@ -204,6 +211,7 @@ const App = () => (
                 element={
                   <SessionContextProvider>
                     <PinyinProvider>
+                      <Header />
                       <SongsPage />
                     </PinyinProvider>
                   </SessionContextProvider>
@@ -214,6 +222,7 @@ const App = () => (
                 element={
                   <SessionContextProvider>
                     <PinyinProvider>
+                      <Header />
                       <SongDetail />
                     </PinyinProvider>
                   </SessionContextProvider>
@@ -226,6 +235,7 @@ const App = () => (
                 element={
                   <SessionContextProvider>
                     <PinyinProvider>
+                      <Header />
                       <MandarinBlog />
                     </PinyinProvider>
                   </SessionContextProvider>
@@ -236,6 +246,7 @@ const App = () => (
                 element={
                   <SessionContextProvider>
                     <PinyinProvider>
+                      <Header />
                       <MandarinBlogDetail />
                     </PinyinProvider>
                   </SessionContextProvider>

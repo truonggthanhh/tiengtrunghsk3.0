@@ -43,27 +43,27 @@ export default function Flashcard({data: rawData,hotkeyControls,onAttach}:{data:
         aria-pressed={flipped}
         onKeyDown={event => { if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); event.stopPropagation(); flip(); } }}
         onClick={flip}
-        className="relative w-full rounded-3xl border-2 border-ink/10 bg-white dark:bg-black/20 p-6 text-left text-ink shadow-[0_20px_0_#d7c8b6] transition-all duration-200 ease-in-out transform hover:-translate-y-1 active:translate-y-0"
+        className="relative flex min-h-64 w-full items-center justify-center rounded-2xl border bg-primary/5 p-6 text-left text-foreground transition-colors hover:border-primary/40"
         whileTap={{ scale: 0.98 }}
       >
         {!flipped? (
           <div className="text-center">
-            <div className="mt-2 text-4xl font-extrabold">{item.word}</div>
-            {showJyutping && item.jyutping && <div className="mt-1 text-sm text-black/70 dark:text-white/70">{item.jyutping}</div>} {/* Jyutping on front */}
+            <div className="mt-2 break-words text-5xl font-semibold">{item.word}</div>
+            {showJyutping && item.jyutping && <div className="mt-1 text-sm text-muted-foreground">{item.jyutping}</div>} {/* Jyutping on front */}
             <div className="mt-2">
               <SpeakerButton text={item.word} />
             </div>
           </div>
         ) : (
           <div className="text-center">
-            <div className="text-xl font-extrabold">{item.vi}</div>
-            {showJyutping && item.jyutping && <div className="mt-1 text-sm text-black/70 dark:text-white/70">{item.jyutping}</div>} {/* Jyutping on back (already there) */}
+            <div className="break-words text-2xl font-semibold">{item.vi}</div>
+            {showJyutping && item.jyutping && <div className="mt-1 text-sm text-muted-foreground">{item.jyutping}</div>} {/* Jyutping on back (already there) */}
           </div>
         )}
       </motion.div>
       <div className="mt-6 flex justify-between">
-        <button disabled={i===0} onClick={prev} className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition text-sm disabled:opacity-50">Trước</button>
-        <button disabled={i===data.items.length-1} onClick={next} className="inline-flex items-center gap-2 rounded-2xl border border-ink/20 px-4 py-2 text-ink hover:bg-black/5 dark:hover:bg-white/5 transition text-sm disabled:opacity-50">Sau</button>
+        <button disabled={i===0} onClick={prev} className="inline-flex items-center gap-2 rounded-2xl border border-border px-4 py-2 text-foreground hover:bg-muted transition text-sm disabled:opacity-50">Trước</button>
+        <button disabled={i===data.items.length-1} onClick={next} className="inline-flex items-center gap-2 rounded-2xl border border-border px-4 py-2 text-foreground hover:bg-muted transition text-sm disabled:opacity-50">Sau</button>
       </div>
     </div>
   )

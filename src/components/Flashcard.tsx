@@ -34,34 +34,34 @@ const Flashcard: React.FC<FlashcardProps> = ({ hanzi, pinyin, meaning, showPinyi
       onKeyDown={handleKeyDown}
       role="button"
       tabIndex={0}
-      aria-label={`Flashcard: ${hanzi}. Click or press Enter to flip and see the meaning`}
+      aria-label={`Thẻ từ ${hanzi}. Nhấn Enter hoặc dấu cách để lật thẻ.`}
       aria-pressed={isFlipped}
     >
       <div className={cn('flashcard', { 'is-flipped': isFlipped })}>
-        <div className="flashcard-face flashcard-front">
-          <Card className="w-full h-full flex items-center justify-center border-2 bg-gradient-colorful text-white relative">
+        <div className="flashcard-face flashcard-front" aria-hidden={isFlipped}>
+          <Card className="w-full h-full flex items-center justify-center border bg-primary/5 text-foreground relative rounded-2xl">
             <CardContent className="p-6 text-center space-y-3">
-              <p className="text-6xl md:text-8xl font-bold">{hanzi}</p>
+              <p className="break-words text-5xl md:text-7xl font-semibold">{hanzi}</p>
               {showPinyin && (
-                <p className="text-2xl md:text-3xl font-medium text-white/90">{pinyin}</p>
+                <p className="text-xl md:text-2xl font-medium text-primary">{pinyin}</p>
               )}
               {/* Speaker Button */}
               <div className="mt-4 flex justify-center">
-                <SpeakerButton text={hanzi} language="zh-CN" />
+                {!isFlipped && <SpeakerButton className="bg-primary/10 text-primary hover:bg-primary/20" text={hanzi} language="zh-CN" />}
               </div>
             </CardContent>
           </Card>
         </div>
-        <div className="flashcard-face flashcard-back">
-          <Card className="w-full h-full flex items-center justify-center border-2 bg-gradient-sunset text-white relative">
+        <div className="flashcard-face flashcard-back" aria-hidden={!isFlipped}>
+          <Card className="w-full h-full flex items-center justify-center border bg-card text-foreground relative rounded-2xl">
             <CardContent className="p-6 text-center">
               {showPinyin && (
-                <p className="text-3xl md:text-4xl font-semibold mb-4 text-white">{pinyin}</p>
+                <p className="text-2xl md:text-3xl font-semibold mb-4 text-primary">{pinyin}</p>
               )}
-              <p className="text-2xl md:text-3xl text-white/90">{meaning}</p>
+              <p className="break-words text-2xl md:text-3xl text-foreground">{meaning}</p>
               {/* Speaker Button */}
               <div className="mt-4 flex justify-center">
-                <SpeakerButton text={hanzi} language="zh-CN" />
+                {isFlipped && <SpeakerButton className="bg-primary/10 text-primary hover:bg-primary/20" text={hanzi} language="zh-CN" />}
               </div>
             </CardContent>
           </Card>

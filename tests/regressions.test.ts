@@ -173,3 +173,22 @@ test('notebook imports validate language, totals, size, and duplicate identities
   assert.equal(new Set(choices).size, choices.length);
   assert.ok(choices.includes(first.meaning));
 });
+
+
+test('recent learning destinations accept known learning routes and isolate languages and accounts', async () => {
+  const { describeRecentLesson, recentLessonKey } = await import('../src/lib/learningNavigation');
+  assert.equal(describeRecentLesson('/mandarin/hsk/2/flashcard?returnUrl=evil', 'mandarin')?.href, '/mandarin/hsk/2/flashcard');
+  for (const path of ['//evil.test', 'https://evil.test', '/mandarin/login', '/mandarin/admin', '/mandarin/hsk/99/flashcard', '/mandarin/hsk/1/not-an-exercise', '/cantonese/lessons/one']) assert.equal(describeRecentLesson(path, 'mandarin'), null);
+  assert.equal(describeRecentLesson('/cantonese/practice/lesson-one/flashcard', 'cantonese')?.href, '/cantonese/practice/lesson-one/flashcard');
+  assert.notEqual(recentLessonKey('mandarin', 'A'), recentLessonKey('mandarin', 'B'));
+  assert.notEqual(recentLessonKey('mandarin', 'A'), recentLessonKey('cantonese', 'A'));
+});
+
+
+test('Vietnamese navigation search handles uppercase Đ, decomposed accents, spacing, and Chinese characters', async () => {
+  const { normalizeSearchText } = await import('../src/lib/searchText');
+  assert.equal(normalizeSearchText('ĐIỀN TỪ'), 'dien tu');
+  assert.equal(normalizeSearchText('  Đặng   An  '), 'dang an');
+  assert.equal(normalizeSearchText('Lời chào'.normalize('NFD')), 'loi chao');
+  assert.equal(normalizeSearchText('你好 粵語'), '你好 粵語');
+});

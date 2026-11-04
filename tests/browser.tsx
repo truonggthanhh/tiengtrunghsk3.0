@@ -1,6 +1,15 @@
+import MandarinFlashcardPage from '../src/pages/FlashcardPage';
+import SongLibrary from '../src/components/learning/SongLibrary';
+import DictionaryPage from '../src/pages/DictionaryPage';
+import LearningHeader from '../src/components/layout/LearningHeader';
+import CourseExplorer from '../src/components/home/CourseExplorer';
+import PhraseCard from '../src/components/home/PhraseCard';
+import CantoneseLessons from '../src/cantonese/pages/Lessons';
+import { useRecentLesson } from '../src/hooks/useRecentLesson';
+import { recentLessonKey } from '../src/lib/learningNavigation';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation, Link } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { supabase as mandarin } from '../src/integrations/supabase/client';
 import { supabase as cantonese } from '../src/cantonese/integrations/supabase/client';
@@ -51,9 +60,10 @@ function mockClient(client: typeof mandarin, language: string) {
   client.from = ((table: string) => {
     seen.push(`${language}:${table}`);
     const value = table === 'lessons' ? { user_id: 'user-1' } : table === 'review_tests' ? { payload: { fill_blank: [{ sentence: 'Fill _____', answer: 'sample' }], multichoice: [{ question: 'Cached review question', choices: ['A', 'B'], correct: 0 }], true_false: [{ statement: 'True statement', answer: true }], reorder: [{ words: ['我'], solution: ['我'] }] } } : table === 'songs' ? { id: 'song-1', title: 'Regression song', youtube_video_id: 'video-1', lrc: '[00:01.00]Lyric one' } : table === 'blog_posts' ? post : table === 'user_progress' ? progress : table === 'level_definitions' ? { id: 2, level_number: 2, xp_required: 100, title: 'Level 2' } : [];
+    let single = false;
     const builder = new Proxy({}, { get: (_target, key) => key === 'then'
-      ? (resolve: (result: unknown) => void) => setTimeout(() => resolve({ data: value, error: null, count: 0 }), 40)
-      : () => builder });
+      ? (resolve: (result: unknown) => void) => setTimeout(() => resolve({ data: !single && ['songs', 'blog_posts', 'lessons'].includes(table) ? [value] : value, error: null, count: 0 }), 40)
+      : () => { if (key === 'single' || key === 'maybeSingle') single = true; return builder; } });
     return builder;
   }) as never;
 }
@@ -178,11 +188,11 @@ await check('Main app routes mount with their actual providers', async () => {
   const { default: App } = await import('../src/App');
   history.replaceState(null, '', '/');
   root.render(<App />);
-  for (const [path, expected] of [['/', 'Chọn phương ngữ'], ['/mandarin', 'HSK'], ['/cantonese', 'Quảng Đông'], ['/mandarin/blog/sample', 'Regression blog'], ['/cantonese/blog/sample', 'Regression blog'], ['/mandarin/notebook', 'Sổ từ tiếng Trung'], ['/cantonese/notebook', 'Sổ từ Quảng Đông'], ['/mandarin/forgot-password', 'Quên mật khẩu'], ['/cantonese/forgot-password', 'Quên mật khẩu'], ['/mandarin/update-password', 'Liên kết không hợp lệ'], ['/cantonese/update-password', 'Liên kết không hợp lệ'], ['/mandarin/login', 'Chào mừng bạn trở lại'], ['/cantonese/login', 'Chào mừng bạn trở lại']]) {
+  for (const [path, expected] of [['/', 'Chọn phương ngữ'], ['/mandarin', 'HSK'], ['/cantonese', 'Một câu tiếng Quảng'], ['/mandarin/blog/sample', 'Regression blog'], ['/cantonese/blog/sample', 'Regression blog'], ['/mandarin/notebook', 'Sổ từ tiếng Trung'], ['/cantonese/notebook', 'Sổ từ Quảng Đông'], ['/mandarin/forgot-password', 'Quên mật khẩu'], ['/cantonese/forgot-password', 'Quên mật khẩu'], ['/mandarin/update-password', 'Liên kết không hợp lệ'], ['/cantonese/update-password', 'Liên kết không hợp lệ'], ['/mandarin/login', 'Chào mừng bạn trở lại'], ['/cantonese/login', 'Chào mừng bạn trở lại'], ['/mandarin/songs', 'Để giai điệu dẫn đường'], ['/cantonese/songs', 'Để giai điệu dẫn đường'], ['/mandarin/blog', 'Góc đọc'], ['/cantonese/blog', 'Góc đọc'], ['/mandarin/dictionary', 'Tra một từ.'], ['/cantonese/lessons', 'Một bài học.'], ['/mandarin/hsk/1/flashcard', 'Flashcards HSK 1']]) {
     history.pushState(null, '', path);
     window.dispatchEvent(new PopStateEvent('popstate'));
     await delay(50);
-    await until(() => Boolean(host.textContent?.includes(expected)));
+    await until(() => Boolean(host.textContent?.includes(expected))).catch(error => { throw new Error(`Route ${path}: ${String(error)}`); });
     assert(!host.textContent?.includes('Oops! Có lỗi xảy ra'), `Route crashed: ${path}`);
     assert(document.documentElement.scrollWidth <= window.innerWidth + 2, `Route overflows viewport: ${path} (${document.documentElement.scrollWidth}/${window.innerWidth})`);
   }
@@ -466,4 +476,167 @@ for (const language of ['mandarin', 'cantonese'] as const) {
     assert(flip.getAttribute('aria-pressed') === 'false', 'Child button keyboard events must not flip the parent');
   });
 }
+export function NavigationProbe() {
+  const location = useLocation();
+  return <output data-route>{location.pathname + location.hash}</output>;
+}
+export function RecentLessonProbe() {
+  const recent = useRecentLesson('mandarin');
+  return <output data-recent>{recent?.label ?? 'no-recent-lesson'}</output>;
+}
+await check('Course explorer changes level, filters skills, and recovers from empty searches', async () => {
+  root.render(<MemoryRouter><CourseExplorer /></MemoryRouter>);
+  await delay(25);
+  clickText('HSK 4'); clickText('Nghe & nói'); await delay(20);
+  let exercises = [...host.querySelectorAll<HTMLAnchorElement>('.exercise-choice')];
+  assert(exercises.length === 3 && exercises.every(link => link.pathname.startsWith('/mandarin/hsk/4/')), 'All filtered exercises must use the selected level');
+  clickText('Tất cả'); await delay(15);
+  setInput('[aria-label="Tìm dạng bài tập"]', 'dien tu'); await delay(20);
+  assert(host.querySelector<HTMLAnchorElement>('.exercise-choice')?.pathname === '/mandarin/hsk/4/fill-in-the-blank', 'Searching without accents must also match uppercase Đ');
+  setInput('[aria-label="Tìm dạng bài tập"]', 'khong-co-bai-nay'); await delay(20);
+  assert(host.querySelectorAll('.exercise-choice').length === 0 && host.textContent?.includes('Chưa tìm thấy'), 'Empty search needs an actionable state');
+  clickText('Xóa bộ lọc và xem tất cả'); await delay(20);
+  exercises = [...host.querySelectorAll<HTMLAnchorElement>('.exercise-choice')];
+  assert(exercises.length === 10 && exercises.every(link => link.pathname.startsWith('/mandarin/hsk/4/')), 'Resetting filters must preserve the chosen level');
+});
+for (const language of ['mandarin', 'cantonese'] as const) {
+  await check(`${language} quick search opens with Ctrl K and navigates by keyboard`, async () => {
+    root.render(<QueryClientProvider client={client()}><MemoryRouter initialEntries={[`/${language}`]}><LearningHeader language={language} pronunciation onTogglePronunciation={() => {}} /><NavigationProbe /></MemoryRouter></QueryClientProvider>);
+    await delay(30);
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true, cancelable: true }));
+    await until(() => Boolean(document.querySelector('[role="dialog"] [cmdk-input]')));
+    const input = document.querySelector<HTMLInputElement>('[role="dialog"] [cmdk-input]')!;
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, 'so tu');
+    input.dispatchEvent(new Event('input', { bubbles: true })); await delay(25);
+    assert(document.querySelector('[role="dialog"] [cmdk-item][data-selected="true"]')?.textContent?.includes('Sổ từ cá nhân'), 'Search should rank the notebook first without Vietnamese accents');
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+    await until(() => host.querySelector('[data-route]')?.textContent === `/${language}/notebook`);
+    await until(() => !document.querySelector('[role="dialog"]'));
+  });
+  await check(`${language} mobile menu closes after navigation and exposes the other language`, async () => {
+    root.render(<QueryClientProvider client={client()}><MemoryRouter initialEntries={[`/${language}`]}><LearningHeader language={language} pronunciation onTogglePronunciation={() => {}} /><NavigationProbe /></MemoryRouter></QueryClientProvider>);
+    await delay(25);
+    host.querySelector<HTMLButtonElement>('[aria-label="Mở menu học tập"]')!.click();
+    await until(() => Boolean(document.querySelector('[role="dialog"] nav')));
+    const menu = document.querySelector('[role="dialog"]')!;
+    const other = language === 'mandarin' ? '/cantonese' : '/mandarin';
+    assert(menu.querySelector(`a[href="${other}"]`), 'Language switching must be available in the mobile menu');
+    menu.querySelector<HTMLAnchorElement>(`a[href="/${language}/songs"]`)!.click();
+    await until(() => host.querySelector('[data-route]')?.textContent === `/${language}/songs`);
+    await until(() => !document.querySelector('[role="dialog"]'));
+  });
+  await check(`${language} phrase card reveals, saves, and resets when the suggestion changes`, async () => {
+    updateNotebook(notebookKey(language), () => []);
+    root.render(<MemoryRouter><PhraseCard language={language} /></MemoryRouter>); await delay(20);
+    assert(!host.querySelector('[role="status"]'), 'Meaning starts hidden');
+    clickText('Đoán nghĩa rồi chạm để xem'); await delay(20);
+    assert(host.querySelector('[role="status"]')?.textContent === 'Cứ từ từ thôi', 'Reveal must show the current phrase meaning');
+    clickText('Lưu từ'); await delay(20);
+    assert(notebookSnapshot(notebookKey(language)).words[0]?.meaning === 'Cứ từ từ thôi', 'Saving must keep the actual phrase and meaning');
+    host.querySelector<HTMLButtonElement>('[aria-label="Đổi câu gợi ý"]')!.click(); await delay(20);
+    assert(!host.querySelector('[role="status"]'), 'Changing suggestions must hide the new meaning again');
+  });
+}
+await check('Recent lesson is scoped to the current account and rejects invalid stored destinations', async () => {
+  localStorage.setItem(recentLessonKey('mandarin', 'A'), '/mandarin/hsk/3/flashcard');
+  localStorage.setItem(recentLessonKey('mandarin', 'B'), 'https://example.test/account');
+  const render = (id: string) => root.render(<MemoryRouter initialEntries={['/mandarin']}><MandarinSessionContext.Provider value={{ session: fakeSession(id), isLoading: false }}><RecentLessonProbe /></MandarinSessionContext.Provider></MemoryRouter>);
+  render('A'); await until(() => host.querySelector('[data-recent]')?.textContent === 'HSK 3 · Flashcard');
+  render('B'); await delay(25);
+  assert(host.querySelector('[data-recent]')?.textContent === 'no-recent-lesson', 'A new account must never inherit the previous account destination');
+});
+await check('Cantonese lesson library respects course access and supports accent-insensitive search and list view', async () => {
+  const items = [
+    { id: 'one', title: 'Chào buổi sáng', description: 'Lời chào', course_id: 'free', courses: { id: 'free', name: 'Nhập môn', is_free: true } },
+    { id: 'two', title: 'Đi chợ', description: 'Mua sắm', course_id: 'paid', courses: { id: 'paid', name: 'Hội thoại', is_free: false } },
+    { id: 'locked', title: 'Unavailable lesson', description: '', course_id: 'other', courses: { id: 'other', name: 'Khác', is_free: false } },
+  ];
+  cantonese.from = ((table: string) => {
+    const builder = new Proxy({}, { get: (_target, name) => name === 'then' ? (resolve: (value: unknown) => void) => setTimeout(() => resolve({ data: table === 'lessons' ? items : [{ course_id: 'paid' }], error: null }), 20) : () => builder });
+    return builder;
+  }) as never;
+  try {
+    root.render(<QueryClientProvider client={client()}><MemoryRouter><CantoneseSessionContext.Provider value={{ session: fakeSession('reader'), isLoading: false }}><CantoneseLessons /></CantoneseSessionContext.Provider></MemoryRouter></QueryClientProvider>);
+    await until(() => host.querySelectorAll('.library-lesson').length === 2);
+    assert(!host.textContent?.includes('Unavailable lesson'), 'Courses without access must remain excluded');
+    setInput('[aria-label="Tìm bài học"]', 'chao buoi sang'); await delay(25);
+    assert(host.querySelectorAll('.library-lesson').length === 1 && host.textContent?.includes('Chào buổi sáng'), 'Vietnamese search should ignore accents');
+    setInput('[aria-label="Tìm bài học"]', 'di cho'); await delay(20);
+    assert(host.querySelector<HTMLAnchorElement>('.library-lesson')?.pathname === '/cantonese/lessons/two', 'Search must also match titles beginning with uppercase Đ');
+    setInput('[aria-label="Tìm bài học"]', 'nothing'); await delay(20); clickText('Xóa bộ lọc'); await delay(20);
+    assert(host.querySelectorAll('.library-lesson').length === 2, 'Reset must restore the accessible library');
+    host.querySelector<HTMLButtonElement>('[aria-label="Xem dạng danh sách"]')!.click(); await delay(20);
+    assert(host.querySelector('[aria-label="Xem dạng danh sách"]')?.getAttribute('aria-pressed') === 'true', 'View toggle must expose its selected state');
+  } finally { mockClient(cantonese, 'cantonese'); }
+});
+for (const language of ['mandarin', 'cantonese'] as const) {
+  await check(`${language} song library retries failed loads and searches titles or artists`, async () => {
+    const sdk = language === 'mandarin' ? mandarin : cantonese;
+    let failing = true;
+    sdk.from = (() => {
+      const builder = new Proxy({}, { get: (_target, name) => name === 'then' ? (resolve: (value: unknown) => void) => setTimeout(() => resolve(failing ? { data: null, error: { message: 'Test connection failure' } } : { data: [{ id: 'song-one', title: 'Một ngày mới', artist: 'Nghệ sĩ A' }, { id: 'song-two', title: 'Hello', artist: 'Đặng An' }], error: null }), 20) : () => builder });
+      return builder;
+    }) as never;
+    try {
+      root.render(<QueryClientProvider client={client()}><MemoryRouter><SongLibrary language={language} /></MemoryRouter></QueryClientProvider>);
+      await until(() => Boolean(host.querySelector('[role="alert"]')));
+      failing = false; clickText('Thử lại');
+      await until(() => host.querySelectorAll('.library-lesson').length === 2);
+      setInput('[aria-label="Tìm bài hát"]', 'nghe si'); await delay(20);
+      assert(host.querySelectorAll('.library-lesson').length === 1, 'Artists should be searchable without accents');
+      setInput('[aria-label="Tìm bài hát"]', 'dang an'); await delay(20);
+      assert(host.querySelector<HTMLAnchorElement>('.library-lesson')?.pathname === `/${language}/songs/song-two`, 'Artist search must normalize uppercase Đ');
+      setInput('[aria-label="Tìm bài hát"]', 'no-matching-song'); await delay(20); clickText('Xóa tìm kiếm'); await delay(20);
+      assert(host.querySelectorAll('.library-lesson').length === 2, 'Empty search must offer a working reset');
+      assert(host.querySelector<HTMLAnchorElement>('.library-lesson')?.pathname === `/${language}/songs/song-one`, 'Song links must stay in their own language');
+    } finally { mockClient(sdk, language); }
+  });
+}
+await check('Dictionary results save to the notebook and expose keyboard-accessible detail buttons', async () => {
+  updateNotebook(notebookKey('mandarin'), () => []);
+  mandarin.rpc = (() => Promise.resolve({ data: [{ id: 1, simplified: '你好', traditional: '你好', pinyin_number: 'ni3 hao3', pinyin_tone: 'nǐ hǎo', vietnamese: 'Xin chào', hsk_level: 1 }], error: null })) as never;
+  mandarin.from = (() => {
+    const builder = new Proxy({}, { get: (_target, name) => name === 'then' ? (resolve: (value: unknown) => void) => resolve({ data: [], count: 1, error: null }) : () => builder });
+    return builder;
+  }) as never;
+  try {
+    root.render(<QueryClientProvider client={client()}><MemoryRouter><DictionaryPage /></MemoryRouter></QueryClientProvider>);
+    await delay(20); setInput('[aria-label="Tra từ điển"]', '你好');
+    await until(() => Boolean(host.querySelector('[aria-label="Xem chi tiết từ 你好"]')));
+    clickText('Lưu từ'); await delay(20);
+    assert(notebookSnapshot(notebookKey('mandarin')).words[0]?.hanzi === '你好', 'Dictionary save must store the selected entry');
+    assert(!document.querySelector('[role="dialog"]'), 'Saving a word must not unexpectedly open its detail dialog');
+    host.querySelector<HTMLButtonElement>('[aria-label="Xem chi tiết từ 你好"]')!.click();
+    await until(() => Boolean(document.querySelector('[role="dialog"]')));
+    assert(document.querySelector('[role="dialog"]')?.textContent?.includes('Xin chào'), 'Details must show the selected entry');
+  } finally { mockClient(mandarin, 'mandarin'); }
+});
+await check('HSK flashcard keyboard shortcuts leave search inputs alone and changing level resets the batch', async () => {
+  root.render(<QueryClientProvider client={client()}><MemoryRouter initialEntries={['/mandarin/hsk/1/flashcard']}><MandarinSessionContext.Provider value={{ session: null, isLoading: false }}><PinyinProvider><Link data-change-level to="/mandarin/hsk/2/flashcard">Change level</Link><Routes><Route path="/mandarin/hsk/:level/flashcard" element={<MandarinFlashcardPage />} /></Routes></PinyinProvider></MandarinSessionContext.Provider></MemoryRouter></QueryClientProvider>);
+  await until(() => Boolean(host.textContent?.includes('Flashcards HSK 1')));
+  const before = host.querySelector('[role="progressbar"]')?.getAttribute('aria-valuenow');
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true, cancelable: true }));
+  await until(() => Boolean(document.querySelector('[role="dialog"] [cmdk-input]')));
+  document.querySelector('[role="dialog"] [cmdk-input]')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true }));
+  await delay(20);
+  assert(host.querySelector('[role="progressbar"]')?.getAttribute('aria-valuenow') === before, 'Moving the search caret must not move the flashcard');
+  document.querySelector('[role="dialog"] [cmdk-input]')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+  await until(() => !document.querySelector('[role="dialog"]'));
+  clickText('Đợt tiếp theo'); await delay(20);
+  assert(host.querySelector('[role="combobox"]')?.textContent?.startsWith('Đợt 2'), 'Test must move beyond the first batch');
+  host.querySelector<HTMLAnchorElement>('[data-change-level]')!.click();
+  await until(() => Boolean(host.textContent?.includes('Flashcards HSK 2')));
+  assert(host.querySelector('[role="combobox"]')?.textContent?.startsWith('Đợt 1'), 'A new HSK level must start in a valid first batch');
+});
+(window as unknown as { __showDesignRoute: (path: string, dark: boolean) => Promise<void> }).__showDesignRoute = async (path, dark) => {
+  const { default: App } = await import('../src/App');
+  localStorage.setItem('theme', dark ? 'dark' : 'light');
+  history.replaceState(null, '', path);
+  root.render(<App />);
+  window.dispatchEvent(new PopStateEvent('popstate'));
+  await delay(700);
+  document.documentElement.classList.toggle('dark', dark);
+  if (!path.includes('#')) window.scrollTo({ top: 0, behavior: 'instant' });
+  await delay(100);
+};
 (window as unknown as { __regressionResults: typeof results }).__regressionResults = results;

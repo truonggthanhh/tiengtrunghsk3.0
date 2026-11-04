@@ -1,182 +1,52 @@
-import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { supabase } from '@/cantonese/integrations/supabase/client';
+import { normalizeSearchText as fold } from '@/lib/searchText';
+import { useMemo, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Home, Sparkles } from 'lucide-react';
-import LessonCard from '@/cantonese/components/LessonCard';
+import { ArrowRight, BookMarked, BookOpen, LayoutGrid, List, LockKeyhole, Search } from 'lucide-react';
+import { supabase } from '@/cantonese/integrations/supabase/client';
 import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
+import LessonCard from '@/cantonese/components/LessonCard';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { oneRelation } from '@/lib/relations';
+import { cn } from '@/lib/utils';
 
-const LessonsPage = () => {
-  const { session } = useSession();
-
-  // Fetch lessons with course info
-  const { data: lessonsWithCourses, isLoading, error } = useQuery({
-    queryKey: ['cantonese', 'lessons-with-courses'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('lessons')
-        .select('*, courses(id, name, is_free)')
-        .order('position', { ascending: true, nullsFirst: false });
+export default function LessonsPage() {
+  const { session, isLoading: checkingSession } = useSession();
+  const location = useLocation();
+  const [search, setSearch] = useState('');
+  const [course, setCourse] = useState('all');
+  const [view, setView] = useState('grid');
+  const lessonsQuery = useQuery({
+    queryKey: ['cantonese', 'lessons-with-courses', session?.user.id],
+    enabled: !checkingSession && Boolean(session),
+    queryFn: async ({ signal }) => {
+      const { data, error } = await supabase.from('lessons').select('*, courses(id, name, is_free)').order('position', { ascending: true, nullsFirst: false }).abortSignal(signal);
       if (error) throw error;
-      return data;
+      return (data ?? []).map(lesson => ({ ...lesson, courses: oneRelation(lesson.courses) }));
     },
   });
-
-  // Fetch user's course access if logged in
-  const { data: userCourseAccess } = useQuery({
-    queryKey: ['cantonese', 'user-course-access', session?.user?.id],
-    queryFn: async () => {
-      if (!session?.user?.id) return [];
-      const { data, error } = await supabase
-        .from('user_course_access')
-        .select('course_id')
-        .eq('user_id', session.user.id);
+  const access = useQuery({
+    queryKey: ['cantonese', 'user-course-access', session?.user.id], enabled: !checkingSession && Boolean(session),
+    queryFn: async ({ signal }) => {
+      const { data, error } = await supabase.from('user_course_access').select('course_id').eq('user_id', session!.user.id).abortSignal(signal);
       if (error) throw error;
-      return data.map(item => item.course_id);
+      return (data ?? []).map(item => item.course_id);
     },
-    enabled: !!session?.user?.id,
   });
-
-  // Filter lessons based on authentication
-  const lessons = useMemo(() => {
-    if (!lessonsWithCourses) return [];
-
-    // REQUIRE LOGIN: If user is not logged in, hide all lessons
-    if (!session?.user?.id) return [];
-
-    return lessonsWithCourses.filter(lesson => {
-      // If lesson has no course, accessible to all logged-in users
-      if (!lesson.course_id || !lesson.courses) return true;
-
-      // If course is free, accessible to all logged-in users
-      if (lesson.courses.is_free) return true;
-
-      // If course is paid, check if user has access
-      return userCourseAccess?.includes(lesson.course_id);
-    });
-  }, [lessonsWithCourses, userCourseAccess, session]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-pink-500 border-t-transparent mb-4"></div>
-          <p className="text-lg font-medium text-pink-600 dark:text-pink-400">Đang tải bài học...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white flex items-center justify-center">
-        <div className="text-center p-6">
-          <p className="text-lg font-medium text-red-600 dark:text-red-400">Lỗi: {error.message}</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <main className="relative min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white overflow-hidden transition-colors duration-300">
-      {/* Film grain effect - ONLY in dark mode */}
-      <div className="hidden dark:block fixed inset-0 pointer-events-none z-50 opacity-[0.03]" style={{
-        backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 400 400\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")'
-      }} />
-
-      {/* Scanlines - ONLY in dark mode */}
-      <div className="hidden dark:block fixed inset-0 pointer-events-none z-50 opacity-10" style={{
-        backgroundImage: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px)',
-        backgroundSize: '100% 2px'
-      }} />
-
-      {/* Background gradient */}
-      <div className="fixed inset-0 bg-gradient-to-br from-pink-50 via-white to-orange-50 dark:bg-[radial-gradient(ellipse_at_top,_rgba(255,16,240,0.15)_0%,_rgba(0,0,0,1)_50%)]" />
-
-      {/* Chinese pattern overlay */}
-      <div className="fixed inset-0 opacity-10 dark:opacity-5" style={{
-        backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23000000\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v6h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-        backgroundSize: '60px 60px'
-      }} />
-
-      {/* Main content */}
-      <div className="relative z-10 max-w-5xl mx-auto p-6 md:p-12">
-        {/* Back button */}
-        <Link
-          to="/cantonese"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-pink-300 dark:border-pink-600 bg-white/90 dark:bg-black/70 text-pink-600 dark:text-pink-400 hover:bg-pink-50 dark:hover:bg-pink-900/30 transition-all shadow-md hover:shadow-lg text-sm font-medium mb-8"
-        >
-          <Home className="h-4 w-4" />
-          Quay về trang chủ
-        </Link>
-
-        {/* Header with Hong Kong retro style */}
-        <div className="text-center mb-12">
-          <div className="relative inline-block">
-            <h1 className="text-5xl md:text-7xl font-black mb-4 text-pink-600 dark:text-pink-500 transition-colors">
-              <span className="inline-block" style={{
-                textShadow: '0 0 5px rgba(255,16,240,0.3), 0 0 10px rgba(255,16,240,0.2)',
-                filter: 'brightness(1.1)'
-              }}>
-                粵語課程
-              </span>
-            </h1>
-
-            {/* Glow effect - ONLY in dark mode */}
-            <div className="hidden dark:block absolute inset-0 blur-3xl opacity-40 -z-10" style={{
-              background: 'radial-gradient(ellipse, rgba(255,16,240,0.4) 0%, transparent 70%)'
-            }} />
-          </div>
-
-          <p className="text-2xl md:text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
-            <span style={{ textShadow: '0 0 8px rgba(255,107,53,0.3)' }}>
-              DANH SÁCH BÀI HỌC
-            </span>
-          </p>
-
-          <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base flex items-center justify-center gap-2">
-            {lessons?.length || 0} bài học
-            <Sparkles className="h-4 w-4 text-yellow-500 dark:text-yellow-400 animate-pulse" />
-          </p>
-        </div>
-
-        {/* Lessons grid */}
-        <div className="space-y-4 md:space-y-6">
-          {!session?.user?.id ? (
-            <div className="text-center py-12">
-              <div className="max-w-md mx-auto bg-white/90 dark:bg-black/70 backdrop-blur-md p-8 rounded-2xl border-2 border-pink-300 dark:border-pink-600 shadow-xl">
-                <div className="mb-4">
-                  <svg className="mx-auto h-16 w-16 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                  Yêu cầu đăng nhập
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  Vui lòng đăng nhập để xem danh sách bài học
-                </p>
-                <Link
-                  to="/cantonese/login"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-pink-500 to-orange-500 text-white font-bold hover:from-pink-600 hover:to-orange-600 transition-all shadow-lg hover:shadow-xl"
-                >
-                  Đăng nhập ngay
-                </Link>
-              </div>
-            </div>
-          ) : lessons && lessons.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-600 dark:text-gray-300">Chưa có bài học nào</p>
-            </div>
-          ) : (
-            lessons?.map((l) => (
-              <LessonCard key={l.id} lesson={l} />
-            ))
-          )}
-        </div>
-      </div>
-    </main>
-  );
-};
-
-export default LessonsPage;
+  const lessons = useMemo(() => (lessonsQuery.data ?? []).filter(lesson => !lesson.course_id || !lesson.courses || lesson.courses.is_free || access.data?.includes(lesson.course_id)), [lessonsQuery.data, access.data]);
+  const courses = [...new Map(lessons.filter(lesson => lesson.courses).map(lesson => [lesson.courses!.id, lesson.courses!])).values()];
+  const filtered = lessons.filter(lesson => (course === 'all' || lesson.course_id === course) && fold(`${lesson.title} ${lesson.description ?? ''}`).includes(fold(search.trim())));
+  const loading = checkingSession || lessonsQuery.isLoading || access.isLoading;
+  const error = lessonsQuery.error || access.error;
+  return <main id="main-content" className="learning-container py-8 sm:py-12">
+    <Link to="/cantonese" className="text-xs text-muted-foreground hover:text-primary">Trang chủ <span className="px-2">/</span> Thư viện bài học</Link>
+    <div className="section-heading mt-8"><div><p className="section-eyebrow">THƯ VIỆN TIẾNG QUẢNG ĐÔNG</p><h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Một bài học. Một bước tiến.</h1><p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground">Chọn bài bạn muốn học, khám phá nội dung và luyện tập từng kỹ năng theo nhịp của mình.</p></div></div>
+    {!checkingSession && !session ? <section className="library-empty"><span className="quickbar-icon mx-auto"><LockKeyhole className="h-5 w-5" /></span><h2 className="mt-5 text-xl font-bold">Mở thư viện học của bạn</h2><p className="mx-auto mt-3 max-w-md text-sm leading-7 text-muted-foreground">Đăng nhập để xem các bài học bạn có quyền truy cập và tiếp tục hành trình tiếng Quảng.</p><Button asChild className="mt-6 rounded-full"><Link to={`/cantonese/login?returnUrl=${encodeURIComponent(location.pathname + location.search)}`}>Đăng nhập để học<ArrowRight /></Link></Button></section> : <>
+      <div className="library-toolbar"><div className="relative flex-1"><Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input aria-label="Tìm bài học" placeholder="Tìm theo tên bài học hoặc nội dung…" value={search} onChange={event => setSearch(event.target.value)} className="rounded-xl pl-9" /></div><Select value={course} onValueChange={setCourse}><SelectTrigger className="w-full rounded-xl sm:w-52" aria-label="Lọc khóa học"><SelectValue placeholder="Tất cả khóa học" /></SelectTrigger><SelectContent><SelectItem value="all">Tất cả khóa học</SelectItem>{courses.map(item => <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>)}</SelectContent></Select><div className="flex gap-1 rounded-xl border bg-card p-1" role="group" aria-label="Kiểu hiển thị"><Button variant={view === 'grid' ? 'secondary' : 'ghost'} size="icon" className="h-8 w-9 rounded-lg" aria-label="Xem dạng lưới" aria-pressed={view === 'grid'} onClick={() => setView('grid')}><LayoutGrid /></Button><Button variant={view === 'list' ? 'secondary' : 'ghost'} size="icon" className="h-8 w-9 rounded-lg" aria-label="Xem dạng danh sách" aria-pressed={view === 'list'} onClick={() => setView('list')}><List /></Button></div></div>
+      {loading ? <div role="status" aria-label="Đang tải bài học" className="grid gap-4 sm:grid-cols-2">{[1, 2, 3, 4].map(value => <div key={value} className="h-36 animate-pulse rounded-2xl border bg-muted" />)}<span className="sr-only">Đang tải bài học…</span></div> : error ? <div role="alert" className="library-empty"><h2 className="text-lg font-bold">Chưa tải được thư viện</h2><p className="mt-3 text-sm text-muted-foreground">Hãy kiểm tra kết nối và thử lại. Nội dung của bạn vẫn được giữ nguyên.</p><Button variant="outline" className="mt-5 rounded-full" onClick={() => { void lessonsQuery.refetch(); void access.refetch(); }}>Thử lại</Button></div> : <><p role="status" className="mb-4 text-xs text-muted-foreground">{filtered.length} bài học{search.trim() ? ` phù hợp với “${search.trim()}”` : ' trong thư viện của bạn'}</p>{filtered.length ? <div className={cn('grid gap-4', view === 'grid' && 'lg:grid-cols-2')}>{filtered.map((lesson, index) => <LessonCard key={lesson.id} lesson={lesson} index={index} />)}</div> : <div className="library-empty"><Search className="mx-auto h-7 w-7 text-muted-foreground" /><h2 className="mt-4 text-lg font-bold">{lessons.length ? 'Chưa tìm thấy bài học phù hợp' : 'Chưa có bài học trong thư viện'}</h2><p className="mt-3 text-sm text-muted-foreground">{lessons.length ? 'Thử một từ khóa khác hoặc chọn lại khóa học.' : 'Các bài học được cấp quyền sẽ xuất hiện tại đây.'}</p>{lessons.length > 0 && <Button variant="outline" className="mt-5 rounded-full" onClick={() => { setSearch(''); setCourse('all'); }}>Xóa bộ lọc</Button>}</div>}</>}
+    </>}
+    <section className="learning-quickbar mt-8"><div className="quickbar-lead"><BookMarked className="h-6 w-6 shrink-0 text-primary" /><div><h2 className="text-sm font-bold">Đừng để từ mới trôi qua.</h2><p className="mt-1 text-xs text-muted-foreground">Lưu vào sổ từ và ôn lại theo cách của bạn.</p></div></div><Button asChild variant="outline" className="rounded-full"><Link to="/cantonese/notebook">Mở sổ từ<ArrowRight /></Link></Button></section>
+  </main>;
+}

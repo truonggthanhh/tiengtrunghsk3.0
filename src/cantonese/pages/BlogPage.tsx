@@ -1,3 +1,4 @@
+import { normalizeSearchText as fold } from '@/lib/searchText';
 import { oneRelation } from '@/lib/relations';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -54,8 +55,7 @@ const BlogPage = () => {
   });
 
   const filteredPosts = posts?.filter(post =>
-    post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    post.excerpt?.toLowerCase().includes(searchQuery.toLowerCase())
+    fold([post.title, post.excerpt, ...(post.tags ?? [])].join(' ')).includes(fold(searchQuery))
   );
 
   if (isLoading) {
@@ -80,17 +80,17 @@ const BlogPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50/50 via-purple-50/30 to-pink-50/50 dark:from-gray-950 dark:via-cyan-950/10 dark:to-purple-950/10">
-      <div className="max-w-7xl mx-auto p-4 md:p-8">
+    <div className="min-h-screen bg-background text-foreground">
+      <div className="learning-container py-8 sm:py-12">
         {/* Header */}
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center gap-4 mb-4">
-            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-cyan-500 via-purple-500 to-pink-500 grid place-items-center shadow-lg">
-              <FileText className="h-6 w-6 text-white" />
+            <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary grid place-items-center">
+              <FileText className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-cyan-600 via-purple-600 to-pink-600 dark:from-cyan-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent text-left">
-                Blog
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground text-left">
+                Góc đọc
               </h1>
               <p className="text-sm text-gray-600 dark:text-gray-400 text-left">Kiến thức học Tiếng Quảng Đông</p>
             </div>
@@ -100,11 +100,12 @@ const BlogPage = () => {
         {/* Search */}
         <div className="mb-8 max-w-2xl mx-auto">
           <Input
-            type="text"
+            type="search"
+            aria-label="Tìm bài viết"
             placeholder="Tìm kiếm bài viết..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full border-gray-300 dark:border-gray-700 focus:border-cyan-500 dark:focus:border-cyan-500"
+            className="w-full rounded-xl border-border"
           />
         </div>
 
@@ -130,7 +131,7 @@ const BlogPage = () => {
                   )}
 
                   <CardHeader className="border-b border-gray-200 dark:border-gray-800">
-                    <CardTitle className="text-xl font-black text-gray-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors line-clamp-2">
+                    <CardTitle className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors line-clamp-2">
                       {post.title}
                     </CardTitle>
                     {post.excerpt && (

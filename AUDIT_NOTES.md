@@ -49,8 +49,8 @@ Browser and handler tests mock Supabase. They establish local behavior, not live
 
 - ESLint: zero errors, zero warnings.
 - TypeScript: frontend, Vite configuration, maintenance scripts, and Node regression tests.
-- Node: 14 regression tests passed; none skipped.
-- Chromium: 31 regression cases passed at the desktop viewport and again at a 390 × 844 mobile viewport. The route smoke case mounts 13 actual application routes; other cases cover both languages, account changes, auth failures, admin mutations, profile saves, notebooks, flashcard controls, cached review remounts, and YouTube cleanup.
+- Node: 16 regression tests passed; none skipped.
+- Chromium: 44 regression cases passed at widths 320, 390, 768, and 1440 pixels. The route smoke case mounts 20 actual application routes; other cases cover both languages, account changes, auth failures, admin mutations, profile saves, notebooks, navigation/search, libraries, flashcard controls, cached review remounts, and YouTube cleanup.
 - Backend calls in these tests are mocked. Live Supabase/OAuth/AI and production hosting remain outside the verified results above.
 
 The prepared source is available in the cloud checkout. Updated startup and verification instructions were saved to the environment draft. Publication is a separate platform action; no Publish tool is available in this chat. No production data was mutated.
@@ -68,8 +68,13 @@ The prepared source is available in the cloud checkout. Updated startup and veri
 
 ### Verification and deployment notes
 
-Run the commands above, plus `HSK_TEST_MOBILE=1 npm run test:browser` for the mobile viewport. The 31 browser cases are the same cases at two viewport sizes, not 62 distinct scenarios. They use mocked Supabase responses. No production users or records were changed.
+Run the commands above, plus `HSK_TEST_MOBILE=1 npm run test:browser` for the mobile viewport. The viewport runs repeat the same browser cases; they are not distinct scenarios to add together. They use mocked Supabase responses. No production users or records were changed.
 
 Live Google sign-in, confirmation email delivery, password recovery, RPC behavior, and database RLS have not been verified against either production Supabase project. Each project's Auth URL configuration must allow its intended production destinations in its own language namespace, including `/mandarin/update-password` or `/cantonese/update-password`. Existing backend/demo limitations listed above still apply.
 
 Production build succeeds. Vite still reports large shared chunks; this upgrade does not claim a measured performance improvement. Source is prepared for GitHub; Vercel deployment is handled by the repository owner.
+
+
+## Visual and UX redesign
+
+See [UX_UI_UPGRADE.md](UX_UI_UPGRADE.md) for the shipped interfaces, interaction changes, screenshots, verification commands, and limits. The redesign uses shared navigation and learning libraries for both languages and does not change backend roles or production data.

@@ -1,3 +1,4 @@
+import SaveWordButton from '@/components/learning/SaveWordButton';
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Search, BookOpen, Sparkles, Loader2, Languages, ArrowRight } from 'lucide-react';
@@ -175,57 +176,10 @@ const DictionaryPage: React.FC = () => {
   }, [debouncedQuery, searchMode]);
 
   return (
-    <main className="relative min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white overflow-hidden transition-colors duration-300">
-      {/* Film grain effect - ONLY in dark mode */}
-      <div className="hidden dark:block fixed inset-0 pointer-events-none z-50 opacity-[0.03]" style={{
-        backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 400 400\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")'
-      }} />
-
-      {/* Scanlines - ONLY in dark mode */}
-      <div className="hidden dark:block fixed inset-0 pointer-events-none z-50 opacity-10" style={{
-        backgroundImage: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px)',
-        backgroundSize: '100% 2px'
-      }} />
-
-      {/* Background gradient */}
-      <div className="fixed inset-0 bg-gradient-to-br from-cyan-50 via-white to-blue-50 dark:bg-[radial-gradient(ellipse_at_top,_rgba(0,150,255,0.15)_0%,_rgba(0,0,0,1)_50%)]" />
-
-      {/* Chinese pattern overlay */}
-      <div className="fixed inset-0 opacity-5 dark:opacity-3" style={{
-        backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23000000\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v6h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-        backgroundSize: '60px 60px'
-      }} />
-
+    <main className="learning-ui min-h-screen bg-background text-foreground">
       {/* Main content */}
-      <div className="relative z-10 max-w-7xl mx-auto p-6 md:p-12">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="relative inline-block mb-4">
-            <div className="flex items-center justify-center gap-4">
-              <BookOpen className="h-16 w-16 text-blue-600 dark:text-blue-400" />
-              <h1 className="text-5xl md:text-7xl font-black text-blue-600 dark:text-blue-400">
-                <span style={{ textShadow: '0 0 10px rgba(0,150,255,0.3)' }}>
-                  字典
-                </span>
-              </h1>
-              <Languages className="h-16 w-16 text-green-600 dark:text-green-400" />
-            </div>
-
-            {/* Glow effect - dark mode only */}
-            <div className="hidden dark:block absolute inset-0 blur-3xl opacity-40 -z-10" style={{
-              background: 'radial-gradient(ellipse, rgba(0,150,255,0.4) 0%, transparent 70%)'
-            }} />
-          </div>
-
-          <p className="text-2xl md:text-3xl font-bold text-green-600 dark:text-green-400 mb-4">
-            <span style={{ textShadow: '0 0 8px rgba(34,197,94,0.3)' }}>
-              TỪ ĐIỂN TRUNG–VIỆT
-            </span>
-          </p>
-          <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Tra cứu hơn 120,000 từ vựng tiếng Trung với nghĩa tiếng Việt, pinyin và HSK level
-          </p>
-        </div>
+      <div className="learning-container py-8 sm:py-12">
+        <div className="section-heading mb-8"><div><p className="section-eyebrow">TỪ ĐIỂN TRUNG – VIỆT</p><h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Tra một từ. Hiểu thêm một chút.</h1><p className="mt-4 text-sm leading-7 text-muted-foreground">Tìm bằng chữ Hán, pinyin hoặc nghĩa tiếng Việt. Lưu từ mới để ôn lại sau.</p></div></div>
 
         {/* Search Section */}
         <div className="max-w-4xl mx-auto mb-8">
@@ -237,9 +191,9 @@ const DictionaryPage: React.FC = () => {
                 onClick={() => setSearchMode(mode.value)}
                 variant={searchMode === mode.value ? 'default' : 'outline'}
                 className={`${searchMode === mode.value
-                  ? `bg-gradient-to-r ${mode.color} text-white border-0 shadow-lg`
-                  : 'bg-white/90 dark:bg-black/70 border-2'
-                } transition-all hover:scale-105`}
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : 'bg-card border-border'
+                } rounded-full transition-colors`}
               >
                 {mode.label}
               </Button>
@@ -250,7 +204,8 @@ const DictionaryPage: React.FC = () => {
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-6 text-gray-400" />
             <Input
-              type="text"
+              type="search"
+              aria-label="Tra từ điển"
               placeholder={
                 searchMode === 'hanzi' ? 'Nhập Hán tự (例: 你好)' :
                 searchMode === 'pinyin' ? 'Nhập pinyin (例: ni3 hao3)' :
@@ -259,7 +214,7 @@ const DictionaryPage: React.FC = () => {
               }
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-14 pr-4 py-6 text-lg bg-white/95 dark:bg-black/70 border-2 border-blue-300 dark:border-blue-600 focus:border-green-400 dark:focus:border-green-500 shadow-xl rounded-2xl"
+              className="h-14 rounded-2xl border-border bg-card pl-14 pr-12 text-base"
             />
             {isLoading && (
               <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-blue-500 animate-spin" />
@@ -342,17 +297,16 @@ const DictionaryPage: React.FC = () => {
                 {data.data.map((entry) => (
                   <Card
                     key={entry.id}
-                    className="group cursor-pointer transition-all hover:scale-[1.02] bg-white/95 dark:bg-black/70 border-2 border-blue-200 dark:border-blue-700 hover:border-green-400 dark:hover:border-green-500 shadow-lg hover:shadow-2xl"
-                    onClick={() => setSelectedEntry(entry)}
+                    className="group rounded-2xl border border-border bg-card transition-colors hover:border-primary/40"
                   >
                     <CardContent className="p-6">
-                      <div className="flex items-center justify-between gap-4">
+                      <div className="flex flex-wrap items-center justify-between gap-4">
                         <div className="flex-1">
                           {/* Hanzi */}
-                          <div className="flex items-center gap-3 mb-2">
-                            <span className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white">
+                          <div className="mb-2 flex flex-wrap items-center gap-3">
+                            <button type="button" onClick={() => setSelectedEntry(entry)} className="rounded text-left text-3xl font-semibold text-foreground hover:text-primary md:text-4xl" aria-label={`Xem chi tiết từ ${entry.simplified}`}>
                               {entry.simplified}
-                            </span>
+                            </button>
                             {entry.traditional !== entry.simplified && (
                               <span className="text-2xl text-gray-500 dark:text-gray-400">
                                 ({entry.traditional})
@@ -378,7 +332,7 @@ const DictionaryPage: React.FC = () => {
                           </p>
                         </div>
 
-                        <ArrowRight className="h-6 w-6 text-gray-400 dark:text-gray-500 group-hover:text-green-600 dark:group-hover:text-green-400 group-hover:translate-x-1 transition-all" />
+                        <div className="flex flex-wrap gap-2"><SaveWordButton language="mandarin" hanzi={entry.simplified} pronunciation={entry.pinyin_tone || entry.pinyin_number} meaning={entry.vietnamese} /><Button variant="ghost" size="sm" onClick={() => setSelectedEntry(entry)}>Chi tiết<ArrowRight className="h-4 w-4" /></Button></div>
                       </div>
                     </CardContent>
                   </Card>

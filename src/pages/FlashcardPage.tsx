@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import Flashcard from '@/components/Flashcard';
@@ -19,7 +19,7 @@ const BATCH_SIZE = 10;
 
 const STORAGE_KEY_PREFIX = 'flashcard_progress_hsk_';
 
-const FlashcardPage = () => {
+const FlashcardLesson = () => {
   const { level } = useParams<{ level: string }>();
   const fullVocabulary = useMemo(() => getVocabularyByLevel(level || '1'), [level]);
   const { showPinyin } = usePinyin();
@@ -32,7 +32,8 @@ const FlashcardPage = () => {
 
   // Load saved progress on mount
   useEffect(() => {
-    const saved = localStorage.getItem(`${STORAGE_KEY_PREFIX}${level}`);
+    let saved: string | null = null;
+    try { saved = localStorage.getItem(`${STORAGE_KEY_PREFIX}${level}`); } catch { /* Learning remains available without storage. */ }
     if (saved) {
       const savedBatch = parseInt(saved, 10);
       if (!isNaN(savedBatch) && savedBatch >= 0 && savedBatch < totalBatches) {
@@ -44,7 +45,7 @@ const FlashcardPage = () => {
   // Save progress when batch changes
   useEffect(() => {
     if (level && batchIndex > 0) {
-      localStorage.setItem(`${STORAGE_KEY_PREFIX}${level}`, batchIndex.toString());
+      try { localStorage.setItem(`${STORAGE_KEY_PREFIX}${level}`, batchIndex.toString()); } catch { /* Session-only progress still works. */ }
     }
   }, [level, batchIndex]);
 
@@ -69,16 +70,20 @@ const FlashcardPage = () => {
     return fullVocabulary.slice(start, end);
   }, [fullVocabulary, batchIndex]);
 
-  const goToNextWord = () => {
-    setCurrentIndexInBatch(prev => (prev + 1) % currentBatchVocabulary.length);
-  };
+  const goToNextWord = useCallback(() => {
+    if (currentBatchVocabulary.length) setCurrentIndexInBatch(prev => (prev + 1) % currentBatchVocabulary.length);
+  }, [currentBatchVocabulary.length]);
 
-  const goToPreviousWord = () => {
-    setCurrentIndexInBatch(prev => (prev - 1 + currentBatchVocabulary.length) % currentBatchVocabulary.length);
-  };
+  const goToPreviousWord = useCallback(() => {
+    if (currentBatchVocabulary.length) setCurrentIndexInBatch(prev => (prev - 1 + currentBatchVocabulary.length) % currentBatchVocabulary.length);
+  }, [currentBatchVocabulary.length]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.altKey || event.ctrlKey || event.metaKey || event.defaultPrevented) return;
+      const target = event.target;
+      if (target instanceof Element && target.closest('input, textarea, select, button, a, [contenteditable="true"], [role="dialog"], [role="combobox"]')) return;
+      if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') event.preventDefault();
       if (event.key === 'ArrowRight') {
         goToNextWord();
       } else if (event.key === 'ArrowLeft') {
@@ -90,9 +95,7 @@ const FlashcardPage = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-    // goToNextWord and goToPreviousWord use functional setState, so they don't need to be in dependencies
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [goToNextWord, goToPreviousWord]);
 
   const goToNextBatch = () => {
     if (batchIndex < totalBatches - 1) {
@@ -119,7 +122,7 @@ const FlashcardPage = () => {
           </p>
           <Button asChild>
             <Link to="/mandarin">
-              <Home className="mr-2 h-4 w-4" /> Quay lại trang chủ
+              <Home className="h-4 w-4" /> Quay lại trang chủ
             </Link>
           </Button>
         </main>
@@ -145,8 +148,8 @@ const FlashcardPage = () => {
       <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
         <div className="w-full max-w-2xl bg-card p-6 md:p-8 rounded-xl shadow-lg border">
           <div className="mb-6 text-center">
-            <h1 className="text-3xl font-bold">Flashcards HSK {level}</h1>
-            <p className="text-muted-foreground">Nhấn vào thẻ để xem nghĩa, hoặc dùng phím mũi tên để chuyển từ.</p>
+            <h1 className="text-2xl font-bold tracking-tight">Flashcards HSK {level}</h1>
+            <p className="text-muted-foreground">Chạm để lật thẻ. Dùng ← → để chuyển từ khi đang xem thẻ.</p>
           </div>
           
           <Flashcard
@@ -171,7 +174,7 @@ const FlashcardPage = () => {
                     onClick={resumeFromSaved}
                     className="font-bold"
                   >
-                    <BookmarkCheck className="mr-2 h-4 w-4" />
+                    <BookmarkCheck className="h-4 w-4" />
                     Tiếp tục học
                   </Button>
                 </div>
@@ -179,7 +182,7 @@ const FlashcardPage = () => {
             )}
 
             {/* Batch selector */}
-            <div className="flex justify-between items-center mb-2 gap-4">
+            <div className="flex flex-wrap justify-between items-center mb-2 gap-3">
               <span className="text-sm text-muted-foreground">Tiến độ đợt này</span>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Đợt:</span>
@@ -201,32 +204,32 @@ const FlashcardPage = () => {
               </div>
             </div>
             <Progress value={progressValue} className="w-full mb-4 h-2 bg-primary/20" indicatorClassName="bg-primary" />
-            <div className="flex justify-between items-center mb-6">
-              <Button variant="outline" onClick={goToPreviousWord} className="hover:bg-primary hover:text-primary-foreground transition-colors font-bold">
-                <ArrowLeft className="mr-2 h-4 w-4" /> Từ trước
+            <div className="flex justify-between items-center mb-6 gap-2">
+              <Button variant="outline" aria-label="Từ trước" onClick={goToPreviousWord} className="rounded-xl px-3 text-xs hover:bg-primary hover:text-primary-foreground sm:text-sm">
+                <ArrowLeft className="h-4 w-4" /><span>Trước</span>
               </Button>
               <span className="text-lg font-medium text-muted-foreground">
                 {currentIndexInBatch + 1} / {currentBatchVocabulary.length}
               </span>
-              <Button variant="outline" onClick={goToNextWord} className="hover:bg-primary hover:text-primary-foreground transition-colors font-bold">
-                Từ tiếp theo <ArrowRight className="ml-2 h-4 w-4" />
+              <Button variant="outline" aria-label="Từ tiếp theo" onClick={goToNextWord} className="rounded-xl px-3 text-xs hover:bg-primary hover:text-primary-foreground sm:text-sm">
+                <span>Sau</span><ArrowRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
 
-          <div className="flex justify-center items-center gap-4 mb-8">
-            <Button variant="secondary" onClick={goToPreviousBatch} disabled={batchIndex === 0} className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
-                <ChevronsLeft className="mr-2 h-4 w-4" /> Đợt trước
+          <div className="grid grid-cols-2 gap-3 mb-8">
+            <Button variant="secondary" onClick={goToPreviousBatch} disabled={batchIndex === 0} className="min-w-0 rounded-xl px-2 text-xs hover:bg-accent hover:text-accent-foreground sm:text-sm">
+                <ChevronsLeft className="h-4 w-4" /> Đợt trước
             </Button>
-            <Button variant="secondary" onClick={goToNextBatch} disabled={batchIndex >= totalBatches - 1} className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
-                Đợt tiếp theo <ChevronsRight className="ml-2 h-4 w-4" />
+            <Button variant="secondary" onClick={goToNextBatch} disabled={batchIndex >= totalBatches - 1} className="min-w-0 rounded-xl px-2 text-xs hover:bg-accent hover:text-accent-foreground sm:text-sm">
+                Đợt tiếp theo <ChevronsRight className="h-4 w-4" />
             </Button>
           </div>
           
           <div className="text-center mt-8">
-            <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
+            <Button asChild variant="secondary" className="min-w-0 rounded-xl px-2 text-xs hover:bg-accent hover:text-accent-foreground sm:text-sm">
               <Link to="/mandarin">
-                <Home className="mr-2 h-4 w-4" /> Chọn bài tập khác
+                <Home className="h-4 w-4" /> Chọn bài tập khác
               </Link>
             </Button>
           </div>
@@ -236,4 +239,7 @@ const FlashcardPage = () => {
   );
 };
 
-export default FlashcardPage;
+export default function FlashcardPage() {
+  const { level } = useParams<{ level: string }>();
+  return <FlashcardLesson key={level} />;
+}
