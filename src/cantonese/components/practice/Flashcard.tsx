@@ -1,12 +1,13 @@
-"use client"
+import { flashcardSchema, type ExerciseHooks } from '@/cantonese/lib/exercisePayload';
 import React from 'react'
-import { useSettings } from '../providers/SettingsProvider'
+import { useSettings } from '../providers/SettingsProvider.shared';
 import { motion } from 'framer-motion'
 import SpeakerButton from '@/cantonese/components/SpeakerButton' // Import SpeakerButton
 
-export default function Flashcard({data,hotkeyControls}:{data:any,hotkeyControls?:{setFlip:(f:()=>void)=>void,setPrev:(f:()=>void)=>void,setNext:(f:()=>void)=>void}}){
+export default function Flashcard({data: rawData,hotkeyControls,onAttach}:{data:unknown,onAttach?:(hooks:{getScore:()=>{score:number,total:number},getAnswers:()=>unknown[]})=>void,hotkeyControls?:{setFlip:(f:()=>void)=>void,setPrev:(f:()=>void)=>void,setNext:(f:()=>void)=>void}}){
+  const data = React.useMemo(() => flashcardSchema.parse(rawData), [rawData]);
   const [i,setI]=React.useState(0)
-  const rawItem=data.items[i]
+  const rawItem=data.items[Math.min(i, data.items.length - 1)] ?? {}
   // Support both old format (front/back) and new format (word/vi)
   const item = {
     word: rawItem.word || rawItem.front,
@@ -15,18 +16,19 @@ export default function Flashcard({data,hotkeyControls}:{data:any,hotkeyControls
   }
   const [flipped,setFlipped]=React.useState(false)
   const {showJyutping}=useSettings()
+  React.useEffect(() => { setI(0); setFlipped(false); }, [data]);
 
-  React.useEffect(()=>{ (window as any).__getScore={ getScore:()=>({score:0,total:data.items.length}) } },[data])
+  React.useEffect(()=>{ onAttach?.({ getScore:()=>({score:0,total:data.items.length}), getAnswers:()=>[] }) },[data,onAttach])
 
-  const prev=()=>{ setI(v=>{const n=Math.max(0,v-1); if(n!==v)setFlipped(false); return n}) }
-  const next=()=>{ setI(v=>{const n=Math.min(data.items.length-1,v+1); if(n!==v)setFlipped(false); return n}) }
-  const flip=()=>setFlipped(f=>!f)
+  const prev=React.useCallback(()=>{ setI(v=>{const n=Math.max(0,v-1); if(n!==v)setFlipped(false); return n}) }, [])
+  const next=React.useCallback(()=>{ setI(v=>{const n=Math.min(data.items.length-1,v+1); if(n!==v)setFlipped(false); return n}) }, [data.items.length])
+  const flip=React.useCallback(()=>setFlipped(f=>!f), [])
 
   React.useEffect(()=>{
     hotkeyControls?.setFlip(()=>flip)
     hotkeyControls?.setPrev(()=>prev)
     hotkeyControls?.setNext(()=>next)
-  },[hotkeyControls,i])
+  },[hotkeyControls,flip,prev,next])
 
   return (
     <div className="max-w-xl mx-auto p-6">

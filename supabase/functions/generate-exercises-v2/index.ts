@@ -1,3 +1,4 @@
+import { toError } from '../../../src/lib/errors.ts';
 /**
  * Supabase Edge Function: Generate Exercises V2
  * Version 2 với focus 100% vào kiểm tra ngôn ngữ
@@ -261,7 +262,8 @@ ${getExerciseFormatInstructions(type)}`;
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     )
 
-  } catch (error: any) {
+  } catch (caughtError: unknown) {
+      const error = toError(caughtError);
     return new Response(
       JSON.stringify({ error: error.message }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }

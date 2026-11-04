@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useSession } from '@/components/SessionContextProvider';
+import { useSession } from '@/components/SessionContextProvider.shared';
 
 export interface Course {
   id: string;
@@ -94,7 +94,7 @@ export const useCoursesWithAccess = (language?: 'mandarin' | 'cantonese') => {
       let filteredCourses = coursesRaw;
       if (language) {
         // Need to fetch full course data to filter by language
-        const courseIds = coursesRaw.map((c: any) => c.course_id);
+        const courseIds = coursesRaw.map((c) => c.course_id);
         const { data: fullCourses, error: coursesError } = await supabase
           .from('courses')
           .select('*')
@@ -105,15 +105,15 @@ export const useCoursesWithAccess = (language?: 'mandarin' | 'cantonese') => {
 
         const courseMap = new Map(fullCourses?.map(c => [c.id, c]));
         filteredCourses = coursesRaw
-          .filter((c: any) => courseMap.has(c.course_id))
-          .map((c: any) => ({
+          .filter((c) => courseMap.has(c.course_id))
+          .map((c) => ({
             ...courseMap.get(c.course_id),
             is_unlocked: c.is_unlocked,
             unlocked_at: c.unlocked_at,
           }));
       } else {
         // Fetch all course data
-        const courseIds = coursesRaw.map((c: any) => c.course_id);
+        const courseIds = coursesRaw.map((c) => c.course_id);
         const { data: fullCourses, error: coursesError } = await supabase
           .from('courses')
           .select('*')
@@ -122,7 +122,7 @@ export const useCoursesWithAccess = (language?: 'mandarin' | 'cantonese') => {
         if (coursesError) throw coursesError;
 
         const courseMap = new Map(fullCourses?.map(c => [c.id, c]));
-        filteredCourses = coursesRaw.map((c: any) => ({
+        filteredCourses = coursesRaw.map((c) => ({
           ...courseMap.get(c.course_id),
           is_unlocked: c.is_unlocked,
           unlocked_at: c.unlocked_at,

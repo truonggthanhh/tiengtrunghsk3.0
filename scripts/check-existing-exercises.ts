@@ -47,9 +47,9 @@ async function checkExercises() {
 
   if (exercises.length > 0) {
     console.log('📋 Exercise types found:');
-    const types = [...new Set(exercises.map((e: any) => e.type))];
+    const types = [...new Set(exercises.map((e) => e.type))];
     types.forEach(type => {
-      const count = exercises.filter((e: any) => e.type === type).length;
+      const count = exercises.filter((e) => e.type === type).length;
       console.log(`   - ${type}: ${count} exercise(s)`);
     });
 
@@ -82,7 +82,7 @@ async function checkExercises() {
     console.log(`📊 Total exercises in database: ${allExercises.length}`);
 
     // Group by lesson_id
-    const byLesson = allExercises.reduce((acc: any, ex: any) => {
+    const byLesson = allExercises.reduce((acc: Record<string, string[]>, ex: { lesson_id: string; type: string }) => {
       if (!acc[ex.lesson_id]) acc[ex.lesson_id] = [];
       acc[ex.lesson_id].push(ex.type);
       return acc;
@@ -91,7 +91,7 @@ async function checkExercises() {
     console.log(`📚 Exercises spread across ${Object.keys(byLesson).length} lessons\n`);
 
     console.log('Sample breakdown by lesson:');
-    Object.entries(byLesson).slice(0, 5).forEach(([lessonId, types]: [string, any]) => {
+    Object.entries(byLesson).slice(0, 5).forEach(([lessonId, types]: [string, string[]]) => {
       console.log(`   Lesson ${lessonId.substring(0, 8)}...: ${types.length} exercises (${[...new Set(types)].join(', ')})`);
     });
   }

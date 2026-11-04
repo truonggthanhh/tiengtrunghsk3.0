@@ -1,9 +1,7 @@
-"use client";
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
-import { useProfile } from '@/cantonese/components/providers/ProfileProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
+import { useProfile } from '@/cantonese/components/providers/ProfileProvider.shared';
 import { supabase } from '@/cantonese/integrations/supabase/client';
 import {
   DropdownMenu,

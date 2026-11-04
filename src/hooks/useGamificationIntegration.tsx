@@ -5,14 +5,14 @@
 
 import { useState, useCallback } from 'react';
 import { recordLearningEvent } from '@/lib/gamification/eventHandler';
-import type { LearningEvent } from '@/types/gamification';
+import type { LearningEvent, Badge } from '@/types/gamification';
 import { useToast } from '@/hooks/use-toast';
 
 interface GamificationResult {
   xp_earned: number;
   level_up: boolean;
   new_level?: number;
-  new_badges?: any[];
+  new_badges?: Badge[];
 }
 
 interface UseGamificationIntegrationReturn {
@@ -22,12 +22,12 @@ interface UseGamificationIntegrationReturn {
   showLevelUpModal: boolean;
   levelUpData: { level: number; title?: string } | null;
   showBadgeNotification: boolean;
-  unlockedBadge: any | null;
+  unlockedBadge: Badge | null;
 
   // Actions
-  trackQuizCompletion: (score: number, total: number, metadata?: any) => Promise<void>;
-  trackLessonCompletion: (metadata?: any) => Promise<void>;
-  trackPronunciationPractice: (metadata?: any) => Promise<void>;
+  trackQuizCompletion: (score: number, total: number, metadata?: Record<string, unknown>) => Promise<void>;
+  trackLessonCompletion: (metadata?: Record<string, unknown>) => Promise<void>;
+  trackPronunciationPractice: (metadata?: Record<string, unknown>) => Promise<void>;
   clearXPAnimation: () => void;
   clearLevelUpModal: () => void;
   clearBadgeNotification: () => void;
@@ -50,7 +50,7 @@ export function useGamificationIntegration(): UseGamificationIntegrationReturn {
 
   // Badge Unlock State
   const [showBadgeNotification, setShowBadgeNotification] = useState(false);
-  const [unlockedBadge, setUnlockedBadge] = useState<any | null>(null);
+  const [unlockedBadge, setUnlockedBadge] = useState<Badge | null>(null);
 
   const processGamificationResult = useCallback((result: GamificationResult) => {
     // Show XP animation
@@ -72,7 +72,7 @@ export function useGamificationIntegration(): UseGamificationIntegrationReturn {
     }
   }, []);
 
-  const trackQuizCompletion = useCallback(async (score: number, total: number, metadata: any = {}) => {
+  const trackQuizCompletion = useCallback(async (score: number, total: number, metadata: Record<string, unknown> = {}) => {
     setIsRecording(true);
     try {
       const event: LearningEvent = {
@@ -96,7 +96,7 @@ export function useGamificationIntegration(): UseGamificationIntegrationReturn {
     }
   }, [processGamificationResult]);
 
-  const trackLessonCompletion = useCallback(async (metadata: any = {}) => {
+  const trackLessonCompletion = useCallback(async (metadata: Record<string, unknown> = {}) => {
     setIsRecording(true);
     try {
       const event: LearningEvent = {
@@ -119,7 +119,7 @@ export function useGamificationIntegration(): UseGamificationIntegrationReturn {
     }
   }, [processGamificationResult]);
 
-  const trackPronunciationPractice = useCallback(async (metadata: any = {}) => {
+  const trackPronunciationPractice = useCallback(async (metadata: Record<string, unknown> = {}) => {
     setIsRecording(true);
     try {
       const event: LearningEvent = {

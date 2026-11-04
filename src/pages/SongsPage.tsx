@@ -65,7 +65,7 @@ const SongsPage = () => {
 
         {/* Songs grid */}
         <div className="grid md:grid-cols-2 gap-4">
-          {songs?.map((song: any) => (
+          {songs?.map((song) => (
             <Link
               key={song.id}
               to={`/mandarin/songs/${song.id}`}

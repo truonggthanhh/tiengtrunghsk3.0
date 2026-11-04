@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import UserMenu from '@/cantonese/components/UserMenu';
 import DarkModeToggle from '@/cantonese/components/ui/DarkModeToggle';
 import JyutpingToggle from '@/cantonese/components/ui/JyutpingToggle';
-import { useProfile } from '@/cantonese/components/providers/ProfileProvider';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useProfile } from '@/cantonese/components/providers/ProfileProvider.shared';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
 import { Button } from '@/components/ui/button';
 import { UserCog, BarChart2, ChevronDown, BookOpen, Music, FileText } from 'lucide-react';
 import {

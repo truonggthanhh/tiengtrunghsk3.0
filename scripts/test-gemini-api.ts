@@ -1,3 +1,4 @@
+import { toError } from '../src/lib/errors';
 /**
  * Test Gemini API key và list available models
  */
@@ -39,7 +40,8 @@ async function testGemini() {
     const text = response.text();
     console.log('✅ gemini-pro works!');
     console.log(`   Response: ${text.substring(0, 100)}...\n`);
-  } catch (error: any) {
+  } catch (caughtError: unknown) {
+      const error = toError(caughtError);
     console.log('❌ gemini-pro failed:');
     console.log(`   ${error.message}\n`);
   }
@@ -54,7 +56,7 @@ async function testGemini() {
     if (response.ok) {
       const data = await response.json();
       console.log('✅ Available models:');
-      data.models?.forEach((model: any) => {
+      data.models?.forEach((model) => {
         const supportsPDF = model.supportedGenerationMethods?.includes('generateContent');
         console.log(`   - ${model.name} ${supportsPDF ? '(supports generateContent)' : ''}`);
       });
@@ -63,7 +65,8 @@ async function testGemini() {
       console.log('❌ Failed to list models:');
       console.log(`   ${response.status}: ${errorText}`);
     }
-  } catch (error: any) {
+  } catch (caughtError: unknown) {
+      const error = toError(caughtError);
     console.log('❌ Error listing models:');
     console.log(`   ${error.message}`);
   }

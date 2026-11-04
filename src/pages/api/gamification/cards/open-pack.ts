@@ -3,9 +3,10 @@
  * Opens a card pack and returns random cards based on rarity weights
  */
 
-import type { APIRoute } from 'astro';
+import type { APIRoute } from '@/types/api-route';
 import { createClient } from '@supabase/supabase-js';
-import { selectRarityByWeight, type CardSource } from '@/lib/gamification/cardSystem';
+import { selectRarityByWeight } from '@/lib/gamification/cardSystem';
+import type { CardSource } from '@/types/gamification';
 
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -45,11 +46,17 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     const { source = 'quiz_reward', pack_size = 3 } = body;
 
     // Validate source
-    const validSources: CardSource[] = ['quiz_reward', 'boss_win', 'mission_reward', 'wheel_reward', 'purchase'];
+    const validSources: CardSource[] = ['quiz_reward', 'boss_win', 'mission_complete', 'wheel_spin', 'daily_login', 'level_up'];
     if (!validSources.includes(source as CardSource)) {
       return new Response(JSON.stringify({ error: 'Invalid card source' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (!Number.isSafeInteger(pack_size) || pack_size < 1 || pack_size > 100) {
+      return new Response(JSON.stringify({ error: 'pack_size must be an integer from 1 to 100' }), {
+        status: 400, headers: { 'Content-Type': 'application/json' }
       });
     }
 
@@ -60,26 +67,21 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       const rarity = selectRarityByWeight(source as CardSource);
 
       // Get a random card of this rarity
-      const { data: availableCards, error: cardError } = await supabase
+      const { data: queriedCards, error: cardError } = await supabase
         .from('cards')
         .select('*')
         .eq('rarity', rarity)
         .limit(10);
 
-      if (cardError || !availableCards || availableCards.length === 0) {
-        // Fallback to common if no cards found
-        const { data: fallbackCards } = await supabase
-          .from('cards')
-          .select('*')
-          .eq('rarity', 'common')
-          .limit(10);
-
-        if (fallbackCards && fallbackCards.length > 0) {
-          const randomCard = fallbackCards[Math.floor(Math.random() * fallbackCards.length)];
-          cards.push(randomCard);
-        }
-        continue;
+      let availableCards = queriedCards;
+      if (cardError) throw cardError;
+      if (!availableCards?.length) {
+        const { data: fallbackCards, error: fallbackError } = await supabase
+          .from('cards').select('*').eq('rarity', 'common').limit(10);
+        if (fallbackError) throw fallbackError;
+        availableCards = fallbackCards;
       }
+      if (!availableCards?.length) throw new Error('No cards available');
 
       // Select random card from available cards
       const randomCard = availableCards[Math.floor(Math.random() * availableCards.length)];
@@ -95,12 +97,9 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         .select('*, card:cards(*)')
         .single();
 
-      if (!insertError && userCard) {
-        cards.push(userCard);
-      } else {
-        // Still return the card info even if insertion failed
-        cards.push({ card: randomCard });
-      }
+      if (insertError) throw insertError;
+      if (!userCard) throw new Error('Failed to save card');
+      cards.push(userCard);
     }
 
     return new Response(JSON.stringify({

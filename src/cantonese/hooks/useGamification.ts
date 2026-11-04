@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/cantonese/integrations/supabase/client';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
 import { toast } from 'sonner';
 
 export interface UserPoints {
@@ -52,7 +52,7 @@ export const useGamification = () => {
 
   // Fetch user points
   const { data: userPoints, isLoading: isLoadingPoints } = useQuery<UserPoints>({
-    queryKey: ['userPoints', userId],
+    queryKey: ['cantonese', 'userPoints', userId],
     queryFn: async () => {
       if (!userId) throw new Error('User not authenticated');
 
@@ -83,7 +83,7 @@ export const useGamification = () => {
 
   // Fetch point transactions (recent 20)
   const { data: transactions, isLoading: isLoadingTransactions } = useQuery<PointTransaction[]>({
-    queryKey: ['pointTransactions', userId],
+    queryKey: ['cantonese', 'pointTransactions', userId],
     queryFn: async () => {
       if (!userId) throw new Error('User not authenticated');
 
@@ -102,7 +102,7 @@ export const useGamification = () => {
 
   // Fetch all achievements
   const { data: allAchievements, isLoading: isLoadingAchievements } = useQuery<Achievement[]>({
-    queryKey: ['achievements'],
+    queryKey: ['cantonese', 'achievements'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('achievements')
@@ -116,7 +116,7 @@ export const useGamification = () => {
 
   // Fetch user's unlocked achievements
   const { data: userAchievements, isLoading: isLoadingUserAchievements } = useQuery<UserAchievement[]>({
-    queryKey: ['userAchievements', userId],
+    queryKey: ['cantonese', 'userAchievements', userId],
     queryFn: async () => {
       if (!userId) throw new Error('User not authenticated');
 
@@ -160,10 +160,10 @@ export const useGamification = () => {
 
       if (error) throw error;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userPoints', userId] });
-      queryClient.invalidateQueries({ queryKey: ['pointTransactions', userId] });
-      checkAndUnlockAchievements();
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['cantonese', 'userPoints', userId] });
+      await queryClient.invalidateQueries({ queryKey: ['cantonese', 'pointTransactions', userId] });
+      await checkAndUnlockAchievements();
     },
   });
 
@@ -178,15 +178,16 @@ export const useGamification = () => {
 
       if (error) throw error;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userPoints', userId] });
-      checkAndUnlockAchievements();
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['cantonese', 'userPoints', userId] });
+      await checkAndUnlockAchievements();
     },
   });
 
   // Check and unlock achievements
   const checkAndUnlockAchievements = async () => {
-    if (!userId || !allAchievements || !userPoints) return;
+    const currentPoints = queryClient.getQueryData<UserPoints>(['cantonese', 'userPoints', userId]) ?? userPoints;
+    if (!userId || !allAchievements || !currentPoints) return;
 
     const unlockedIds = new Set(userAchievements?.map(ua => ua.achievement_id) || []);
 
@@ -197,10 +198,10 @@ export const useGamification = () => {
 
       switch (achievement.requirement_type) {
         case 'points':
-          shouldUnlock = userPoints.total_points >= achievement.requirement_value;
+          shouldUnlock = currentPoints.total_points >= achievement.requirement_value;
           break;
         case 'streak_days':
-          shouldUnlock = userPoints.current_streak_days >= achievement.requirement_value;
+          shouldUnlock = currentPoints.current_streak_days >= achievement.requirement_value;
           break;
         // Add more cases for lessons_completed, exercises_completed, perfect_scores
         default:
@@ -231,7 +232,7 @@ export const useGamification = () => {
             });
           }
 
-          queryClient.invalidateQueries({ queryKey: ['userAchievements', userId] });
+          await queryClient.invalidateQueries({ queryKey: ['cantonese', 'userAchievements', userId] });
         }
       }
     }
@@ -239,6 +240,13 @@ export const useGamification = () => {
 
   return {
     userPoints,
+    userProgress: userPoints ? {
+      total_xp: userPoints.total_points,
+      current_level: userPoints.level,
+      current_streak: userPoints.current_streak_days,
+      longest_streak: userPoints.longest_streak_days,
+    } : null,
+    addXP: (points: number) => addPointsMutation.mutate({ points, activityType: 'game_reward' }),
     transactions,
     allAchievements,
     userAchievements,

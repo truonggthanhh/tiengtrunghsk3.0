@@ -1,3 +1,4 @@
+import { loadYouTubeApi, type YouTubePlayer } from '@/lib/youtube';
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/cantonese/integrations/supabase/client';
@@ -7,14 +8,6 @@ import { Home, ArrowLeft, Music } from 'lucide-react';
 interface LrcLine {
   time: number;
   text: string;
-}
-
-// Declare YouTube Player API types
-declare global {
-  interface Window {
-    YT: any;
-    onYouTubeIframeAPIReady: () => void;
-  }
 }
 
 const parseLrc = (lrcContent: string): LrcLine[] => {
@@ -41,13 +34,13 @@ const SongDetail = () => {
   const { songId } = useParams<{ songId: string }>();
   const [currentTime, setCurrentTime] = useState(0);
   const [activeLineIndex, setActiveLineIndex] = useState(-1);
-  const [player, setPlayer] = useState<any>(null);
+  const [player, setPlayer] = useState<YouTubePlayer | null>(null);
   const lyricRefs = useRef<(HTMLDivElement | null)[]>([]);
   const lyricsContainerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<HTMLDivElement>(null);
 
   const { data: song, isLoading, error } = useQuery({
-    queryKey: ['song', songId],
+    queryKey: ['cantonese', 'song', songId],
     queryFn: async () => {
       const { data, error } = await supabase.from('songs').select('*').eq('id', songId).single();
       if (error) throw error;
@@ -60,78 +53,31 @@ const SongDetail = () => {
     return song?.lrc ? parseLrc(song.lrc) : [];
   }, [song?.lrc]);
 
-  // Load YouTube IFrame API
+  // Own exactly one player and timer per song; callbacks never capture an old player.
   useEffect(() => {
-    if (!window.YT) {
-      const tag = document.createElement('script');
-      tag.src = 'https://www.youtube.com/iframe_api';
-      const firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-    }
-  }, []);
-
-  // Initialize YouTube Player
-  useEffect(() => {
-    if (!song?.youtube_video_id || !playerRef.current) return;
-
-    const initPlayer = () => {
-      if (window.YT && window.YT.Player) {
-        const newPlayer = new window.YT.Player(playerRef.current, {
-          videoId: song.youtube_video_id,
-          playerVars: {
-            autoplay: 0,
-            controls: 1,
-            modestbranding: 1,
-            rel: 0,
-          },
-          events: {
-            onReady: (event: any) => {
-              console.log('YouTube player ready');
-            },
-            onStateChange: (event: any) => {
-              if (event.data === window.YT.PlayerState.PLAYING) {
-                startTimeUpdate();
-              }
-            },
-          },
-        });
-        setPlayer(newPlayer);
-      }
-    };
-
-    if (window.YT && window.YT.Player) {
-      initPlayer();
-    } else {
-      window.onYouTubeIframeAPIReady = initPlayer;
-    }
-
-    return () => {
-      if (player) {
-        player.destroy();
-      }
-    };
+    const element = playerRef.current;
+    if (!song?.youtube_video_id || !element) return;
+    let cancelled = false;
+    let ownedPlayer: YouTubePlayer | undefined;
+    setCurrentTime(0);
+    loadYouTubeApi().then(api => {
+      if (cancelled) return;
+      ownedPlayer = new api.Player(element, {
+        videoId: song.youtube_video_id,
+        playerVars: { autoplay: 0, controls: 1, modestbranding: 1, rel: 0 },
+      });
+      setPlayer(ownedPlayer);
+    }).catch(error => console.error('Failed to load YouTube player:', error));
+    return () => { cancelled = true; ownedPlayer?.destroy(); setPlayer(null); };
   }, [song?.youtube_video_id]);
 
-  const startTimeUpdate = () => {
-    const interval = setInterval(() => {
-      if (player && typeof player.getCurrentTime === 'function') {
-        try {
-          const time = player.getCurrentTime();
-          setCurrentTime(time * 1000); // Convert to milliseconds
-        } catch (e) {
-          console.error('Error getting current time:', e);
-        }
-      }
-    }, 100); // Update every 100ms for smooth sync
-
-    return () => clearInterval(interval);
-  };
-
   useEffect(() => {
-    if (player) {
-      const cleanup = startTimeUpdate();
-      return cleanup;
-    }
+    if (!player) return;
+    const interval = setInterval(() => {
+      try { setCurrentTime(player.getCurrentTime() * 1000); }
+      catch (error) { console.error('Error getting current time:', error); }
+    }, 100);
+    return () => clearInterval(interval);
   }, [player]);
 
   // Update active line and scroll

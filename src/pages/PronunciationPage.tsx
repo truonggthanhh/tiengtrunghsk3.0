@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { ArrowRight, Home, Mic, MicOff } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
-import { usePinyin } from '@/contexts/PinyinContext';
+import { usePinyin } from '@/contexts/PinyinContext.shared';
 
 const shuffleArray = <T,>(array: T[]): T[] => {
   const newArray = [...array];
@@ -44,7 +44,7 @@ const PronunciationPage = () => {
   const currentWord = useMemo(() => vocabulary[currentIndex], [vocabulary, currentIndex]);
 
   useEffect(() => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
       setFeedback('info');
       setFeedbackMessage('Trình duyệt của bạn không hỗ trợ nhận dạng giọng nói. Vui lòng thử trên Chrome hoặc Edge.');

@@ -1,4 +1,4 @@
-"use client"
+import { multipleChoiceSchema, type ExerciseHooks } from '@/cantonese/lib/exercisePayload';
 import React from 'react'
 import JyutpingText from '@/cantonese/components/JyutpingText'
 import { cn } from '@/lib/utils'
@@ -8,7 +8,8 @@ const containsChinese = (text: string): boolean => {
   return /[\u4e00-\u9fff]/.test(text);
 };
 
-export default function MultipleChoice({data,hotkeyControls, onAttach, showAnswers}:{data:any,hotkeyControls?:{setPick:(f:(i:number)=>void)=>void}, onAttach?:(h:any)=>void, showAnswers?: boolean}){
+export default function MultipleChoice({data: rawData,hotkeyControls, onAttach, showAnswers}:{data:unknown,hotkeyControls?:{setPick:React.Dispatch<React.SetStateAction<(i:number)=>void>>}, onAttach?:(h:ExerciseHooks)=>void, showAnswers?: boolean}){
+  const data = React.useMemo(() => multipleChoiceSchema.parse(rawData), [rawData]);
   const [picked,setPicked]=React.useState<number[]>([]);
 
   React.useEffect(() => {
@@ -17,7 +18,7 @@ export default function MultipleChoice({data,hotkeyControls, onAttach, showAnswe
     }
   }, [data.items]);
   
-  const score=data.items.reduce((s:any,it:any,idx:number)=> s + (picked[idx]===it.correct ? 1 : 0), 0)
+  const score=data.items.reduce((s,it,idx:number)=> s + (picked[idx]===it.correct ? 1 : 0), 0)
   
   React.useEffect(()=>{ 
     if(onAttach){
@@ -28,14 +29,14 @@ export default function MultipleChoice({data,hotkeyControls, onAttach, showAnswe
     }
   },[picked,data,onAttach, score])
 
-  const pick = (idx:number, i:number)=>{ const p=[...picked]; p[idx]=i; setPicked(p) }
-  React.useEffect(()=>{ hotkeyControls?.setPick((i:number)=>{
+  const pick = React.useCallback((idx:number, i:number)=>{ setPicked(previous => { const p=[...previous]; p[idx]=i; return p; }); }, [])
+  React.useEffect(()=>{ hotkeyControls?.setPick(()=>(i:number)=>{
     const idx = picked.findIndex(v=>v===-1); if(idx>-1) pick(idx,i)
-  })},[picked, hotkeyControls])
+  })},[picked, hotkeyControls, pick])
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-4">
-      {data.items.map((it:any,idx:number)=>(
+      {data.items.map((it,idx:number)=>(
         <div key={idx} className="p-6 bg-white dark:bg-black/20 rounded-2xl border border-ink/10 shadow-[0_10px_0_#d7c8b6]">
           <div className="mb-3 text-sm text-ink/70 dark:text-cream/70">Câu {idx + 1}</div>
           <JyutpingText jyutping={containsChinese(it.question) ? it.questionJyutping : undefined} className="mb-4 font-semibold text-lg" tag="div">

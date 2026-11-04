@@ -47,7 +47,7 @@ export interface XPEvent {
   event_type: XPEventType;
   xp_earned: number;
   source_id: string | null;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   created_at: string;
 }
 
@@ -82,6 +82,7 @@ export interface UserBadge {
   badge_id: string;
   unlocked_at: string;
   is_favorite: boolean;
+  badge?: Badge;
 }
 
 // ============================================================================
@@ -230,7 +231,7 @@ export interface Boss {
 
   // Questions
   lesson_ids: string[];
-  question_pool_config: any | null;
+  question_pool_config: unknown | null;
 
   // Rewards
   reward_config: {
@@ -247,7 +248,7 @@ export interface Boss {
   icon_url: string | null;
 
   is_active: boolean;
-  unlock_condition: any | null;
+  unlock_condition: unknown | null;
 
   created_at: string;
 }
@@ -277,7 +278,7 @@ export interface BossBattle {
   completed_at: string | null;
 
   // Rewards
-  rewards_claimed: any | null;
+  rewards_claimed: unknown | null;
 
   // Joined data
   boss?: Boss;
@@ -356,7 +357,7 @@ export type WheelRewardType =
 export interface WheelReward {
   id: string;
   reward_type: WheelRewardType;
-  reward_value: any;
+  reward_value: unknown;
   // Examples:
   // { xp: 100 }
   // { cards: 2, rarity: 'rare' }
@@ -386,7 +387,7 @@ export interface WheelSpinHistory {
   id: string;
   user_id: string;
   reward_id: string;
-  reward_received: any;
+  reward_received: unknown;
   spun_at: string;
 
   // Joined data
@@ -455,7 +456,7 @@ export interface GameItem {
   name: string;
   description: string | null;
   item_type: ItemType;
-  effect_config: any; // depends on item type
+  effect_config: unknown; // depends on item type
   icon_url: string | null;
   rarity: CardRarity;
 
@@ -484,7 +485,7 @@ export interface UserInventory {
 export interface LearningEvent {
   event_type: XPEventType;
   source_id?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface LearningEventResponse {
@@ -531,18 +532,16 @@ export interface SubmitBossAnswerResponse {
   next_question?: BossQuestion;
   battle_result?: {
     status: BossBattleStatus;
-    rewards: any;
+    rewards: unknown;
   };
 }
 
 // Wheel spin
-export interface SpinWheelRequest {
-  // No body needed, uses session user
-}
+export type SpinWheelRequest = Record<string, never>;
 
 export interface SpinWheelResponse {
   reward: WheelReward;
-  reward_claimed: any;
+  reward_claimed: unknown;
   spins_remaining: number;
 }
 
@@ -616,5 +615,5 @@ export interface PaginatedResponse<T> {
 export interface GamificationError {
   code: string;
   message: string;
-  details?: any;
+  details?: unknown;
 }

@@ -26,7 +26,7 @@ async function checkHanziCount() {
       console.log(`${lesson.title}: ${count} chữ Hán`);
 
       // Show sample characters
-      const chars = exercises[0].payload.items.slice(0, 10).map((item: any) => item.character || item.char).join(', ');
+      const chars = exercises[0].payload.items.slice(0, 10).map((item) => item.character || item.char).join(', ');
       console.log(`  Mẫu: ${chars}${count > 10 ? '...' : ''}\n`);
     } else {
       console.log(`${lesson.title}: Không có HANZI_WRITE exercise\n`);

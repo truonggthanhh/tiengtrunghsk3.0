@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { useGamification } from '@/components/gamification/GamificationProvider';
+import { useGamification } from '@/components/gamification/GamificationProvider.shared';
 import {
   Home,
   Loader2,
@@ -22,7 +22,7 @@ import {
   X,
   Check
 } from 'lucide-react';
-import { useSession } from '@/components/SessionContextProvider';
+import { useSession } from '@/components/SessionContextProvider.shared';
 import confetti from 'canvas-confetti';
 
 interface Boss {

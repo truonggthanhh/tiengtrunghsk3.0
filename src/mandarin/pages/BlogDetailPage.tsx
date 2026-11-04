@@ -1,8 +1,9 @@
+import { oneRelation } from '@/lib/relations';
 import React, { useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
-import { useSession } from '@/components/SessionContextProvider';
+import { useSession } from '@/components/SessionContextProvider.shared';
 import { Calendar, User, Eye, Tag, ArrowLeft } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -69,7 +70,7 @@ const BlogDetailPage = () => {
         .single();
 
       if (error) throw error;
-      return data as BlogPost;
+      return { ...data, profiles: oneRelation(data.profiles) };
     },
     enabled: !!slug,
   });
@@ -77,9 +78,19 @@ const BlogDetailPage = () => {
   // Increment view count when post loads
   useEffect(() => {
     if (post?.id) {
-      supabase.rpc('increment_blog_post_view_count', { post_id: post.id });
+      supabase.rpc('increment_blog_post_view_count', { post_id: post.id }).then(({ error }) => {
+        if (error) console.error('Failed to increment view count:', error);
+      });
     }
   }, [post?.id]);
+
+  // Sanitize HTML content to prevent XSS attacks
+  const sanitizedContent = useMemo(() => {
+    return DOMPurify.sanitize(post?.content ?? '', {
+      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre', 'hr', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
+      ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'id', 'target', 'rel'],
+    });
+  }, [post?.content]);
 
   if (isLoading) {
     return (
@@ -102,13 +113,7 @@ const BlogDetailPage = () => {
     );
   }
 
-  // Sanitize HTML content to prevent XSS attacks
-  const sanitizedContent = useMemo(() => {
-    return DOMPurify.sanitize(post.content, {
-      ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre', 'hr', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
-      ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'id', 'target', 'rel'],
-    });
-  }, [post.content]);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50/50 via-purple-50/30 to-pink-50/50 dark:from-gray-950 dark:via-cyan-950/10 dark:to-purple-950/10">

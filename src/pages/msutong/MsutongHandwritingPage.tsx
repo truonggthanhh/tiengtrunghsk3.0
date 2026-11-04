@@ -3,13 +3,13 @@ import { useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import HandwritingPracticeComponent from '@/components/HandwritingPracticeComponent';
 import { getVocabularyByMsutong, getFullMsutongVocabularyByLevel } from '@/data';
-import { usePinyin } from '@/contexts/PinyinContext';
+import { usePinyin } from '@/contexts/PinyinContext.shared';
 
 const MsutongHandwritingPage: React.FC = () => {
   const { showPinyin } = usePinyin();
   const [searchParams] = useSearchParams();
   const level = searchParams.get('level') || 'so-cap';
-  const lessonIds = searchParams.get('lessonIds')?.split(',') || [];
+  const lessonIds = useMemo(() => searchParams.get('lessonIds')?.split(',') || [], [searchParams]);
   const booksParam = searchParams.get('books') || 'Không rõ';
 
   const vocabulary = useMemo(() => getVocabularyByMsutong(level, lessonIds), [level, lessonIds]);

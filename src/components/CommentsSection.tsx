@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
-import { supabase } from '@/cantonese/integrations/supabase/client';
+import { supabase as mandarinClient } from '@/integrations/supabase/client';
+import { supabase as cantoneseClient } from '@/cantonese/integrations/supabase/client';
+import type { Session, SupabaseClient } from '@supabase/supabase-js';
+import { oneRelation } from '@/lib/relations';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession as useCantoneseSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
+import { useSession as useMandarinSession } from '@/components/SessionContextProvider.shared';
 import { toast } from 'sonner';
 import { MessageCircle, ThumbsUp, Reply, Trash2, Check, X, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -42,16 +46,15 @@ interface CommentsSectionProps {
   isAdmin?: boolean;
 }
 
-const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, isAdmin = false }) => {
+const CommentsSection = ({ postId, isAdmin = false, session, supabase, language }: CommentsSectionProps & { session: Session | null; supabase: SupabaseClient; language: string }) => {
   const queryClient = useQueryClient();
-  const { session } = useSession();
   const [newComment, setNewComment] = useState('');
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState('');
 
   // Fetch comments
   const { data: comments, isLoading } = useQuery<Comment[]>({
-    queryKey: ['blog-comments', postId],
+    queryKey: ['blog-comments', language, postId, isAdmin],
     queryFn: async () => {
       const query = supabase
         .from('blog_comments')
@@ -104,7 +107,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, isAdmin = fal
           }
 
           const { data: replies } = await replyQuery;
-          return { ...comment, replies: replies || [] };
+          return { ...comment, profiles: oneRelation(comment.profiles), replies: (replies || []).map(reply => ({ ...reply, profiles: oneRelation(reply.profiles) })) };
         })
       );
 
@@ -141,7 +144,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, isAdmin = fal
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['blog-comments', postId] });
+      queryClient.invalidateQueries({ queryKey: ['blog-comments', language, postId, isAdmin] });
       toast.success('Bình luận của bạn đang chờ duyệt!');
       setNewComment('');
       setReplyContent('');
@@ -156,7 +159,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, isAdmin = fal
       await supabase.rpc('increment_comment_likes', { comment_id_param: commentId });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['blog-comments', postId] });
+      queryClient.invalidateQueries({ queryKey: ['blog-comments', language, postId, isAdmin] });
     },
     onError: (error: Error) => toast.error(`Lỗi: ${error.message}`),
   });
@@ -171,7 +174,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, isAdmin = fal
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['blog-comments', postId] });
+      queryClient.invalidateQueries({ queryKey: ['blog-comments', language, postId, isAdmin] });
       toast.success('Đã cập nhật trạng thái!');
     },
     onError: (error: Error) => toast.error(`Lỗi: ${error.message}`),
@@ -187,7 +190,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, isAdmin = fal
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['blog-comments', postId] });
+      queryClient.invalidateQueries({ queryKey: ['blog-comments', language, postId, isAdmin] });
       toast.success('Đã xóa bình luận!');
     },
     onError: (error: Error) => toast.error(`Lỗi: ${error.message}`),
@@ -401,4 +404,12 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId, isAdmin = fal
   );
 };
 
-export default CommentsSection;
+export function CantoneseCommentsSection(props: CommentsSectionProps) {
+  const { session } = useCantoneseSession();
+  return <CommentsSection {...props} session={session} supabase={cantoneseClient} language="cantonese" />;
+}
+
+export default function MandarinCommentsSection(props: CommentsSectionProps) {
+  const { session } = useMandarinSession();
+  return <CommentsSection {...props} session={session} supabase={mandarinClient} language="mandarin" />;
+}

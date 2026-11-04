@@ -1,6 +1,6 @@
 import React from 'react'
-import { useTheme } from '@/cantonese/components/providers/ThemeProvider'
-import { useSettings } from '@/cantonese/components/providers/SettingsProvider'
+import { useTheme } from '@/cantonese/components/providers/ThemeProvider.shared';
+import { useSettings } from '@/cantonese/components/providers/SettingsProvider.shared';
 
 type Opts = {
   onPrev?: ()=>void
@@ -14,6 +14,9 @@ export default function useHotkeys(opts:Opts){
 
   React.useEffect(()=>{
     function onKey(e:KeyboardEvent){
+      const target = e.target instanceof HTMLElement ? e.target : null;
+      if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey || e.isComposing ||
+          target?.isContentEditable || target?.closest('input, textarea, select, [contenteditable="true"]')) return;
       if(e.key==='ArrowLeft'){ opts.onPrev?.(); }
       else if(e.key==='ArrowRight'){ opts.onNext?.(); }
       else if(e.key===' '){ e.preventDefault(); opts.onFlip?.(); }

@@ -7,7 +7,7 @@ import {
   Trophy, Zap, Swords, ScrollText, Sparkles, Target,
   Award, Gift, Flame, Star, ChevronRight, Gamepad2
 } from 'lucide-react';
-import { useGamification } from '@/components/gamification/GamificationProvider';
+import { useGamification } from '@/components/gamification/GamificationProvider.shared';
 import GamificationDashboard from '@/components/gamification/GamificationDashboard';
 
 const gameFeatures = [

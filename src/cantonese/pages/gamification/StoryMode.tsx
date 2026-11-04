@@ -18,7 +18,7 @@ import {
   X,
   Check,
 } from 'lucide-react';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
 import { useGamification } from '@/cantonese/hooks/useGamification';
 import confetti from 'canvas-confetti';
 

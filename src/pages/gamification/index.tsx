@@ -9,7 +9,7 @@ import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useGamification } from '@/components/gamification/GamificationProvider';
+import { useGamification } from '@/components/gamification/GamificationProvider.shared';
 import XPProgressBar from '@/components/gamification/XPProgressBar';
 import BadgeShowcase from '@/components/gamification/BadgeShowcase';
 import MissionCards from '@/components/gamification/MissionCards';
@@ -22,7 +22,7 @@ import {
   Loader2,
   Lock
 } from 'lucide-react';
-import { useSession } from '@/components/SessionContextProvider';
+import { useSession } from '@/components/SessionContextProvider.shared';
 
 export default function GamificationDashboard() {
   const { session } = useSession();

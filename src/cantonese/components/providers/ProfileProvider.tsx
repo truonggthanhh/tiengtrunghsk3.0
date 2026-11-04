@@ -1,8 +1,7 @@
-"use client";
-
+import { ProfileContext, useProfile } from './ProfileProvider.shared';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/cantonese/integrations/supabase/client';
-import { useSession } from './SessionContextProvider';
+import { useSession } from './SessionContextProvider.shared';
 
 interface Profile {
   id: string;
@@ -19,15 +18,9 @@ interface ProfileContextType {
   isAdmin: boolean;
 }
 
-const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
-export const useProfile = () => {
-  const context = useContext(ProfileContext);
-  if (context === undefined) {
-    throw new Error('useProfile must be used within a ProfileProvider');
-  }
-  return context;
-};
+
+
 
 export default function ProfileProvider({ children }: { children: React.ReactNode }) {
   const { session, isLoading: isLoadingSession } = useSession();
@@ -42,6 +35,8 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
     async function getProfileAndRole() {
       console.log('[ProfileProvider] Starting - Session:', session ? `✓ User: ${session.user.email}` : '✗ No session');
       setIsLoadingProfile(true);
+      setProfile(null);
+      setIsAdmin(false);
 
       // Add timeout to prevent infinite loading (10 seconds max)
       timeoutId = setTimeout(() => {
@@ -69,6 +64,8 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
           .select('id, first_name, last_name, avatar_url, role')
           .eq('id', session.user.id)
           .maybeSingle();
+
+        if (!isMounted) return;
 
         if (profileError) {
           console.error('[ProfileProvider] ❌ Error fetching profile:', profileError);
@@ -118,6 +115,7 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
               role: 'user'
             });
 
+          if (!isMounted) return;
           if (insertError) {
             console.error('[ProfileProvider] ❌ Error creating profile:', insertError);
             console.warn('[ProfileProvider] ⚠️ Continuing without profile creation (app will still work)');
@@ -147,10 +145,12 @@ export default function ProfileProvider({ children }: { children: React.ReactNod
           console.warn('[ProfileProvider] ⚠ RPC exception (using profile.role fallback):', rpcError);
         }
 
+        if (!isMounted) return;
         setIsAdmin(adminStatus);
         console.log('[ProfileProvider] ✓ Final state - Profile:', !!finalProfile, 'Admin:', adminStatus);
 
       } catch (err) {
+        if (!isMounted) return;
         console.error('[ProfileProvider] ❌ Unexpected error:', err);
         console.warn('[ProfileProvider] ⚠️ Continuing without profile data (app will still work)');
         clearTimeout(timeoutId);

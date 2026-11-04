@@ -1,8 +1,7 @@
-"use client"
 import React from 'react'
 import HanziWriter from 'hanzi-writer'
 import { Button } from '@/components/ui/button'
-import { useSettings } from '@/cantonese/components/providers/SettingsProvider' // Import useSettings
+import { useSettings } from '@/cantonese/components/providers/SettingsProvider.shared'; // Import useSettings
 
 export default function HanziPractice({ data, onComplete }: { data: { char: string; hint?: string; jyutping?: string }, onComplete?: () => void }) {
   const ref = React.useRef<HTMLDivElement | null>(null)
@@ -35,6 +34,7 @@ export default function HanziPractice({ data, onComplete }: { data: { char: stri
   }, [char]);
 
   React.useEffect(() => {
+    const ownedContainer = ref.current;
     const writer = initializeWriter();
     if (writer) {
       writer.animateCharacter({
@@ -44,9 +44,7 @@ export default function HanziPractice({ data, onComplete }: { data: { char: stri
       });
     }
     return () => {
-      if (ref.current) {
-        ref.current.innerHTML = '';
-      }
+      if (ownedContainer) ownedContainer.innerHTML = '';
     };
   }, [char, initializeWriter]);
 

@@ -26,3 +26,6 @@ dist-ssr
 # Supabase
 supabase/.temp/
 .env
+
+# TypeScript incremental build cache
+*.tsbuildinfo

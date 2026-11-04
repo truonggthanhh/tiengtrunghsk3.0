@@ -1,12 +1,12 @@
-"use client"
+import { SettingsCtx, useSettings } from './SettingsProvider.shared';
 import React from 'react'
 
 type Settings = {
   showJyutping: boolean
   toggleJyutping: ()=>void
 }
-const SettingsCtx = React.createContext<Settings>({showJyutping:true,toggleJyutping:()=>{}})
-export function useSettings(){ return React.useContext(SettingsCtx) }
+
+
 
 export default function SettingsProvider({children}:{children:React.ReactNode}){
   const [show,setShow]=React.useState(true)

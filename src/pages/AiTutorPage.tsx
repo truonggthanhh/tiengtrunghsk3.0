@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, FormEvent } from 'react';
+import { toError } from '@/lib/errors';
+import React, { useState, useEffect, useRef, useCallback, FormEvent } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
@@ -25,8 +26,12 @@ const AiTutorPage = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [chatMode, setChatMode] = useState<'text' | 'voice'>('text');
 
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  const sendMessageRef = useRef<(text: string) => Promise<void>>(async () => {});
+  const modeRef = useRef(chatMode);
+  useEffect(() => { modeRef.current = chatMode; }, [chatMode]);
 
   // --- Initialization and Setup ---
   useEffect(() => {
@@ -34,16 +39,25 @@ const AiTutorPage = () => {
     if (storedApiKey) setApiKey(storedApiKey);
   }, []);
 
-  useEffect(() => {
-    if (apiKey) initializeChat();
-  }, [apiKey, level]);
+
 
   useEffect(() => {
-    setupSpeechRecognition();
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'zh-CN';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+      recognition.onstart = () => setIsListening(true);
+      recognition.onend = () => setIsListening(false);
+      recognition.onerror = event => { console.error('Speech recognition error', event.error); setIsListening(false); };
+      recognition.onresult = event => { void sendMessageRef.current(event.results[0][0].transcript); };
+      recognitionRef.current = recognition;
+    }
     // Clean up on unmount
     return () => {
       if (recognitionRef.current) recognitionRef.current.abort();
-      window.speechSynthesis.cancel();
+      window.speechSynthesis?.cancel();
     };
   }, []);
 
@@ -54,7 +68,25 @@ const AiTutorPage = () => {
   }, [messages]);
 
   // --- Core Functions ---
-  const initializeChat = async () => {
+  const speak = useCallback((text: string) => {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis?.cancel(); // Cancel any previous speech
+    const utterance = new SpeechSynthesisUtterance(text);
+    const voices = window.speechSynthesis.getVoices();
+    const chineseVoice = voices.find(voice => voice.lang.startsWith('zh'));
+    if (chineseVoice) utterance.voice = chineseVoice;
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    window.speechSynthesis.speak(utterance);
+  }, []);
+
+  const handleApiError = useCallback((e: unknown) => {
+    console.error("API Error:", e);
+    const errorMessage = `Đã xảy ra lỗi khi kết nối với AI. Lỗi gốc: ${toError(e).message}`;
+    setMessages(prev => [...prev, { role: 'error', parts: [{ text: errorMessage }] }]);
+  }, []);
+
+  const initializeChat = useCallback(async () => {
     try {
       const { GoogleGenerativeAI } = await import('@google/generative-ai');
       const genAI = new GoogleGenerativeAI(apiKey!);
@@ -68,46 +100,12 @@ const AiTutorPage = () => {
       session.sendMessage("Bắt đầu").then(result => {
         const initialResponse = { role: 'model', parts: [{ text: result.response.text() }] } as Message;
         setMessages(prev => [...prev, initialResponse]);
-        if (chatMode === 'voice') speak(initialResponse.parts[0].text);
+        if (modeRef.current === 'voice') speak(initialResponse.parts[0].text);
       }).catch(handleApiError).finally(() => setIsLoading(false));
-    } catch (e: any) { handleApiError(e); }
-  };
+    } catch (caughtError: unknown) {
+      const e = toError(caughtError); handleApiError(e); }
+  }, [handleApiError, speak, apiKey, level]);
 
-  const setupSpeechRecognition = () => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
-      recognition.lang = 'zh-CN';
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-      recognitionRef.current = recognition;
-
-      recognition.onstart = () => setIsListening(true);
-      recognition.onend = () => setIsListening(false);
-      recognition.onerror = (event: any) => {
-        console.error('Speech recognition error', event.error);
-        setIsListening(false);
-      };
-      recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        sendMessage(transcript);
-      };
-    } else {
-      console.warn("Speech Recognition not supported by this browser.");
-    }
-  };
-
-  const speak = (text: string) => {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel(); // Cancel any previous speech
-    const utterance = new SpeechSynthesisUtterance(text);
-    const voices = window.speechSynthesis.getVoices();
-    const chineseVoice = voices.find(voice => voice.lang.startsWith('zh'));
-    if (chineseVoice) utterance.voice = chineseVoice;
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    window.speechSynthesis.speak(utterance);
-  };
 
   const sendMessage = async (messageText: string) => {
     if (!messageText.trim() || isLoading || !chatSession) return;
@@ -121,12 +119,16 @@ const AiTutorPage = () => {
       const aiResponse: Message = { role: 'model', parts: [{ text: result.response.text() }] };
       setMessages(prev => [...prev, aiResponse]);
       if (chatMode === 'voice') speak(aiResponse.parts[0].text);
-    } catch (e: any) {
+    } catch (caughtError: unknown) {
+      const e = toError(caughtError);
       handleApiError(e);
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => { sendMessageRef.current = sendMessage; });
+  useEffect(() => { if (apiKey) void initializeChat(); }, [apiKey, initializeChat]);
 
   // --- Event Handlers ---
   const handleFormSubmit = (e: FormEvent) => {
@@ -140,16 +142,11 @@ const AiTutorPage = () => {
     if (isListening) {
       recognitionRef.current.stop();
     } else {
-      window.speechSynthesis.cancel(); // Stop AI from speaking
+      window.speechSynthesis?.cancel(); // Stop AI from speaking
       recognitionRef.current.start();
     }
   };
 
-  const handleApiError = (e: any) => {
-    console.error("API Error:", e);
-    let errorMessage = `Đã xảy ra lỗi khi kết nối với AI. Lỗi gốc: ${e.message || e.toString()}`;
-    setMessages(prev => [...prev, { role: 'error', parts: [{ text: errorMessage }] }]);
-  };
 
   const handleSaveApiKey = () => {
     if (tempApiKey.trim()) {

@@ -1,3 +1,4 @@
+import { SidebarContext } from './sidebar.shared';
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { VariantProps, cva } from "class-variance-authority";
@@ -34,7 +35,7 @@ type SidebarContext = {
   toggleSidebar: () => void;
 };
 
-const SidebarContext = React.createContext<SidebarContext | null>(null);
+
 
 function useSidebar() {
   const context = React.useContext(SidebarContext);
@@ -765,5 +766,4 @@ export {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
-  useSidebar,
 };

@@ -1,9 +1,10 @@
-"use client"
+import { fillBlankSchema, type ExerciseHooks } from '@/cantonese/lib/exercisePayload';
 import React from 'react'
 import JyutpingText from '@/cantonese/components/JyutpingText'
 import { cn } from '@/lib/utils'
 
-export default function FillBlank({data, onAttach, showAnswers}:{data:any, onAttach?:(h:any)=>void, showAnswers?: boolean}){
+export default function FillBlank({data: rawData, onAttach, showAnswers}:{data:unknown, onAttach?:(h:ExerciseHooks)=>void, showAnswers?: boolean}){
+  const data = React.useMemo(() => fillBlankSchema.parse(rawData), [rawData]);
   const [answers,setAnswers]=React.useState<string[]>([]);
 
   // Normalize data to support both old (sentence) and new (sentenceBefore/After) formats
@@ -12,7 +13,7 @@ export default function FillBlank({data, onAttach, showAnswers}:{data:any, onAtt
 
     return {
       ...data,
-      items: data.items.map((item: any) => {
+      items: data.items.map((item) => {
         // If item already has sentenceBefore/After, use it
         if (item.sentenceBefore !== undefined && item.sentenceAfter !== undefined) {
           return item;
@@ -48,7 +49,7 @@ export default function FillBlank({data, onAttach, showAnswers}:{data:any, onAtt
     setAnswers(a) 
   }
   
-  const score = normalizedData.items.reduce((s:any,it:any,idx:number)=> s + ((answers[idx] || '').trim().toLowerCase()===it.answer.toLowerCase() ? 1 : 0), 0)
+  const score = normalizedData.items.reduce((s,it,idx:number)=> s + ((answers[idx] || '').trim().toLowerCase()===it.answer.toLowerCase() ? 1 : 0), 0)
 
   React.useEffect(()=>{
     if(onAttach){
@@ -63,7 +64,7 @@ export default function FillBlank({data, onAttach, showAnswers}:{data:any, onAtt
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-4">
-      {normalizedData.items.map((it:any,idx:number)=>(
+      {normalizedData.items.map((it,idx:number)=>(
         <div key={idx} className="p-6 bg-white dark:bg-black/20 rounded-2xl border border-ink/10 shadow-[0_10px_0_#d7c8b6]">
           <div className="mb-3 text-sm text-ink/70 dark:text-cream/70">Câu {idx + 1}</div>
           <div className="mb-4 flex items-start gap-1 flex-wrap text-lg font-medium">

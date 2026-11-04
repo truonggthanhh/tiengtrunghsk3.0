@@ -1,3 +1,4 @@
+import { toError } from '../src/lib/errors';
 /**
  * Script để regenerate lại các bài tập Cantonese
  * Tập trung vào kiểm tra ngôn ngữ 100% thay vì hỏi về nội dung hội thoại
@@ -177,7 +178,8 @@ ${getExerciseFormatInstructions(type)}`;
 
     console.log(`✅ Completed lesson: ${lessonId}\n`);
 
-  } catch (error: any) {
+  } catch (caughtError: unknown) {
+      const error = toError(caughtError);
     console.error(`❌ Error for lesson ${lessonId}:`, error.message);
   }
 }

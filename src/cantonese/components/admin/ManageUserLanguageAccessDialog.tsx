@@ -46,10 +46,10 @@ const ManageUserLanguageAccessDialog = ({ user, onClose }: ManageUserLanguageAcc
     },
     onSuccess: () => {
       toast.success('Đã cập nhật quyền truy cập ngôn ngữ.');
-      queryClient.invalidateQueries({ queryKey: ['allProfiles'] });
+      queryClient.invalidateQueries({ queryKey: ['cantonese', 'allProfiles'] });
       onClose();
     },
-    onError: (err: any) => {
+    onError: (err: Error) => {
       toast.error(`Lỗi: ${err.message}`);
     },
   });

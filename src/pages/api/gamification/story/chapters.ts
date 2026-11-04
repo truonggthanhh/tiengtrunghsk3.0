@@ -3,7 +3,7 @@
  * Get all story chapters (for both languages)
  */
 
-import type { APIRoute } from 'astro';
+import type { APIRoute } from '@/types/api-route';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
@@ -43,7 +43,7 @@ export const GET: APIRoute = async ({ cookies, url }) => {
     }
 
     // If user is logged in, get their progress
-    let userProgress: any = null;
+    let userProgress: { chapter_id: string; is_unlocked: boolean; is_completed: boolean; stars_earned: number }[] | null = null;
     if (accessToken) {
       const { data: { user } } = await supabase.auth.getUser(accessToken);
 
@@ -59,7 +59,7 @@ export const GET: APIRoute = async ({ cookies, url }) => {
 
     // Merge chapters with user progress
     const chaptersWithProgress = chapters?.map(chapter => {
-      const progress = userProgress?.find((p: any) => p.chapter_id === chapter.id);
+      const progress = userProgress?.find((p) => p.chapter_id === chapter.id);
 
       return {
         ...chapter,

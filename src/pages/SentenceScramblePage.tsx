@@ -7,8 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { ArrowRight, Home, RefreshCw, Lightbulb } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
-import { usePinyin } from '@/contexts/PinyinContext';
-import { GamificationWrapper, useGamificationTracking } from '@/components/gamification/GamificationWrapper';
+import { usePinyin } from '@/contexts/PinyinContext.shared';
+import { GamificationWrapper } from '@/components/gamification/GamificationWrapper';
+import { useGamificationTracking } from '@/components/gamification/GamificationWrapper.shared';
 import { pinyin } from 'pinyin-pro';
 
 // Helper function to shuffle an array
@@ -38,13 +39,14 @@ const SentenceScramblePage = () => {
     return fullVocabulary.flatMap(word => 
       word.examples ? word.examples.map(ex => ({ 
           sentence: ex.hanzi, 
-          translation: ex.translation 
+          translation: ex.translation,
+          pinyin: ex.pinyin
       })) : []
     );
   }, [fullVocabulary]);
 
   const [questionCount, setQuestionCount] = useState<number | null>(null);
-  const [questions, setQuestions] = useState<{ sentence: string; translation: string; }[]>([]);
+  const [questions, setQuestions] = useState<{ sentence: string; translation: string; pinyin?: string; }[]>([]);
   
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState<CharObject[]>([]);

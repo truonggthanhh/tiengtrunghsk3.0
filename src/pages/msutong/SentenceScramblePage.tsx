@@ -7,8 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { ArrowRight, Home, RefreshCw, Grid3X3, ListOrdered } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
-import { usePinyin } from '@/contexts/PinyinContext';
-import { GamificationWrapper, useGamificationTracking } from '@/components/gamification/GamificationWrapper';
+import { usePinyin } from '@/contexts/PinyinContext.shared';
+import { GamificationWrapper } from '@/components/gamification/GamificationWrapper';
+import { useGamificationTracking } from '@/components/gamification/GamificationWrapper.shared';
 
 const shuffleArray = <T,>(array: T[]): T[] => {
   const newArray = [...array];
@@ -28,7 +29,7 @@ const MsutongSentenceScramblePage = () => {
   const { showPinyin } = usePinyin();
   const [searchParams] = useSearchParams();
   const level = searchParams.get('level') || 'so-cap';
-  const lessonIds = searchParams.get('lessonIds')?.split(',') || [];
+  const lessonIds = useMemo(() => searchParams.get('lessonIds')?.split(',') || [], [searchParams]);
   const { trackQuizCompletion } = useGamificationTracking();
 
   const vocabulary = useMemo(() => getVocabularyByMsutong(level, lessonIds), [level, lessonIds]);
@@ -49,19 +50,19 @@ const MsutongSentenceScramblePage = () => {
     params.append('step', 'lesson');
     return `/mandarin/msutong?${params.toString()}`;
   }, [level, lessonIds]);
-  
+
   const allAvailableQuestions = useMemo(() => {
-    return vocabulary.flatMap(word => 
-      word.examples ? word.examples.map(ex => ({ 
-          sentence: ex.hanzi, 
-          translation: ex.translation 
+    return vocabulary.flatMap(word =>
+      word.examples ? word.examples.map(ex => ({
+          sentence: ex.hanzi,
+          translation: ex.translation, pinyin: ex.pinyin
       })) : []
     ).filter(q => q.sentence);
   }, [vocabulary]);
 
   const [questionCount, setQuestionCount] = useState<number | null>(null);
-  const [questions, setQuestions] = useState<{ sentence: string; translation: string; }[]>([]);
-  
+  const [questions, setQuestions] = useState<{ sentence: string; translation: string; pinyin?: string; }[]>([]);
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState<CharObject[]>([]);
   const [answerStatus, setAnswerStatus] = useState<'correct' | 'incorrect' | null>(null);
@@ -100,7 +101,7 @@ const MsutongSentenceScramblePage = () => {
     const shuffledQuestions = shuffleArray(allAvailableQuestions);
     const selectedQuestions = shuffledQuestions.slice(0, count);
     setQuestions(selectedQuestions);
-    
+
     setCurrentIndex(0);
     setCorrectAnswers(0);
     setShowResult(false);
@@ -122,7 +123,7 @@ const MsutongSentenceScramblePage = () => {
     if (answerStatus) return;
     const userAnswerString = userAnswer.map(c => c.char).join('');
     const correctAnswerString = currentQuestion.sentence.replace(/[，。？！]/g, '');
-    
+
     if (userAnswerString === correctAnswerString) {
       setAnswerStatus('correct');
       setCorrectAnswers(prev => prev + 1);
@@ -183,9 +184,9 @@ const MsutongSentenceScramblePage = () => {
               </CardHeader>
               <CardContent className="flex flex-col gap-4">
                 {[10, 20, 50].map(count => (
-                  <Button 
-                    key={count} 
-                    onClick={() => handleStart(count)} 
+                  <Button
+                    key={count}
+                    onClick={() => handleStart(count)}
                     disabled={allAvailableQuestions.length < count}
                     size="lg"
                     className="font-bold"
@@ -312,8 +313,8 @@ const MsutongSentenceScramblePage = () => {
                 <CardContent className="p-6 text-center space-y-2">
                   <p className="text-white font-semibold text-lg">Sai rồi!</p>
                   <p className="text-2xl md:text-3xl font-bold">{currentQuestion.sentence}</p>
-                  {showPinyin && (currentQuestion as any).pinyin && (
-                    <p className="text-xl font-medium text-white/90">{(currentQuestion as any).pinyin}</p>
+                  {showPinyin && currentQuestion.pinyin && (
+                    <p className="text-xl font-medium text-white/90">{currentQuestion.pinyin}</p>
                   )}
                   <p className="text-lg text-white/90">Nghĩa: {currentQuestion.translation}</p>
                 </CardContent>

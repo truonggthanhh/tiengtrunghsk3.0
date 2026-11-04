@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { ArrowRight, Home, CheckCircle2, XCircle, BookText, Grid3X3, ListOrdered } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
-import { usePinyin } from '@/contexts/PinyinContext';
+import { usePinyin } from '@/contexts/PinyinContext.shared';
 
 const shuffleArray = <T,>(array: T[]): T[] => {
   const newArray = [...array];
@@ -22,7 +22,7 @@ const MsutongReadingComprehensionPage = () => {
   const { showPinyin } = usePinyin();
   const [searchParams] = useSearchParams();
   const level = searchParams.get('level') || 'so-cap';
-  const lessonIds = searchParams.get('lessonIds')?.split(',') || [];
+  const lessonIds = useMemo(() => searchParams.get('lessonIds')?.split(',') || [], [searchParams]);
 
   const allPassages = useMemo(() => getReadingComprehensionByMsutong(level, lessonIds), [level, lessonIds]);
 

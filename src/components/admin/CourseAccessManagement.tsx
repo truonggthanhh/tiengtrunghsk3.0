@@ -116,7 +116,7 @@ export const CourseAccessManagement: React.FC = () => {
       await refetchAccess();
       toast.success('✅ Đã mở khóa khóa học');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error('[CourseAccess] Mutation onError:', error);
       toast.error('❌ Lỗi mở khóa', { description: error.message });
     },
@@ -148,7 +148,7 @@ export const CourseAccessManagement: React.FC = () => {
       await refetchAccess();
       toast.success('🔒 Đã khóa lại khóa học');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error('[CourseAccess] Mutation onError:', error);
       toast.error('❌ Lỗi khóa', { description: error.message });
     },
@@ -182,7 +182,7 @@ export const CourseAccessManagement: React.FC = () => {
       toast.success('✅ Đã mở khóa nhiều khóa học');
       setBulkNotes('');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error('[CourseAccess] Mutation onError:', error);
       toast.error('❌ Lỗi mở khóa hàng loạt', { description: error.message });
     },
@@ -366,7 +366,7 @@ export const CourseAccessManagement: React.FC = () => {
             {/* Filter */}
             <div className="flex items-center gap-4">
               <Label>Lọc:</Label>
-              <Select value={filterCategory} onValueChange={(v: any) => setFilterCategory(v)}>
+              <Select value={filterCategory} onValueChange={(v) => { if (v === 'all' || v === 'cantonese' || v === 'mandarin_hsk' || v === 'mandarin_msutong') setFilterCategory(v); }}>
                 <SelectTrigger className="w-48">
                   <SelectValue />
                 </SelectTrigger>

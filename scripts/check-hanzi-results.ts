@@ -56,18 +56,18 @@ async function checkHanziResults() {
   console.log('📊 Character count per lesson:\n');
 
   let totalCharacters = 0;
-  const results: any[] = [];
+  const results: { title: string; count: number; sample: string }[] = [];
 
   for (const exercise of exercises) {
     const characterCount = exercise.payload?.items?.length || 0;
     totalCharacters += characterCount;
 
-    const lessonTitle = (exercise as any).lessons?.title || 'Unknown';
+    const lessonTitle = (Array.isArray(exercise.lessons) ? exercise.lessons[0] : exercise.lessons)?.title || 'Unknown';
 
     results.push({
       title: lessonTitle,
       count: characterCount,
-      sample: exercise.payload?.items?.slice(0, 5).map((item: any) => item.character).join(', ') || ''
+      sample: exercise.payload?.items?.slice(0, 5).map((item) => item.character).join(', ') || ''
     });
   }
 

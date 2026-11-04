@@ -1,3 +1,4 @@
+import { toError } from '../src/lib/errors';
 /**
  * Script regenerate exercises DỰA TRÊN exercises cũ đã có
  * Lấy vocabulary từ FLASHCARD exercises cũ, regenerate với prompt mới 100% language-focused
@@ -168,7 +169,7 @@ async function fetchLessonsWithExercises() {
   const exercises = await response.json();
 
   // Group by lesson_id
-  const byLesson = exercises.reduce((acc: any, ex: any) => {
+  const byLesson = exercises.reduce((acc: Record<string, Record<string, unknown>>, ex: { lesson_id: string; type: string; payload: unknown }) => {
     if (!acc[ex.lesson_id]) {
       acc[ex.lesson_id] = {};
     }
@@ -194,7 +195,7 @@ async function fetchLessonsWithExercises() {
 
   const lessons = await lessonsResponse.json();
 
-  return lessons.map((lesson: any) => ({
+  return lessons.map((lesson) => ({
     ...lesson,
     oldExercises: byLesson[lesson.id]
   }));
@@ -237,7 +238,7 @@ ${getExerciseFormatInstructions(type)}`;
   }
 
   const data = await response.json();
-  const textContent = data.content.find((c: any) => c.type === 'text');
+  const textContent = data.content.find((c) => c.type === 'text');
 
   if (!textContent) {
     throw new Error('No text content in response');
@@ -271,7 +272,7 @@ async function deleteOldExercises(lessonId: string) {
   return true;
 }
 
-async function saveExercise(lessonId: string, userId: string, type: string, payload: any) {
+async function saveExercise(lessonId: string, userId: string, type: string, payload: unknown) {
   const url = `${SUPABASE_URL}/rest/v1/exercises`;
 
   const response = await fetch(url, {
@@ -323,7 +324,7 @@ async function main() {
     }
 
     // Build vocabulary string from flashcards
-    const vocabulary = flashcards.items.map((card: any) =>
+    const vocabulary = flashcards.items.map((card) =>
       `${card.front} (${card.frontJyutping}) - ${card.back}`
     ).join('\n');
 
@@ -333,7 +334,8 @@ async function main() {
     try {
       await deleteOldExercises(lesson.id);
       console.log('   🗑️  Deleted old exercises');
-    } catch (error: any) {
+    } catch (caughtError: unknown) {
+      const error = toError(caughtError);
       console.log(`   ⚠️  Could not delete old exercises: ${error.message}`);
     }
 
@@ -350,7 +352,8 @@ async function main() {
         // Delay 2s để tránh rate limit
         await new Promise(resolve => setTimeout(resolve, 2000));
 
-      } catch (error: any) {
+      } catch (caughtError: unknown) {
+      const error = toError(caughtError);
         console.log(`   ❌ ${type} failed: ${error.message}`);
       }
 

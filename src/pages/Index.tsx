@@ -17,7 +17,7 @@ import FeatureSection from "@/components/FeatureSection";
 import TestimonialSection from "@/components/TestimonialSection";
 import CallToActionSection from "@/components/CallToActionSection";
 import { cn } from "@/lib/utils";
-import { useSession } from "@/components/SessionContextProvider";
+import { useSession } from '@/components/SessionContextProvider.shared';
 import GamificationDashboard from "@/components/gamification/GamificationDashboard";
 
 const exerciseTypes = [

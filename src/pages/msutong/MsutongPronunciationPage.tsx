@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { ArrowRight, Home, Mic, MicOff, Grid3X3, ListOrdered } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
-import { usePinyin } from '@/contexts/PinyinContext';
+import { usePinyin } from '@/contexts/PinyinContext.shared';
 
 const shuffleArray = <T,>(array: T[]): T[] => {
   const newArray = [...array];
@@ -28,7 +28,7 @@ const MsutongPronunciationPage = () => {
   const { showPinyin } = usePinyin();
   const [searchParams] = useSearchParams();
   const level = searchParams.get('level') || 'so-cap';
-  const lessonIds = searchParams.get('lessonIds')?.split(',') || [];
+  const lessonIds = useMemo(() => searchParams.get('lessonIds')?.split(',') || [], [searchParams]);
 
   const practiceVocabulary = useMemo(() => getVocabularyByMsutong(level, lessonIds), [level, lessonIds]);
 
@@ -64,7 +64,7 @@ const MsutongPronunciationPage = () => {
   const currentWord = useMemo(() => vocabulary[currentIndex], [vocabulary, currentIndex]);
 
   useEffect(() => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
       setFeedback('info');
       setFeedbackMessage('Trình duyệt của bạn không hỗ trợ nhận dạng giọng nói. Vui lòng thử trên Chrome hoặc Edge.');

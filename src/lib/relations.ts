@@ -1,0 +1,4 @@
+/** Normalize a to-one PostgREST relation with or without generated schema types. */
+export function oneRelation<T>(value: T | T[] | null | undefined): T | null {
+  return Array.isArray(value) ? value[0] ?? null : value ?? null;
+}

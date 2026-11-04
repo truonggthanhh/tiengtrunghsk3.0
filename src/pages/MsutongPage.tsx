@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Label } from '@/components/ui/label';
 import { BookCopy, ChevronRight, ArrowLeft, BookOpen, Mic, Puzzle, FileQuestion, CheckSquare, Shuffle, AudioLines, Bot, Home, BookText, PenTool } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useSession } from '@/components/SessionContextProvider';
+import { useSession } from '@/components/SessionContextProvider.shared';
 
 const levels = [
   { slug: 'so-cap', name: 'Sơ cấp' },

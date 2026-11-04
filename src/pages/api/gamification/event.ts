@@ -3,9 +3,9 @@
  * Central endpoint for recording learning events and updating XP
  */
 
-import type { APIRoute } from 'astro';
+import type { APIRoute } from '@/types/api-route';
 import { createClient } from '@supabase/supabase-js';
-import { XP_REWARDS, calculateLevel, getXPForLevel } from '@/lib/gamification/xpRules';
+import { XP_REWARDS, calculateLevel } from '@/lib/gamification/xpRules';
 import type { XPEventType, UserProgress } from '@/types/gamification';
 
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
@@ -66,7 +66,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         xp_earned = XP_REWARDS.lesson_complete;
         break;
       case 'pronunciation_practice':
-        xp_earned = XP_REWARDS.pronunciation_practice;
+        xp_earned = XP_REWARDS.pronunciation_practice(metadata?.score ?? 0);
         break;
       case 'boss_win':
         if (metadata?.difficulty !== undefined) {
@@ -74,7 +74,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         }
         break;
       case 'mission_complete':
-        xp_earned = metadata?.xp_reward || XP_REWARDS.mission_complete;
+        xp_earned = XP_REWARDS.mission_complete(metadata?.mission_type);
         break;
       case 'daily_login':
         xp_earned = XP_REWARDS.daily_login;
@@ -85,7 +85,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         }
         break;
       case 'card_collected':
-        xp_earned = XP_REWARDS.card_collected;
+        xp_earned = XP_REWARDS.card_collected(metadata?.rarity);
         break;
       case 'vocabulary_mastered':
         xp_earned = XP_REWARDS.vocabulary_mastered;
@@ -113,7 +113,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         .insert({
           user_id: user.id,
           total_xp: xp_earned,
-          current_level: 1,
+          current_level: calculateLevel(xp_earned),
           current_streak: event_type === 'daily_login' ? 1 : 0,
           longest_streak: event_type === 'daily_login' ? 1 : 0,
           last_activity_date: new Date().toISOString()
@@ -198,19 +198,17 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       : false;
 
     // Check for badge unlocks (simplified - would need more complex logic)
-    const newBadges: any[] = [];
+    const newBadges: unknown[] = [];
 
     // Update mission progress if applicable
     if (event_type === 'quiz_complete' || event_type === 'lesson_complete') {
       // Update daily/weekly missions that track these activities
-      await supabase.rpc('update_mission_progress', {
+      const { error: missionError } = await supabase.rpc('update_mission_progress', {
         p_user_id: user.id,
         p_event_type: event_type,
         p_amount: 1
-      }).catch(() => {
-        // Mission progress update failed, but don't fail the whole request
-        console.error('Failed to update mission progress');
       });
+      if (missionError) console.error('Failed to update mission progress:', missionError);
     }
 
     // Return response with updated progress and rewards

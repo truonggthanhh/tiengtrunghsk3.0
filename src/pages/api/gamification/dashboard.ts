@@ -3,7 +3,7 @@
  * Get complete dashboard data including progress, badges, missions, cards, story, etc.
  */
 
-import type { APIRoute } from 'astro';
+import type { APIRoute } from '@/types/api-route';
 import { createClient } from '@supabase/supabase-js';
 import type { GamificationDashboard } from '@/types/gamification';
 

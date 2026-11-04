@@ -8,7 +8,7 @@ import type { VocabularyWord } from '@/data';
 import { Link } from 'react-router-dom';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import HanziWriterWrapper from './HanziWriterWrapper';
-import { usePinyin } from '@/contexts/PinyinContext';
+import { usePinyin } from '@/contexts/PinyinContext.shared';
 import { pinyin } from 'pinyin-pro';
 
 interface HandwritingPracticeProps {

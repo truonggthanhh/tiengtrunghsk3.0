@@ -2,8 +2,8 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { BookOpen, Headphones, Keyboard, PenTool, Zap, PlayCircle, Sparkles, Music, ListChecks, ToggleRight, Star, Volume2, Flame, Heart, ShoppingBag, Trophy, Award, Target, TrendingUp, Globe } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider'
-import { useProfile } from '@/cantonese/components/providers/ProfileProvider'
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
+import { useProfile } from '@/cantonese/components/providers/ProfileProvider.shared';
 
 export default function Index(){ return <HongKongRetroLanding/> }
 

@@ -3,7 +3,7 @@
  * Get user's card collection with filtering and sorting options
  */
 
-import type { APIRoute } from 'astro';
+import type { APIRoute } from '@/types/api-route';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;

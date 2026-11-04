@@ -3,7 +3,7 @@
  * Get current user's gamification progress
  */
 
-import type { APIRoute } from 'astro';
+import type { APIRoute } from '@/types/api-route';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;

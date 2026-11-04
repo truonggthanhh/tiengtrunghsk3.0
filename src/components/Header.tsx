@@ -1,12 +1,12 @@
 import { ThemeToggle } from "./ThemeToggle";
 import { Link } from "react-router-dom";
-import { useSession } from "@/components/SessionContextProvider";
+import { useSession } from '@/components/SessionContextProvider.shared';
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { LogOut, UserCog, Languages, User, BarChart2, BookOpen, Newspaper } from "lucide-react";
 import { toast } from "sonner";
-import { usePinyin } from "@/contexts/PinyinContext";
+import { usePinyin } from '@/contexts/PinyinContext.shared';
 
 const Header = () => {
   const { session, isLoading } = useSession();

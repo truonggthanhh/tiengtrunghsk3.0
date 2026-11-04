@@ -4,14 +4,14 @@ import { supabase } from '@/cantonese/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 import { Home, Sparkles } from 'lucide-react';
 import LessonCard from '@/cantonese/components/LessonCard';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
 
 const LessonsPage = () => {
   const { session } = useSession();
 
   // Fetch lessons with course info
   const { data: lessonsWithCourses, isLoading, error } = useQuery({
-    queryKey: ['lessons-with-courses'],
+    queryKey: ['cantonese', 'lessons-with-courses'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('lessons')
@@ -24,7 +24,7 @@ const LessonsPage = () => {
 
   // Fetch user's course access if logged in
   const { data: userCourseAccess } = useQuery({
-    queryKey: ['user-course-access', session?.user?.id],
+    queryKey: ['cantonese', 'user-course-access', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return [];
       const { data, error } = await supabase
@@ -169,7 +169,7 @@ const LessonsPage = () => {
               <p className="text-gray-600 dark:text-gray-300">Chưa có bài học nào</p>
             </div>
           ) : (
-            lessons?.map((l: any) => (
+            lessons?.map((l) => (
               <LessonCard key={l.id} lesson={l} />
             ))
           )}

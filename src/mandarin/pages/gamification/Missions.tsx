@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { useGamification } from '@/components/gamification/GamificationProvider';
+import { useGamification } from '@/components/gamification/GamificationProvider.shared';
 import {
   ArrowLeft,
   Target,
@@ -21,7 +21,7 @@ import {
   Calendar,
   Loader2,
 } from 'lucide-react';
-import { useSession } from '@/components/SessionContextProvider';
+import { useSession } from '@/components/SessionContextProvider.shared';
 import confetti from 'canvas-confetti';
 
 interface Mission {
@@ -144,7 +144,7 @@ export default function MandarinMissions() {
   ]);
 
   const handleClaimReward = (mission: Mission) => {
-    if (!mission.completed || mission.progress < mission.target) return;
+    if (mission.completed || mission.progress < mission.target) return;
 
     // Add XP
     if (addXP) {
@@ -170,23 +170,6 @@ export default function MandarinMissions() {
     }
   };
 
-  // Simulate mission progress (in real app, would track from actual user actions)
-  useEffect(() => {
-    const simulateProgress = () => {
-      setDailyMissions(prev => prev.map(m => ({
-        ...m,
-        progress: Math.min(m.progress + Math.floor(Math.random() * 2), m.target),
-      })));
-      setWeeklyMissions(prev => prev.map(m => ({
-        ...m,
-        progress: Math.min(m.progress + Math.floor(Math.random() * 3), m.target),
-      })));
-    };
-
-    // Simulate every 10 seconds
-    const interval = setInterval(simulateProgress, 10000);
-    return () => clearInterval(interval);
-  }, []);
 
   if (!session?.user) {
     return (

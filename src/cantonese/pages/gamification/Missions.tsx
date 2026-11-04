@@ -20,7 +20,7 @@ import {
   Calendar,
   Loader2,
 } from 'lucide-react';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
 import confetti from 'canvas-confetti';
 
 interface Mission {
@@ -143,7 +143,7 @@ export default function CantoneseMissions() {
   ]);
 
   const handleClaimReward = (mission: Mission) => {
-    if (!mission.completed || mission.progress < mission.target) return;
+    if (mission.completed || mission.progress < mission.target) return;
 
     // Add XP
     if (addXP) {
@@ -169,23 +169,6 @@ export default function CantoneseMissions() {
     }
   };
 
-  // Simulate mission progress (in real app, would track from actual user actions)
-  useEffect(() => {
-    const simulateProgress = () => {
-      setDailyMissions(prev => prev.map(m => ({
-        ...m,
-        progress: Math.min(m.progress + Math.floor(Math.random() * 2), m.target),
-      })));
-      setWeeklyMissions(prev => prev.map(m => ({
-        ...m,
-        progress: Math.min(m.progress + Math.floor(Math.random() * 3), m.target),
-      })));
-    };
-
-    // Simulate every 10 seconds
-    const interval = setInterval(simulateProgress, 10000);
-    return () => clearInterval(interval);
-  }, []);
 
   if (!session?.user) {
     return (

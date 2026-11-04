@@ -30,7 +30,7 @@ const ManageUserLessonsDialog = ({ user, onClose }: ManageUserLessonsDialogProps
 
   // Query 1: Fetch ALL lessons (for admin to choose from)
   const { data: allLessons, isLoading: isLoadingAllLessons } = useQuery<Lesson[]>({
-    queryKey: ['all_lessons_for_admin'],
+    queryKey: ['cantonese', 'all_lessons_for_admin'],
     queryFn: async () => {
       const { data, error } = await supabase.from('lessons').select('id, title').order('position', { ascending: true });
       if (error) throw error;
@@ -40,7 +40,7 @@ const ManageUserLessonsDialog = ({ user, onClose }: ManageUserLessonsDialogProps
 
   // Query 2: Fetch lessons currently assigned to the selected user
   const { data: userAssignedLessons, isLoading: isLoadingUserLessons } = useQuery<{ lesson_id: string }[]>({
-    queryKey: ['user_lesson_access', user?.id],
+    queryKey: ['cantonese', 'user_lesson_access', user?.id],
     queryFn: async () => {
       if (!user) return [];
       const { data, error } = await supabase.from('user_lesson_access').select('lesson_id').eq('user_id', user.id);
@@ -68,10 +68,10 @@ const ManageUserLessonsDialog = ({ user, onClose }: ManageUserLessonsDialogProps
     },
     onSuccess: () => {
       toast.success('Đã cập nhật quyền truy cập bài học cho người dùng.');
-      queryClient.invalidateQueries({ queryKey: ['user_lesson_access', user?.id] });
+      queryClient.invalidateQueries({ queryKey: ['cantonese', 'user_lesson_access', user?.id] });
       onClose();
     },
-    onError: (err: any) => {
+    onError: (err: Error) => {
       toast.error(`Lỗi: ${err.message}`);
     },
   });

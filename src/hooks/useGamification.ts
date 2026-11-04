@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useSession } from '@/components/SessionContextProvider';
+import { useSession } from '@/components/SessionContextProvider.shared';
 import { toast } from 'sonner';
 
 export interface UserPoints {
@@ -160,10 +160,10 @@ export const useGamification = () => {
 
       if (error) throw error;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userPoints', userId] });
-      queryClient.invalidateQueries({ queryKey: ['pointTransactions', userId] });
-      checkAndUnlockAchievements();
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['userPoints', userId] });
+      await queryClient.invalidateQueries({ queryKey: ['pointTransactions', userId] });
+      await checkAndUnlockAchievements();
     },
   });
 
@@ -178,15 +178,16 @@ export const useGamification = () => {
 
       if (error) throw error;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userPoints', userId] });
-      checkAndUnlockAchievements();
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['userPoints', userId] });
+      await checkAndUnlockAchievements();
     },
   });
 
   // Check and unlock achievements
   const checkAndUnlockAchievements = async () => {
-    if (!userId || !allAchievements || !userPoints) return;
+    const currentPoints = queryClient.getQueryData<UserPoints>(['userPoints', userId]) ?? userPoints;
+    if (!userId || !allAchievements || !currentPoints) return;
 
     const unlockedIds = new Set(userAchievements?.map(ua => ua.achievement_id) || []);
 
@@ -197,10 +198,10 @@ export const useGamification = () => {
 
       switch (achievement.requirement_type) {
         case 'points':
-          shouldUnlock = userPoints.total_points >= achievement.requirement_value;
+          shouldUnlock = currentPoints.total_points >= achievement.requirement_value;
           break;
         case 'streak_days':
-          shouldUnlock = userPoints.current_streak_days >= achievement.requirement_value;
+          shouldUnlock = currentPoints.current_streak_days >= achievement.requirement_value;
           break;
         // Add more cases for lessons_completed, exercises_completed, perfect_scores
         default:
@@ -231,7 +232,7 @@ export const useGamification = () => {
             });
           }
 
-          queryClient.invalidateQueries({ queryKey: ['userAchievements', userId] });
+          await queryClient.invalidateQueries({ queryKey: ['userAchievements', userId] });
         }
       }
     }

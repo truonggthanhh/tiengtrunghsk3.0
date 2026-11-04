@@ -41,7 +41,7 @@ export const CourseAccessManagement: React.FC = () => {
 
   // Fetch users via RPC (gets email from auth.users)
   const { data: users = [], isLoading: isLoadingUsers, error: usersError } = useQuery({
-    queryKey: ['users'],
+    queryKey: ['cantonese', 'users'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_all_users_with_emails');
 
@@ -56,7 +56,7 @@ export const CourseAccessManagement: React.FC = () => {
 
   // Fetch course access for selected user
   const { data: courseAccess = [], isLoading: isLoadingAccess, refetch: refetchAccess } = useQuery({
-    queryKey: ['courseAccess', selectedUserId],
+    queryKey: ['cantonese', 'courseAccess', selectedUserId],
     queryFn: async () => {
       if (!selectedUserId) return [];
 
@@ -82,7 +82,7 @@ export const CourseAccessManagement: React.FC = () => {
 
   // Get current admin ID
   const { data: currentAdmin } = useQuery({
-    queryKey: ['currentAdmin'],
+    queryKey: ['cantonese', 'currentAdmin'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       return user?.id;
@@ -112,11 +112,11 @@ export const CourseAccessManagement: React.FC = () => {
     },
     onSuccess: async () => {
       console.log('[Cantonese CourseAccess] Invalidating and refetching...');
-      await queryClient.invalidateQueries({ queryKey: ['courseAccess', selectedUserId] });
+      await queryClient.invalidateQueries({ queryKey: ['cantonese', 'courseAccess', selectedUserId] });
       await refetchAccess();
       toast.success('✅ Đã mở khóa bài học');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error('[Cantonese CourseAccess] Mutation onError:', error);
       toast.error('❌ Lỗi mở khóa', { description: error.message });
     },
@@ -144,11 +144,11 @@ export const CourseAccessManagement: React.FC = () => {
     },
     onSuccess: async () => {
       console.log('[Cantonese CourseAccess] Invalidating and refetching...');
-      await queryClient.invalidateQueries({ queryKey: ['courseAccess', selectedUserId] });
+      await queryClient.invalidateQueries({ queryKey: ['cantonese', 'courseAccess', selectedUserId] });
       await refetchAccess();
       toast.success('🔒 Đã khóa lại bài học');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error('[Cantonese CourseAccess] Mutation onError:', error);
       toast.error('❌ Lỗi khóa', { description: error.message });
     },
@@ -177,12 +177,12 @@ export const CourseAccessManagement: React.FC = () => {
     },
     onSuccess: async () => {
       console.log('[Cantonese CourseAccess] Invalidating and refetching...');
-      await queryClient.invalidateQueries({ queryKey: ['courseAccess', selectedUserId] });
+      await queryClient.invalidateQueries({ queryKey: ['cantonese', 'courseAccess', selectedUserId] });
       await refetchAccess();
       toast.success('✅ Đã mở khóa nhiều bài học');
       setBulkNotes('');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error('[Cantonese CourseAccess] Mutation onError:', error);
       toast.error('❌ Lỗi mở khóa hàng loạt', { description: error.message });
     },

@@ -6,7 +6,7 @@ import { getVocabularyByLevel } from '@/data';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, Home, ChevronsLeft, ChevronsRight, BookmarkCheck } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
-import { usePinyin } from '@/contexts/PinyinContext';
+import { usePinyin } from '@/contexts/PinyinContext.shared';
 import {
   Select,
   SelectContent,

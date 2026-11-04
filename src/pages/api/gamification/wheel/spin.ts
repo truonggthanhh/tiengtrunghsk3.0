@@ -3,7 +3,7 @@
  * Spin the lucky wheel and award random rewards
  */
 
-import type { APIRoute } from 'astro';
+import type { APIRoute } from '@/types/api-route';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
@@ -105,7 +105,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       });
 
     // Award the reward
-    let awardedReward: any = {
+    const awardedReward: Record<string, unknown> = {
       type: selectedReward.reward_type,
       value: selectedReward.reward_value,
       label: selectedReward.reward_label
@@ -127,7 +127,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         }).catch(err => console.error('Failed to award XP:', err));
         break;
 
-      case 'card_pack':
+      case 'card_pack': {
         // Award card pack
         const cardPackResponse = await fetch(`${new URL(request.url).origin}/api/gamification/cards/open-pack`, {
           method: 'POST',
@@ -136,7 +136,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
             'Cookie': `sb-access-token=${accessToken}`
           },
           body: JSON.stringify({
-            source: 'wheel_reward',
+            source: 'wheel_spin',
             pack_size: selectedReward.reward_value
           })
         }).catch(err => {
@@ -149,6 +149,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
           awardedReward.cards = cardData.cards;
         }
         break;
+      }
 
       case 'extra_spin':
         // Award extra spin

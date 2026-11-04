@@ -1,6 +1,6 @@
-"use client"
+import { reorderSchema, type ExerciseHooks } from '@/cantonese/lib/exercisePayload';
 import React from 'react'
-import { useSettings } from '@/cantonese/components/providers/SettingsProvider'
+import { useSettings } from '@/cantonese/components/providers/SettingsProvider.shared';
 import { DndContext, closestCenter, DragEndEvent, useSensor, useSensors, PointerSensor, KeyboardSensor } from '@dnd-kit/core'
 import { SortableContext, sortableKeyboardCoordinates, useSortable, arrayMove, rectSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
@@ -42,7 +42,8 @@ function SortableItem({ item, showJyutping }: { item: WordItem; showJyutping: bo
   );
 }
 
-export default function Reorder({data, onAttach, showAnswers}:{data:any, onAttach?:(h:any)=>void, showAnswers?: boolean}){
+export default function Reorder({data: rawData, onAttach, showAnswers}:{data:unknown, onAttach?:(h:ExerciseHooks)=>void, showAnswers?: boolean}){
+  const data = React.useMemo(() => reorderSchema.parse(rawData), [rawData]);
   const { showJyutping } = useSettings();
 
   // Normalize data to support both old (words/solution) and new (shuffled/correct) formats
@@ -51,7 +52,7 @@ export default function Reorder({data, onAttach, showAnswers}:{data:any, onAttac
 
     return {
       ...data,
-      items: data.items.map((item: any) => {
+      items: data.items.map((item) => {
         // If item already has words/solution, use it
         if (item.words && item.solution) {
           return item;
@@ -71,7 +72,7 @@ export default function Reorder({data, onAttach, showAnswers}:{data:any, onAttac
 
   const [answers, setAnswers] = React.useState<WordItem[][]>(() => {
     if (!normalizedData?.items) return [];
-    return normalizedData.items.map((it: any, itemIdx: number) => {
+    return normalizedData.items.map((it, itemIdx: number) => {
       const combined = it.words.map((word: string, i: number) => ({
         word,
         jyutping: it.wordsJyutping?.[i] || '',
@@ -83,7 +84,7 @@ export default function Reorder({data, onAttach, showAnswers}:{data:any, onAttac
 
   React.useEffect(() => {
     if (normalizedData?.items) {
-      setAnswers(normalizedData.items.map((it: any, itemIdx: number) => {
+      setAnswers(normalizedData.items.map((it, itemIdx: number) => {
         const combined = it.words.map((word: string, i: number) => ({
           word,
           jyutping: it.wordsJyutping?.[i] || '',
@@ -127,7 +128,7 @@ export default function Reorder({data, onAttach, showAnswers}:{data:any, onAttac
     return answers[idx].map(item => item.word).join(' ') === normalizedData.items[idx].solution.join(' ');
   }
 
-  const score = normalizedData.items.reduce((s:any,_:any,idx:number)=> s + (isCorrect(idx)?1:0), 0)
+  const score = normalizedData.items.reduce((s,_,idx:number)=> s + (isCorrect(idx)?1:0), 0)
 
   React.useEffect(()=>{
     if(onAttach){
@@ -140,7 +141,7 @@ export default function Reorder({data, onAttach, showAnswers}:{data:any, onAttac
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-4">
-      {normalizedData.items.map((item:any,idx:number)=>(
+      {normalizedData.items.map((item,idx:number)=>(
         <div key={idx} className="p-6 bg-white dark:bg-black/20 rounded-2xl border border-ink/10 shadow-[0_10px_0_#d7c8b6]">
           <div className="mb-3 text-sm text-ink/70 dark:text-cream/70">Câu {idx + 1}</div>
           <div className="text-lg font-medium text-ink mb-4">Sắp xếp thành câu đúng nghĩa:</div>

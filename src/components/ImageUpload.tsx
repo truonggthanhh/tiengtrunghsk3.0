@@ -1,3 +1,4 @@
+import { toError } from '@/lib/errors';
 import React, { useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -71,7 +72,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
       onImageUploaded(publicUrl);
       toast.success('Tải ảnh lên thành công!');
-    } catch (error: any) {
+    } catch (caughtError: unknown) {
+      const error = toError(caughtError);
       console.error('Error uploading image:', error);
       toast.error(`Lỗi tải ảnh: ${error.message}`);
       setPreview(null);

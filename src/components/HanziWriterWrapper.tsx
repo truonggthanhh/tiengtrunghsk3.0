@@ -13,6 +13,7 @@ const HanziWriterWrapper: React.FC<HanziWriterWrapperProps> = ({ character, writ
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const ownedContainer = containerRef.current;
     // Clear previous instance
     if (containerRef.current) {
       containerRef.current.innerHTML = '';
@@ -32,7 +33,7 @@ const HanziWriterWrapper: React.FC<HanziWriterWrapperProps> = ({ character, writ
         strokeColor: '#1A1A1A',
         radicalColor: '#D14A41', // Bộ thủ màu đỏ
         // By removing charDataLoader, HanziWriter will use its default CDN fetching
-        onLoadError: (err) => {
+        onLoadCharDataError: (err) => {
             console.error('HanziWriter load error:', err);
             const errorMessage = `Không thể tải dữ liệu cho chữ "${character}". Chữ này có thể không được hỗ trợ hoặc có lỗi mạng.`;
             toast.error("Lỗi tải dữ liệu", { description: errorMessage });
@@ -56,9 +57,7 @@ const HanziWriterWrapper: React.FC<HanziWriterWrapperProps> = ({ character, writ
 
     // Cleanup function
     return () => {
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
-      }
+      if (ownedContainer) ownedContainer.innerHTML = '';
       writerRef.current = null;
     };
   }, [character, writerRef, onWriterLoaded, onWriterError]);

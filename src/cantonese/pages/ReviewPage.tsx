@@ -1,13 +1,15 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import { reviewSchema, type ReviewPayload, type ExerciseHooks, type ExerciseSessionInput } from '@/cantonese/lib/exercisePayload';
+import React, { useState, useEffect, useCallback, useMemo, Suspense, lazy } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/cantonese/integrations/supabase/client';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
 import { toast } from 'sonner';
 import { Home, ArrowLeft, CheckCircle2, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import JyutpingToggle from '@/cantonese/components/ui/JyutpingToggle';
-import { GamificationWrapper, useGamificationTracking } from '@/components/gamification/GamificationWrapper';
+import { GamificationWrapper } from '@/components/gamification/GamificationWrapper';
+import { useGamificationTracking } from '@/components/gamification/GamificationWrapper.shared';
 
 // Lazy load components
 const FillBlank = lazy(() => import('@/cantonese/components/practice/FillBlank'));
@@ -19,14 +21,14 @@ const ReviewPage = () => {
   const { lessonId } = useParams<{ lessonId: string }>();
   const { session } = useSession();
   const { trackQuizCompletion } = useGamificationTracking();
-  const [testData, setTestData] = useState<any>(null);
-  const [hooks, setHooks] = useState<Record<string, any>>({});
+  const [testData, setTestData] = useState<ReviewPayload | null>(null);
+  const [hooks, setHooks] = useState<Record<string, ExerciseHooks>>({});
   const [results, setResults] = useState<{ score: number; total: number } | null>(null);
   const [startTime, setStartTime] = useState<number | null>(null);
 
   // 1. Fetch lesson details first
   const { data: lesson, isLoading: isLoadingLesson, error: errorLessonData } = useQuery({
-    queryKey: ['lesson_for_review', lessonId],
+    queryKey: ['cantonese', 'lesson_for_review', lessonId],
     queryFn: async () => {
       const { data, error } = await supabase.from('lessons').select('user_id').eq('id', lessonId).single();
       if (error) throw error;
@@ -40,8 +42,8 @@ const ReviewPage = () => {
   const queryUserId = !isLoadingLesson && lesson ? lesson.user_id : null;
 
   // 3. Fetch a random review test
-  const { isLoading, error } = useQuery({
-    queryKey: ['review_test', lessonId, queryUserId], // Use derived queryUserId
+  const { data: reviewPayload, isLoading, error } = useQuery({
+    queryKey: ['cantonese', 'review_test', lessonId, queryUserId], // Use derived queryUserId
     queryFn: async () => {
       if (!lessonId || !queryUserId) return null; // Ensure queryUserId is available
 
@@ -54,21 +56,27 @@ const ReviewPage = () => {
         .eq('test_index', randomIndex)
         .single();
       if (error) throw error;
-      setTestData(data.payload);
-      setStartTime(Date.now());
-      return data.payload;
+      return reviewSchema.parse(data.payload);
     },
     enabled: !!lessonId && !!queryUserId, // Enable only when queryUserId is ready
     refetchOnWindowFocus: false,
   });
 
+  useEffect(() => {
+    if (!reviewPayload) return;
+    setTestData(reviewPayload);
+    setStartTime(Date.now());
+    setResults(null);
+    setHooks({});
+  }, [reviewPayload]);
+
   const saveSessionMutation = useMutation({
-    mutationFn: async (sessionData: any) => {
+    mutationFn: async (sessionData: ExerciseSessionInput) => {
       const { error } = await supabase.from('exercise_sessions').insert([sessionData]);
       if (error) throw error;
     },
     onSuccess: () => toast.success('Đã lưu kết quả ôn tập!'),
-    onError: (err: any) => toast.error(`Lỗi khi lưu kết quả: ${err.message}`),
+    onError: (err: Error) => toast.error(`Lỗi khi lưu kết quả: ${err.message}`),
   });
 
   useEffect(() => {
@@ -81,9 +89,10 @@ const ReviewPage = () => {
     }
   }, [results, lessonId, trackQuizCompletion]);
 
-  const attachHooks = (type: string, h: any) => {
+  const attachHooks = useCallback((type: string, h: ExerciseHooks) => {
     setHooks(prev => ({ ...prev, [type]: h }));
-  };
+  }, []);
+  const attachments = useMemo(() => Object.fromEntries(['fill_blank', 'multichoice', 'true_false', 'reorder'].map(type => [type, (h: ExerciseHooks) => attachHooks(type, h)])), [attachHooks]);
 
   const handleSubmit = () => {
     if (Object.keys(hooks).length < 4) {
@@ -93,7 +102,7 @@ const ReviewPage = () => {
 
     let totalScore = 0;
     let totalQuestions = 0;
-    const allAnswers: Record<string, any> = {};
+    const allAnswers: Record<string, unknown> = {};
 
     for (const type in hooks) {
       const { score, total } = hooks[type].getScore();
@@ -152,25 +161,25 @@ const ReviewPage = () => {
             {testData.fill_blank && (
               <section>
                 <h2 className="text-xl font-bold mb-4 border-b-2 border-verm pb-2">Phần 1: Điền vào chỗ trống</h2>
-                <FillBlank data={{ items: testData.fill_blank }} onAttach={(h: any) => attachHooks('fill_blank', h)} showAnswers={showAnswers} />
+                <FillBlank data={{ items: testData.fill_blank }} onAttach={attachments.fill_blank} showAnswers={showAnswers} />
               </section>
             )}
             {testData.multichoice && (
               <section>
                 <h2 className="text-xl font-bold mb-4 border-b-2 border-neonCyan pb-2">Phần 2: Trắc nghiệm</h2>
-                <MultipleChoice data={{ items: testData.multichoice }} onAttach={(h: any) => attachHooks('multichoice', h)} showAnswers={showAnswers} />
+                <MultipleChoice data={{ items: testData.multichoice }} onAttach={attachments.multichoice} showAnswers={showAnswers} />
               </section>
             )}
             {testData.true_false && (
               <section>
                 <h2 className="text-xl font-bold mb-4 border-b-2 border-neonPink pb-2">Phần 3: Đúng / Sai</h2>
-                <TrueFalse data={{ items: testData.true_false }} onAttach={(h: any) => attachHooks('true_false', h)} showAnswers={showAnswers} />
+                <TrueFalse data={{ items: testData.true_false }} onAttach={attachments.true_false} showAnswers={showAnswers} />
               </section>
             )}
             {testData.reorder && (
               <section>
                 <h2 className="text-xl font-bold mb-4 border-b-2 border-neonBlue pb-2">Phần 4: Sắp xếp câu</h2>
-                <Reorder data={{ items: testData.reorder }} onAttach={(h: any) => attachHooks('reorder', h)} showAnswers={showAnswers} />
+                <Reorder data={{ items: testData.reorder }} onAttach={attachments.reorder} showAnswers={showAnswers} />
               </section>
             )}
             <div className="text-center pt-8">

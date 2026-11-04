@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from 'react';
 import { supabase } from '@/cantonese/integrations/supabase/client';
 import { Input } from '@/components/ui/input';

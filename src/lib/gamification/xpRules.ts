@@ -5,6 +5,7 @@
 export const XP_REWARDS = {
   // Quiz completion - base 50, bonus for high scores
   quiz_complete: (score: number, total: number): number => {
+    if (!Number.isFinite(score) || !Number.isFinite(total) || total <= 0 || score < 0 || score > total) return 0;
     const percentage = (score / total) * 100;
     const base = 50;
 
@@ -21,6 +22,7 @@ export const XP_REWARDS = {
 
   // Pronunciation practice - based on score
   pronunciation_practice: (score: number): number => {
+    if (!Number.isFinite(score) || score < 0 || score > 100) return 0;
     if (score >= 95) return 50; // Perfect
     if (score >= 90) return 40; // Excellent
     if (score >= 80) return 30; // Great
@@ -30,6 +32,7 @@ export const XP_REWARDS = {
 
   // Boss battle wins - scales with difficulty
   boss_win: (difficulty: number): number => {
+    if (!Number.isSafeInteger(difficulty) || difficulty < 1) return 0;
     return 100 + (difficulty * 50); // Level 1 = 150, Level 10 = 600
   },
 
@@ -49,6 +52,7 @@ export const XP_REWARDS = {
 
   // Streak milestones
   streak_milestone: (streak: number): number => {
+    if (!Number.isSafeInteger(streak) || streak <= 0) return 0;
     if (streak % 100 === 0) return 1000; // 100-day milestone
     if (streak % 30 === 0) return 500;   // Monthly milestone
     if (streak % 7 === 0) return 100;    // Weekly milestone
@@ -71,6 +75,7 @@ export const XP_REWARDS = {
 
   // Story chapter completed
   chapter_complete: (chapterNumber: number): number => {
+    if (!Number.isSafeInteger(chapterNumber) || chapterNumber < 1) return 0;
     return 100 + (chapterNumber * 20); // Scales with chapter
   }
 };

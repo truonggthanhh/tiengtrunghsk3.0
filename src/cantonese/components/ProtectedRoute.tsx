@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
 
 const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
   const { session, isLoading } = useSession();

@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { useSession } from '@/components/SessionContextProvider';
+import { useSession } from '@/components/SessionContextProvider.shared';
 import { FileText, Trash2, Edit3, Eye, PlusCircle, Upload, Image as ImageIcon } from 'lucide-react';
 import RichTextEditor from '@/components/RichTextEditor';
 import ImageUpload from '@/components/ImageUpload';
@@ -192,7 +192,7 @@ const BlogManager = () => {
       const slug = createSlug(editTitle);
       const tagsArray = editTags ? editTags.split(',').map(t => t.trim()).filter(Boolean) : [];
 
-      const postData: any = {
+      const postData: Partial<BlogPost> = {
         title: editTitle,
         slug,
         excerpt: editExcerpt,

@@ -1,3 +1,4 @@
+import { toError } from '@/lib/errors';
 import React, { useState, useCallback } from 'react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -47,7 +48,8 @@ const DictionarySearch: React.FC = () => {
 
       setResults(data || []);
 
-    } catch (e: any) {
+    } catch (caughtError: unknown) {
+      const e = toError(caughtError);
       console.error("Dictionary lookup error:", e);
       setError("Không thể tra cứu từ điển lúc này. Vui lòng thử lại sau.");
       setResults([]);

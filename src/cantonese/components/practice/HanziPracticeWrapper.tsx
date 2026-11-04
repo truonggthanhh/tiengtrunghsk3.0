@@ -1,4 +1,4 @@
-"use client"
+import type { ExerciseHooks } from '@/cantonese/lib/exercisePayload';
 import React from 'react'
 import HanziPractice from '@/cantonese/components/HanziPractice'
 import { motion } from 'framer-motion'
@@ -16,10 +16,15 @@ type HanziWriteItem = {
 export default function HanziPracticeWrapper({ data, hotkeyControls, onAttach }: {
   data: { description?: string; items: HanziWriteItem[] },
   hotkeyControls?: { setPrev: (f: () => void) => void, setNext: (f: () => void) => void },
-  onAttach?: (h: any) => void
+  onAttach?: (h) => void
 }) {
   const [selectedIndex, setSelectedIndex] = React.useState<number | null>(null)
   const [completedIndices, setCompletedIndices] = React.useState<Set<number>>(new Set())
+
+  React.useEffect(() => {
+    setSelectedIndex(null);
+    setCompletedIndices(new Set());
+  }, [data.items]);
 
   // Normalize data - support both char and character fields
   const normalizedItems = React.useMemo(() => {
@@ -115,6 +120,7 @@ export default function HanziPracticeWrapper({ data, hotkeyControls, onAttach }:
 
   // Show practice for selected character
   const selectedItem = normalizedItems[selectedIndex]
+  if (!selectedItem) return null;
 
   return (
     <div className="max-w-xl mx-auto p-6">

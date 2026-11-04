@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGamification } from './GamificationProvider';
+import { useGamification } from './GamificationProvider.shared';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Trophy, Star, Zap, Target, Award, TrendingUp } from 'lucide-react';
 import XPProgressBar from './XPProgressBar';
@@ -39,7 +39,7 @@ const GamificationDashboard = () => {
     },
     {
       title: 'Nhiệm vụ hoàn thành',
-      value: [...(dashboard.missions.daily || []), ...(dashboard.missions.weekly || []), ...(dashboard.missions.newbie || [])].filter(m => m.completed).length,
+      value: [...(dashboard.missions.daily || []), ...(dashboard.missions.weekly || []), ...(dashboard.missions.newbie || [])].filter(m => m.is_completed).length,
       icon: <Target className="h-5 w-5" />,
       gradient: 'bg-gradient-spring',
       shadowColor: 'shadow-cyan',
@@ -87,12 +87,15 @@ const GamificationDashboard = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <XPProgressBar />
+          <XPProgressBar currentLevel={userProgress.current_level} currentXP={userProgress.total_xp}
+            xpForCurrentLevel={dashboard.level_info.xp_required}
+            xpForNextLevel={dashboard.next_level_info?.xp_required ?? dashboard.level_info.xp_required}
+            levelTitle={dashboard.level_info.title} />
         </CardContent>
       </Card>
 
       {/* Streak Tracker */}
-      <StreakTracker />
+      <StreakTracker currentStreak={userProgress.current_streak} longestStreak={userProgress.longest_streak} />
 
       {/* Missions */}
       <div>
@@ -100,7 +103,7 @@ const GamificationDashboard = () => {
           <Target className="h-6 w-6 text-primary" />
           Nhiệm Vụ
         </h3>
-        <MissionCards />
+        <MissionCards missions={[...dashboard.missions.daily, ...dashboard.missions.weekly, ...dashboard.missions.newbie].filter(m => m.mission).map(m => ({ ...m, mission: m.mission! }))} />
       </div>
 
       {/* Badge Showcase */}
@@ -109,7 +112,7 @@ const GamificationDashboard = () => {
           <Award className="h-6 w-6 text-primary" />
           Bộ Sưu Tập Badge
         </h3>
-        <BadgeShowcase />
+        <BadgeShowcase unlockedBadges={dashboard.badges.unlocked.filter(b => b.badge).map(b => ({ ...b, badge: b.badge! }))} lockedBadges={dashboard.badges.available.filter(b => !dashboard.badges.unlocked.some(u => u.badge_id === b.id))} />
       </div>
     </div>
   );

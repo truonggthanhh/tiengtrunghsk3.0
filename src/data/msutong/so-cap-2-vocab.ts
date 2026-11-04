@@ -1,8 +1,5 @@
-import type { VocabularyWord } from '@/data';
-
-export interface MsutongWord extends VocabularyWord {
-  lesson: number;
-}
+import type { MsutongWord } from './so-cap-1-vocab';
+export type { MsutongWord } from './so-cap-1-vocab';
 
 export const msutong_so_cap_2_vocab: MsutongWord[] = [
   // Bài 1

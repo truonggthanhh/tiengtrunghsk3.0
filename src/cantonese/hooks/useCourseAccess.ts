@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/cantonese/integrations/supabase/client';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
 
 export type CourseType = `cantonese_lesson_${number}`;
 
@@ -20,7 +20,7 @@ export const useCourseAccess = (courseType: CourseType) => {
   const userId = session?.user?.id;
 
   return useQuery({
-    queryKey: ['courseAccess', userId, courseType],
+    queryKey: ['cantonese', 'courseAccess', userId, courseType],
     queryFn: async () => {
       if (!userId) {
         return { hasAccess: false, isAdmin: false };
@@ -66,7 +66,7 @@ export const useAllCourseAccess = () => {
   const userId = session?.user?.id;
 
   return useQuery({
-    queryKey: ['allCourseAccess', userId],
+    queryKey: ['cantonese', 'allCourseAccess', userId],
     queryFn: async () => {
       if (!userId) {
         return [];

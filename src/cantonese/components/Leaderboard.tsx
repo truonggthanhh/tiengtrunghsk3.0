@@ -1,4 +1,4 @@
-"use client";
+import { oneRelation } from '@/lib/relations';
 
 import React from 'react';
 import { supabase } from '@/cantonese/integrations/supabase/client';
@@ -11,7 +11,7 @@ interface LeaderboardProps {
 
 const Leaderboard = ({ lessonId }: LeaderboardProps) => {
   const { data: leaderboardData, isLoading, error } = useQuery({
-    queryKey: ['leaderboard', lessonId],
+    queryKey: ['cantonese', 'leaderboard', lessonId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('exercise_sessions')
@@ -33,7 +33,7 @@ const Leaderboard = ({ lessonId }: LeaderboardProps) => {
       const userScores: { [key: string]: { score: number; total: number; created_at: string; user_name: string } } = {};
       data.forEach(session => {
         const userId = session.user_id;
-        const userName = session.profiles ? `${session.profiles.first_name || ''} ${session.profiles.last_name || ''}`.trim() : 'Người dùng ẩn danh';
+        const userName = session.profiles ? `${oneRelation(session.profiles)?.first_name || ''} ${oneRelation(session.profiles)?.last_name || ''}`.trim() : 'Người dùng ẩn danh';
         
         if (!userScores[userId] || session.score > userScores[userId].score || (session.score === userScores[userId].score && new Date(session.created_at) < new Date(userScores[userId].created_at))) {
           userScores[userId] = {

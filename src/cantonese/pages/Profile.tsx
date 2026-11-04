@@ -1,9 +1,7 @@
-"use client";
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
-import { useProfile } from '@/cantonese/components/providers/ProfileProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
+import { useProfile } from '@/cantonese/components/providers/ProfileProvider.shared';
 import { supabase } from '@/cantonese/integrations/supabase/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -39,7 +37,7 @@ const ProfilePage = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      queryClient.invalidateQueries({ queryKey: ['cantonese', 'profile'] });
       toast.success('Hồ sơ đã được cập nhật thành công!');
     },
     onError: (err) => {

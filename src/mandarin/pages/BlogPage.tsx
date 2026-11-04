@@ -1,3 +1,4 @@
+import { oneRelation } from '@/lib/relations';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -48,7 +49,7 @@ const BlogPage = () => {
         .order('published_at', { ascending: false });
 
       if (error) throw error;
-      return data as BlogPost[];
+      return (data ?? []).map(post => ({ ...post, profiles: oneRelation(post.profiles) }));
     },
   });
 

@@ -58,7 +58,7 @@ async function checkExercises() {
 
   console.log(`📊 Found ${exercises.length} exercises:\n`);
 
-  exercises.forEach((ex: any) => {
+  exercises.forEach((ex) => {
     console.log(`\n📝 ${ex.type}:`);
     console.log(`   Payload structure: ${typeof ex.payload}`);
 

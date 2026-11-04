@@ -3,7 +3,7 @@
  * Shows notification when user unlocks a new badge
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Award, Sparkles, X } from 'lucide-react';
 import type { Badge } from '@/types/gamification';
@@ -53,6 +53,11 @@ export function BadgeUnlockNotification({ badge, onClose }: BadgeUnlockNotificat
   const rarity = badge.rarity || 'common';
   const colors = RARITY_COLORS[rarity];
 
+  const handleClose = useCallback(() => {
+    setShow(false);
+    setTimeout(onClose, 300);
+  }, [onClose]);
+
   useEffect(() => {
     // Auto close after 5 seconds
     const timer = setTimeout(() => {
@@ -60,12 +65,9 @@ export function BadgeUnlockNotification({ badge, onClose }: BadgeUnlockNotificat
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [handleClose]);
 
-  const handleClose = () => {
-    setShow(false);
-    setTimeout(onClose, 300);
-  };
+
 
   return (
     <AnimatePresence>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Moon, Sun } from 'lucide-react'
-import { useTheme } from '@/cantonese/components/providers/ThemeProvider'
+import { useTheme } from '@/cantonese/components/providers/ThemeProvider.shared';
 
 export default function DarkModeToggle(){
   const {dark,toggle} = useTheme()

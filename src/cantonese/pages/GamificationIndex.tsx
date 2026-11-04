@@ -6,9 +6,8 @@ import {
   Trophy, Zap, Swords, ScrollText, Sparkles, Target,
   Award, Gift, Flame, Star, ChevronRight, GamepadIcon
 } from 'lucide-react';
-import { useGamification } from '@/components/gamification/GamificationProvider';
+import { useGamification } from '@/cantonese/hooks/useGamification';
 import GamificationDashboard from '@/components/gamification/GamificationDashboard';
-import CantoneseHeader from '../components/layouts/Header';
 
 const gameFeatures = [
   {
@@ -68,11 +67,10 @@ const gameFeatures = [
 ];
 
 const CantoneseGamificationIndex = () => {
-  const { userProgress, dashboard, isLoading } = useGamification();
+  const { userProgress, isLoading } = useGamification();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
-      <CantoneseHeader />
 
       <main className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Hero Section */}
@@ -123,7 +121,7 @@ const CantoneseGamificationIndex = () => {
                     <div className="absolute top-4 right-4 bg-white text-primary px-3 py-1 rounded-full text-xs font-bold shadow-lg z-10">
                       {feature.badge}
                     </div>
-                  </div>
+                  )}
 
                   <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
 
@@ -150,7 +148,7 @@ const CantoneseGamificationIndex = () => {
 
         {/* Dashboard Section */}
         <section>
-          <GamificationDashboard />
+          {/* The active Cantonese dashboard is in pages/gamification/index.tsx. */}
         </section>
       </main>
     </div>

@@ -1,9 +1,10 @@
+import { oneRelation } from '@/lib/relations';
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/cantonese/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
-import { useProfile } from '@/cantonese/components/providers/ProfileProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
+import { useProfile } from '@/cantonese/components/providers/ProfileProvider.shared';
 import { toast } from 'sonner';
 import { FileText, Home, ArrowLeft, BookOpen, Edit3, ListChecks, ToggleRight, Shuffle, PenTool, Star, type LucideIcon } from 'lucide-react';
 import Leaderboard from '@/cantonese/components/Leaderboard';
@@ -69,7 +70,7 @@ const LessonDetail = () => {
 
   // 1. Fetch lesson details with course info
   const { data: lesson, isLoading: isLoadingLesson, error: errorLesson } = useQuery({
-    queryKey: ['lesson', lessonId],
+    queryKey: ['cantonese', 'lesson', lessonId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('lessons')
@@ -77,14 +78,14 @@ const LessonDetail = () => {
         .eq('id', lessonId)
         .single();
       if (error) throw error;
-      return data;
+      return { ...data, courses: oneRelation(data.courses) };
     },
     enabled: !!lessonId,
   });
 
   // Check user's course access
   const { data: userCourseAccess } = useQuery({
-    queryKey: ['user-course-access', session?.user?.id],
+    queryKey: ['cantonese', 'user-course-access', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return [];
       const { data, error } = await supabase
@@ -120,7 +121,7 @@ const LessonDetail = () => {
 
   // 3. Fetch available exercises
   const { data: exercises, isLoading: isLoadingExercises, error: errorExercises } = useQuery({
-    queryKey: ['exercises', lessonId, queryUserId], // Use derived queryUserId
+    queryKey: ['cantonese', 'exercises', lessonId, queryUserId], // Use derived queryUserId
     queryFn: async () => {
       if (!lessonId || !queryUserId) return []; // Ensure queryUserId is available
       const { data, error } = await supabase.from('exercises').select('type').eq('lesson_id', lessonId).eq('user_id', queryUserId);
@@ -132,7 +133,7 @@ const LessonDetail = () => {
 
   // 3. Check if review tests are available
   const { data: reviewTests, isLoading: isLoadingReviewTests } = useQuery({
-    queryKey: ['review_tests_check', lessonId, queryUserId], // Use derived queryUserId
+    queryKey: ['cantonese', 'review_tests_check', lessonId, queryUserId], // Use derived queryUserId
     queryFn: async () => {
       if (!lessonId || !queryUserId) return null; // Ensure queryUserId is available
       const { count, error } = await supabase.from('review_tests').select('*', { count: 'exact', head: true }).eq('lesson_id', lessonId).eq('user_id', queryUserId);
@@ -144,7 +145,7 @@ const LessonDetail = () => {
 
   // Fetch exercise sessions for CSV export
   const { data: exerciseSessions, isLoading: isLoadingSessions, error: errorSessions } = useQuery({
-    queryKey: ['exercise_sessions', lessonId, session?.user?.id, isAdmin],
+    queryKey: ['cantonese', 'exercise_sessions', lessonId, session?.user?.id, isAdmin],
     queryFn: async () => {
       if (!session?.user?.id) return [];
       let query = supabase.from('exercise_sessions').select(`*, profiles (first_name, last_name)`).eq('lesson_id', lessonId).order('created_at', { ascending: false });
@@ -242,7 +243,7 @@ const LessonDetail = () => {
     );
   }
 
-  const generatedExerciseTypes = new Set(exercises?.map((e: any) => e.type));
+  const generatedExerciseTypes = new Set(exercises?.map((e) => e.type));
   const areReviewTestsAvailable = (reviewTests ?? 0) > 0;
 
   return (

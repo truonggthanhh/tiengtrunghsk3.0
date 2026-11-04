@@ -10,7 +10,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useSession } from '@/components/SessionContextProvider';
+import { useSession } from '@/components/SessionContextProvider.shared';
 import { useCourseByLegacyType, useCheckCourseAccess } from './useCourses';
 
 export type CourseType =

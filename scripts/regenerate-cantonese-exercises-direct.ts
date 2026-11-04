@@ -1,3 +1,4 @@
+import { toError } from '../src/lib/errors';
 /**
  * Script để regenerate lại các bài tập Cantonese
  * Tập trung vào kiểm tra ngôn ngữ 100% thay vì hỏi về nội dung hội thoại
@@ -206,7 +207,7 @@ ${getExerciseFormatInstructions(type)}`;
   }
 
   const data = await response.json();
-  const textContent = data.content.find((c: any) => c.type === 'text');
+  const textContent = data.content.find((c) => c.type === 'text');
 
   if (!textContent) {
     throw new Error('No text content in response');
@@ -221,7 +222,7 @@ ${getExerciseFormatInstructions(type)}`;
   return JSON.parse(jsonMatch[0]);
 }
 
-async function saveExercise(lessonId: string, userId: string, type: string, payload: any) {
+async function saveExercise(lessonId: string, userId: string, type: string, payload: unknown) {
   const url = `${SUPABASE_URL}/rest/v1/exercises`;
 
   const response = await fetch(url, {
@@ -296,7 +297,8 @@ async function main() {
         // Delay 2s để tránh rate limit
         await new Promise(resolve => setTimeout(resolve, 2000));
 
-      } catch (error: any) {
+      } catch (caughtError: unknown) {
+      const error = toError(caughtError);
         console.log(`   ❌ ${type} failed: ${error.message}`);
       }
 

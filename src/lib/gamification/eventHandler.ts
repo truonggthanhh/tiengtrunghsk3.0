@@ -128,9 +128,9 @@ export async function getGamificationDashboard(): Promise<GamificationDashboard 
   const xpToNextLevel = nextLevelInfo ? nextLevelInfo.xp_required - userProgress.total_xp : 0;
 
   // Group missions by type
-  const dailyMissions = (userMissions || []).filter((um: any) => um.mission?.mission_type === 'daily');
-  const weeklyMissions = (userMissions || []).filter((um: any) => um.mission?.mission_type === 'weekly');
-  const newbieMissions = (userMissions || []).filter((um: any) => um.mission?.mission_type === 'newbie');
+  const dailyMissions = (userMissions || []).filter((um) => um.mission?.mission_type === 'daily');
+  const weeklyMissions = (userMissions || []).filter((um) => um.mission?.mission_type === 'weekly');
+  const newbieMissions = (userMissions || []).filter((um) => um.mission?.mission_type === 'newbie');
 
   return {
     user_progress: userProgress,
@@ -149,7 +149,7 @@ export async function getGamificationDashboard(): Promise<GamificationDashboard 
     },
     cards: {
       total_collected: userCards?.length || 0,
-      unique_cards: new Set(userCards?.map((uc: any) => uc.card_id)).size || 0,
+      unique_cards: new Set(userCards?.map((uc) => uc.card_id)).size || 0,
       collection_completion_percentage: totalCards ? ((userCards?.length || 0) / totalCards) * 100 : 0,
       recent_cards: (userCards || []).slice(0, 10)
     },
@@ -181,12 +181,13 @@ export async function recordLearningEvent(
   let xpEarned = 0;
 
   switch (event.event_type) {
-    case 'quiz_complete':
+    case 'quiz_complete': {
       const correct = (event.metadata?.correct_count ?? event.metadata?.score ?? 0) as number;
       const total = (event.metadata?.total_count ?? event.metadata?.total ?? 1) as number;
       const scorePercentage = total > 0 ? correct / total : 0;
       xpEarned = Math.floor(total * 10 * scorePercentage);
       break;
+    }
     case 'lesson_complete':
       xpEarned = 50;
       break;

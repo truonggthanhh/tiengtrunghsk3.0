@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Home, ArrowLeft, BarChart2, TrendingUp, Award, Flame, Calendar, Trophy, Star, Zap } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,12 +20,14 @@ const LearningProgressPage = () => {
     updateStreak,
   } = useGamification();
 
-  // Update streak on page load
+  const updatedForUser = useRef<string | null>(null);
+  // Update streak once per signed-in user without a mutation/refetch loop.
   useEffect(() => {
-    if (userPoints) {
+    if (userPoints && updatedForUser.current !== userPoints.user_id) {
+      updatedForUser.current = userPoints.user_id;
       updateStreak().catch(console.error);
     }
-  }, []);
+  }, [userPoints, updateStreak]);
 
   if (isLoading) {
     return (

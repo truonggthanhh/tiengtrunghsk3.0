@@ -20,8 +20,8 @@ const CantoneseEnhancedPronunciationPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const fullVocabulary = useMemo(() => getFullMsutongVocabularyByLevel(level || 'so-cap'), [level]);
 
-  const { startSession, completeSession, recordAnswer } = useAnalytics();
-  const { updateReview, calculateQuality, getMixedVocabulary } = useSRS();
+  const { startSession, completeSession, recordAnswer } = useAnalytics('cantonese');
+  const { updateReview, calculateQuality, getMixedVocabulary } = useSRS('cantonese');
 
   const [questionCount, setQuestionCount] = useState<number | null>(null);
   const [vocabulary, setVocabulary] = useState<MsutongWord[]>([]);

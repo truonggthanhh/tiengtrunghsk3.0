@@ -1,10 +1,10 @@
-"use client"
+import { ThemeCtx, useTheme } from './ThemeProvider.shared';
 import React from 'react'
 
 type Ctx = { dark:boolean; toggle:()=>void }
-const ThemeCtx = React.createContext<Ctx>({dark:false,toggle:()=>{}})
 
-export function useTheme(){ return React.useContext(ThemeCtx) }
+
+
 
 export default function ThemeProvider({children}:{children:React.ReactNode}){
   const [dark,setDark]=React.useState(false)

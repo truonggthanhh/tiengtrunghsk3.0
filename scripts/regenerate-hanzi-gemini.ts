@@ -1,3 +1,4 @@
+import { toError } from '../src/lib/errors';
 /**
  * Script regenerate CHỈ HANZI_WRITE exercises cho Cantonese
  * Sử dụng Gemini API (FREE)
@@ -177,7 +178,7 @@ QUAN TRỌNG: Chỉ trả về JSON, KHÔNG thêm text nào khác.`;
 
     // Show sample
     if (payload.items && payload.items.length > 0) {
-      const sample = payload.items.slice(0, 10).map((item: any) => item.character).join(', ');
+      const sample = payload.items.slice(0, 10).map((item) => item.character).join(', ');
       console.log(`    🔤 Sample: ${sample}${characterCount > 10 ? '...' : ''}`);
     }
 
@@ -207,7 +208,8 @@ QUAN TRỌNG: Chỉ trả về JSON, KHÔNG thêm text nào khác.`;
 
     console.log(`✅ Completed lesson: ${title}`);
 
-  } catch (error: any) {
+  } catch (caughtError: unknown) {
+      const error = toError(caughtError);
     console.error(`❌ Error for lesson ${title}:`, error.message);
   }
 }

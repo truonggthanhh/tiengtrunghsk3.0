@@ -1,9 +1,10 @@
+import type { Song } from '@/types/song';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/cantonese/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
 import { Upload, Sparkles, FileText, Trash2, Music, Users, PlusCircle, BookOpen, ListMusic, Edit3, Clock, CheckCircle2, XCircle, Star, Replace, GripVertical, KeyRound, Lock, Newspaper, UserCog } from 'lucide-react';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -44,7 +45,7 @@ import BlogManager from '@/cantonese/components/admin/BlogManager';
 import CourseManager from '@/cantonese/components/admin/CourseManager';
 
 const extractVideoId = (url: string) => {
-  const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+  const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
   const match = url.match(regex);
   return match ? match[1] : null;
 };
@@ -267,7 +268,7 @@ const LessonManager = () => {
   const [lessonToReplacePdf, setLessonToReplacePdf] = useState<Lesson | null>(null);
 
   const { data: fetchedLessons, isLoading: isLoadingLessons } = useQuery<Lesson[]>({
-    queryKey: ['lessons'],
+    queryKey: ['cantonese', 'lessons'],
     queryFn: async () => {
       const { data, error } = await supabase.from('lessons').select('*').order('position', { ascending: true });
       if (error) throw error;
@@ -283,7 +284,7 @@ const LessonManager = () => {
   }, [fetchedLessons]);
 
   const { data: jobs, isLoading: isLoadingJobs } = useQuery<Job[]>({
-    queryKey: ['exercise_generation_jobs', session?.user?.id],
+    queryKey: ['cantonese', 'exercise_generation_jobs', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return [];
       const { data, error } = await supabase.from('exercise_generation_jobs').select('*').eq('user_id', session.user.id);
@@ -294,7 +295,7 @@ const LessonManager = () => {
   });
 
   const { data: reviewTestStatus, isLoading: isLoadingReviewStatus } = useQuery({
-    queryKey: ['review_tests_status', session?.user?.id],
+    queryKey: ['cantonese', 'review_tests_status', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return new Set();
       const { data, error } = await supabase.from('review_tests').select('lesson_id').eq('user_id', session.user.id);
@@ -305,7 +306,7 @@ const LessonManager = () => {
   });
 
   const { data: courses } = useQuery<Course[]>({
-    queryKey: ['courses-admin', 'cantonese'],
+    queryKey: ['cantonese', 'courses-admin', 'cantonese'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('courses')
@@ -325,15 +326,15 @@ const LessonManager = () => {
     const channel = supabase.channel('realtime-dashboard')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'exercise_generation_jobs', filter: `user_id=eq.${session.user.id}` },
         (payload) => {
-          queryClient.invalidateQueries({ queryKey: ['exercise_generation_jobs', session.user.id] });
+          queryClient.invalidateQueries({ queryKey: ['cantonese', 'exercise_generation_jobs', session.user.id] });
           if ((payload.new as Job)?.status === 'completed') {
-            queryClient.invalidateQueries({ queryKey: ['exercises', (payload.new as Job).lesson_id, session.user.id] });
+            queryClient.invalidateQueries({ queryKey: ['cantonese', 'exercises', (payload.new as Job).lesson_id, session.user.id] });
           }
         }
       )
       .on('postgres_changes', { event: '*', schema: 'public', table: 'review_tests', filter: `user_id=eq.${session.user.id}` },
         () => {
-          queryClient.invalidateQueries({ queryKey: ['review_tests_status', session.user.id] });
+          queryClient.invalidateQueries({ queryKey: ['cantonese', 'review_tests_status', session.user.id] });
         }
       )
       .subscribe();
@@ -346,7 +347,7 @@ const LessonManager = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['lessons'] }); toast.success('Bài học đã được tải lên!'); setFile(null); setTitle(''); setDesc(''); setCourseId(''); },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['cantonese', 'lessons'] }); toast.success('Bài học đã được tải lên!'); setFile(null); setTitle(''); setDesc(''); setCourseId(''); },
     onError: (err) => toast.error(`Lỗi: ${err.message}`),
   });
 
@@ -355,7 +356,7 @@ const LessonManager = () => {
       const { error } = await supabase.from('lessons').update({ title, description }).eq('id', id);
       if (error) throw error;
     },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['lessons'] }); toast.success('Bài học đã được cập nhật!'); setEditingLesson(null); },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['cantonese', 'lessons'] }); toast.success('Bài học đã được cập nhật!'); setEditingLesson(null); },
     onError: (err: Error) => toast.error(`Lỗi: ${err.message}`),
   });
 
@@ -365,8 +366,8 @@ const LessonManager = () => {
       if (error) throw new Error(error.message);
       return data;
     },
-    onSuccess: (data) => { toast.info(data.message); queryClient.invalidateQueries({ queryKey: ['exercise_generation_jobs', session?.user?.id] }); },
-    onError: (err: any) => toast.error(`Lỗi: ${err.message}`),
+    onSuccess: (data) => { toast.info(data.message); queryClient.invalidateQueries({ queryKey: ['cantonese', 'exercise_generation_jobs', session?.user?.id] }); },
+    onError: (err: Error) => toast.error(`Lỗi: ${err.message}`),
   });
 
   const generateReviewBatchMutation = useMutation({
@@ -376,7 +377,7 @@ const LessonManager = () => {
       return data;
     },
     onSuccess: (data) => { toast.info(data.message); setSelectedLessons(new Set()); },
-    onError: (err: any) => toast.error(`Lỗi khi tạo đề ôn tập: ${err.message}`),
+    onError: (err: Error) => toast.error(`Lỗi khi tạo đề ôn tập: ${err.message}`),
   });
 
   const deleteLessonMutation = useMutation({
@@ -394,7 +395,7 @@ const LessonManager = () => {
     },
     onSuccess: () => { toast.success('Bài học đã được xóa.'); },
     onError: (err: Error) => toast.error(`Lỗi: ${err.message}`),
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ['lessons'] }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['cantonese', 'lessons'] }),
   });
 
   const deleteJobMutation = useMutation({
@@ -403,11 +404,11 @@ const LessonManager = () => {
       if (error) throw error;
     },
     onMutate: async (jobId: string) => {
-      await queryClient.cancelQueries({ queryKey: ['exercise_generation_jobs', session?.user?.id] });
-      const previousJobs = queryClient.getQueryData<Job[]>(['exercise_generation_jobs', session?.user?.id]);
+      await queryClient.cancelQueries({ queryKey: ['cantonese', 'exercise_generation_jobs', session?.user?.id] });
+      const previousJobs = queryClient.getQueryData<Job[]>(['cantonese', 'exercise_generation_jobs', session?.user?.id]);
       if (previousJobs) {
         queryClient.setQueryData<Job[]>(
-          ['exercise_generation_jobs', session?.user?.id],
+          ['cantonese', 'exercise_generation_jobs', session?.user?.id],
           previousJobs.filter(job => job.id !== jobId)
         );
       }
@@ -416,9 +417,9 @@ const LessonManager = () => {
     onError: (err: Error, _jobId, context) => {
       toast.error(`Lỗi khi hủy tác vụ: ${err.message}`);
       if (context?.previousJobs) {
-        queryClient.setQueryData(['exercise_generation_jobs', session?.user?.id], context.previousJobs);
+        queryClient.setQueryData(['cantonese', 'exercise_generation_jobs', session?.user?.id], context.previousJobs);
       }
-      queryClient.invalidateQueries({ queryKey: ['exercise_generation_jobs', session?.user?.id] });
+      queryClient.invalidateQueries({ queryKey: ['cantonese', 'exercise_generation_jobs', session?.user?.id] });
     },
     onSuccess: () => {
         toast.success('Tác vụ đã được hủy.');
@@ -430,7 +431,7 @@ const LessonManager = () => {
       const { error } = await supabase.rpc('update_lesson_order', { lesson_ids: orderedLessonIds });
       if (error) throw error;
     },
-    onSuccess: () => { toast.success('Đã lưu thứ tự bài học!'); queryClient.invalidateQueries({ queryKey: ['lessons'] }); },
+    onSuccess: () => { toast.success('Đã lưu thứ tự bài học!'); queryClient.invalidateQueries({ queryKey: ['cantonese', 'lessons'] }); },
     onError: (err: Error) => toast.error(`Lỗi lưu thứ tự: ${err.message}`),
   });
 
@@ -459,7 +460,7 @@ const LessonManager = () => {
         } catch (e) { console.warn("Could not parse or delete old PDF from storage:", e); }
       }
     },
-    onSuccess: () => { toast.success('Đã thay thế file PDF thành công!'); queryClient.invalidateQueries({ queryKey: ['lessons'] }); },
+    onSuccess: () => { toast.success('Đã thay thế file PDF thành công!'); queryClient.invalidateQueries({ queryKey: ['cantonese', 'lessons'] }); },
     onError: (err: Error) => toast.error(`Lỗi: ${err.message}`),
   });
 
@@ -493,7 +494,7 @@ const LessonManager = () => {
   };
 
   const sensors = useSensors(useSensor(PointerSensor));
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event) => {
     const { active, over } = event;
     if (active.id !== over.id) {
       setLessons((items) => {
@@ -723,14 +724,14 @@ const SongManager = () => {
   const [lrc, setLrc] = useState('');
 
   // Edit state
-  const [editingSong, setEditingSong] = useState<any>(null);
+  const [editingSong, setEditingSong] = useState<Song | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [editArtist, setEditArtist] = useState('');
   const [editYoutubeUrl, setEditYoutubeUrl] = useState('');
   const [editLrc, setEditLrc] = useState('');
 
   const { data: songs, isLoading, error } = useQuery({
-    queryKey: ['songs'],
+    queryKey: ['cantonese', 'songs'],
     queryFn: async () => {
       const { data, error } = await supabase.from('songs').select('*').order('created_at', { ascending: false });
       if (error) throw error;
@@ -743,7 +744,7 @@ const SongManager = () => {
       const { error } = await supabase.from('songs').insert([newSong]);
       if (error) throw error;
     },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['songs'] }); toast.success('Bài hát đã được thêm!'); setTitle(''); setArtist(''); setYoutubeUrl(''); setLrc(''); },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['cantonese', 'songs'] }); toast.success('Bài hát đã được thêm!'); setTitle(''); setArtist(''); setYoutubeUrl(''); setLrc(''); },
     onError: (err: Error) => toast.error(`Lỗi: ${err.message}`),
   });
 
@@ -753,7 +754,7 @@ const SongManager = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['songs'] });
+      queryClient.invalidateQueries({ queryKey: ['cantonese', 'songs'] });
       toast.success('Bài hát đã được cập nhật!');
       setEditingSong(null);
     },
@@ -765,7 +766,7 @@ const SongManager = () => {
       const { error } = await supabase.from('songs').delete().eq('id', songId);
       if (error) throw error;
     },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['songs'] }); toast.success('Bài hát đã được xóa.'); },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['cantonese', 'songs'] }); toast.success('Bài hát đã được xóa.'); },
     onError: (err: Error) => toast.error(`Lỗi: ${err.message}`),
   });
 
@@ -775,7 +776,7 @@ const SongManager = () => {
     addSongMutation.mutate({ title, artist, youtube_video_id: videoId, lrc });
   };
 
-  const handleEditClick = (song: any) => {
+  const handleEditClick = (song: Song) => {
     setEditingSong(song);
     setEditTitle(song.title);
     setEditArtist(song.artist);
@@ -826,7 +827,7 @@ const SongManager = () => {
               <div className="text-red-600 dark:text-red-400 p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">Lỗi tải bài hát.</div>
             ) : (
               <div className="space-y-3">
-                {songs?.map((s: any) => (
+                {songs?.map((s) => (
                   <div key={s.id} className="group p-4 border border-gray-200 dark:border-gray-800 rounded-xl flex items-center justify-between flex-wrap gap-3 hover:border-purple-300 dark:hover:border-purple-700 hover:shadow-lg transition-all duration-300 bg-gradient-to-r from-white to-purple-50/30 dark:from-gray-900 dark:to-purple-900/10">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 grid place-items-center shadow-md">
@@ -1017,7 +1018,7 @@ const UserManager = () => {
   const [selectedUserForLessons, setSelectedUserForLessons] = useState<Profile | null>(null);
 
   const { data: profiles, isLoading, error } = useQuery<Profile[]>({
-    queryKey: ['allProfiles'],
+    queryKey: ['cantonese', 'allProfiles'],
     queryFn: async () => {
       const { data, error } = await supabase.from('profiles').select('id, first_name, last_name, role, updated_at');
       if (error) throw error;

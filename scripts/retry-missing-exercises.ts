@@ -1,3 +1,4 @@
+import { toError } from '../src/lib/errors';
 /**
  * Script retry - chỉ regenerate exercises còn thiếu
  * Skip những exercises đã có trong database
@@ -151,7 +152,7 @@ async function getExistingExercises(lessonId: string): Promise<Set<string>> {
   }
 
   const exercises = await response.json();
-  return new Set(exercises.map((ex: any) => ex.type));
+  return new Set(exercises.map((ex) => ex.type));
 }
 
 async function extractVocabularyFromPDF(pdfUrl: string): Promise<string> {
@@ -237,7 +238,7 @@ ${getExerciseFormatInstructions(type)}`;
   return JSON.parse(jsonMatch[0]);
 }
 
-async function saveExercise(lessonId: string, userId: string, type: string, payload: any) {
+async function saveExercise(lessonId: string, userId: string, type: string, payload: unknown) {
   const url = `${SUPABASE_URL}/rest/v1/exercises`;
 
   const response = await fetch(url, {
@@ -302,7 +303,8 @@ async function main() {
         console.log('   🤖 Extracting vocabulary with Gemini...');
         vocabularyCache[lesson.id] = await extractVocabularyFromPDF(lesson.pdf_url);
         console.log(`   ✅ Extracted vocabulary`);
-      } catch (error: any) {
+      } catch (caughtError: unknown) {
+      const error = toError(caughtError);
         console.log(`   ❌ Failed to extract vocabulary: ${error.message}`);
         continue;
       }
@@ -324,7 +326,8 @@ async function main() {
         // Delay 2s
         await new Promise(resolve => setTimeout(resolve, 2000));
 
-      } catch (error: any) {
+      } catch (caughtError: unknown) {
+      const error = toError(caughtError);
         console.log(`   ❌ ${type} failed: ${error.message}`);
       }
 

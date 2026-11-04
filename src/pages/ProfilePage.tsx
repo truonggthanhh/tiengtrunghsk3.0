@@ -1,7 +1,8 @@
+import { toError } from '@/lib/errors';
 import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
-import { useSession } from '@/components/SessionContextProvider';
+import { useSession } from '@/components/SessionContextProvider.shared';
 import { useProgressTracking } from '@/hooks/useProgressTracking';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -40,16 +41,7 @@ const ProfilePage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!isSessionLoading) {
-      if (!session) {
-        navigate(`/mandarin/login?returnUrl=${returnUrl}`);
-        return;
-      }
-      loadUserData();
-    }
-  }, [session, isSessionLoading, navigate, returnUrl]);
-
-  const loadUserData = async () => {
+const loadUserData = async () => {
     if (!session?.user) return;
 
     setIsLoadingData(true);
@@ -72,12 +64,24 @@ const ProfilePage: React.FC = () => {
       if (statsData) {
         setStats(statsData as ExerciseStats[]);
       }
-    } catch (error: any) {
+    } catch (caughtError: unknown) {
+      const error = toError(caughtError);
       console.error('Error loading user data:', error);
     } finally {
       setIsLoadingData(false);
     }
   };
+
+    if (!isSessionLoading) {
+      if (!session) {
+        navigate(`/mandarin/login?returnUrl=${returnUrl}`);
+        return;
+      }
+      loadUserData();
+    }
+  }, [session, isSessionLoading, navigate, returnUrl, getAllStats]);
+
+
 
   if (isSessionLoading || isLoadingData) {
     return (

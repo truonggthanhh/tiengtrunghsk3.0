@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, FormEvent } from 'react';
+import { toError } from '@/lib/errors';
+import React, { useState, useEffect, useRef, useCallback, useMemo, FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
@@ -17,7 +18,7 @@ const MsutongAiTutorPage = () => {
   const level = searchParams.get('level') || 'Sơ cấp';
   const books = searchParams.get('books') || 'Không rõ';
   const lessons = searchParams.get('lessons') || 'Không rõ';
-  const lessonIds = searchParams.get('lessonIds')?.split(',') || [];
+  const lessonIds = useMemo(() => searchParams.get('lessonIds')?.split(',') || [], [searchParams]);
 
   // Build URLs for back navigation
   const exerciseSelectionUrl = React.useMemo(() => {
@@ -47,23 +48,36 @@ const MsutongAiTutorPage = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [chatMode, setChatMode] = useState<'text' | 'voice'>('text');
 
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  const sendMessageRef = useRef<(text: string) => Promise<void>>(async () => {});
+  const modeRef = useRef(chatMode);
+  useEffect(() => { modeRef.current = chatMode; }, [chatMode]);
 
   useEffect(() => {
     const storedApiKey = localStorage.getItem('geminiApiKey');
     if (storedApiKey) setApiKey(storedApiKey);
   }, []);
 
-  useEffect(() => {
-    if (apiKey) initializeChat();
-  }, [apiKey, level, books, lessons]);
+
 
   useEffect(() => {
-    setupSpeechRecognition();
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'zh-CN';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+      recognition.onstart = () => setIsListening(true);
+      recognition.onend = () => setIsListening(false);
+      recognition.onerror = event => { console.error('Speech recognition error', event.error); setIsListening(false); };
+      recognition.onresult = event => { void sendMessageRef.current(event.results[0][0].transcript); };
+      recognitionRef.current = recognition;
+    }
     return () => {
       if (recognitionRef.current) recognitionRef.current.abort();
-      window.speechSynthesis.cancel();
+      window.speechSynthesis?.cancel();
     };
   }, []);
 
@@ -73,7 +87,25 @@ const MsutongAiTutorPage = () => {
     }
   }, [messages]);
 
-  const initializeChat = async () => {
+  const speak = useCallback((text: string) => {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis?.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    const voices = window.speechSynthesis.getVoices();
+    const chineseVoice = voices.find(voice => voice.lang.startsWith('zh'));
+    if (chineseVoice) utterance.voice = chineseVoice;
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    window.speechSynthesis.speak(utterance);
+  }, []);
+
+  const handleApiError = useCallback((e: unknown) => {
+    console.error("API Error:", e);
+    const errorMessage = `Đã xảy ra lỗi khi kết nối với AI. Lỗi gốc: ${toError(e).message}`;
+    setMessages(prev => [...prev, { role: 'error', parts: [{ text: errorMessage }] }]);
+  }, []);
+
+  const initializeChat = useCallback(async () => {
     try {
       const { GoogleGenerativeAI } = await import('@google/generative-ai');
       const genAI = new GoogleGenerativeAI(apiKey!);
@@ -87,46 +119,12 @@ const MsutongAiTutorPage = () => {
       session.sendMessage("Bắt đầu").then(result => {
         const initialResponse = { role: 'model', parts: [{ text: result.response.text() }] } as Message;
         setMessages(prev => [...prev, initialResponse]);
-        if (chatMode === 'voice') speak(initialResponse.parts[0].text);
+        if (modeRef.current === 'voice') speak(initialResponse.parts[0].text);
       }).catch(handleApiError).finally(() => setIsLoading(false));
-    } catch (e: any) { handleApiError(e); }
-  };
+    } catch (caughtError: unknown) {
+      const e = toError(caughtError); handleApiError(e); }
+  }, [handleApiError, speak, apiKey, level, books, lessons]);
 
-  const setupSpeechRecognition = () => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
-      recognition.lang = 'zh-CN';
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-      recognitionRef.current = recognition;
-
-      recognition.onstart = () => setIsListening(true);
-      recognition.onend = () => setIsListening(false);
-      recognition.onerror = (event: any) => {
-        console.error('Speech recognition error', event.error);
-        setIsListening(false);
-      };
-      recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        sendMessage(transcript);
-      };
-    } else {
-      console.warn("Speech Recognition not supported by this browser.");
-    }
-  };
-
-  const speak = (text: string) => {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    const voices = window.speechSynthesis.getVoices();
-    const chineseVoice = voices.find(voice => voice.lang.startsWith('zh'));
-    if (chineseVoice) utterance.voice = chineseVoice;
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    window.speechSynthesis.speak(utterance);
-  };
 
   const sendMessage = async (messageText: string) => {
     if (!messageText.trim() || isLoading || !chatSession) return;
@@ -138,18 +136,17 @@ const MsutongAiTutorPage = () => {
       const aiResponse: Message = { role: 'model', parts: [{ text: result.response.text() }] };
       setMessages(prev => [...prev, aiResponse]);
       if (chatMode === 'voice') speak(aiResponse.parts[0].text);
-    } catch (e: any) {
+    } catch (caughtError: unknown) {
+      const e = toError(caughtError);
       handleApiError(e);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleApiError = (e: any) => {
-    console.error("API Error:", e);
-    let errorMessage = `Đã xảy ra lỗi khi kết nối với AI. Lỗi gốc: ${e.message || e.toString()}`;
-    setMessages(prev => [...prev, { role: 'error', parts: [{ text: errorMessage }] }]);
-  };
+
+  useEffect(() => { sendMessageRef.current = sendMessage; });
+  useEffect(() => { if (apiKey) void initializeChat(); }, [apiKey, initializeChat]);
 
   const handleSaveApiKey = () => {
     if (tempApiKey.trim()) {
@@ -228,7 +225,7 @@ const MsutongAiTutorPage = () => {
               </form>
             ) : (
               <div className="w-full flex justify-center">
-                <Button onClick={() => { if (!recognitionRef.current) return; if (isListening) { recognitionRef.current.stop(); } else { window.speechSynthesis.cancel(); recognitionRef.current.start(); } }} disabled={isLoading || isSpeaking} size="lg" className={cn("rounded-full w-20 h-20", isListening && "bg-destructive hover:bg-destructive/90 animate-pulse")}>
+                <Button onClick={() => { if (!recognitionRef.current) return; if (isListening) { recognitionRef.current.stop(); } else { window.speechSynthesis?.cancel(); recognitionRef.current.start(); } }} disabled={isLoading || isSpeaking} size="lg" className={cn("rounded-full w-20 h-20", isListening && "bg-destructive hover:bg-destructive/90 animate-pulse")}>
                   {isListening ? <MicOff className="h-8 w-8" /> : <Mic className="h-8 w-8" />}
                 </Button>
               </div>

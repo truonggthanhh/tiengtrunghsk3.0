@@ -1,3 +1,4 @@
+import { oneRelation } from '@/lib/relations';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/cantonese/integrations/supabase/client';
@@ -27,7 +28,7 @@ const BlogPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const { data: posts, isLoading, error } = useQuery<BlogPost[]>({
-    queryKey: ['blog-posts', 'cantonese'],
+    queryKey: ['cantonese', 'blog-posts', 'cantonese'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('blog_posts')
@@ -48,7 +49,7 @@ const BlogPage = () => {
         .order('published_at', { ascending: false });
 
       if (error) throw error;
-      return data as BlogPost[];
+      return (data ?? []).map(post => ({ ...post, profiles: oneRelation(post.profiles) }));
     },
   });
 

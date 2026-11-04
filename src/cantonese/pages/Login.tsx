@@ -1,11 +1,9 @@
-"use client";
-
 import React, { useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/cantonese/integrations/supabase/client';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
 import EmailPasswordAuthForm from '@/cantonese/components/auth/EmailPasswordForm'; // Import form tùy chỉnh
 
 // Đối tượng localization đầy đủ cho tiếng Việt

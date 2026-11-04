@@ -186,7 +186,7 @@ function checkVietnamese(vietnamese: string): ErrorEntry | null {
   }
 
   // 2. Kiểm tra có nhiều từ tiếng Anh không
-  const words = lower.split(/[\s,;.()\/]+/);
+  const words = lower.split(/[\s,;.()/]+/);
   const englishFound = words.filter(w =>
     ENGLISH_WORDS.includes(w) && w.length > 2
   );
@@ -242,10 +242,10 @@ function checkHanzi(simplified: string, traditional: string): ErrorEntry | null 
   if (!simplified) return null;
 
   // 1. Kiểm tra có ký tự không phải chữ Hán
-  const nonHanzi = simplified.replace(/[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff\s·\-]/g, '');
+  const nonHanzi = simplified.replace(/[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff\s·-]/g, '');
   if (nonHanzi.length > 0) {
     // Cho phép một số ký tự đặc biệt
-    const allowedSpecial = /^[0-9a-zA-Z,.\/%]+$/;
+    const allowedSpecial = /^[0-9a-zA-Z,./%]+$/;
     if (!allowedSpecial.test(nonHanzi)) {
       return {
         id: 0, simplified: '', field: 'simplified',

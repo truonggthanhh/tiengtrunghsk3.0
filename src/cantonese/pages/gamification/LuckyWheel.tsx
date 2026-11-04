@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Gift, Lock, Zap, Star, Trophy, Sparkles } from 'lucide-react';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
 import { useGamification } from '@/cantonese/hooks/useGamification';
 import confetti from 'canvas-confetti';
 

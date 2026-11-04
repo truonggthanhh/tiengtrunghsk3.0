@@ -17,7 +17,7 @@ import {
   Crown,
   Loader2,
 } from 'lucide-react';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
 import confetti from 'canvas-confetti';
 
 interface VocabCard {

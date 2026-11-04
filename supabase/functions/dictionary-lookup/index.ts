@@ -68,8 +68,8 @@ serve(async (req) => {
     const url = new URL(req.url)
     const searchQuery = url.searchParams.get('q')?.trim()
     const searchMode = url.searchParams.get('mode') as SearchParams['mode'] || 'auto'
-    const page = parseInt(url.searchParams.get('page') || '1')
-    const pageSize = Math.min(parseInt(url.searchParams.get('pageSize') || '30'), 100)
+    const page = Number(url.searchParams.get('page') || '1')
+    const pageSize = Math.min(Number(url.searchParams.get('pageSize') || '30'), 100)
 
     // Validate parameters
     if (!searchQuery) {
@@ -82,7 +82,7 @@ serve(async (req) => {
       )
     }
 
-    if (page < 1 || pageSize < 1) {
+    if (!Number.isSafeInteger(page) || !Number.isSafeInteger(pageSize) || page < 1 || pageSize < 1 || !Number.isSafeInteger((page - 1) * pageSize)) {
       return new Response(
         JSON.stringify({ error: 'Invalid page or pageSize' }),
         {
@@ -90,6 +90,12 @@ serve(async (req) => {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       )
+    }
+
+    if (!['auto', 'hanzi', 'pinyin', 'vietnamese'].includes(searchMode)) {
+      return new Response(JSON.stringify({ error: 'Invalid search mode' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
     }
 
     // Initialize Supabase client
@@ -104,7 +110,7 @@ serve(async (req) => {
     // Calculate offset for pagination
     const offset = (page - 1) * pageSize
 
-    console.log(\`[Dictionary Lookup] Query: "\${searchQuery}", Mode: \${actualMode}, Page: \${page}, PageSize: \${pageSize}\`)
+    console.log(`[Dictionary Lookup] Query: "${searchQuery}", Mode: ${actualMode}, Page: ${page}, PageSize: ${pageSize}`)
 
     // Call the search_dictionary function
     const { data, error, count } = await supabaseClient.rpc('search_dictionary', {
@@ -131,10 +137,10 @@ serve(async (req) => {
       .select('*', { count: 'exact', head: true })
       .or(
         actualMode === 'hanzi'
-          ? \`simplified.like.%\${searchQuery}%,traditional.like.%\${searchQuery}%\`
+          ? `simplified.like.%${searchQuery}%,traditional.like.%${searchQuery}%`
           : actualMode === 'pinyin'
-          ? \`pinyin_number.ilike.%\${searchQuery}%,pinyin_tone.ilike.%\${searchQuery}%\`
-          : \`vietnamese.ilike.%\${searchQuery}%\`
+          ? `pinyin_number.ilike.%${searchQuery}%,pinyin_tone.ilike.%${searchQuery}%`
+          : `vietnamese.ilike.%${searchQuery}%`
       )
 
     const total = totalCount || 0

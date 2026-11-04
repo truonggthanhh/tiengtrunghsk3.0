@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { useSession } from '@/components/SessionContextProvider';
+import { useSession } from '@/components/SessionContextProvider.shared';
 import { BookOpen, Trash2, Edit3, PlusCircle, Eye, EyeOff } from 'lucide-react';
 import {
   AlertDialog,

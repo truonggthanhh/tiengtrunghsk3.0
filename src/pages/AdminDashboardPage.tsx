@@ -1,7 +1,9 @@
+import type { Song } from '@/types/song';
+import { toError } from '@/lib/errors';
 import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
-import { useSession } from '@/components/SessionContextProvider';
+import { useSession } from '@/components/SessionContextProvider.shared';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -38,7 +40,7 @@ import BlogManager from '@/mandarin/components/admin/BlogManager';
 import CourseManager from '@/mandarin/components/admin/CourseManager';
 
 const extractVideoId = (url: string) => {
-  const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+  const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
   const match = url.match(regex);
   return match ? match[1] : null;
 };
@@ -94,29 +96,7 @@ const AdminDashboardPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!isSessionLoading) {
-      if (!session) {
-        navigate(`/mandarin/login?returnUrl=${returnUrl}`);
-        return;
-      }
-      // Only fetch once when component mounts
-      if (!hasFetchedRef.current) {
-        hasFetchedRef.current = true;
-        fetchUserProfile(session.user.id);
-      }
-    }
-  }, [session?.user?.id, isSessionLoading, navigate, returnUrl]);
-
-  // Load saved API key
-  useEffect(() => {
-    const stored = localStorage.getItem('gemini_api_key');
-    if (stored) {
-      setSavedApiKey(stored);
-      setApiKey(stored);
-    }
-  }, []);
-
-  const fetchUserProfile = async (userId: string) => {
+const fetchUserProfile = async (userId: string) => {
     const { data: profileData, error: profileError } = await supabase
       .from('profiles')
       .select('role')
@@ -132,12 +112,9 @@ const AdminDashboardPage: React.FC = () => {
     }
     fetchUsers();
   };
-
-  const fetchUsers = async () => {
+const fetchUsers = async () => {
     // Only show loading spinner if we don't have data yet
-    if (users.length === 0) {
-      setIsLoadingUsers(true);
-    }
+    setIsLoadingUsers(true);
     setError(null);
 
     // Fetch profiles
@@ -177,6 +154,32 @@ const AdminDashboardPage: React.FC = () => {
     setUsers(formattedUsers);
     setIsLoadingUsers(false);
   };
+
+    if (!isSessionLoading) {
+      if (!session) {
+        navigate(`/mandarin/login?returnUrl=${returnUrl}`);
+        return;
+      }
+      // Only fetch once when component mounts
+      if (!hasFetchedRef.current) {
+        hasFetchedRef.current = true;
+        fetchUserProfile(session.user.id);
+      }
+    }
+  }, [session, isSessionLoading, navigate, returnUrl]);
+
+  // Load saved API key
+  useEffect(() => {
+    const stored = localStorage.getItem('gemini_api_key');
+    if (stored) {
+      setSavedApiKey(stored);
+      setApiKey(stored);
+    }
+  }, []);
+
+
+
+
 
   const handleAdminToggle = async (userId: string, currentRole: string) => {
     if (session?.user.id === userId) {
@@ -255,7 +258,8 @@ const AdminDashboardPage: React.FC = () => {
 
       setGeneratedContent(text);
       toast.success('Thành công', { description: 'Nội dung đã được tạo' });
-    } catch (error: any) {
+    } catch (caughtError: unknown) {
+      const error = toError(caughtError);
       toast.error('Lỗi', { description: error.message || 'Không thể tạo nội dung' });
     } finally {
       setIsGenerating(false);
@@ -276,7 +280,8 @@ const AdminDashboardPage: React.FC = () => {
       console.log('Vocabulary data:', data);
       toast.success('Thành công', { description: 'Từ vựng đã được upload (xem console)' });
       setVocabularyJson('');
-    } catch (error: any) {
+    } catch (caughtError: unknown) {
+      const error = toError(caughtError);
       toast.error('Lỗi', { description: 'JSON không hợp lệ: ' + error.message });
     }
   };
@@ -294,7 +299,8 @@ const AdminDashboardPage: React.FC = () => {
       console.log('Document to upload:', documentFile.name, documentFile.size);
       toast.success('Thành công', { description: `File ${documentFile.name} đã được upload (xem console)` });
       setDocumentFile(null);
-    } catch (error: any) {
+    } catch (caughtError: unknown) {
+      const error = toError(caughtError);
       toast.error('Lỗi', { description: error.message });
     }
   };
@@ -649,7 +655,7 @@ const SongManager = () => {
   const [lrc, setLrc] = useState('');
 
   // Edit state
-  const [editingSong, setEditingSong] = useState<any>(null);
+  const [editingSong, setEditingSong] = useState<Song | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [editArtist, setEditArtist] = useState('');
   const [editYoutubeUrl, setEditYoutubeUrl] = useState('');
@@ -714,7 +720,7 @@ const SongManager = () => {
     addSongMutation.mutate({ title, artist, youtube_video_id: videoId, lrc });
   };
 
-  const handleEditClick = (song: any) => {
+  const handleEditClick = (song: Song) => {
     setEditingSong(song);
     setEditTitle(song.title);
     setEditArtist(song.artist);
@@ -752,7 +758,7 @@ const SongManager = () => {
               <div className="text-red-600">Lỗi tải bài hát.</div>
             ) : (
               <div className="space-y-3">
-                {songs?.map((s: any) => (
+                {songs?.map((s) => (
                   <div key={s.id} className="p-3 border rounded-lg flex items-center justify-between flex-wrap gap-2">
                     <div>
                       <span className="font-semibold">{s.title}</span> - {s.artist}

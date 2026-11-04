@@ -1,11 +1,12 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import { rawExerciseSchema, hanziSchema, type RawExercisePayload, type ExerciseHooks } from '@/cantonese/lib/exercisePayload';
+import React, { useState, useEffect, useCallback, useMemo, Suspense, lazy } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import useHotkeys from '@/cantonese/hooks/useHotkeys';
 import HotkeyHelp from '@/cantonese/components/HotkeyHelp';
 import { supabase } from '@/cantonese/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CheckCircle2, XCircle, Home, ArrowLeft } from 'lucide-react'; // Import icons for results and navigation
 import JyutpingToggle from '@/cantonese/components/ui/JyutpingToggle'; // Import JyutpingToggle
@@ -25,13 +26,13 @@ const PracticePage = () => {
   const queryClient = useQueryClient();
 
   // Analytics hooks
-  const { startSession, completeSession } = useAnalytics();
+  const { startSession, completeSession } = useAnalytics('cantonese');
   const [analyticsSessionId, setAnalyticsSessionId] = useState<string | null>(null);
 
-  const [fullData, setFullData] = useState<any>(null);
-  const [displayData, setDisplayData] = useState<any>(null);
+  const [fullData, setFullData] = useState<RawExercisePayload | null>(null);
+  const [displayData, setDisplayData] = useState<RawExercisePayload | null>(null);
   const [selectedQuantity, setSelectedQuantity] = useState<string>('10');
-  const [exerciseHooks, setExerciseHooks] = useState<{ getScore: () => { score: number, total: number }, getAnswers: () => any } | null>(null);
+  const [exerciseHooks, setExerciseHooks] = useState<{ getScore: () => { score: number, total: number }, getAnswers: () => unknown } | null>(null);
   const [flip, setFlip] = useState<() => void>(() => () => { });
   const [prev, setPrev] = useState<() => void>(() => () => { });
   const [next, setNext] = useState<() => void>(() => () => { });
@@ -43,7 +44,7 @@ const PracticePage = () => {
   // Fetch exercise data from Supabase
   // NOTE: Removed user_id filter because exercises are public
   const { data: exercisePayload, isLoading: isLoadingExercise, error: errorExercise } = useQuery({
-    queryKey: ['exercise', lessonId, type],
+    queryKey: ['cantonese', 'exercise', lessonId, type],
     queryFn: async () => {
       if (!lessonId || !type) return null;
       const { data, error } = await supabase
@@ -56,7 +57,7 @@ const PracticePage = () => {
         .maybeSingle();
 
       if (error) throw error;
-      return data?.payload;
+      return data?.payload ? rawExerciseSchema.parse(data.payload) : null;
     },
     enabled: !!lessonId && !!type,
     staleTime: Infinity, // Data never becomes stale
@@ -118,13 +119,13 @@ const PracticePage = () => {
 
   // Fallback: Keep old exercise_sessions saving for backward compatibility
   const saveSessionMutation = useMutation({
-    mutationFn: async (sessionData: { lesson_id: string; user_id: string; type: string; count: number; score: number; total: number; answers: any; duration_seconds?: number }) => {
+    mutationFn: async (sessionData: { lesson_id: string; user_id: string; type: string; count: number; score: number; total: number; answers: unknown; duration_seconds?: number }) => {
       const { data, error } = await supabase.from('exercise_sessions').insert([sessionData]).select();
       if (error) throw error;
       return data;
     },
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['exercise_sessions', lessonId] });
+      queryClient.invalidateQueries({ queryKey: ['cantonese', 'exercise_sessions', lessonId] });
     },
     onError: (err) => {
       console.warn('Exercise session save failed (non-critical):', err.message);
@@ -181,8 +182,8 @@ const PracticePage = () => {
     }
   }
 
-  const attachHooks = (h: any) => setExerciseHooks(h);
-  const controls = { setFlip, setPrev, setNext, setPick };
+  const attachHooks = useCallback((h: ExerciseHooks) => setExerciseHooks(h), []);
+  const controls = useMemo(() => ({ setFlip, setPrev, setNext, setPick }), []);
 
   if (isSessionLoading || isLoadingExercise) {
     return (
@@ -226,7 +227,7 @@ const PracticePage = () => {
       case 'MULTICHOICE': return <MultipleChoice data={displayData} hotkeyControls={controls} onAttach={attachHooks} />;
       case 'TRUE_FALSE': return <TrueFalse data={displayData} onAttach={attachHooks} />;
       case 'REORDER': return <Reorder data={displayData} onAttach={attachHooks} />;
-      case 'HANZI_WRITE': return <HanziPracticeWrapper data={displayData} hotkeyControls={controls} onAttach={attachHooks} />;
+      case 'HANZI_WRITE': return <HanziPracticeWrapper data={{ ...hanziSchema.parse(displayData), items: hanziSchema.parse(displayData).items ?? [] }} hotkeyControls={controls} onAttach={attachHooks} />;
       default: return <div className="p-6 text-verm">Không hỗ trợ loại bài tập này.</div>;
     }
   };

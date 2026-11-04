@@ -17,7 +17,7 @@ import { soCap1ExtendedVocabulary } from './msutong/so-cap-1-extended';
 import { soCap2ExtendedVocabulary } from './msutong/so-cap-2-extended';
 import { soCap3ExtendedVocabulary } from './msutong/so-cap-3-extended';
 import { soCap4ExtendedVocabulary } from './msutong/so-cap-4-extended';
-import { msutongReadingComprehension, type ReadingComprehensionPassage } from './msutong/reading-comprehension';
+import { msutongReadingComprehension, type ReadingComprehensionQuestion, type ReadingComprehensionPassage } from './msutong/reading-comprehension';
 
 const vocabularyData: { [key: string]: VocabularyWord[] } = {
   '1': hsk1Vocabulary,
@@ -64,7 +64,7 @@ export const getFullMsutongVocabularyByLevel = (level: string): MsutongWord[] =>
   const levelData = msutongVocabularyData[level];
   if (!levelData) return [];
   
-  let combinedVocabulary: MsutongWord[] = [];
+  const combinedVocabulary: MsutongWord[] = [];
   for (const bookSlug in levelData) {
     combinedVocabulary.push(...levelData[bookSlug]);
   }
@@ -89,7 +89,7 @@ export const getVocabularyByMsutong = (level: string, lessonIds: string[]): Voca
     };
   });
 
-  let combinedVocabulary: MsutongWord[] = [];
+  const combinedVocabulary: MsutongWord[] = [];
   const levelData = msutongVocabularyData[level];
   if (!levelData) return [];
 

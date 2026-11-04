@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import Flashcard from '@/components/Flashcard';
@@ -6,7 +6,7 @@ import { getVocabularyByMsutong } from '@/data';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, Home, ChevronsLeft, ChevronsRight, ListOrdered, Grid3X3, BookmarkCheck } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
-import { usePinyin } from '@/contexts/PinyinContext';
+import { usePinyin } from '@/contexts/PinyinContext.shared';
 import {
   Select,
   SelectContent,
@@ -21,7 +21,7 @@ const STORAGE_KEY_PREFIX = 'flashcard_progress_msutong_';
 const MsutongFlashcardPage = () => {
   const [searchParams] = useSearchParams();
   const level = searchParams.get('level') || 'so-cap';
-  const lessonIds = searchParams.get('lessonIds')?.split(',') || [];
+  const lessonIds = useMemo(() => searchParams.get('lessonIds')?.split(',') || [], [searchParams]);
 
   const fullVocabulary = useMemo(() => getVocabularyByMsutong(level, lessonIds), [level, lessonIds]);
   const { showPinyin } = usePinyin();
@@ -93,13 +93,13 @@ const MsutongFlashcardPage = () => {
     return fullVocabulary.slice(start, end);
   }, [fullVocabulary, batchIndex]);
 
-  const goToNextWord = () => {
-    setCurrentIndexInBatch(prev => (prev + 1) % currentBatchVocabulary.length);
-  };
+  const goToNextWord = useCallback(() => {
+    if (currentBatchVocabulary.length) setCurrentIndexInBatch(prev => (prev + 1) % currentBatchVocabulary.length);
+  }, [currentBatchVocabulary.length]);
 
-  const goToPreviousWord = () => {
-    setCurrentIndexInBatch(prev => (prev - 1 + currentBatchVocabulary.length) % currentBatchVocabulary.length);
-  };
+  const goToPreviousWord = useCallback(() => {
+    if (currentBatchVocabulary.length) setCurrentIndexInBatch(prev => (prev - 1 + currentBatchVocabulary.length) % currentBatchVocabulary.length);
+  }, [currentBatchVocabulary.length]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -114,7 +114,7 @@ const MsutongFlashcardPage = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [currentBatchVocabulary]);
+  }, [goToNextWord, goToPreviousWord]);
 
   const goToNextBatch = () => {
     if (batchIndex < totalBatches - 1) {

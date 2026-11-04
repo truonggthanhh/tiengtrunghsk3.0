@@ -21,7 +21,7 @@ import {
   Swords,
   Loader2,
 } from 'lucide-react';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
 
 interface Achievement {
   id: string;

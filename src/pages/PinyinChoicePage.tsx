@@ -7,8 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { ArrowRight, Home, CheckCircle2, XCircle } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
-import { usePinyin } from '@/contexts/PinyinContext';
-import { GamificationWrapper, useGamificationTracking } from '@/components/gamification/GamificationWrapper';
+import { usePinyin } from '@/contexts/PinyinContext.shared';
+import { GamificationWrapper } from '@/components/gamification/GamificationWrapper';
+import { useGamificationTracking } from '@/components/gamification/GamificationWrapper.shared';
 import { useSRS } from '@/hooks/useSRS';
 import { useAnalytics } from '@/hooks/useAnalytics';
 

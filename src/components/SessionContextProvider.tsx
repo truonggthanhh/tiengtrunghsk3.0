@@ -1,3 +1,4 @@
+import { SessionContext, useSession } from './SessionContextProvider.shared';
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,7 +10,7 @@ interface SessionContextType {
   isLoading: boolean;
 }
 
-const SessionContext = createContext<SessionContextType | undefined>(undefined);
+
 
 export const SessionContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null);
@@ -43,14 +44,14 @@ export const SessionContextProvider: React.FC<{ children: React.ReactNode }> = (
 
     handleOAuthCallback();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       console.log('Auth state changed:', _event, session ? 'Session exists' : 'No session');
       setSession(session);
       setIsLoading(false);
 
       // Initialize user progress when user signs in for the first time
       if (_event === 'SIGNED_IN' && session?.user) {
-        await initUserProgress(session.user.id);
+        setTimeout(() => { void initUserProgress(session.user.id); }, 0);
       }
 
       // Clean URL nếu event là SIGNED_IN và có OAuth params
@@ -71,12 +72,4 @@ export const SessionContextProvider: React.FC<{ children: React.ReactNode }> = (
       {children}
     </SessionContext.Provider>
   );
-};
-
-export const useSession = () => {
-  const context = useContext(SessionContext);
-  if (context === undefined) {
-    throw new Error('useSession must be used within a SessionContextProvider');
-  }
-  return context;
 };

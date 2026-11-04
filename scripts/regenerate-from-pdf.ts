@@ -1,3 +1,4 @@
+import { toError } from '../src/lib/errors';
 /**
  * Script regenerate exercises từ PDF
  * Parse PDF bằng Claude API, extract vocabulary, generate exercises
@@ -194,7 +195,7 @@ Chỉ trả về danh sách từ vựng, KHÔNG thêm giải thích hay comment.
   }
 
   const data = await response.json();
-  const textContent = data.content.find((c: any) => c.type === 'text');
+  const textContent = data.content.find((c) => c.type === 'text');
 
   if (!textContent) {
     throw new Error('No text content in response');
@@ -240,7 +241,7 @@ ${getExerciseFormatInstructions(type)}`;
   }
 
   const data = await response.json();
-  const textContent = data.content.find((c: any) => c.type === 'text');
+  const textContent = data.content.find((c) => c.type === 'text');
 
   if (!textContent) {
     throw new Error('No text content in response');
@@ -255,7 +256,7 @@ ${getExerciseFormatInstructions(type)}`;
   return JSON.parse(jsonMatch[0]);
 }
 
-async function saveExercise(lessonId: string, userId: string, type: string, payload: any) {
+async function saveExercise(lessonId: string, userId: string, type: string, payload: unknown) {
   const url = `${SUPABASE_URL}/rest/v1/exercises`;
 
   const response = await fetch(url, {
@@ -318,14 +319,16 @@ async function main() {
           // Delay 2s
           await new Promise(resolve => setTimeout(resolve, 2000));
 
-        } catch (error: any) {
+        } catch (caughtError: unknown) {
+      const error = toError(caughtError);
           console.log(`   ❌ ${type} failed: ${error.message}`);
         }
 
         totalProcessed++;
       }
 
-    } catch (error: any) {
+    } catch (caughtError: unknown) {
+      const error = toError(caughtError);
       console.log(`   ❌ Failed to process lesson: ${error.message}`);
       continue;
     }

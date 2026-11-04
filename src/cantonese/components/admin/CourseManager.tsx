@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { supabase } from '@/cantonese/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { useSession } from '@/cantonese/components/providers/SessionContextProvider';
+import { useSession } from '@/cantonese/components/providers/SessionContextProvider.shared';
 import { BookOpen, Trash2, Edit3, PlusCircle, Eye, EyeOff } from 'lucide-react';
 import {
   AlertDialog,
@@ -63,7 +63,7 @@ const CourseManager = () => {
   const [editColor, setEditColor] = useState('#3B82F6');
 
   const { data: courses, isLoading, error } = useQuery<Course[]>({
-    queryKey: ['courses-admin', 'cantonese'],
+    queryKey: ['cantonese', 'courses-admin', 'cantonese'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('courses')
@@ -112,7 +112,7 @@ const CourseManager = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['courses-admin', 'cantonese'] });
+      queryClient.invalidateQueries({ queryKey: ['cantonese', 'courses-admin', 'cantonese'] });
       toast.success('Khóa học đã được tạo!');
       setName('');
       setDescription('');
@@ -147,7 +147,7 @@ const CourseManager = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['courses-admin', 'cantonese'] });
+      queryClient.invalidateQueries({ queryKey: ['cantonese', 'courses-admin', 'cantonese'] });
       toast.success('Khóa học đã được cập nhật!');
       setEditingCourse(null);
     },
@@ -160,7 +160,7 @@ const CourseManager = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['courses-admin', 'cantonese'] });
+      queryClient.invalidateQueries({ queryKey: ['cantonese', 'courses-admin', 'cantonese'] });
       toast.success('Khóa học đã được xóa.');
     },
     onError: (err: Error) => toast.error(`Lỗi: ${err.message}`),

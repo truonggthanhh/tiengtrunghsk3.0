@@ -1,6 +1,7 @@
+import { toError } from '@/lib/errors';
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useSession } from '@/components/SessionContextProvider';
+import { useSession } from '@/components/SessionContextProvider.shared';
 import { toast } from 'sonner';
 
 export interface ProgressEntry {
@@ -13,6 +14,58 @@ export interface ProgressEntry {
 export const useProgressTracking = () => {
   const { session } = useSession();
   const [isSaving, setIsSaving] = useState(false);
+
+  const updateExerciseStats = useCallback(async (entry: ProgressEntry) => {
+    if (!session?.user?.id) return;
+
+    try {
+      // Fetch existing stats
+      const { data: existingStats, error: fetchError } = await supabase
+        .from('user_exercise_stats')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .eq('exercise_type', entry.exerciseType)
+        .eq('level', entry.level)
+        .single();
+
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        throw fetchError;
+      }
+
+      if (existingStats) {
+        // Update existing stats
+        const { error: updateError } = await supabase
+          .from('user_exercise_stats')
+          .update({
+            total_attempts: existingStats.total_attempts + 1,
+            correct_answers: entry.isCorrect
+              ? existingStats.correct_answers + 1
+              : existingStats.correct_answers,
+            last_practiced_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', existingStats.id);
+
+        if (updateError) throw updateError;
+      } else {
+        // Insert new stats
+        const { error: insertError } = await supabase
+          .from('user_exercise_stats')
+          .insert({
+            user_id: session.user.id,
+            exercise_type: entry.exerciseType,
+            level: entry.level,
+            total_attempts: 1,
+            correct_answers: entry.isCorrect ? 1 : 0,
+          });
+
+        if (insertError) throw insertError;
+      }
+    } catch (caughtError: unknown) {
+      const error = toError(caughtError);
+      console.error('Error updating exercise stats:', error);
+    }
+  }, [session]);
 
   /**
    * Record a single progress entry
@@ -72,7 +125,8 @@ export const useProgressTracking = () => {
       await updateExerciseStats(entry);
 
       return true;
-    } catch (error: any) {
+    } catch (caughtError: unknown) {
+      const error = toError(caughtError);
       console.error('Error recording progress:', error);
       toast.error('Không thể lưu tiến độ', {
         description: error.message,
@@ -81,61 +135,12 @@ export const useProgressTracking = () => {
     } finally {
       setIsSaving(false);
     }
-  }, [session]);
+  }, [session, updateExerciseStats]);
 
   /**
    * Update aggregated exercise statistics
    */
-  const updateExerciseStats = useCallback(async (entry: ProgressEntry) => {
-    if (!session?.user?.id) return;
 
-    try {
-      // Fetch existing stats
-      const { data: existingStats, error: fetchError } = await supabase
-        .from('user_exercise_stats')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .eq('exercise_type', entry.exerciseType)
-        .eq('level', entry.level)
-        .single();
-
-      if (fetchError && fetchError.code !== 'PGRST116') {
-        throw fetchError;
-      }
-
-      if (existingStats) {
-        // Update existing stats
-        const { error: updateError } = await supabase
-          .from('user_exercise_stats')
-          .update({
-            total_attempts: existingStats.total_attempts + 1,
-            correct_answers: entry.isCorrect
-              ? existingStats.correct_answers + 1
-              : existingStats.correct_answers,
-            last_practiced_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', existingStats.id);
-
-        if (updateError) throw updateError;
-      } else {
-        // Insert new stats
-        const { error: insertError } = await supabase
-          .from('user_exercise_stats')
-          .insert({
-            user_id: session.user.id,
-            exercise_type: entry.exerciseType,
-            level: entry.level,
-            total_attempts: 1,
-            correct_answers: entry.isCorrect ? 1 : 0,
-          });
-
-        if (insertError) throw insertError;
-      }
-    } catch (error: any) {
-      console.error('Error updating exercise stats:', error);
-    }
-  }, [session]);
 
   /**
    * Get user progress for a specific exercise and level
@@ -153,7 +158,8 @@ export const useProgressTracking = () => {
 
       if (error) throw error;
       return data;
-    } catch (error: any) {
+    } catch (caughtError: unknown) {
+      const error = toError(caughtError);
       console.error('Error fetching progress:', error);
       return null;
     }
@@ -176,7 +182,8 @@ export const useProgressTracking = () => {
 
       if (error && error.code !== 'PGRST116') throw error;
       return data;
-    } catch (error: any) {
+    } catch (caughtError: unknown) {
+      const error = toError(caughtError);
       console.error('Error fetching exercise stats:', error);
       return null;
     }
@@ -197,7 +204,8 @@ export const useProgressTracking = () => {
 
       if (error) throw error;
       return data;
-    } catch (error: any) {
+    } catch (caughtError: unknown) {
+      const error = toError(caughtError);
       console.error('Error fetching all stats:', error);
       return null;
     }

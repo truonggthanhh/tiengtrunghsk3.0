@@ -45,7 +45,9 @@ const PronunciationRecognition: React.FC<PronunciationRecognitionProps> = ({
   const [isSupported, setIsSupported] = useState(true);
   const [isSpeaking, setIsSpeaking] = useState(false);
 
-  const recognitionRef = useRef<any>(null);
+  const onResultRef = useRef(onResult);
+  useEffect(() => { onResultRef.current = onResult; }, [onResult]);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   /**
@@ -131,7 +133,7 @@ const PronunciationRecognition: React.FC<PronunciationRecognitionProps> = ({
 
   // Check if Speech Recognition is supported
   useEffect(() => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
       setIsSupported(false);
       toast.error('Trình duyệt không hỗ trợ nhận dạng giọng nói', {
@@ -152,7 +154,7 @@ const PronunciationRecognition: React.FC<PronunciationRecognitionProps> = ({
       setIsListening(true);
     };
 
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
 
       // Calculate pronunciation score based on similarity
@@ -166,8 +168,8 @@ const PronunciationRecognition: React.FC<PronunciationRecognitionProps> = ({
       setResult(isCorrect ? 'correct' : 'incorrect');
 
       // Callback
-      if (onResult) {
-        onResult({
+      if (onResultRef.current) {
+        onResultRef.current({
           recognized: transcript,
           confidence: pronunciationScore, // Return pronunciation score
           isCorrect
@@ -175,7 +177,7 @@ const PronunciationRecognition: React.FC<PronunciationRecognitionProps> = ({
       }
     };
 
-    recognition.onerror = (event: any) => {
+    recognition.onerror = (event) => {
       console.error('Speech recognition error:', event.error);
       setIsListening(false);
 

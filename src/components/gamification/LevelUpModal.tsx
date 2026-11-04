@@ -3,7 +3,7 @@
  * Shows celebration modal when user levels up
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, Sparkles, X } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -16,6 +16,11 @@ interface LevelUpModalProps {
 
 export function LevelUpModal({ newLevel, levelTitle, onClose }: LevelUpModalProps) {
   const [show, setShow] = useState(true);
+
+  const handleClose = useCallback(() => {
+    setShow(false);
+    setTimeout(onClose, 300);
+  }, [onClose]);
 
   useEffect(() => {
     // Trigger confetti
@@ -51,12 +56,9 @@ export function LevelUpModal({ newLevel, levelTitle, onClose }: LevelUpModalProp
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [handleClose]);
 
-  const handleClose = () => {
-    setShow(false);
-    setTimeout(onClose, 300);
-  };
+
 
   return (
     <AnimatePresence>

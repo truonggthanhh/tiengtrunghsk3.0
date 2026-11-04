@@ -6,7 +6,7 @@ import { Home, Music, Play } from 'lucide-react';
 
 const SongsPage = () => {
   const { data: songs, isLoading, error } = useQuery({
-    queryKey: ['songs'],
+    queryKey: ['cantonese', 'songs'],
     queryFn: async () => {
       const { data, error } = await supabase.from('songs').select('*').order('created_at', { ascending: false });
       if (error) throw error;
@@ -65,7 +65,7 @@ const SongsPage = () => {
 
         {/* Songs grid */}
         <div className="grid md:grid-cols-2 gap-4">
-          {songs?.map((song: any) => (
+          {songs?.map((song) => (
             <Link
               key={song.id}
               to={`/cantonese/songs/${song.id}`}

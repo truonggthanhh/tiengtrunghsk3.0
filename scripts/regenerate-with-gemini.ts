@@ -1,3 +1,4 @@
+import { toError } from '../src/lib/errors';
 /**
  * Script regenerate exercises từ PDF sử dụng Gemini API (MIỄN PHÍ!)
  * Parse PDF bằng Gemini, extract vocabulary, generate exercises
@@ -225,7 +226,7 @@ ${getExerciseFormatInstructions(type)}`;
   return JSON.parse(jsonMatch[0]);
 }
 
-async function saveExercise(lessonId: string, userId: string, type: string, payload: any) {
+async function saveExercise(lessonId: string, userId: string, type: string, payload: unknown) {
   const url = `${SUPABASE_URL}/rest/v1/exercises`;
 
   const response = await fetch(url, {
@@ -289,14 +290,16 @@ async function main() {
           // Delay 1s (Gemini free tier có rate limit thấp hơn)
           await new Promise(resolve => setTimeout(resolve, 1000));
 
-        } catch (error: any) {
+        } catch (caughtError: unknown) {
+      const error = toError(caughtError);
           console.log(`   ❌ ${type} failed: ${error.message}`);
         }
 
         totalProcessed++;
       }
 
-    } catch (error: any) {
+    } catch (caughtError: unknown) {
+      const error = toError(caughtError);
       console.log(`   ❌ Failed to process lesson: ${error.message}`);
       continue;
     }

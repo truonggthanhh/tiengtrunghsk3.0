@@ -3,13 +3,13 @@
  * Submit answer to boss question and update battle state
  */
 
-import type { APIRoute } from 'astro';
+import type { APIRoute } from '@/types/api-route';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
 
-export const POST: APIRoute = async ({ request, cookies }) => {
+export const POST: APIRoute = async ({ request, cookies, url }) => {
   try {
     // Get session from cookie
     const accessToken = cookies.get('sb-access-token')?.value;
@@ -78,7 +78,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     const isBossDefeated = newHP === 0;
 
     // Update battle state
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       current_hp: newHP,
       current_question: question_index + 1
     };

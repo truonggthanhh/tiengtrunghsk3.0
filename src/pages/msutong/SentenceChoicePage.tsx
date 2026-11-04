@@ -7,8 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { ArrowRight, Home, CheckCircle2, XCircle, Grid3X3, ListOrdered, Lightbulb } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
-import { usePinyin } from '@/contexts/PinyinContext';
-import { GamificationWrapper, useGamificationTracking } from '@/components/gamification/GamificationWrapper';
+import { usePinyin } from '@/contexts/PinyinContext.shared';
+import { GamificationWrapper } from '@/components/gamification/GamificationWrapper';
+import { useGamificationTracking } from '@/components/gamification/GamificationWrapper.shared';
 
 const shuffleArray = <T,>(array: T[]): T[] => {
   const newArray = [...array];
@@ -23,7 +24,7 @@ const MsutongSentenceChoicePage = () => {
   const { showPinyin } = usePinyin();
   const [searchParams] = useSearchParams();
   const level = searchParams.get('level') || 'so-cap';
-  const lessonIds = searchParams.get('lessonIds')?.split(',') || [];
+  const lessonIds = useMemo(() => searchParams.get('lessonIds')?.split(',') || [], [searchParams]);
   const { trackQuizCompletion } = useGamificationTracking();
 
   const practiceVocabulary = useMemo(() => getVocabularyByMsutong(level, lessonIds), [level, lessonIds]);

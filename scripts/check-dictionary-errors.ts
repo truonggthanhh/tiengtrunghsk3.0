@@ -1,3 +1,4 @@
+interface DictionaryIssue { id: number; hanzi?: string; pinyin?: string; meaning?: string; reason?: string; hanziCount?: number; syllableCount?: number; }
 /**
  * Script kiểm tra lỗi từ điển Supabase - Phiên bản đầy đủ
  *
@@ -36,7 +37,7 @@ function isValidPinyin(pinyin: string): { valid: boolean; reason?: string } {
   }
 
   // Pinyin hợp lệ chỉ chứa chữ cái, số 1-5, dấu cách và một số ký tự đặc biệt
-  const validPinyinRegex = /^[a-zA-ZüÜāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ\s0-5,·\-]+$/;
+  const validPinyinRegex = /^[a-zA-ZüÜāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ\s0-5,·-]+$/;
   if (!validPinyinRegex.test(pinyin)) {
     return { valid: false, reason: 'Chứa ký tự không hợp lệ' };
   }
@@ -104,7 +105,7 @@ async function checkAllErrors(): Promise<void> {
   console.log('🔧 KIỂM TRA LỖI TỪ ĐIỂN SUPABASE');
   console.log('='.repeat(50));
 
-  const errors: { type: string; entries: any[] }[] = [];
+  const errors: { type: string; entries: DictionaryIssue[] }[] = [];
   const batchSize = 1000;
   let offset = 0;
   let totalChecked = 0;
@@ -118,14 +119,14 @@ async function checkAllErrors(): Promise<void> {
   console.log('\n⏳ Đang kiểm tra...\n');
 
   const errorLists = {
-    emptyPinyin: [] as any[],
-    invalidPinyin: [] as any[],
-    emptyMeaning: [] as any[],
-    shortMeaning: [] as any[],
-    invalidMeaning: [] as any[],
-    invalidHanzi: [] as any[],
-    mismatchSyllables: [] as any[],
-    duplicates: [] as any[],
+    emptyPinyin: [] as DictionaryIssue[],
+    invalidPinyin: [] as DictionaryIssue[],
+    emptyMeaning: [] as DictionaryIssue[],
+    shortMeaning: [] as DictionaryIssue[],
+    invalidMeaning: [] as DictionaryIssue[],
+    invalidHanzi: [] as DictionaryIssue[],
+    mismatchSyllables: [] as DictionaryIssue[],
+    duplicates: [] as DictionaryIssue[],
   };
 
   // Kiểm tra từng batch
@@ -228,7 +229,7 @@ async function checkAllErrors(): Promise<void> {
   console.log('📋 KẾT QUẢ KIỂM TRA');
   console.log('='.repeat(50));
 
-  const printErrors = (title: string, list: any[], maxShow: number = 10) => {
+  const printErrors = (title: string, list: DictionaryIssue[], maxShow: number = 10) => {
     if (list.length === 0) {
       console.log(`\n✅ ${title}: Không có lỗi`);
     } else {

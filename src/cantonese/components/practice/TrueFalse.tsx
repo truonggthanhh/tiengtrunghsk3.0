@@ -1,9 +1,10 @@
-"use client"
+import { trueFalseSchema, type ExerciseHooks } from '@/cantonese/lib/exercisePayload';
 import React from 'react'
 import JyutpingText from '@/cantonese/components/JyutpingText'
 import { cn } from '@/lib/utils'
 
-export default function TrueFalse({data, onAttach, showAnswers}:{data:any, onAttach?:(h:any)=>void, showAnswers?: boolean}){
+export default function TrueFalse({data: rawData, onAttach, showAnswers}:{data:unknown, onAttach?:(h:ExerciseHooks)=>void, showAnswers?: boolean}){
+  const data = React.useMemo(() => trueFalseSchema.parse(rawData), [rawData]);
   const [picked,setPicked]=React.useState<number[]>([]);
 
   React.useEffect(() => {
@@ -12,7 +13,7 @@ export default function TrueFalse({data, onAttach, showAnswers}:{data:any, onAtt
     }
   }, [data.items]);
   
-  const score=data.items.reduce((s:any,it:any,idx:number)=> s + (picked[idx]=== (it.answer?1:0) ? 1 : 0), 0)
+  const score=data.items.reduce((s,it,idx:number)=> s + (picked[idx]=== (it.answer?1:0) ? 1 : 0), 0)
   
   React.useEffect(()=>{ 
     if(onAttach){
@@ -25,7 +26,7 @@ export default function TrueFalse({data, onAttach, showAnswers}:{data:any, onAtt
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-4">
-      {data.items.map((it:any,idx:number)=>(
+      {data.items.map((it,idx:number)=>(
         <div key={idx} className="p-6 bg-white dark:bg-black/20 rounded-2xl border border-ink/10 shadow-[0_10px_0_#d7c8b6]">
           <div className="mb-3 text-sm text-ink/70 dark:text-cream/70">Câu {idx + 1}</div>
           <JyutpingText jyutping={it.statementJyutping} className="mb-4 text-lg font-medium">

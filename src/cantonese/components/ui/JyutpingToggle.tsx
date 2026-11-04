@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSettings } from '@/cantonese/components/providers/SettingsProvider'
+import { useSettings } from '@/cantonese/components/providers/SettingsProvider.shared';
 import { Button } from '@/components/ui/button'
 import { SpellCheck } from 'lucide-react'
 

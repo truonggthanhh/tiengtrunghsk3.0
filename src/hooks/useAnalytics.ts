@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase as mandarinClient } from '@/integrations/supabase/client';
+import { supabase as cantoneseClient } from '@/cantonese/integrations/supabase/client';
 
 export interface PracticeSession {
   id: string;
@@ -12,7 +13,7 @@ export interface PracticeSession {
   duration_seconds?: number;
   started_at: string;
   completed_at?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface SessionAnswer {
@@ -53,7 +54,8 @@ export interface AnalyticsChartData {
  * Hook for tracking and analyzing learning progress
  * Provides comprehensive analytics for both Mandarin and Cantonese
  */
-export const useAnalytics = () => {
+export const useAnalytics = (language: 'mandarin' | 'cantonese' = 'mandarin') => {
+  const supabase = language === 'cantonese' ? cantoneseClient : mandarinClient;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,7 +67,7 @@ export const useAnalytics = () => {
     language: 'mandarin' | 'cantonese',
     level: string,
     totalQuestions: number,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ): Promise<string | null> => {
     setLoading(true);
     setError(null);
@@ -108,7 +110,7 @@ export const useAnalytics = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [supabase]);
 
   /**
    * Complete a practice session
@@ -140,7 +142,7 @@ export const useAnalytics = () => {
         return false;
       }
 
-      const accuracy = (correctAnswers / session.total_questions) * 100;
+      const accuracy = session.total_questions > 0 ? (correctAnswers / session.total_questions) * 100 : 0;
 
       const { error: updateError } = await supabase
         .from('practice_sessions')
@@ -166,7 +168,7 @@ export const useAnalytics = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [supabase]);
 
   /**
    * Record an individual answer
@@ -211,7 +213,7 @@ export const useAnalytics = () => {
       console.warn('Error recording answer:', err);
       return false;
     }
-  }, []);
+  }, [supabase]);
 
   /**
    * Get user's learning statistics
@@ -245,7 +247,7 @@ export const useAnalytics = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [supabase]);
 
   /**
    * Get recent practice sessions
@@ -287,7 +289,7 @@ export const useAnalytics = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [supabase]);
 
   /**
    * Get analytics chart data for the past N days
@@ -324,7 +326,7 @@ export const useAnalytics = () => {
       if (queryError) throw queryError;
 
       // Group by date
-      const grouped = (data || []).reduce((acc, session) => {
+      const grouped: Record<string, { date: string; sessions: number; totalQuestions: number; correctAnswers: number }> = (data || []).reduce((acc, session) => {
         const date = new Date(session.created_at).toLocaleDateString();
         if (!acc[date]) {
           acc[date] = {
@@ -338,10 +340,10 @@ export const useAnalytics = () => {
         acc[date].totalQuestions += session.total_questions;
         acc[date].correctAnswers += session.correct_answers;
         return acc;
-      }, {} as Record<string, any>);
+      }, {} as Record<string, { date: string; sessions: number; totalQuestions: number; correctAnswers: number }>);
 
       // Convert to array and calculate accuracy
-      const chartData = Object.values(grouped).map((item: any) => ({
+      const chartData = Object.values(grouped).map((item) => ({
         date: item.date,
         sessions: item.sessions,
         accuracy: item.totalQuestions > 0
@@ -359,7 +361,7 @@ export const useAnalytics = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [supabase]);
 
   /**
    * Get weak spots - words/categories with low accuracy
@@ -377,7 +379,7 @@ export const useAnalytics = () => {
         throw new Error('User not authenticated');
       }
 
-      let query = supabase
+      const query = supabase
         .from('session_answers')
         .select('word_id, hanzi, is_correct')
         .eq('user_id', user.id);
@@ -406,11 +408,11 @@ export const useAnalytics = () => {
           acc[answer.word_id].correct += 1;
         }
         return acc;
-      }, {} as Record<number, any>);
+      }, {} as Record<number, { word_id: number; hanzi: string; correct: number; total: number }>);
 
       // Convert to array and calculate accuracy
       const weakSpots = Object.values(wordStats)
-        .map((stat: any) => ({
+        .map((stat) => ({
           word_id: stat.word_id,
           hanzi: stat.hanzi,
           accuracy: (stat.correct / stat.total) * 100,
@@ -429,7 +431,7 @@ export const useAnalytics = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [supabase]);
 
   return {
     loading,

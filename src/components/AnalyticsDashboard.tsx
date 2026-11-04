@@ -32,7 +32,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   language,
   className
 }) => {
-  const { loading, getLearningStats, getRecentSessions, getChartData, getWeakSpots } = useAnalytics();
+  const { loading, getLearningStats, getRecentSessions, getChartData, getWeakSpots } = useAnalytics(language ?? 'mandarin');
 
   const [stats, setStats] = useState<LearningStats | null>(null);
   const [recentSessions, setRecentSessions] = useState<PracticeSession[]>([]);
@@ -41,10 +41,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
-    loadData();
-  }, [language]);
-
-  const loadData = async () => {
+const loadData = async () => {
     const [statsData, sessionsData, chartDataResult, weakSpotsData] = await Promise.all([
       getLearningStats(),
       getRecentSessions(10, language),
@@ -57,6 +54,11 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
     setChartData(chartDataResult);
     setWeakSpots(weakSpotsData);
   };
+
+    loadData();
+  }, [language, getLearningStats, getRecentSessions, getChartData, getWeakSpots]);
+
+
 
   const formatDuration = (seconds: number): string => {
     if (seconds < 60) return `${seconds}s`;

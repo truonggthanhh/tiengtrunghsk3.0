@@ -60,7 +60,7 @@ export default function AchievementBadge({
   pointsReward,
 }: AchievementBadgeProps) {
   // Get icon component dynamically
-  const IconComponent = (LucideIcons as any)[icon] || LucideIcons.Award;
+  const IconComponent = LucideIcons.icons[icon as keyof typeof LucideIcons.icons] || LucideIcons.Award;
   const colors = tierColors[tier];
 
   return (

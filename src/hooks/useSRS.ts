@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase as mandarinClient } from '@/integrations/supabase/client';
+import { supabase as cantoneseClient } from '@/cantonese/integrations/supabase/client';
 import type { VocabularyWord } from '@/data';
 
 export interface SRSReviewData {
@@ -27,7 +28,8 @@ export interface UpdateSRSParams {
  * Hook for managing Spaced Repetition System (SRS) for vocabulary learning
  * Works for both Mandarin and Cantonese
  */
-export const useSRS = () => {
+export const useSRS = (language: 'mandarin' | 'cantonese' = 'mandarin') => {
+  const supabase = language === 'cantonese' ? cantoneseClient : mandarinClient;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -71,7 +73,7 @@ export const useSRS = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [supabase]);
 
   /**
    * Update SRS data after a review
@@ -114,7 +116,7 @@ export const useSRS = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [supabase]);
 
   /**
    * Get all review data for a specific word type and level
@@ -151,7 +153,7 @@ export const useSRS = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [supabase]);
 
   /**
    * Check if a word has been reviewed before
@@ -183,7 +185,7 @@ export const useSRS = () => {
       console.error('Error checking review status:', err);
       return false;
     }
-  }, []);
+  }, [supabase]);
 
   /**
    * Calculate quality score based on correctness and other factors
@@ -224,12 +226,12 @@ export const useSRS = () => {
    * Mix SRS due reviews with new vocabulary
    * Prioritizes due reviews but includes new words for continuous learning
    */
-  const getMixedVocabulary = useCallback(async (
-    allVocabulary: VocabularyWord[],
+  const getMixedVocabulary = useCallback(async <T extends VocabularyWord,>(
+    allVocabulary: T[],
     wordType: 'mandarin' | 'cantonese',
     level: string,
     totalCount: number
-  ): Promise<VocabularyWord[]> => {
+  ): Promise<T[]> => {
     try {
       // Get due reviews (will return empty if migration not run)
       const dueReviews = await getDueReviews(wordType, level, Math.ceil(totalCount * 0.7));
