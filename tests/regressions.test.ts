@@ -192,3 +192,53 @@ test('Vietnamese navigation search handles uppercase Đ, decomposed accents, spa
   assert.equal(normalizeSearchText('Lời chào'.normalize('NFD')), 'loi chao');
   assert.equal(normalizeSearchText('你好 粵語'), '你好 粵語');
 });
+
+test('every existing Msutong book and lesson is retrievable without losing rows or mixing books', async () => {
+  const { getFullMsutongVocabularyByLevel, getVocabularyByMsutong } = await import('../src/data/index');
+  const all = getFullMsutongVocabularyByLevel('so-cap');
+  assert.equal(all.length, 1309, 'This is the existing source inventory, not a PDF completeness claim');
+  assert.equal(new Set(all.map(word => word.id)).size, all.length);
+  for (let book = 1; book <= 4; book++) for (let lesson = 1; lesson <= 10; lesson++) {
+    const id = `quyen-${book}-lesson-${lesson}`;
+    const words = getVocabularyByMsutong('so-cap', [id]);
+    assert(words.length > 0, id);
+    assert.deepEqual(words.map(word => word.id), all.filter(word => word.bookSlug === `quyen-${book}` && word.lesson === lesson).map(word => word.id));
+    assert.deepEqual(getVocabularyByMsutong('so-cap', [id, id]).map(word => word.id), words.map(word => word.id));
+    assert(words.every(word => word.hanzi.trim() && word.pinyin.trim() && word.meaning.trim()));
+  }
+  assert.deepEqual(getVocabularyByMsutong('so-cap', ['quyen-1-lesson-1oops', 'quyen-5-lesson-1', 'quyen-1-lesson-0', 'quyen-1-lesson-01']), []);
+});
+
+test('Msutong resume links retain book/lesson selection and discard unrelated URL credentials', async () => {
+  const { describeRecentLesson } = await import('../src/lib/learningNavigation');
+  const recent = describeRecentLesson('/mandarin/msutong/msutong-flashcard?level=so-cap&lessonIds=quyen-2-lesson-3,quyen-4-lesson-1&code=private-code&access_token=private-token', 'mandarin');
+  assert(recent);
+  const url = new URL(recent.href, 'https://app.test');
+  assert.equal(url.searchParams.get('lessonIds'), 'quyen-2-lesson-3,quyen-4-lesson-1');
+  assert.equal(url.searchParams.get('books'), 'Quyển 2, Quyển 4');
+  assert(!recent.href.includes('private-'));
+  for (const path of ['/mandarin/msutong/msutong-flashcard', '/mandarin/msutong/msutong-unknown?lessonIds=quyen-1-lesson-1', '/mandarin/msutong/msutong-flashcard?level=cao-cap&lessonIds=quyen-1-lesson-1']) assert.equal(describeRecentLesson(path, 'mandarin'), null);
+});
+
+test('Msutong meaning distractors never mark another translation of the same Hanzi as wrong', async () => {
+  const { getFullMsutongVocabularyByLevel } = await import('../src/data/index');
+  const { getMsutongDistractors } = await import('../src/lib/msutongSelection');
+  const all = getFullMsutongVocabularyByLevel('so-cap');
+  const effort = all.filter(word => word.hanzi === '努力');
+  assert(effort.length >= 2, 'Cover the actual competing translations in the existing dataset');
+  const wrong = getMsutongDistractors(all, effort[0], 'meaning');
+  for (const word of effort) assert(!wrong.includes(word.meaning.trim()));
+  const candidates = [{ hanzi: '行', pinyin: 'xíng', meaning: 'được' }, { hanzi: '行', pinyin: 'háng', meaning: 'ngành' }, { hanzi: '好', pinyin: 'hǎo', meaning: 'tốt' }];
+  assert.deepEqual(getMsutongDistractors(candidates, candidates[0], 'pinyin'), ['hǎo']);
+});
+
+test('Msutong reading selection rejects malformed lesson IDs instead of matching a numeric prefix', async () => {
+  const { getReadingComprehensionByMsutong } = await import('../src/data/index');
+  const all = getReadingComprehensionByMsutong('so-cap', []);
+  assert(all.length > 0);
+  assert.deepEqual(getReadingComprehensionByMsutong('so-cap', ['quyen-1-lesson-1junk']), []);
+  const passage = all[0];
+  const selection = getReadingComprehensionByMsutong('so-cap', [`${passage.bookSlug}-lesson-${passage.lesson}`]);
+  assert(selection.some(item => item.id === passage.id));
+  assert(selection.every(item => item.bookSlug === passage.bookSlug && item.lesson === passage.lesson));
+});

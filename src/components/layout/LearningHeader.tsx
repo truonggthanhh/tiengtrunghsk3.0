@@ -40,7 +40,7 @@ export default function LearningHeader({ language, pronunciation, onTogglePronun
   const login = `${base}/login?returnUrl=${encodeURIComponent(pathname + routeSearch + hash)}`;
   const rawName: unknown = session?.user.user_metadata?.first_name;
   const name = typeof rawName === 'string' && rawName.trim() ? rawName.trim() : session?.user.email?.split('@')[0] || 'Bạn';
-  const navLinks = [links[0], links.find(link => link.href.endsWith('/notebook'))!, links.find(link => link.href.endsWith('/songs'))!, links.find(link => link.href.endsWith('/blog'))!];
+  const navLinks = [links[0], ...(isMandarin ? [links.find(link => link.href.endsWith('/msutong'))!] : []), links.find(link => link.href.endsWith('/notebook'))!, links.find(link => link.href.endsWith('/songs'))!, links.find(link => link.href.endsWith('/blog'))!];
   const openLink = (href: string) => { setSearchOpen(false); setMenuOpen(false); navigate(href); };
   return <div className="learning-ui" data-language={language}>
     <a href="#main-content" className="skip-learning-nav" onClick={event => {
@@ -54,7 +54,7 @@ export default function LearningHeader({ language, pronunciation, onTogglePronun
           <span><span className="block text-lg font-extrabold leading-none tracking-tight">haohao<span className="text-primary">.</span></span><span className="mt-1 block text-[10px] font-semibold tracking-wide text-muted-foreground">{isMandarin ? 'TIẾNG TRUNG · HSK' : 'TIẾNG QUẢNG ĐÔNG'}</span></span>
         </Link>
         <nav aria-label="Điều hướng chính" className="hidden items-center gap-1 xl:flex">
-          {navLinks.map(link => <Link key={link.href} to={link.href} aria-current={isLearningLinkActive(link.href, pathname, hash) ? 'page' : undefined} className="learning-nav-link">{link.label === 'Sổ từ cá nhân' ? 'Sổ từ' : link.label}</Link>)}
+          {navLinks.map(link => <Link key={link.href} to={link.href} aria-current={isLearningLinkActive(link.href, pathname, hash) ? 'page' : undefined} className="learning-nav-link">{link.href.endsWith('/msutong') ? 'Msutong' : link.label === 'Sổ từ cá nhân' ? 'Sổ từ' : link.label}</Link>)}
         </nav>
         <div className="flex items-center gap-1.5 sm:gap-2">
           <Button variant="outline" className="learning-search-trigger" aria-label="Tìm nhanh tính năng" onClick={() => setSearchOpen(true)}><Search /><span className="hidden lg:inline">Bạn muốn học gì?</span><kbd className="ml-5 hidden rounded border px-1.5 py-0.5 text-[10px] text-muted-foreground lg:inline">Ctrl K</kbd></Button>

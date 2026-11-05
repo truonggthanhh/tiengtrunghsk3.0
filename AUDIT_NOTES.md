@@ -49,8 +49,8 @@ Browser and handler tests mock Supabase. They establish local behavior, not live
 
 - ESLint: zero errors, zero warnings.
 - TypeScript: frontend, Vite configuration, maintenance scripts, and Node regression tests.
-- Node: 16 regression tests passed; none skipped.
-- Chromium: the UI redesign passed 44 regression cases at widths 320, 390, 768, and 1440 pixels. Content recovery coverage extends the suite to 52 cases, verified at desktop and mobile widths. The route smoke case mounts 20 actual application routes; other cases cover both languages, account changes, auth failures, admin mutations, profile saves, notebooks, navigation/search, libraries, flashcard controls, cached review remounts, and YouTube cleanup.
+- Node: 20 regression tests passed; none skipped.
+- Chromium: the UI redesign passed 44 regression cases at widths 320, 390, 768, and 1440 pixels. Content recovery coverage extended the suite to 52 cases; Msutong navigation/selection coverage extends it to 57, verified at widths 320, 1280, and 1440 pixels. The route smoke case mounts 22 actual application routes; other cases cover both languages, account changes, auth failures, admin mutations, profile saves, notebooks, navigation/search, libraries, flashcard controls, cached review remounts, and YouTube cleanup.
 - Backend calls in these tests are mocked. Live Supabase/OAuth/AI and production hosting remain outside the verified results above.
 
 The prepared source is available in the cloud checkout. Updated startup and verification instructions were saved to the environment draft. Publication is a separate platform action; no Publish tool is available in this chat. No production data was mutated.
@@ -92,3 +92,10 @@ The reported song/blog loading failure affected both languages. The owner confir
 - Supabase projects, API keys, server routing, and production records were not changed.
 
 The final source passes lint, TypeScript, build, 16 Node tests, and 52 browser cases at desktop/mobile widths. Backend responses in automated tests are mocked. Live recovery was confirmed by the owner; direct production checks remain blocked by the cloud environment's network policy.
+
+
+## Msutong navigation and existing-data audit
+
+See [MSUTONG_RECOVERY.md](MSUTONG_RECOVERY.md) and [the generated inventory](docs/msutong-data-audit.json). The four books are visible from the Mandarin homepage and desktop navigation. Saved learning links retain their selected lessons, invalid IDs no longer match numeric prefixes, and changing flashcard selections resets the batch. Synonymous entries for the same Hanzi are excluded from distractors.
+
+The source contains 1,309 existing rows across 40 lessons, including 600 rows from existing extension files; four within-lesson Hanzi/pinyin groups require review. No vocabulary rows were invented, removed, or marked as PDF-verified. All four supplied PDFs exceed the tool's 32 MiB transfer cap and could not be read. Full PDF extraction and completeness verification remain blocked pending smaller or split files.

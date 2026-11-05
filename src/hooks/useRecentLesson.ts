@@ -6,18 +6,18 @@ import type { LearningLanguage } from '@/lib/auth/navigation';
 
 export function useRecentLesson(language: LearningLanguage) {
   const { session, isLoading } = useLearningSession(language);
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const key = recentLessonKey(language, session?.user.id);
   const [saved, setSaved] = useState<{ key: string; lesson: RecentLesson | null }>({ key: '', lesson: null });
   useEffect(() => {
     if (isLoading) return;
-    const current = describeRecentLesson(pathname, language);
+    const current = describeRecentLesson(pathname + search, language);
     let lesson = current;
     try {
       if (current) localStorage.setItem(key, current.href);
       else lesson = describeRecentLesson(localStorage.getItem(key) ?? '', language);
     } catch { /* Continue learning even when local storage is unavailable. */ }
     setSaved({ key, lesson });
-  }, [key, pathname, language, isLoading]);
+  }, [key, pathname, search, language, isLoading]);
   return !isLoading && saved.key === key ? saved.lesson : null;
 }

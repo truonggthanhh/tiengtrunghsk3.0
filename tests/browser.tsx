@@ -1,3 +1,6 @@
+import MsutongPage from '../src/pages/MsutongPage';
+import MsutongFlashcardPage from '../src/pages/msutong/MsutongFlashcardPage';
+import { getVocabularyByMsutong } from '../src/data';
 import MandarinBlogList from '../src/mandarin/pages/BlogPage';
 import CantoneseBlogList from '../src/cantonese/pages/BlogPage';
 import CantoneseSongDetail from '../src/cantonese/pages/SongDetail';
@@ -191,7 +194,7 @@ await check('Main app routes mount with their actual providers', async () => {
   const { default: App } = await import('../src/App');
   history.replaceState(null, '', '/');
   root.render(<App />);
-  for (const [path, expected] of [['/', 'Chọn phương ngữ'], ['/mandarin', 'HSK'], ['/cantonese', 'Một câu tiếng Quảng'], ['/mandarin/blog/sample', 'Regression blog'], ['/cantonese/blog/sample', 'Regression blog'], ['/mandarin/notebook', 'Sổ từ tiếng Trung'], ['/cantonese/notebook', 'Sổ từ Quảng Đông'], ['/mandarin/forgot-password', 'Quên mật khẩu'], ['/cantonese/forgot-password', 'Quên mật khẩu'], ['/mandarin/update-password', 'Liên kết không hợp lệ'], ['/cantonese/update-password', 'Liên kết không hợp lệ'], ['/mandarin/login', 'Chào mừng bạn trở lại'], ['/cantonese/login', 'Chào mừng bạn trở lại'], ['/mandarin/songs', 'Để giai điệu dẫn đường'], ['/cantonese/songs', 'Để giai điệu dẫn đường'], ['/mandarin/blog', 'Góc đọc'], ['/cantonese/blog', 'Góc đọc'], ['/mandarin/dictionary', 'Tra một từ.'], ['/cantonese/lessons', 'Một bài học.'], ['/mandarin/hsk/1/flashcard', 'Flashcards HSK 1']]) {
+  for (const [path, expected] of [['/', 'Chọn phương ngữ'], ['/mandarin', 'HSK'], ['/cantonese', 'Một câu tiếng Quảng'], ['/mandarin/blog/sample', 'Regression blog'], ['/cantonese/blog/sample', 'Regression blog'], ['/mandarin/notebook', 'Sổ từ tiếng Trung'], ['/cantonese/notebook', 'Sổ từ Quảng Đông'], ['/mandarin/forgot-password', 'Quên mật khẩu'], ['/cantonese/forgot-password', 'Quên mật khẩu'], ['/mandarin/update-password', 'Liên kết không hợp lệ'], ['/cantonese/update-password', 'Liên kết không hợp lệ'], ['/mandarin/login', 'Chào mừng bạn trở lại'], ['/cantonese/login', 'Chào mừng bạn trở lại'], ['/mandarin/songs', 'Để giai điệu dẫn đường'], ['/cantonese/songs', 'Để giai điệu dẫn đường'], ['/mandarin/blog', 'Góc đọc'], ['/cantonese/blog', 'Góc đọc'], ['/mandarin/dictionary', 'Tra một từ.'], ['/cantonese/lessons', 'Một bài học.'], ['/mandarin/hsk/1/flashcard', 'Flashcards HSK 1'], ['/mandarin/msutong', 'Học theo quyển.'], ['/mandarin/msutong/msutong-flashcard?level=so-cap&lessonIds=quyen-1-lesson-1', 'Flashcard']]) {
     history.pushState(null, '', path);
     window.dispatchEvent(new PopStateEvent('popstate'));
     await delay(50);
@@ -689,6 +692,64 @@ for (const language of ['mandarin', 'cantonese'] as const) for (const kind of ['
     } finally { mockClient(sdk, language); }
   });
 }
+function renderMsutong(node: React.ReactNode, entry = '/mandarin/msutong', authenticated = true) {
+  root.render(<QueryClientProvider client={client()}><MemoryRouter initialEntries={[entry]}><MandarinSessionContext.Provider value={{ session: authenticated ? fakeSession('msutong-learner') : null, isLoading: false }}><PinyinProvider>{node}</PinyinProvider></MandarinSessionContext.Provider></MemoryRouter></QueryClientProvider>);
+}
+await check('Msutong exposes all four books and passes exactly the selected lessons to activities', async () => {
+  renderMsutong(<MsutongPage />); await delay(30);
+  for (let book = 1; book <= 4; book++) {
+    const selectBook = host.querySelector<HTMLButtonElement>(`[aria-label="Chọn Quyển ${book}"]`)!;
+    selectBook.click(); await delay(20);
+    const lessonId = `quyen-${book}-lesson-1`;
+    host.querySelector<HTMLButtonElement>(`[aria-label="Quyển ${book} · Bài 1"]`)!.click(); await delay(20);
+    const flashcard = host.querySelector<HTMLAnchorElement>('a[href*="/msutong/msutong-flashcard?"]');
+    assert(flashcard, `Book ${book} must have an activity link`);
+    assert(new URL(flashcard!.href).searchParams.get('lessonIds') === lessonId, 'Practice must receive the selected book/lesson');
+    assert(host.textContent?.includes(`${getVocabularyByMsutong('so-cap', [lessonId]).length} mục từ trong bộ dữ liệu hiện có`), 'Counts must use the actual dataset');
+    selectBook.click(); await delay(20);
+    assert(!host.querySelector('a[href*="/msutong/msutong-flashcard?"]'), 'Unselecting a book must remove its hidden lesson selections');
+  }
+  clickText('Chọn cả 4 quyển'); await delay(20); clickText('Chọn tất cả bài'); await delay(20);
+  assert(host.textContent?.includes('40 bài đã chọn · 1309 mục từ'), 'Selecting every existing lesson must retain every existing row');
+  assert(document.documentElement.scrollWidth <= window.innerWidth + 2, 'The full four-book selection must fit the viewport');
+});
+await check('Msutong restores legacy back-navigation URLs and rejects malformed lesson IDs', async () => {
+  renderMsutong(<><Link data-invalid-msutong to="/mandarin/msutong?level=so-cap&bookSlugs=quyen-1&lessonIds=quyen-1-lesson-1junk">Liên kết lỗi</Link><MsutongPage /></>, '/mandarin/msutong?level=so-cap&lessonIds=quyen-2-lesson-3&step=exercise'); await delay(25);
+  assert(host.querySelector('[aria-label="Chọn Quyển 2"]')?.getAttribute('aria-pressed') === 'true', 'Legacy URLs must restore their book');
+  assert(host.querySelector('[aria-label="Quyển 2 · Bài 3"]')?.getAttribute('aria-pressed') === 'true', 'Legacy URLs must restore their lesson');
+  assert(host.querySelector('a[href*="/msutong/msutong-flashcard?"]'), 'The restored selection must remain usable');
+  host.querySelector<HTMLAnchorElement>('[data-invalid-msutong]')!.click(); await delay(20);
+  assert(host.textContent?.includes('Một số mã bài'), 'Malformed lesson selections need a recovery message');
+  assert(!host.querySelector('a[href*="/msutong/msutong-flashcard?"]'), 'Malformed IDs must not silently select another lesson');
+});
+await check('Msutong guest login keeps the book preselected from the homepage', async () => {
+  const entry = '/mandarin/msutong?level=so-cap&bookSlugs=quyen-4';
+  renderMsutong(<MsutongPage />, entry, false); await delay(25);
+  const login = host.querySelector<HTMLAnchorElement>('main a[href*="/mandarin/login?"]')!;
+  assert(login && new URL(login.href).searchParams.get('returnUrl') === entry, 'Signing in must return to the selected book');
+});
+await check('Msutong flashcards reset an out-of-date batch after changing lesson selection', async () => {
+  renderMsutong(<><Link data-change-msutong to="/mandarin/msutong/msutong-flashcard?level=so-cap&lessonIds=quyen-2-lesson-1">Đổi bộ bài</Link><Routes><Route path="/mandarin/msutong/msutong-flashcard" element={<MsutongFlashcardPage />} /></Routes></>, '/mandarin/msutong/msutong-flashcard?level=so-cap&lessonIds=quyen-1-lesson-1');
+  await until(() => Boolean(host.querySelector('[role="combobox"]')));
+  clickText('Đợt tiếp theo'); await delay(20);
+  assert(host.querySelector('[role="combobox"]')?.textContent?.startsWith('Đợt 2'), 'The test must move beyond the first batch');
+  host.querySelector<HTMLAnchorElement>('[data-change-msutong]')!.click(); await delay(30);
+  assert(host.querySelector('[role="combobox"]')?.textContent?.startsWith('Đợt 1'), 'Switching lessons must reset the batch');
+  assert(host.querySelector('.flashcard-front p')?.textContent === getVocabularyByMsutong('so-cap', ['quyen-2-lesson-1'])[0].hanzi, 'The card must come from the new lesson');
+  assert(document.documentElement.scrollWidth <= window.innerWidth + 2, 'Msutong controls must fit the viewport');
+});
+export function MsutongRecentProbe() {
+  const recent = useRecentLesson('mandarin');
+  return <><output data-msutong-recent>{recent?.href ?? ''}</output><Link data-next-msutong to="/mandarin/msutong/msutong-flashcard?level=so-cap&lessonIds=quyen-3-lesson-2">Bộ tiếp theo</Link><Link data-home-msutong to="/mandarin">Trang học</Link></>;
+}
+await check('Msutong continue-learning retains query selection, including when only search parameters change', async () => {
+  renderMsutong(<MsutongRecentProbe />, '/mandarin/msutong/msutong-flashcard?level=so-cap&lessonIds=quyen-1-lesson-1');
+  await until(() => Boolean(host.querySelector('[data-msutong-recent]')?.textContent?.includes('quyen-1-lesson-1')));
+  host.querySelector<HTMLAnchorElement>('[data-next-msutong]')!.click();
+  await until(() => Boolean(host.querySelector('[data-msutong-recent]')?.textContent?.includes('quyen-3-lesson-2')));
+  host.querySelector<HTMLAnchorElement>('[data-home-msutong]')!.click(); await delay(20);
+  assert(host.querySelector('[data-msutong-recent]')?.textContent?.includes('quyen-3-lesson-2'), 'Returning home must keep the complete last lesson URL');
+});
 (window as unknown as { __showDesignRoute: (path: string, dark: boolean) => Promise<void> }).__showDesignRoute = async (path, dark) => {
   const { default: App } = await import('../src/App');
   localStorage.setItem('theme', dark ? 'dark' : 'light');

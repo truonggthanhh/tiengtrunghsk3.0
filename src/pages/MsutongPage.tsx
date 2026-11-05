@@ -1,315 +1,51 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { ArrowRight, BookOpen, Check, LibraryBig } from 'lucide-react';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { BookCopy, ChevronRight, ArrowLeft, BookOpen, Mic, Puzzle, FileQuestion, CheckSquare, Shuffle, AudioLines, Bot, Home, BookText, PenTool } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { useSession } from '@/components/SessionContextProvider.shared';
+import { getFullMsutongVocabularyByLevel, getVocabularyByMsutong, getReadingComprehensionByMsutong } from '@/data';
+import { msutongBooks, parseMsutongLessonId } from '@/lib/msutongSelection';
+import { practiceModes } from '@/lib/learningNavigation';
+import { cn } from '@/lib/utils';
 
-const levels = [
-  { slug: 'so-cap', name: 'Sơ cấp' },
-  { slug: 'trung-cap', name: 'Trung cấp' },
-  { slug: 'cao-cap', name: 'Cao cấp' },
-];
+const catalog = getFullMsutongVocabularyByLevel('so-cap');
+const lessons = msutongBooks.flatMap(book => [...new Set(catalog.filter(word => word.bookSlug === book.slug).map(word => word.lesson))].sort((a, b) => a - b).map(lesson => ({ id: `${book.slug}-lesson-${lesson}`, bookSlug: book.slug, lesson, count: catalog.filter(word => word.bookSlug === book.slug && word.lesson === lesson).length })));
+const validLessonIds = new Set(lessons.map(lesson => lesson.id));
 
-const books = [
-  { slug: 'quyen-1', name: 'Quyển 1' },
-  { slug: 'quyen-2', name: 'Quyển 2' },
-  { slug: 'quyen-3', name: 'Quyển 3' },
-  { slug: 'quyen-4', name: 'Quyển 4' },
-];
-
-const exerciseTypes = [
-    { slug: "flashcard", title: "Flashcard", description: "Ôn tập từ vựng qua thẻ ghi nhớ", icon: <BookOpen />, isAvailable: true },
-    { slug: "pinyin-choice", title: "Chọn phiên âm", description: "Chọn pinyin đúng cho chữ Hán", icon: <Mic />, isAvailable: true },
-    { slug: "meaning-choice", title: "Chọn nghĩa", description: "Chọn nghĩa đúng cho từ vựng", icon: <Puzzle />, isAvailable: true },
-    { slug: "fill-in-the-blank", title: "Điền từ", description: "Điền chữ Hán dựa vào pinyin và nghĩa", icon: <FileQuestion />, isAvailable: true },
-    { slug: "pronunciation", title: "Luyện phát âm", description: "Luyện phát âm qua nhận dạng giọng nói", icon: <AudioLines />, isAvailable: true },
-    { slug: "sentence-choice", title: "Điền từ vào câu", description: "Chọn từ đúng để hoàn thành câu", icon: <CheckSquare />, isAvailable: true },
-    { slug: "sentence-scramble", title: "Sắp xếp câu", description: "Sắp xếp các từ thành câu hoàn chỉnh", icon: <Shuffle />, isAvailable: true },
-    { slug: "reading-comprehension", title: "Đọc hiểu", description: "Đọc đoạn văn và trả lời câu hỏi", icon: <BookText />, isAvailable: true },
-    { slug: "handwriting-practice", title: "Luyện viết chữ Hán", description: "Xem thứ tự nét và luyện viết chữ Hán", icon: <PenTool />, isAvailable: true },
-    { slug: "ai-tutor", title: "Luyện nói cùng AI", description: "Trò chuyện và nhận phản hồi từ AI", icon: <Bot />, isAvailable: true },
-];
-
-const MsutongPage = () => {
-  const { session } = useSession();
-  const [searchParams] = useSearchParams();
-  const [step, setStep] = useState<'level' | 'book' | 'lesson' | 'exercise'>('level');
-  const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
-  const [selectedBooks, setSelectedBooks] = useState<string[]>([]);
-  const [selectedLessons, setSelectedLessons] = useState<string[]>([]);
-
-  // Restore state from URL params (for back navigation from exercise pages)
-  useEffect(() => {
-    const levelParam = searchParams.get('level');
-    const lessonIdsParam = searchParams.get('lessonIds');
-    const stepParam = searchParams.get('step') as 'level' | 'book' | 'lesson' | 'exercise' | null;
-
-    if (levelParam) {
-      setSelectedLevel(levelParam);
-
-      if (lessonIdsParam) {
-        const lessonIds = lessonIdsParam.split(',');
-        setSelectedLessons(lessonIds);
-
-        // Extract unique book slugs from lessonIds (format: 'quyen-X-lesson-Y')
-        const bookSlugs = [...new Set(lessonIds.map(id => id.split('-lesson-')[0]))];
-        setSelectedBooks(bookSlugs);
-
-        // Determine which step to show
-        if (stepParam === 'exercise') {
-          setStep('exercise');
-        } else if (stepParam === 'lesson') {
-          setStep('lesson');
-        } else {
-          setStep('exercise'); // Default to exercise selection when lessonIds provided
-        }
-      } else if (stepParam === 'book' || stepParam === 'lesson') {
-        setStep(stepParam);
-      } else {
-        setStep('book'); // Default to book selection when only level provided
-      }
-    }
-  }, [searchParams]);
-
-  const handleLevelSelect = (levelSlug: string) => {
-    setSelectedLevel(levelSlug);
-    setStep('book');
-  };
-
-  const handleBookToggle = (bookSlug: string) => {
-    setSelectedBooks(prev =>
-      prev.includes(bookSlug)
-        ? prev.filter(b => b !== bookSlug)
-        : [...prev, bookSlug]
-    );
-  };
-
-  const lessonsToDisplay = useMemo(() => {
-    if (selectedBooks.length === 0) return [];
-    
-    const allLessons: { id: string; lesson: number; bookSlug: string; bookName: string }[] = [];
-    
-    selectedBooks.forEach(bookSlug => {
-      const bookInfo = books.find(b => b.slug === bookSlug);
-      if (bookInfo) {
-        // Generate lessons 1-10 for each selected book
-        for (let i = 1; i <= 10; i++) {
-          allLessons.push({
-            id: `${bookSlug}-lesson-${i}`, // ID format: 'quyen-X-lesson-Y'
-            lesson: i, // Lesson number within the book (1-10)
-            bookSlug: bookSlug,
-            bookName: bookInfo.name,
-          });
-        }
-      }
-    });
-    // Sort by book number then lesson number for consistent display
-    return allLessons.sort((a, b) => {
-      const bookNumA = parseInt(a.bookSlug.replace('quyen-', ''));
-      const bookNumB = parseInt(b.bookSlug.replace('quyen-', ''));
-      if (bookNumA !== bookNumB) {
-        return bookNumA - bookNumB;
-      }
-      return a.lesson - b.lesson;
-    });
-  }, [selectedBooks]);
-
-  const handleLessonToggle = (lessonId: string) => {
-    setSelectedLessons(prev =>
-      prev.includes(lessonId)
-        ? prev.filter(id => id !== lessonId)
-        : [...prev, lessonId]
-    );
-  };
-
-  const selectionSummary = useMemo(() => {
-    const levelName = levels.find(l => l.slug === selectedLevel)?.name;
-    const bookNames = selectedBooks.map(slug => books.find(b => b.slug === slug)?.name).join(', ');
-    return `Đã chọn: ${levelName} > ${bookNames} > (${selectedLessons.length} bài)`;
-  }, [selectedLevel, selectedBooks, selectedLessons]);
-
-  const practiceUrlParams = useMemo(() => {
-    const params = new URLSearchParams();
-    if (selectedLevel) params.append('level', selectedLevel);
-    if (selectedLessons.length > 0) params.append('lessonIds', selectedLessons.join(','));
-    // Also pass selected books for AI Tutor context if needed
-    if (selectedBooks.length > 0) params.append('books', selectedBooks.map(slug => books.find(b => b.slug === slug)?.name).join(', '));
-    return params.toString();
-  }, [selectedLevel, selectedLessons, selectedBooks]);
-
-  const renderStep = () => {
-    switch (step) {
-      case 'level':
-        return (
-          <div className="text-center py-16 md:py-20">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Chọn Cấp Độ</h2>
-            <p className="max-w-2xl mx-auto text-lg text-muted-foreground mb-12">Bắt đầu bằng việc chọn cấp độ bạn muốn ôn tập.</p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              {levels.map(level => (
-                <Card key={level.slug} className="flex flex-col text-center h-full hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-in-out group cursor-pointer border-primary/30 hover:border-primary rounded-xl" onClick={() => handleLevelSelect(level.slug)}>
-                  <CardHeader className="items-center flex-grow justify-center">
-                    <CardTitle className="text-2xl">{level.name}</CardTitle>
-                  </CardHeader>
-                </Card>
-              ))}
-            </div>
-            <div className="text-center mt-8">
-              <Button asChild variant="secondary" className="hover:bg-accent hover:text-accent-foreground transition-colors font-bold">
-                <Link to="/mandarin">
-                  <Home className="mr-2 h-4 w-4" /> Quay về trang chủ
-                </Link>
-              </Button>
-            </div>
-          </div>
-        );
-      
-      case 'book':
-        return (
-          <div className="w-full max-w-4xl mx-auto bg-card p-6 md:p-10 rounded-xl shadow-lg border">
-            <Button variant="secondary" onClick={() => setStep('level')} className="mb-8 font-bold hover:bg-secondary/80 transition-colors"><ArrowLeft className="mr-2 h-4 w-4" /> Quay lại</Button>
-            <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold tracking-tight">Chọn Quyển</h2>
-              <p className="text-muted-foreground mt-2">Bạn có thể chọn một hoặc nhiều quyển.</p>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto mb-8">
-              {books.map(book => (
-                <Label
-                  key={book.slug}
-                  htmlFor={book.slug}
-                  onClick={() => handleBookToggle(book.slug)}
-                  className={cn(
-                    "flex h-full w-full cursor-pointer items-center justify-center rounded-lg border p-4 text-lg font-medium transition-colors hover:shadow-md",
-                    selectedBooks.includes(book.slug) ? "border-primary bg-primary/10 text-primary" : "hover:bg-muted/50"
-                  )}
-                >
-                  {book.name}
-                </Label>
-              ))}
-            </div>
-            <div className="text-center">
-              <Button onClick={() => setStep('lesson')} disabled={selectedBooks.length === 0} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">Tiếp tục <ChevronRight className="ml-2 h-4 w-4" /></Button>
-            </div>
-          </div>
-        );
-
-      case 'lesson':
-        return (
-          <div className="w-full max-w-5xl mx-auto bg-card p-6 md:p-10 rounded-xl shadow-lg border">
-            <Button variant="secondary" onClick={() => setStep('book')} className="mb-8 font-bold hover:bg-secondary/80 transition-colors"><ArrowLeft className="mr-2 h-4 w-4" /> Quay lại</Button>
-            <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold tracking-tight">Chọn Bài Học</h2>
-              <p className="text-muted-foreground mt-2">Bạn có thể chọn một hoặc nhiều bài.</p>
-            </div>
-            <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-10 gap-4 max-w-5xl mx-auto mb-8">
-              {lessonsToDisplay.map(lesson => (
-                <Label
-                  key={lesson.id}
-                  htmlFor={`lesson-${lesson.id}`}
-                  onClick={() => handleLessonToggle(lesson.id)}
-                  className={cn(
-                    "flex flex-col h-16 w-full cursor-pointer items-center justify-center rounded-lg border p-2 text-base font-medium transition-colors hover:shadow-md",
-                    selectedLessons.includes(lesson.id) ? "border-primary bg-primary/10 text-primary" : "hover:bg-muted/50"
-                  )}
-                >
-                  <span>Bài {lesson.lesson}</span>
-                  {selectedBooks.length > 1 && <span className="text-xs text-muted-foreground">({lesson.bookName.replace('Quyển ', 'Q')})</span>}
-                </Label>
-              ))}
-            </div>
-            <div className="text-center">
-              <Button onClick={() => setStep('exercise')} disabled={selectedLessons.length === 0} className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.02] transition-all font-bold">Tiếp tục <ChevronRight className="ml-2 h-4 w-4" /></Button>
-            </div>
-          </div>
-        );
-
-      case 'exercise':
-        return (
-          <div className="w-full max-w-5xl mx-auto bg-card p-6 md:p-10 rounded-xl shadow-lg border">
-            <Button variant="secondary" onClick={() => setStep('lesson')} className="mb-8 font-bold hover:bg-secondary/80 transition-colors"><ArrowLeft className="mr-2 h-4 w-4" /> Quay lại</Button>
-            <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold tracking-tight">Chọn Dạng Bài Tập</h2>
-              <p className="text-muted-foreground mt-2">{selectionSummary}</p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {exerciseTypes.map((exercise) => (
-                <Link
-                  key={exercise.slug}
-                  to={exercise.isAvailable ? `/mandarin/msutong/msutong-${exercise.slug}?${practiceUrlParams}` : '#'}
-                  className={cn(!exercise.isAvailable && "pointer-events-none")}
-                >
-                  <Card className={cn("flex flex-col text-center h-full hover:shadow-xl hover:-translate-y-2 transition-all duration-300 ease-in-out group cursor-pointer border-primary/30 hover:border-primary rounded-xl", !exercise.isAvailable && "opacity-50")}>
-                    <CardHeader className="items-center flex-grow">
-                      <div className="mb-4 bg-primary/10 p-4 rounded-full transition-colors group-hover:bg-primary">
-                        {React.cloneElement(exercise.icon, { className: "w-8 h-8 text-primary transition-colors group-hover:text-primary-foreground" })}
-                      </div>
-                      <CardTitle className="text-xl">{exercise.title}</CardTitle>
-                      <CardDescription>{exercise.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Button variant="secondary" className="w-full font-bold" disabled={!exercise.isAvailable}>
-                        {exercise.isAvailable ? 'Luyện tập' : 'Sắp ra mắt'}
-                        {exercise.isAvailable && <ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          </div>
-        );
-    }
-  };
-
-  // Require authentication
-  if (!session?.user?.id) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <Header />
-        <main className="container mx-auto p-4 md:p-8 flex-grow flex items-center justify-center">
-          <div className="text-center py-12 max-w-md">
-            <div className="mb-6 bg-white/90 dark:bg-black/70 backdrop-blur-md p-8 rounded-2xl border-2 border-primary/30 shadow-xl">
-              <div className="mb-4">
-                <svg className="mx-auto h-16 w-16 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold mb-2">
-                Yêu cầu đăng nhập
-              </h2>
-              <p className="text-muted-foreground mb-6">
-                Vui lòng đăng nhập để truy cập giáo trình Msutong
-              </p>
-              <div className="flex gap-3 justify-center">
-                <Button asChild variant="outline">
-                  <Link to="/mandarin">
-                    <Home className="mr-2 h-4 w-4" /> Trang chủ
-                  </Link>
-                </Button>
-                <Button asChild>
-                  <Link to="/mandarin/login">
-                    Đăng nhập ngay
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
+export default function MsutongPage() {
+  const { session, isLoading } = useSession();
+  const location = useLocation();
+  const [params, setParams] = useSearchParams();
+  const level = params.get('level') ?? 'so-cap';
+  const requestedIds = [...new Set((params.get('lessonIds') ?? '').split(',').filter(Boolean))];
+  const selectedLessons = requestedIds.filter(id => validLessonIds.has(id));
+  const requestedBooks = [...(params.get('bookSlugs') ?? '').split(','), ...selectedLessons.map(id => parseMsutongLessonId(id)!.bookSlug)];
+  const selectedBooks = msutongBooks.filter(book => requestedBooks.includes(book.slug)).map(book => book.slug);
+  const words = getVocabularyByMsutong(level, selectedLessons);
+  const reading = getReadingComprehensionByMsutong(level, selectedLessons);
+  const canPractice = selectedLessons.length > 0 && words.length > 0;
+  const exercises = [...practiceModes.filter(mode => mode.slug !== 'enhanced-pronunciation'), { slug: 'reading-comprehension', label: 'Đọc hiểu', description: 'Đọc đoạn văn và trả lời câu hỏi.', icon: BookOpen, group: 'sentences' }];
+  const exerciseParams = new URLSearchParams({ level, lessonIds: selectedLessons.join(','), books: msutongBooks.filter(book => selectedBooks.includes(book.slug)).map(book => book.name).join(', ') });
+  function select(books: string[], ids: string[]) {
+    const allowedBooks = msutongBooks.filter(book => books.includes(book.slug)).map(book => book.slug);
+    const allowedIds = lessons.filter(lesson => allowedBooks.includes(lesson.bookSlug as typeof allowedBooks[number]) && ids.includes(lesson.id)).map(lesson => lesson.id);
+    setParams({ level: 'so-cap', bookSlugs: allowedBooks.join(','), lessonIds: allowedIds.join(',') });
   }
-
-  return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Header />
-      <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
-        {renderStep()}
-      </main>
-    </div>
-  );
-};
-
-export default MsutongPage;
+  return <div className="learning-ui min-h-screen bg-background" data-language="mandarin"><Header /><main id="main-content" className="learning-container py-8 sm:py-12">
+    <Link to="/mandarin" className="text-xs text-muted-foreground hover:text-primary">Trang chủ <span className="px-2">/</span> Msutong</Link>
+    <div className="section-heading mt-8"><div><p className="section-eyebrow">GIÁO TRÌNH MSUTONG · SƠ CẤP</p><h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Học theo quyển. Ôn theo bài.</h1><p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">Chọn một hoặc nhiều quyển, chọn bài học rồi mở flashcard hoặc hoạt động bạn muốn luyện.</p></div></div>
+    {isLoading ? <p role="status" className="py-12 text-center">Đang kiểm tra phiên đăng nhập…</p> : !session ? <section className="library-empty"><LibraryBig className="mx-auto h-8 w-8 text-primary" /><h2 className="mt-5 text-xl font-bold">Đăng nhập để học giáo trình Msutong</h2><p className="mt-3 text-sm text-muted-foreground">Quyển 1 · Quyển 2 · Quyển 3 · Quyển 4</p><Button asChild className="mt-6 rounded-full"><Link to={`/mandarin/login?returnUrl=${encodeURIComponent(location.pathname + location.search)}`}>Đăng nhập để học<ArrowRight /></Link></Button></section> : level !== 'so-cap' ? <section className="library-empty"><h2 className="text-xl font-bold">Chưa có bộ từ cho cấp độ này</h2><p className="mt-3 text-sm text-muted-foreground">Hiện có 4 quyển sơ cấp để bạn lựa chọn.</p><Button className="mt-5" onClick={() => select([], [])}>Mở Msutong sơ cấp</Button></section> : <>
+      <section aria-labelledby="msutong-books-title" className="rounded-2xl border bg-card p-4 sm:p-6"><div className="mb-5 flex flex-wrap items-center justify-between gap-3"><div><p className="section-eyebrow">BƯỚC 1</p><h2 id="msutong-books-title" className="mt-2 text-xl font-bold">Chọn quyển</h2></div><Button variant="outline" size="sm" onClick={() => select(msutongBooks.map(book => book.slug), selectedLessons)}>Chọn cả 4 quyển</Button></div><div className="grid grid-cols-2 gap-3 lg:grid-cols-4">{msutongBooks.map(book => {
+        const active = selectedBooks.includes(book.slug);
+        return <button type="button" key={book.slug} aria-label={`Chọn ${book.name}`} aria-pressed={active} className={cn('relative rounded-2xl border p-4 text-left transition-colors hover:border-primary/50 sm:p-5', active && 'border-primary bg-primary/5')} onClick={() => select(active ? selectedBooks.filter(slug => slug !== book.slug) : [...selectedBooks, book.slug], selectedLessons)}><span className="flex items-center justify-between"><LibraryBig className="h-5 w-5 text-primary" />{active && <Check className="h-4 w-4 text-primary" />}</span><span className="mt-4 block text-lg font-bold">{book.name}</span><span className="mt-2 block text-xs leading-5 text-muted-foreground">{lessons.filter(lesson => lesson.bookSlug === book.slug).length} bài · {catalog.filter(word => word.bookSlug === book.slug).length} mục từ hiện có</span></button>;
+      })}</div></section>
+      {selectedBooks.length > 0 && <section id="msutong-lessons" aria-labelledby="msutong-lessons-title" className="mt-6 rounded-2xl border bg-card p-4 sm:p-6"><div className="mb-5 flex flex-wrap items-center justify-between gap-3"><div><p className="section-eyebrow">BƯỚC 2</p><h2 id="msutong-lessons-title" className="mt-2 text-xl font-bold">Chọn bài học</h2></div><div className="flex flex-wrap gap-2"><Button variant="outline" size="sm" onClick={() => select(selectedBooks, lessons.filter(lesson => selectedBooks.includes(lesson.bookSlug as typeof selectedBooks[number])).map(lesson => lesson.id))}>Chọn tất cả bài</Button><Button variant="ghost" size="sm" disabled={!selectedLessons.length} onClick={() => select(selectedBooks, [])}>Bỏ chọn bài</Button></div></div>{msutongBooks.filter(book => selectedBooks.includes(book.slug)).map(book => <div key={book.slug} className="mb-6 last:mb-0"><h3 className="mb-3 text-sm font-bold">{book.name}</h3><div className="grid grid-cols-2 gap-2 sm:grid-cols-5">{lessons.filter(lesson => lesson.bookSlug === book.slug).map(lesson => <button type="button" key={lesson.id} aria-pressed={selectedLessons.includes(lesson.id)} aria-label={`${book.name} · Bài ${lesson.lesson}`} className={cn('rounded-xl border p-3 text-left text-sm hover:border-primary/50', selectedLessons.includes(lesson.id) && 'border-primary bg-primary/5')} onClick={() => select(selectedBooks, selectedLessons.includes(lesson.id) ? selectedLessons.filter(id => id !== lesson.id) : [...selectedLessons, lesson.id])}><span className="font-semibold">Bài {lesson.lesson}</span><span className="mt-1 block text-xs text-muted-foreground">{lesson.count} mục từ</span></button>)}</div></div>)}</section>}
+      {requestedIds.some(id => !validLessonIds.has(id)) && <p role="status" className="mt-4 text-sm text-muted-foreground">Một số mã bài trong liên kết không hợp lệ hoặc chưa có dữ liệu. Hãy chọn lại bài từ danh sách.</p>}
+      <section id="msutong-exercises" aria-labelledby="msutong-exercises-title" className="mt-6"><div className="section-heading"><div><p className="section-eyebrow">BƯỚC 3</p><h2 id="msutong-exercises-title">Chọn hoạt động luyện tập</h2><p role="status">{selectedLessons.length} bài đã chọn · {words.length} mục từ trong bộ dữ liệu hiện có</p></div></div>{!canPractice && <p className="mb-4 text-sm text-muted-foreground">Chọn quyển và ít nhất một bài để bắt đầu.</p>}<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{exercises.map(exercise => {
+        const available = canPractice && (exercise.slug === 'reading-comprehension' ? reading.length > 0 : exercise.slug === 'sentence-choice' || exercise.slug === 'sentence-scramble' ? words.some(word => word.examples?.length) : true);
+        const content = <><span className="exercise-icon"><exercise.icon className="h-5 w-5" /></span><span className="min-w-0 flex-1"><span className="block font-semibold">{exercise.label}</span><span className="mt-1 block text-xs leading-5 text-muted-foreground">{!available && canPractice ? 'Chưa có nội dung cho các bài đang chọn.' : exercise.description}</span></span>{available && <ArrowRight className="h-4 w-4 shrink-0" />}</>;
+        return available ? <Link key={exercise.slug} className="exercise-choice" to={`/mandarin/msutong/msutong-${exercise.slug}?${exerciseParams}`}>{content}</Link> : <div key={exercise.slug} className="exercise-choice opacity-60" aria-disabled="true">{content}</div>;
+      })}</div></section>
+    </>}
+  </main></div>;
+}

@@ -1,3 +1,4 @@
+import { parseMsutongLessonId } from '../lib/msutongSelection';
 import { hsk1Vocabulary, type VocabularyWord } from './hsk1';
 import { hsk2Vocabulary } from './hsk2';
 import { hsk3Vocabulary } from './hsk3';
@@ -81,12 +82,9 @@ export const getFullMsutongVocabularyByLevel = (level: string): MsutongWord[] =>
 };
 
 export const getVocabularyByMsutong = (level: string, lessonIds: string[]): VocabularyWord[] => {
-  const selections: { bookSlug: string; lessonNumber: number }[] = lessonIds.map(id => {
-    const parts = id.split('-lesson-');
-    return {
-      bookSlug: parts[0],
-      lessonNumber: parseInt(parts[1], 10), // This will now correctly be 1-10
-    };
+  const selections = [...new Set(lessonIds)].flatMap(id => {
+    const parsed = parseMsutongLessonId(id);
+    return parsed ? [parsed] : [];
   });
 
   const combinedVocabulary: MsutongWord[] = [];
@@ -126,10 +124,10 @@ export const getReadingComprehensionByMsutong = (level: string, lessonIds: strin
   const selectedPassages: ReadingComprehensionPassage[] = [];
   const uniquePassageIds = new Set<number>();
 
-  lessonIds.forEach(id => {
-    const parts = id.split('-lesson-');
-    const bookSlug = parts[0];
-    const lessonNumber = parseInt(parts[1], 10);
+  [...new Set(lessonIds)].forEach(id => {
+    const parsed = parseMsutongLessonId(id);
+    if (!parsed) return;
+    const { bookSlug, lessonNumber } = parsed;
 
     passagesForLevel.forEach(passage => {
       if (passage.bookSlug === bookSlug && passage.lesson === lessonNumber && !uniquePassageIds.has(passage.id)) {

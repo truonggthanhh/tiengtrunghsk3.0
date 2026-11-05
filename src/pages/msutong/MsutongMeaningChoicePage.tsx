@@ -1,3 +1,4 @@
+import { getMsutongDistractors } from '@/lib/msutongSelection';
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -63,11 +64,8 @@ const MsutongMeaningChoicePage = () => {
     if (!currentWord) return;
 
     const correctOption = currentWord.meaning;
-    const incorrectOptions = distractorVocabulary
-      .filter(word => word.meaning !== correctOption)
-      .map(word => word.meaning);
-    
-    const shuffledIncorrect = shuffleArray([...new Set(incorrectOptions)]).slice(0, 3);
+    const incorrectOptions = getMsutongDistractors(distractorVocabulary, currentWord, 'meaning');
+    const shuffledIncorrect = shuffleArray(incorrectOptions).slice(0, 3);
 
     const finalOptions = shuffleArray([correctOption, ...shuffledIncorrect]);
     setOptions(finalOptions);

@@ -18,7 +18,7 @@ import {
 const BATCH_SIZE = 10;
 const STORAGE_KEY_PREFIX = 'flashcard_progress_msutong_';
 
-const MsutongFlashcardPage = () => {
+const MsutongFlashcardLesson = () => {
   const [searchParams] = useSearchParams();
   const level = searchParams.get('level') || 'so-cap';
   const lessonIds = useMemo(() => searchParams.get('lessonIds')?.split(',') || [], [searchParams]);
@@ -56,7 +56,8 @@ const MsutongFlashcardPage = () => {
 
   // Load saved progress on mount
   useEffect(() => {
-    const saved = localStorage.getItem(storageKey);
+    let saved: string | null = null;
+    try { saved = localStorage.getItem(storageKey); } catch { /* Continue without browser storage. */ }
     if (saved) {
       const savedBatch = parseInt(saved, 10);
       if (!isNaN(savedBatch) && savedBatch >= 0 && savedBatch < totalBatches) {
@@ -68,7 +69,7 @@ const MsutongFlashcardPage = () => {
   // Save progress when batch changes
   useEffect(() => {
     if (batchIndex > 0) {
-      localStorage.setItem(storageKey, batchIndex.toString());
+      try { localStorage.setItem(storageKey, batchIndex.toString()); } catch { /* In-session practice remains available. */ }
     }
   }, [storageKey, batchIndex]);
 
@@ -103,6 +104,9 @@ const MsutongFlashcardPage = () => {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
+      if (event.target instanceof Element && event.target.closest('input, textarea, select, button, a, [contenteditable="true"], [role="dialog"], [role="combobox"]')) return;
+      if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') event.preventDefault();
       if (event.key === 'ArrowRight') {
         goToNextWord();
       } else if (event.key === 'ArrowLeft') {
@@ -141,7 +145,7 @@ const MsutongFlashcardPage = () => {
           </p>
           <Button asChild>
             <Link to="/mandarin/msutong">
-              <Home className="mr-2 h-4 w-4" /> Quay lại trang chọn bài
+              <Home className="h-4 w-4" /> Quay lại trang chọn bài
             </Link>
           </Button>
         </main>
@@ -193,7 +197,7 @@ const MsutongFlashcardPage = () => {
                     onClick={resumeFromSaved}
                     className="font-bold"
                   >
-                    <BookmarkCheck className="mr-2 h-4 w-4" />
+                    <BookmarkCheck className="h-4 w-4" />
                     Tiếp tục học
                   </Button>
                 </div>
@@ -201,7 +205,7 @@ const MsutongFlashcardPage = () => {
             )}
 
             {/* Batch selector */}
-            <div className="flex justify-between items-center mb-2 gap-4">
+            <div className="flex flex-wrap justify-between items-center mb-2 gap-3">
               <span className="text-sm text-muted-foreground">Tiến độ đợt này</span>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Đợt:</span>
@@ -223,37 +227,37 @@ const MsutongFlashcardPage = () => {
               </div>
             </div>
             <Progress value={progressValue} className="w-full mb-4" />
-            <div className="flex justify-between items-center mb-6">
-              <Button variant="outline" onClick={goToPreviousWord} className="font-bold">
-                <ArrowLeft className="mr-2 h-4 w-4" /> Từ trước
+            <div className="flex justify-between items-center mb-6 gap-2">
+              <Button variant="outline" onClick={goToPreviousWord} aria-label="Từ trước" className="rounded-xl px-3 text-xs sm:text-sm">
+                <ArrowLeft className="h-4 w-4" /> Trước
               </Button>
               <span className="text-lg font-medium text-muted-foreground">
                 {currentIndexInBatch + 1} / {currentBatchVocabulary.length}
               </span>
-              <Button variant="outline" onClick={goToNextWord} className="font-bold">
-                Từ tiếp theo <ArrowRight className="ml-2 h-4 w-4" />
+              <Button variant="outline" onClick={goToNextWord} aria-label="Từ tiếp theo" className="rounded-xl px-3 text-xs sm:text-sm">
+                Sau <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
 
-          <div className="flex justify-center items-center gap-4 mb-8">
-            <Button variant="secondary" onClick={goToPreviousBatch} disabled={batchIndex === 0} className="font-bold">
-                <ChevronsLeft className="mr-2 h-4 w-4" /> Đợt trước
+          <div className="grid grid-cols-2 gap-3 mb-8">
+            <Button variant="secondary" onClick={goToPreviousBatch} disabled={batchIndex === 0} className="min-w-0 rounded-xl px-2 text-xs sm:text-sm">
+                <ChevronsLeft className="h-4 w-4" /> Đợt trước
             </Button>
-            <Button variant="secondary" onClick={goToNextBatch} disabled={batchIndex >= totalBatches - 1} className="font-bold">
-                Đợt tiếp theo <ChevronsRight className="ml-2 h-4 w-4" />
+            <Button variant="secondary" onClick={goToNextBatch} disabled={batchIndex >= totalBatches - 1} className="min-w-0 rounded-xl px-2 text-xs sm:text-sm">
+                Đợt tiếp theo <ChevronsRight className="h-4 w-4" />
             </Button>
           </div>
           
           <div className="flex justify-center gap-4 mt-8 flex-wrap">
             <Button asChild variant="secondary" className="font-bold">
               <Link to={exerciseSelectionUrl}>
-                <Grid3X3 className="mr-2 h-4 w-4" /> Chọn bài tập khác
+                <Grid3X3 className="h-4 w-4" /> Chọn bài tập khác
               </Link>
             </Button>
             <Button asChild variant="outline" className="font-bold">
               <Link to={lessonSelectionUrl}>
-                <ListOrdered className="mr-2 h-4 w-4" /> Chọn bài khác
+                <ListOrdered className="h-4 w-4" /> Chọn bài khác
               </Link>
             </Button>
           </div>
@@ -263,4 +267,7 @@ const MsutongFlashcardPage = () => {
   );
 };
 
-export default MsutongFlashcardPage;
+export default function MsutongFlashcardPage() {
+  const [params] = useSearchParams();
+  return <MsutongFlashcardLesson key={`${params.get('level') ?? 'so-cap'}:${params.get('lessonIds') ?? ''}`} />;
+}

@@ -1,0 +1,280 @@
+{
+  "pdfVerification": {
+    "status": "pending_pdf_comparison",
+    "reason": "All four uploaded PDFs exceed the 32 MiB file-transfer limit; their contents have not been read or verified.",
+    "requiredNextInput": "PDFs split into ordered parts below 32 MiB, or compressed PDFs below that limit."
+  },
+  "totalExistingRows": 1309,
+  "existingVocabularyRows": 709,
+  "existingExtensionRows": 600,
+  "uniqueIds": 1309,
+  "books": [
+    {
+      "book": "quyen-1",
+      "existingVocabularyRows": 179,
+      "existingExtensionRows": 150,
+      "total": 329,
+      "lessons": [
+        {
+          "lesson": 1,
+          "rows": 22
+        },
+        {
+          "lesson": 2,
+          "rows": 29
+        },
+        {
+          "lesson": 3,
+          "rows": 29
+        },
+        {
+          "lesson": 4,
+          "rows": 33
+        },
+        {
+          "lesson": 5,
+          "rows": 35
+        },
+        {
+          "lesson": 6,
+          "rows": 42
+        },
+        {
+          "lesson": 7,
+          "rows": 35
+        },
+        {
+          "lesson": 8,
+          "rows": 35
+        },
+        {
+          "lesson": 9,
+          "rows": 33
+        },
+        {
+          "lesson": 10,
+          "rows": 36
+        }
+      ]
+    },
+    {
+      "book": "quyen-2",
+      "existingVocabularyRows": 191,
+      "existingExtensionRows": 150,
+      "total": 341,
+      "lessons": [
+        {
+          "lesson": 1,
+          "rows": 43
+        },
+        {
+          "lesson": 2,
+          "rows": 34
+        },
+        {
+          "lesson": 3,
+          "rows": 33
+        },
+        {
+          "lesson": 4,
+          "rows": 35
+        },
+        {
+          "lesson": 5,
+          "rows": 25
+        },
+        {
+          "lesson": 6,
+          "rows": 33
+        },
+        {
+          "lesson": 7,
+          "rows": 32
+        },
+        {
+          "lesson": 8,
+          "rows": 34
+        },
+        {
+          "lesson": 9,
+          "rows": 37
+        },
+        {
+          "lesson": 10,
+          "rows": 35
+        }
+      ]
+    },
+    {
+      "book": "quyen-3",
+      "existingVocabularyRows": 183,
+      "existingExtensionRows": 150,
+      "total": 333,
+      "lessons": [
+        {
+          "lesson": 1,
+          "rows": 40
+        },
+        {
+          "lesson": 2,
+          "rows": 32
+        },
+        {
+          "lesson": 3,
+          "rows": 36
+        },
+        {
+          "lesson": 4,
+          "rows": 29
+        },
+        {
+          "lesson": 5,
+          "rows": 28
+        },
+        {
+          "lesson": 6,
+          "rows": 34
+        },
+        {
+          "lesson": 7,
+          "rows": 32
+        },
+        {
+          "lesson": 8,
+          "rows": 34
+        },
+        {
+          "lesson": 9,
+          "rows": 37
+        },
+        {
+          "lesson": 10,
+          "rows": 31
+        }
+      ]
+    },
+    {
+      "book": "quyen-4",
+      "existingVocabularyRows": 156,
+      "existingExtensionRows": 150,
+      "total": 306,
+      "lessons": [
+        {
+          "lesson": 1,
+          "rows": 33
+        },
+        {
+          "lesson": 2,
+          "rows": 30
+        },
+        {
+          "lesson": 3,
+          "rows": 31
+        },
+        {
+          "lesson": 4,
+          "rows": 30
+        },
+        {
+          "lesson": 5,
+          "rows": 30
+        },
+        {
+          "lesson": 6,
+          "rows": 30
+        },
+        {
+          "lesson": 7,
+          "rows": 32
+        },
+        {
+          "lesson": 8,
+          "rows": 29
+        },
+        {
+          "lesson": 9,
+          "rows": 29
+        },
+        {
+          "lesson": 10,
+          "rows": 32
+        }
+      ]
+    }
+  ],
+  "duplicateGroupsNeedingReview": [
+    {
+      "book": "quyen-2",
+      "lesson": 2,
+      "hanzi": "早",
+      "pinyin": "zǎo",
+      "entries": [
+        {
+          "id": 20044,
+          "meaning": "sớm",
+          "sourceFile": "src/data/msutong/so-cap-2-vocab.ts"
+        },
+        {
+          "id": 61015,
+          "meaning": "sớm",
+          "sourceFile": "src/data/msutong/so-cap-2-extended.ts"
+        }
+      ]
+    },
+    {
+      "book": "quyen-2",
+      "lesson": 6,
+      "hanzi": "风景",
+      "pinyin": "fēngjǐng",
+      "entries": [
+        {
+          "id": 20100,
+          "meaning": "phong cảnh",
+          "sourceFile": "src/data/msutong/so-cap-2-vocab.ts"
+        },
+        {
+          "id": 61079,
+          "meaning": "phong cảnh",
+          "sourceFile": "src/data/msutong/so-cap-2-extended.ts"
+        }
+      ]
+    },
+    {
+      "book": "quyen-2",
+      "lesson": 6,
+      "hanzi": "旅行",
+      "pinyin": "lǚxíng",
+      "entries": [
+        {
+          "id": 20106,
+          "meaning": "du lịch",
+          "sourceFile": "src/data/msutong/so-cap-2-vocab.ts"
+        },
+        {
+          "id": 61076,
+          "meaning": "du hành",
+          "sourceFile": "src/data/msutong/so-cap-2-extended.ts"
+        }
+      ]
+    },
+    {
+      "book": "quyen-3",
+      "lesson": 5,
+      "hanzi": "努力",
+      "pinyin": "nǔlì",
+      "entries": [
+        {
+          "id": 30089,
+          "meaning": "chăm chỉ, nỗ lực ",
+          "sourceFile": "src/data/msutong/so-cap-3-vocab.ts"
+        },
+        {
+          "id": 62060,
+          "meaning": "nỗ lực, cố gắng",
+          "sourceFile": "src/data/msutong/so-cap-3-extended.ts"
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

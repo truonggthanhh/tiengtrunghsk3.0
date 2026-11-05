@@ -1,3 +1,4 @@
+import { msutongBooks, parseMsutongLessonId } from './msutongSelection';
 import { BookOpen, BookMarked, Music2, Newspaper, ChartNoAxesCombined, PenLine, Mic2, Layers3, MessageCircle, LibraryBig, Gamepad2, type LucideIcon } from 'lucide-react';
 import type { LearningLanguage } from './auth/navigation';
 
@@ -41,7 +42,18 @@ export function describeRecentLesson(path: string, language: LearningLanguage): 
     const match = pathname.match(/^\/mandarin\/hsk\/([1-6])\/([a-z-]+)$/);
     const mode = match && practiceModes.find(item => item.slug === match[2]);
     if (match && mode) return { href: pathname, label: `HSK ${match[1]} · ${mode.label}` };
-    if (/^\/mandarin\/msutong\/msutong-[a-z-]+$/.test(pathname)) return { href: pathname, label: 'Bài luyện giáo trình Msutong' };
+    const msutong = pathname.match(/^\/mandarin\/msutong\/msutong-([a-z-]+)$/);
+    if (msutong) {
+      const activity = practiceModes.find(item => item.slug === msutong[1] && item.slug !== 'enhanced-pronunciation');
+      const label = msutong[1] === 'reading-comprehension' ? 'Đọc hiểu' : activity?.label;
+      const url = new URL(path, 'https://app.invalid');
+      const level = url.searchParams.get('level') ?? 'so-cap';
+      const ids = [...new Set((url.searchParams.get('lessonIds') ?? '').split(',').filter(id => parseMsutongLessonId(id)))];
+      if (!label || level !== 'so-cap' || !ids.length) return null;
+      const bookNames = msutongBooks.filter(book => ids.some(id => parseMsutongLessonId(id)?.bookSlug === book.slug)).map(book => book.name).join(', ');
+      const params = new URLSearchParams({ level, lessonIds: ids.join(','), books: bookNames });
+      return { href: `${pathname}?${params}`, label: `Msutong · ${bookNames} · ${label}` };
+    }
   } else if (/^\/cantonese\/(lessons|practice|review)\/[a-zA-Z0-9_-]+(\/[a-z-]+)?$/.test(pathname)) {
     return { href: pathname, label: pathname.includes('/lessons/') ? 'Bài học Quảng Đông gần đây' : 'Bài luyện Quảng Đông gần đây' };
   }
