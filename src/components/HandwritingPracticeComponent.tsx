@@ -51,10 +51,10 @@ const HandwritingPracticeComponent: React.FC<HandwritingPracticeProps> = ({
       if (!word.hanzi || !word.pinyin) return;
 
       // Split word into individual characters
-      const chars = word.hanzi.split('');
-      chars.forEach((char, index) => {
+      const chars = Array.from(word.hanzi);
+      chars.forEach((char) => {
         // Skip punctuation and whitespace
-        if (char.trim() && !/[，。？！、；：""''（）《》【】\s]/.test(char)) {
+        if (/\p{Script=Han}/u.test(char)) {
           // Use character + word ID as key to allow same character from different words
           const key = `${char}-${word.id}`;
           if (!charMap.has(key)) {

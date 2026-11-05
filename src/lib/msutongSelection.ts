@@ -14,5 +14,16 @@ export function msutongBookUrl(bookSlug: string) {
 
 export function getMsutongDistractors(words: { hanzi: string; pinyin: string; meaning: string }[], current: { hanzi: string; pinyin: string; meaning: string }, field: 'pinyin' | 'meaning') {
   const normalize = (value: string) => value.trim().normalize('NFC');
-  return [...new Set(words.filter(word => normalize(word.hanzi) !== normalize(current.hanzi)).map(word => word[field].trim()).filter(value => value && normalize(value) !== normalize(current[field])))];
+  const validAnswers = new Set([normalize(current[field]), ...words.filter(word => normalize(word.hanzi) === normalize(current.hanzi)).map(word => normalize(word[field]))]);
+  return [...new Set(words.filter(word => normalize(word.hanzi) !== normalize(current.hanzi)).map(word => word[field].trim()).filter(value => value && !validAnswers.has(normalize(value))))];
+}
+
+// Slash alternatives and parenthesized optional parts are printed in the books.
+export function acceptsMsutongAnswer(answer: string, hanzi: string) {
+  const normalize = (value: string) => value.normalize('NFKC').replace(/\s/g, '');
+  const input = normalize(answer);
+  return hanzi.split('/').some(part => {
+    const normalized = normalize(part);
+    return [normalized, normalized.replace(/[()]/g, ''), normalized.replace(/\([^)]*\)/g, '')].includes(input);
+  });
 }

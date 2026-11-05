@@ -1,3 +1,4 @@
+import type { PdfMsutongWord } from '@/data/msutong/pdf-vocabulary';
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -16,7 +17,7 @@ import {
 } from "@/components/ui/select";
 
 const BATCH_SIZE = 10;
-const STORAGE_KEY_PREFIX = 'flashcard_progress_msutong_';
+const STORAGE_KEY_PREFIX = 'flashcard_progress_msutong_pdf_v1_';
 
 const MsutongFlashcardLesson = () => {
   const [searchParams] = useSearchParams();
@@ -153,7 +154,7 @@ const MsutongFlashcardLesson = () => {
     );
   }
 
-  const currentWord = currentBatchVocabulary[currentIndexInBatch];
+  const currentWord = currentBatchVocabulary[currentIndexInBatch] as PdfMsutongWord | undefined;
 
   if (!currentWord) {
     return (
@@ -175,6 +176,8 @@ const MsutongFlashcardLesson = () => {
             <p className="text-muted-foreground">Nhấn vào thẻ để xem nghĩa, hoặc dùng phím mũi tên để chuyển từ.</p>
           </div>
           
+          <p className="mb-3 text-center text-xs text-muted-foreground">{currentWord?.bookSlug?.replace('quyen-', 'Quyển ')} · Bài {currentWord?.lesson} · PDF trang {[...new Set(currentWord?.sources.map(source => source.pdfPage))].join(', ')}</p>
+          {currentWord?.correction && <p className="mb-3 text-sm text-muted-foreground">{currentWord.correction}</p>}
           <Flashcard
             key={currentWord.id}
             hanzi={currentWord.hanzi}

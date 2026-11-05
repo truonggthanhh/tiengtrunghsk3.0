@@ -1,3 +1,4 @@
+import { acceptsMsutongAnswer } from '@/lib/msutongSelection';
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -87,7 +88,7 @@ const MsutongFillInTheBlankPage = () => {
     e.preventDefault();
     if (answerStatus || !inputValue.trim()) return;
 
-    const isCorrect = inputValue.trim() === currentWord.hanzi;
+    const isCorrect = acceptsMsutongAnswer(inputValue, currentWord.hanzi);
     if (isCorrect) {
       setAnswerStatus('correct');
       setCorrectAnswers(prev => prev + 1);

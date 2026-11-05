@@ -705,12 +705,12 @@ await check('Msutong exposes all four books and passes exactly the selected less
     const flashcard = host.querySelector<HTMLAnchorElement>('a[href*="/msutong/msutong-flashcard?"]');
     assert(flashcard, `Book ${book} must have an activity link`);
     assert(new URL(flashcard!.href).searchParams.get('lessonIds') === lessonId, 'Practice must receive the selected book/lesson');
-    assert(host.textContent?.includes(`${getVocabularyByMsutong('so-cap', [lessonId]).length} mục từ trong bộ dữ liệu hiện có`), 'Counts must use the actual dataset');
+    assert(host.textContent?.includes(`${getVocabularyByMsutong('so-cap', [lessonId]).length} mục từ theo PDF`), 'Counts must use the actual dataset');
     selectBook.click(); await delay(20);
     assert(!host.querySelector('a[href*="/msutong/msutong-flashcard?"]'), 'Unselecting a book must remove its hidden lesson selections');
   }
   clickText('Chọn cả 4 quyển'); await delay(20); clickText('Chọn tất cả bài'); await delay(20);
-  assert(host.textContent?.includes('40 bài đã chọn · 1309 mục từ'), 'Selecting every existing lesson must retain every existing row');
+  assert(host.textContent?.includes('40 bài đã chọn · 812 mục từ'), 'Selecting all 40 lessons includes every reviewed PDF entry');
   assert(document.documentElement.scrollWidth <= window.innerWidth + 2, 'The full four-book selection must fit the viewport');
 });
 await check('Msutong restores legacy back-navigation URLs and rejects malformed lesson IDs', async () => {
@@ -729,7 +729,7 @@ await check('Msutong guest login keeps the book preselected from the homepage', 
   assert(login && new URL(login.href).searchParams.get('returnUrl') === entry, 'Signing in must return to the selected book');
 });
 await check('Msutong flashcards reset an out-of-date batch after changing lesson selection', async () => {
-  renderMsutong(<><Link data-change-msutong to="/mandarin/msutong/msutong-flashcard?level=so-cap&lessonIds=quyen-2-lesson-1">Đổi bộ bài</Link><Routes><Route path="/mandarin/msutong/msutong-flashcard" element={<MsutongFlashcardPage />} /></Routes></>, '/mandarin/msutong/msutong-flashcard?level=so-cap&lessonIds=quyen-1-lesson-1');
+  renderMsutong(<><Link data-change-msutong to="/mandarin/msutong/msutong-flashcard?level=so-cap&lessonIds=quyen-2-lesson-1">Đổi bộ bài</Link><Routes><Route path="/mandarin/msutong/msutong-flashcard" element={<MsutongFlashcardPage />} /></Routes></>, '/mandarin/msutong/msutong-flashcard?level=so-cap&lessonIds=quyen-1-lesson-3');
   await until(() => Boolean(host.querySelector('[role="combobox"]')));
   clickText('Đợt tiếp theo'); await delay(20);
   assert(host.querySelector('[role="combobox"]')?.textContent?.startsWith('Đợt 2'), 'The test must move beyond the first batch');

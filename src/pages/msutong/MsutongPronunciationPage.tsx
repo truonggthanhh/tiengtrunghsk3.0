@@ -1,3 +1,4 @@
+import { acceptsMsutongAnswer } from '@/lib/msutongSelection';
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -100,7 +101,7 @@ const MsutongPronunciationPage = () => {
       const result = event.results[0][0].transcript.replace(/[.,。]/g, '');
       setTranscript(result);
       
-      if (result === currentWord.hanzi) {
+      if (acceptsMsutongAnswer(result, currentWord.hanzi)) {
         setFeedback('correct');
         setFeedbackMessage('Chính xác!');
         setCorrectAnswers(prev => prev + 1);

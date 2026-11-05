@@ -1,57 +1,50 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
-import { msutong_so_cap_1_vocab } from '../src/data/msutong/so-cap-1-vocab';
-import { msutong_so_cap_2_vocab } from '../src/data/msutong/so-cap-2-vocab';
-import { msutong_so_cap_3_vocab } from '../src/data/msutong/so-cap-3-vocab';
-import { msutong_so_cap_4_vocab } from '../src/data/msutong/so-cap-4-vocab';
-import { soCap1ExtendedVocabulary } from '../src/data/msutong/so-cap-1-extended';
-import { soCap2ExtendedVocabulary } from '../src/data/msutong/so-cap-2-extended';
-import { soCap3ExtendedVocabulary } from '../src/data/msutong/so-cap-3-extended';
-import { soCap4ExtendedVocabulary } from '../src/data/msutong/so-cap-4-extended';
+import { pdfMsutongVocabulary as rows } from '../src/data/msutong/pdf-vocabulary';
+import manifest from '../docs/msutong/source-manifest.json';
 
-const books = [msutong_so_cap_1_vocab, msutong_so_cap_2_vocab, msutong_so_cap_3_vocab, msutong_so_cap_4_vocab];
-const extensions = [soCap1ExtendedVocabulary, soCap2ExtendedVocabulary, soCap3ExtendedVocabulary, soCap4ExtendedVocabulary];
-const rows = books.flatMap((words, index) => [
-  ...words.map(word => ({ ...word, sourceType: 'existing-vocabulary', sourceFile: `src/data/msutong/so-cap-${index + 1}-vocab.ts` })),
-  ...extensions[index].map(word => ({ ...word, sourceType: 'existing-extension', sourceFile: `src/data/msutong/so-cap-${index + 1}-extended.ts` })),
-]);
 const errors: string[] = [];
 const ids = new Set<number>();
-const groups = new Map<string, typeof rows>();
+const keys = new Set<string>();
 for (const row of rows) {
   if (!Number.isSafeInteger(row.id) || ids.has(row.id)) errors.push(`Invalid or duplicated ID: ${row.id}`);
   ids.add(row.id);
-  if (![row.hanzi, row.pinyin, row.meaning].every(value => typeof value === 'string' && value.trim())) errors.push(`Missing vocabulary field: ${row.id}`);
-  if (!/^quyen-[1-4]$/.test(row.bookSlug ?? '') || !Number.isSafeInteger(row.lesson) || row.lesson < 1) errors.push(`Invalid book/lesson: ${row.id}`);
-  const key = `${row.bookSlug}|${row.lesson}|${row.hanzi.trim().normalize('NFC')}|${row.pinyin.trim().normalize('NFC')}`;
-  groups.set(key, [...(groups.get(key) ?? []), row]);
+  if (![row.hanzi, row.pinyin, row.meaning].every(value => value.trim())) errors.push(`Missing field: ${row.id}`);
+  const key = `${row.bookSlug}|${row.lesson}|${row.hanzi}|${row.pinyin}`;
+  if (keys.has(key)) errors.push(`Duplicate: ${key}`);
+  keys.add(key);
+  if (!/^quyen-[1-4]$/.test(row.bookSlug ?? '') || row.lesson < 1 || row.lesson > 10) errors.push(`Invalid lesson: ${row.id}`);
+  if (!row.sources.length || row.sources.some(source => source.pdfPage < 1 || source.row < 1)) errors.push(`Missing source: ${row.id}`);
 }
-const report = {
-  pdfVerification: { status: 'pending_pdf_comparison', reason: 'All four uploaded PDFs exceed the 32 MiB file-transfer limit; their contents have not been read or verified.', requiredNextInput: 'PDFs split into ordered parts below 32 MiB, or compressed PDFs below that limit.' },
-  totalExistingRows: rows.length,
-  existingVocabularyRows: books.reduce((count, words) => count + words.length, 0),
-  existingExtensionRows: extensions.reduce((count, words) => count + words.length, 0),
-  uniqueIds: ids.size,
-  books: books.map((words, index) => {
-    const selected = rows.filter(row => row.bookSlug === `quyen-${index + 1}`);
-    const lessonNumbers = [...new Set(selected.map(word => word.lesson))].sort((a, b) => a - b);
-    return { book: `quyen-${index + 1}`, existingVocabularyRows: words.length, existingExtensionRows: extensions[index].length, total: selected.length, lessons: lessonNumbers.map(lesson => ({ lesson, rows: selected.filter(row => row.lesson === lesson).length })) };
-  }),
-  duplicateGroupsNeedingReview: [...groups.values()].filter(group => group.length > 1).map(group => ({ book: group[0].bookSlug, lesson: group[0].lesson, hanzi: group[0].hanzi, pinyin: group[0].pinyin, entries: group.map(row => ({ id: row.id, meaning: row.meaning, sourceFile: row.sourceFile })) })),
-  errors,
-};
-const reportPath = resolve('docs/msutong-data-audit.json');
-await mkdir(dirname(reportPath), { recursive: true });
-await writeFile(reportPath, JSON.stringify(report, null, 2) + '\n');
+// Independently compare the runtime catalog to every transcribed index row and lesson-table occurrence.
+for (const book of manifest.books) {
+  let page = 0, column = '', category = '', ordinal = 0, indexRows = 0;
+  const words = rows.filter(row => row.bookSlug === `quyen-${book.book}`);
+  for (const line of (await readFile(`src/data/msutong/reviewed/book${book.book}.tsv`, 'utf8')).trim().split('\n')) {
+    if (line.startsWith('@')) { const header = line.slice(1).split(' '); page = Number(header[0]); column = header[1]; category = header[2]; ordinal = 0; continue; }
+    ordinal++; indexRows++;
+    const [hanzi] = line.split('|');
+    if (!words.some(word => word.hanzi === hanzi && word.sources.some(source => source.kind === 'index' && source.pdfPage === page && source.column === column && source.row === ordinal && ('category' in source && source.category === category)))) errors.push(`Index missing: book ${book.book}, page ${page}, ${column}/${ordinal} ${hanzi}`);
+  }
+  if (indexRows !== book.indexRows || words.length !== book.rows) errors.push(`Book count drift: ${book.book}`);
+  for (const lesson of book.lessons) if (words.filter(word => word.lesson === lesson.lesson).length !== lesson.rows) errors.push(`Lesson count drift: ${book.book}/${lesson.lesson}`);
+}
+let lessonOccurrences = 0;
+for (const line of (await readFile('src/data/msutong/reviewed/lesson-census.txt', 'utf8')).trim().split('\n')) {
+  const [book, lesson, page, hanziList] = line.split('|');
+  for (const [index, hanzi] of hanziList.split(' ').entries()) {
+    lessonOccurrences++;
+    if (!rows.some(word => word.bookSlug === `quyen-${book}` && word.lesson === Number(lesson) && word.hanzi === hanzi && word.sources.some(source => source.kind === 'lesson' && source.pdfPage === Number(page) && source.row === index + 1))) errors.push(`Lesson missing: ${book}/${lesson}, ${hanzi}`);
+  }
+}
+if (rows.length !== manifest.totalRows) errors.push('Total count drift');
+const report = { pdfVerification: { status: 'reviewed_index_and_lesson_tables', scope: manifest.scope, method: manifest.method }, totalRows: rows.length, uniqueIds: ids.size, indexRows: manifest.books.reduce((sum, book) => sum + book.indexRows, 0), lessonOccurrences, books: manifest.books, corrections: rows.filter(row => row.correction).map(({ id, hanzi, correction }) => ({ id, hanzi, correction })), errors };
+await writeFile('docs/msutong-data-audit.json', JSON.stringify(report, null, 2) + '\n');
 const exportIndex = process.argv.indexOf('--export');
-if (exportIndex !== -1) {
-  if (!process.argv[exportIndex + 1]) throw new Error('Supply a CSV destination after --export.');
-  const destination = resolve(process.argv[exportIndex + 1]);
-  const cell = (value: unknown) => { let text = String(value ?? ''); if (/^[=+\-@\t\r]/.test(text)) text = `'${text}`; return `"${text.replace(/"/g, '""')}"`; };
-  const lines = [['id', 'book', 'lesson', 'hanzi', 'pinyin', 'meaning', 'examples_json', 'source_type', 'source_file', 'pdf_verification'], ...rows.map(row => [row.id, row.bookSlug, row.lesson, row.hanzi, row.pinyin, row.meaning, JSON.stringify(row.examples ?? []), row.sourceType, row.sourceFile, 'pending_pdf_comparison'])];
-  await mkdir(dirname(destination), { recursive: true });
-  await writeFile(destination, '\uFEFF' + lines.map(line => line.map(cell).join(',')).join('\r\n') + '\r\n');
-  console.log(`Existing-data CSV: ${destination}`);
-}
-console.log(`Existing rows: ${rows.length}; duplicate groups to review: ${report.duplicateGroupsNeedingReview.length}; structural errors: ${errors.length}. PDF comparison pending.`);
-if (errors.length) process.exitCode = 1;
+const destination = resolve(exportIndex === -1 ? 'public/data/msutong-vocabulary.csv' : process.argv[exportIndex + 1] || 'public/data/msutong-vocabulary.csv');
+const cell = (value: unknown) => { let text = String(value ?? ''); if (/^[=+\-@\t\r]/.test(text)) text = `'${text}`; return `"${text.replace(/"/g, '""')}"`; };
+const lines = [['id', 'book', 'lesson', 'hanzi', 'pinyin', 'meaning_vi', 'category', 'sources_json', 'correction', 'supplementary_examples_json'], ...rows.map(row => [row.id, row.bookSlug, row.lesson, row.hanzi, row.pinyin, row.meaning, row.category, JSON.stringify(row.sources), row.correction, JSON.stringify(row.examples ?? [])])];
+await mkdir(dirname(destination), { recursive: true });
+await writeFile(destination, '\uFEFF' + lines.map(line => line.map(cell).join(',')).join('\r\n') + '\r\n');
+console.log(`Reviewed vocabulary: ${rows.length}; index rows: ${report.indexRows}; lesson occurrences: ${lessonOccurrences}; errors: ${errors.length}. CSV: ${destination}`);
+if (errors.length) { console.error(errors.join('\n')); process.exitCode = 1; }

@@ -196,7 +196,7 @@ test('Vietnamese navigation search handles uppercase Đ, decomposed accents, spa
 test('every existing Msutong book and lesson is retrievable without losing rows or mixing books', async () => {
   const { getFullMsutongVocabularyByLevel, getVocabularyByMsutong } = await import('../src/data/index');
   const all = getFullMsutongVocabularyByLevel('so-cap');
-  assert.equal(all.length, 1309, 'This is the existing source inventory, not a PDF completeness claim');
+  assert.equal(all.length, 812, 'Reviewed union of all four PDF indexes and 40 lesson tables');
   assert.equal(new Set(all.map(word => word.id)).size, all.length);
   for (let book = 1; book <= 4; book++) for (let lesson = 1; lesson <= 10; lesson++) {
     const id = `quyen-${book}-lesson-${lesson}`;
@@ -224,8 +224,8 @@ test('Msutong meaning distractors never mark another translation of the same Han
   const { getFullMsutongVocabularyByLevel } = await import('../src/data/index');
   const { getMsutongDistractors } = await import('../src/lib/msutongSelection');
   const all = getFullMsutongVocabularyByLevel('so-cap');
-  const effort = all.filter(word => word.hanzi === '努力');
-  assert(effort.length >= 2, 'Cover the actual competing translations in the existing dataset');
+  const effort = all.filter(word => word.hanzi === '号');
+  assert(effort.length >= 2, 'Cover the reviewed meanings of 号 across books and lessons');
   const wrong = getMsutongDistractors(all, effort[0], 'meaning');
   for (const word of effort) assert(!wrong.includes(word.meaning.trim()));
   const candidates = [{ hanzi: '行', pinyin: 'xíng', meaning: 'được' }, { hanzi: '行', pinyin: 'háng', meaning: 'ngành' }, { hanzi: '好', pinyin: 'hǎo', meaning: 'tốt' }];
@@ -241,4 +241,22 @@ test('Msutong reading selection rejects malformed lesson IDs instead of matching
   const selection = getReadingComprehensionByMsutong('so-cap', [`${passage.bookSlug}-lesson-${passage.lesson}`]);
   assert(selection.some(item => item.id === passage.id));
   assert(selection.every(item => item.bookSlug === passage.bookSlug && item.lesson === passage.lesson));
+});
+
+
+test('Msutong PDF vocabulary keeps source corrections, constituents, variants and polyphonic entries', async () => {
+  const { pdfMsutongVocabulary: words } = await import('../src/data/msutong/pdf-vocabulary');
+  const { acceptsMsutongAnswer } = await import('../src/lib/msutongSelection');
+  assert(words.every(word => word.sources.length > 0));
+  assert.deepEqual([1, 2, 3, 4].map(book => words.filter(word => word.bookSlug === `quyen-${book}`).length), [200, 220, 198, 194]);
+  assert(words.some(word => word.hanzi === '们' && word.lesson === 1 && word.bookSlug === 'quyen-1'));
+  assert(words.some(word => word.hanzi === '很' && word.lesson === 3 && word.bookSlug === 'quyen-1'));
+  assert.equal(words.find(word => word.hanzi === '旅行' && word.bookSlug === 'quyen-2')?.lesson, 5);
+  assert.equal(words.filter(word => word.hanzi === '长' && word.bookSlug === 'quyen-3').length, 2);
+  assert(words.find(word => word.hanzi === '人气')?.correction);
+  assert(acceptsMsutongAnswer('哪里', '哪儿/哪里'));
+  assert(acceptsMsutongAnswer('一点儿', '（一）点儿'));
+  assert(acceptsMsutongAnswer('点儿', '（一）点儿'));
+  assert(acceptsMsutongAnswer('填写', '填（写）'));
+  assert(!acceptsMsutongAnswer('那里', '哪儿/哪里'));
 });

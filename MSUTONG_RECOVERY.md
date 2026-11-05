@@ -1,53 +1,40 @@
-# Msutong: khôi phục truy cập và rà soát dữ liệu
+# Khôi phục và đối chiếu Msutong
 
-## Đã sửa
+Đã nhận đủ 4 PDF nén (152 + 153 + 145 + 137 = 587 trang scan). OCR dùng để định vị; chữ Hán, pinyin và nghĩa được nhập từ 16 trang phụ lục, rồi đối chiếu bằng hình ảnh các bảng Từ mới của 40 bài, gồm từ thành phần và tên riêng.
 
-- Trang chủ tiếng Trung có khu Msutong riêng, với liên kết chọn sẵn từng quyển. Menu máy tính có mục Msutong; menu điện thoại và tìm nhanh vẫn truy cập được giáo trình.
-- Trang giáo trình hiển thị đúng các quyển/bài thực sự có dữ liệu, hỗ trợ chọn nhiều quyển/nhiều bài và chọn tất cả. Các cấp độ chưa có dữ liệu không còn dẫn người học vào bộ bài trống.
-- Giữ tương thích với liên kết cũ `level=so-cap&lessonIds=quyen-X-lesson-Y&step=exercise`. Đăng nhập giữ lại quyển đã chọn. Bỏ chọn quyển đồng thời bỏ các bài thuộc quyển đó.
-- Liên kết “Tiếp tục học” giữ cả quyển và bài. Trước đây liên kết chỉ lưu đường dẫn, làm rơi `lessonIds` và có thể mở flashcard trống.
-- Thay lựa chọn bài trong flashcard sẽ khởi tạo lại đợt hợp lệ. Phím mũi tên không đổi thẻ khi đang nhập tìm kiếm; lưu tiến độ không làm hỏng trang khi trình duyệt chặn localStorage. Thanh điều khiển vừa màn hình nhỏ.
-- Trắc nghiệm không dùng một bản dịch/phiên âm khác của cùng chữ Hán làm đáp án sai. Không tự xóa các mục trùng khi chưa đối chiếu nguồn.
+| Quyển | Dòng phụ lục | Mục học theo bài |
+| --- | ---: | ---: |
+| 1 | 198 | 200 |
+| 2 | 217 | 220 |
+| 3 | 198 | 198 |
+| 4 | 192 | 194 |
+| Tổng | 805 | 812 |
 
-## Dữ liệu hiện có — chưa phải bản trích xuất từ PDF vừa gửi
+812 mục học là hợp của phụ lục và bảng Từ mới, không phải 812 từ duy nhất: cùng từ xuất hiện ở bài khác hoặc có nghĩa/cách đọc khác được giữ riêng. Đã rà 807 lượt từ trong các bảng theo bài. Phạm vi không bao gồm việc coi mọi chữ trong ví dụ, bài khóa hoặc bảng ngữ pháp là một từ mới riêng.
 
-| Quyển | Tệp từ vựng cũ | Tệp mở rộng cũ | Tổng số mục | Bài có dữ liệu |
-| --- | ---: | ---: | ---: | ---: |
-| 1 | 179 | 150 | 329 | 10 |
-| 2 | 191 | 150 | 341 | 10 |
-| 3 | 183 | 150 | 333 | 10 |
-| 4 | 156 | 150 | 306 | 10 |
-| Tổng | 709 | 600 | 1.309 | 40 |
+- Nguồn nhập có thể kiểm tra: `src/data/msutong/reviewed/book*.tsv` và `lesson-census.txt`.
+- Danh mục chạy trong ứng dụng: `src/data/msutong/pdf-vocabulary.json`.
+- SHA256 tệp nguồn, số trang và tổng từng bài: [manifest](docs/msutong/source-manifest.json).
+- Kiểm tra độ bao phủ, sửa nghĩa/gán bài: [báo cáo](docs/msutong-data-audit.json).
+- CSV tải trong giao diện: `public/data/msutong-vocabulary.csv`, gồm nguồn trang và ghi chú sửa.
 
-Có 1.309 ID khác nhau và không có lỗi cấu trúc bắt buộc trong dữ liệu hiện có. Có 4 nhóm trùng chữ Hán + pinyin trong cùng bài cần rà soát: `早`, `风景`, `旅行` (quyển 2), `努力` (quyển 3). Số lượng trên không chứng minh đủ từ vựng trong giáo trình; chính tả, nghĩa, phiên âm và vị trí bài vẫn cần đối chiếu PDF.
+Số trang là vị trí PDF, bắt đầu từ 1. Thứ tự dòng bảng bài học gồm cả các từ thành phần, không phải số thứ tự in sẵn. Một số mép scan bị cắt; những mục chỉ rõ ở phụ lục được giữ nguồn phụ lục. Ví dụ câu và bài đọc cũ được đánh dấu nội dung bổ sung, không tuyên bố trích nguyên văn từ PDF. Các tệp dữ liệu cũ được giữ để tra cứu; 600 mục mở rộng chưa có căn cứ PDF không trộn vào danh mục đã đối chiếu.
 
-[Báo cáo theo từng bài và nhóm trùng](docs/msutong-data-audit.json).
+Đáng chú ý: bổ sung 很 (quyển 1 bài 3), 们 (bài 1), 垃圾 / 箱 (quyển 4 bài 8); sửa 旅行 về quyển 2 bài 5; tách 号 (số) khỏi 号 (cỡ); sửa nghĩa 人气 từ “ý chí, chí khí” trong bản in thành sự yêu mến/độ nổi tiếng theo ngữ cảnh nhà hàng. Giữ hai cách đọc của 长 và hai nghĩa của 比. Bộ nhớ đợt flashcard dùng phiên bản mới vì thứ tự và số mục thay đổi; ID cũ được giữ khi từ/quyển/bài/pinyin khớp.
 
-## Phần còn chờ tệp có thể đọc được
+Trang giáo trình, flashcard, trắc nghiệm nghĩa/pinyin, phát âm, điền chữ và luyện viết dùng chung danh mục này. Điền chữ và chấm phát âm chấp nhận dạng thay thế và phần tùy chọn trong sách; luyện viết chỉ gửi chữ Hán đến Hanzi Writer.
 
-Cả 4 PDF người dùng gửi đều bị công cụ tải tệp từ chối với thông báo `file exceeds the executor transfer limit of 32 MiB`. Không PDF nào được tải hoặc đọc thành công. Vì vậy chưa thể xác nhận danh sách từ mới, từ mở rộng, tên riêng, số bài hay độ bao phủ của từng PDF. Không thêm từ dựa trên phỏng đoán.
-
-Cần gửi lại PDF được nén hoặc tách theo thứ tự trang thành các phần **dưới 32 MiB mỗi tệp**, giữ chữ đủ rõ. Sau khi đọc được nguồn, cần đối chiếu từng quyển/bài, lưu số trang và thứ tự mục, kiểm tra pinyin/nghĩa, phân biệt từ mới và tên riêng/từ bổ sung, rồi cập nhật dữ liệu dùng chung cho các hoạt động.
-
-## Tái tạo báo cáo và xuất dữ liệu hiện có
+## Tái tạo và kiểm tra
 
 ```bash
 npm run audit:msutong
-npm run audit:msutong -- --export /tmp/msutong-existing-vocabulary.csv
-```
-
-Script rà cấu trúc/ID, thống kê từng bài và ghi nhóm trùng để đối chiếu. CSV giữ chữ Hán, pinyin, nghĩa, ví dụ, quyển/bài và tệp nguồn. Mọi dòng đều ghi `pdf_verification=pending_pdf_comparison`; đây là bản xuất dữ liệu cũ, không phải kết quả OCR/PDF mới.
-
-## Kiểm tra
-
-```bash
 npm run lint
 npm run typecheck
 npm test
-HSK_TEST_WIDTH=320 npm run test:browser
-HSK_TEST_WIDTH=1280 npm run test:browser
 npm run test:browser
 npm run build
 ```
 
-20 kiểm thử Node; 57 tình huống trình duyệt, gồm chọn đủ 4 quyển/40 bài, khôi phục URL cũ, giữ quyển khi đăng nhập, thay bộ flashcard và tiếp tục học không mất tham số. Kiểm thử đối chiếu khả năng truy xuất với dữ liệu source, không khẳng định độ đầy đủ so với PDF chưa đọc được. Supabase trong bộ kiểm thử trình duyệt được giả lập.
+Audit so sánh từng dòng nguồn với danh mục ứng dụng và báo lỗi nếu mất dòng hoặc đổi tổng. Kiểm thử trình duyệt giả lập Supabase; không kiểm chứng kết nối cơ sở dữ liệu thật. PDF đầy đủ không được đưa vào repository.
+
+Kết quả kiểm tra: audit không thiếu dòng nguồn, lint/typecheck/build đạt, 21 kiểm thử Node đạt, 57 tình huống Chromium đạt ở chiều rộng 320px.

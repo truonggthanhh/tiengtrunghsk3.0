@@ -1,19 +1,175 @@
 {
   "pdfVerification": {
-    "status": "pending_pdf_comparison",
-    "reason": "All four uploaded PDFs exceed the 32 MiB file-transfer limit; their contents have not been read or verified.",
-    "requiredNextInput": "PDFs split into ordered parts below 32 MiB, or compressed PDFs below that limit."
+    "status": "reviewed_index_and_lesson_tables",
+    "scope": "Union of vocabulary indexes and Từ mới / proper-name tables in all 40 lessons; includes constituent words. Grammar examples and running text are not a separate vocabulary list.",
+    "method": "OCR for discovery; manual transcription of 16 index pages and visual comparison of all 40 lesson tables. PDF page numbers are 1-based; lesson row is visual order including constituent words, not printed item number."
   },
-  "totalExistingRows": 1309,
-  "existingVocabularyRows": 709,
-  "existingExtensionRows": 600,
-  "uniqueIds": 1309,
+  "totalRows": 812,
+  "uniqueIds": 812,
+  "indexRows": 805,
+  "lessonOccurrences": 807,
   "books": [
     {
-      "book": "quyen-1",
-      "existingVocabularyRows": 179,
-      "existingExtensionRows": 150,
-      "total": 329,
+      "book": 1,
+      "file": "Msutong Quyển 1 -compressed.pdf",
+      "sha256": "291d20ab685d726892c50294745c3a9208b3ca99f06f4356a0b79c95ee8064fe",
+      "pdfPages": 152,
+      "indexRows": 198,
+      "lessonOccurrences": 199,
+      "rows": 200,
+      "lessons": [
+        {
+          "lesson": 1,
+          "rows": 7
+        },
+        {
+          "lesson": 2,
+          "rows": 16
+        },
+        {
+          "lesson": 3,
+          "rows": 22
+        },
+        {
+          "lesson": 4,
+          "rows": 20
+        },
+        {
+          "lesson": 5,
+          "rows": 21
+        },
+        {
+          "lesson": 6,
+          "rows": 27
+        },
+        {
+          "lesson": 7,
+          "rows": 21
+        },
+        {
+          "lesson": 8,
+          "rows": 24
+        },
+        {
+          "lesson": 9,
+          "rows": 21
+        },
+        {
+          "lesson": 10,
+          "rows": 21
+        }
+      ]
+    },
+    {
+      "book": 2,
+      "file": "Msutong Quyển 2 -compressed.pdf",
+      "sha256": "a44250152d4995fb6cad05b6761ce1b847d3df5ec2d2adf8bfc789f5837d8748",
+      "pdfPages": 153,
+      "indexRows": 217,
+      "lessonOccurrences": 220,
+      "rows": 220,
+      "lessons": [
+        {
+          "lesson": 1,
+          "rows": 31
+        },
+        {
+          "lesson": 2,
+          "rows": 23
+        },
+        {
+          "lesson": 3,
+          "rows": 23
+        },
+        {
+          "lesson": 4,
+          "rows": 20
+        },
+        {
+          "lesson": 5,
+          "rows": 20
+        },
+        {
+          "lesson": 6,
+          "rows": 20
+        },
+        {
+          "lesson": 7,
+          "rows": 22
+        },
+        {
+          "lesson": 8,
+          "rows": 17
+        },
+        {
+          "lesson": 9,
+          "rows": 23
+        },
+        {
+          "lesson": 10,
+          "rows": 21
+        }
+      ]
+    },
+    {
+      "book": 3,
+      "file": "Msutong Quyển 3  -compressed.pdf",
+      "sha256": "5ff5033f36e16c378b25071c9094b5bc22e12c09bcda7f17928ef33acf0cdcde",
+      "pdfPages": 145,
+      "indexRows": 198,
+      "lessonOccurrences": 198,
+      "rows": 198,
+      "lessons": [
+        {
+          "lesson": 1,
+          "rows": 25
+        },
+        {
+          "lesson": 2,
+          "rows": 20
+        },
+        {
+          "lesson": 3,
+          "rows": 23
+        },
+        {
+          "lesson": 4,
+          "rows": 17
+        },
+        {
+          "lesson": 5,
+          "rows": 16
+        },
+        {
+          "lesson": 6,
+          "rows": 19
+        },
+        {
+          "lesson": 7,
+          "rows": 20
+        },
+        {
+          "lesson": 8,
+          "rows": 18
+        },
+        {
+          "lesson": 9,
+          "rows": 23
+        },
+        {
+          "lesson": 10,
+          "rows": 17
+        }
+      ]
+    },
+    {
+      "book": 4,
+      "file": "Msutong Quyển 4 -compressed.pdf",
+      "sha256": "aae32a92156f12d4c9e470a8f0c89ffebbf1810ca563e401f0a49cced01764f3",
+      "pdfPages": 137,
+      "indexRows": 192,
+      "lessonOccurrences": 190,
+      "rows": 194,
       "lessons": [
         {
           "lesson": 1,
@@ -21,259 +177,58 @@
         },
         {
           "lesson": 2,
-          "rows": 29
+          "rows": 18
         },
         {
           "lesson": 3,
-          "rows": 29
+          "rows": 20
         },
         {
           "lesson": 4,
-          "rows": 33
+          "rows": 22
         },
         {
           "lesson": 5,
-          "rows": 35
+          "rows": 20
         },
         {
           "lesson": 6,
-          "rows": 42
+          "rows": 20
         },
         {
           "lesson": 7,
-          "rows": 35
+          "rows": 21
         },
         {
           "lesson": 8,
-          "rows": 35
+          "rows": 18
         },
         {
           "lesson": 9,
-          "rows": 33
+          "rows": 16
         },
         {
           "lesson": 10,
-          "rows": 36
-        }
-      ]
-    },
-    {
-      "book": "quyen-2",
-      "existingVocabularyRows": 191,
-      "existingExtensionRows": 150,
-      "total": 341,
-      "lessons": [
-        {
-          "lesson": 1,
-          "rows": 43
-        },
-        {
-          "lesson": 2,
-          "rows": 34
-        },
-        {
-          "lesson": 3,
-          "rows": 33
-        },
-        {
-          "lesson": 4,
-          "rows": 35
-        },
-        {
-          "lesson": 5,
-          "rows": 25
-        },
-        {
-          "lesson": 6,
-          "rows": 33
-        },
-        {
-          "lesson": 7,
-          "rows": 32
-        },
-        {
-          "lesson": 8,
-          "rows": 34
-        },
-        {
-          "lesson": 9,
-          "rows": 37
-        },
-        {
-          "lesson": 10,
-          "rows": 35
-        }
-      ]
-    },
-    {
-      "book": "quyen-3",
-      "existingVocabularyRows": 183,
-      "existingExtensionRows": 150,
-      "total": 333,
-      "lessons": [
-        {
-          "lesson": 1,
-          "rows": 40
-        },
-        {
-          "lesson": 2,
-          "rows": 32
-        },
-        {
-          "lesson": 3,
-          "rows": 36
-        },
-        {
-          "lesson": 4,
-          "rows": 29
-        },
-        {
-          "lesson": 5,
-          "rows": 28
-        },
-        {
-          "lesson": 6,
-          "rows": 34
-        },
-        {
-          "lesson": 7,
-          "rows": 32
-        },
-        {
-          "lesson": 8,
-          "rows": 34
-        },
-        {
-          "lesson": 9,
-          "rows": 37
-        },
-        {
-          "lesson": 10,
-          "rows": 31
-        }
-      ]
-    },
-    {
-      "book": "quyen-4",
-      "existingVocabularyRows": 156,
-      "existingExtensionRows": 150,
-      "total": 306,
-      "lessons": [
-        {
-          "lesson": 1,
-          "rows": 33
-        },
-        {
-          "lesson": 2,
-          "rows": 30
-        },
-        {
-          "lesson": 3,
-          "rows": 31
-        },
-        {
-          "lesson": 4,
-          "rows": 30
-        },
-        {
-          "lesson": 5,
-          "rows": 30
-        },
-        {
-          "lesson": 6,
-          "rows": 30
-        },
-        {
-          "lesson": 7,
-          "rows": 32
-        },
-        {
-          "lesson": 8,
-          "rows": 29
-        },
-        {
-          "lesson": 9,
-          "rows": 29
-        },
-        {
-          "lesson": 10,
-          "rows": 32
+          "rows": 17
         }
       ]
     }
   ],
-  "duplicateGroupsNeedingReview": [
+  "corrections": [
     {
-      "book": "quyen-2",
-      "lesson": 2,
-      "hanzi": "早",
-      "pinyin": "zǎo",
-      "entries": [
-        {
-          "id": 20044,
-          "meaning": "sớm",
-          "sourceFile": "src/data/msutong/so-cap-2-vocab.ts"
-        },
-        {
-          "id": 61015,
-          "meaning": "sớm",
-          "sourceFile": "src/data/msutong/so-cap-2-extended.ts"
-        }
-      ]
+      "id": 200260,
+      "hanzi": "号",
+      "correction": "Tách nghĩa “số, mã số” ở bài 3 khỏi nghĩa “cỡ” ở bài 4."
     },
     {
-      "book": "quyen-2",
-      "lesson": 6,
-      "hanzi": "风景",
-      "pinyin": "fēngjǐng",
-      "entries": [
-        {
-          "id": 20100,
-          "meaning": "phong cảnh",
-          "sourceFile": "src/data/msutong/so-cap-2-vocab.ts"
-        },
-        {
-          "id": 61079,
-          "meaning": "phong cảnh",
-          "sourceFile": "src/data/msutong/so-cap-2-extended.ts"
-        }
-      ]
-    },
-    {
-      "book": "quyen-2",
-      "lesson": 6,
+      "id": 200315,
       "hanzi": "旅行",
-      "pinyin": "lǚxíng",
-      "entries": [
-        {
-          "id": 20106,
-          "meaning": "du lịch",
-          "sourceFile": "src/data/msutong/so-cap-2-vocab.ts"
-        },
-        {
-          "id": 61076,
-          "meaning": "du hành",
-          "sourceFile": "src/data/msutong/so-cap-2-extended.ts"
-        }
-      ]
+      "correction": "Phụ lục ghi bài 9; bảng Từ mới PDF trang 64 xác định bài 5."
     },
     {
-      "book": "quyen-3",
-      "lesson": 5,
-      "hanzi": "努力",
-      "pinyin": "nǔlì",
-      "entries": [
-        {
-          "id": 30089,
-          "meaning": "chăm chỉ, nỗ lực ",
-          "sourceFile": "src/data/msutong/so-cap-3-vocab.ts"
-        },
-        {
-          "id": 62060,
-          "meaning": "nỗ lực, cố gắng",
-          "sourceFile": "src/data/msutong/so-cap-3-extended.ts"
-        }
-      ]
+      "id": 30076,
+      "hanzi": "人气",
+      "correction": "Bản in ghi “ý chí, chí khí”. Sửa nghĩa theo ngữ cảnh 有人气 (nhà hàng đông khách, được yêu thích), PDF trang 54."
     }
   ],
   "errors": []
