@@ -41,10 +41,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ hanzi, pinyin, meaning, showPinyi
         <div className="flashcard-face flashcard-front" aria-hidden={isFlipped}>
           <Card className="w-full h-full flex items-center justify-center border bg-primary/5 text-foreground relative rounded-2xl">
             <CardContent className="p-6 text-center space-y-3">
-              <p className="break-words text-5xl md:text-7xl font-semibold">{hanzi}</p>
-              {showPinyin && (
-                <p className="text-xl md:text-2xl font-medium text-primary">{pinyin}</p>
-              )}
+              <p className={cn('break-words font-semibold', hanzi.length > 12 ? 'text-xl md:text-3xl' : hanzi.length > 5 ? 'text-3xl md:text-5xl' : 'text-5xl md:text-7xl')}>{hanzi}</p>
               {/* Speaker Button */}
               <div className="mt-4 flex justify-center">
                 {!isFlipped && <SpeakerButton className="bg-primary/10 text-primary hover:bg-primary/20" text={hanzi} language="zh-CN" />}
@@ -54,7 +51,7 @@ const Flashcard: React.FC<FlashcardProps> = ({ hanzi, pinyin, meaning, showPinyi
         </div>
         <div className="flashcard-face flashcard-back" aria-hidden={!isFlipped}>
           <Card className="w-full h-full flex items-center justify-center border bg-card text-foreground relative rounded-2xl">
-            <CardContent className="p-6 text-center">
+            <CardContent className="max-h-full overflow-y-auto p-6 text-center">
               {showPinyin && (
                 <p className="text-2xl md:text-3xl font-semibold mb-4 text-primary">{pinyin}</p>
               )}

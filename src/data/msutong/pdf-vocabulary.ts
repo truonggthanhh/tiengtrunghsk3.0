@@ -1,4 +1,5 @@
 import data from './pdf-vocabulary.json';
+import intermediate from './intermediate-vocabulary.json';
 import type { MsutongWord } from './so-cap-1-vocab';
 
 export interface PdfMsutongWord extends MsutongWord {
@@ -10,3 +11,5 @@ export interface PdfMsutongWord extends MsutongWord {
 
 // Reviewed source: reviewed/book*.tsv + reviewed/lesson-census.txt.
 export const pdfMsutongVocabulary: PdfMsutongWord[] = data;
+
+export const intermediateMsutongVocabulary: PdfMsutongWord[] = intermediate;

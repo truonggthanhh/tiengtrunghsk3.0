@@ -38,3 +38,7 @@ npm run build
 Audit so sánh từng dòng nguồn với danh mục ứng dụng và báo lỗi nếu mất dòng hoặc đổi tổng. Kiểm thử trình duyệt giả lập Supabase; không kiểm chứng kết nối cơ sở dữ liệu thật. PDF đầy đủ không được đưa vào repository.
 
 Kết quả kiểm tra: audit không thiếu dòng nguồn, lint/typecheck/build đạt, 21 kiểm thử Node đạt, 57 tình huống Chromium đạt ở chiều rộng 320px.
+
+## Bổ sung trung cấp và mặt thẻ
+
+Đã thêm cấp Trung cấp riêng (4 quyển, 40 bài, 1.076 mục). Xem [nguồn và phạm vi trung cấp](docs/msutong/INTERMEDIATE.md). Mặt trước flashcard tiếng Trung hiện chỉ có chữ Hán và nút nghe; pinyin chuyển về mặt đáp án theo thiết lập hiển thị.

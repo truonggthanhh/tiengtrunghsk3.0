@@ -260,3 +260,28 @@ test('Msutong PDF vocabulary keeps source corrections, constituents, variants an
   assert(acceptsMsutongAnswer('填写', '填（写）'));
   assert(!acceptsMsutongAnswer('那里', '哪儿/哪里'));
 });
+
+
+test('Msutong intermediate catalog isolates all four books and retains intermediate resume links', async () => {
+  const { getFullMsutongVocabularyByLevel, getVocabularyByMsutong, getReadingComprehensionByMsutong } = await import('../src/data/index');
+  const { describeRecentLesson } = await import('../src/lib/learningNavigation');
+  const all = getFullMsutongVocabularyByLevel('trung-cap');
+  assert.equal(all.length, 1076);
+  assert.deepEqual([1, 2, 3, 4].map(book => all.filter(word => word.bookSlug === `quyen-${book}`).length), [273, 355, 239, 209]);
+  const beginnerIds = new Set(getFullMsutongVocabularyByLevel('so-cap').map(word => word.id));
+  assert(all.every(word => !beginnerIds.has(word.id)));
+  for (let book = 1; book <= 4; book++) for (let lesson = 1; lesson <= 10; lesson++) {
+    const id = `quyen-${book}-lesson-${lesson}`;
+    const selected = getVocabularyByMsutong('trung-cap', [id]);
+    assert(selected.length > 0);
+    assert.deepEqual(selected.map(word => word.id), all.filter(word => word.bookSlug === `quyen-${book}` && word.lesson === lesson).map(word => word.id));
+  }
+  const url = '/mandarin/msutong/msutong-flashcard?level=trung-cap&lessonIds=quyen-3-lesson-2';
+  assert.equal(new URL(describeRecentLesson(url, 'mandarin')!.href, 'https://test.local').searchParams.get('level'), 'trung-cap');
+  assert.deepEqual(getReadingComprehensionByMsutong('trung-cap', ['quyen-1-lesson-1']), []);
+  assert.equal(all.find(word => word.hanzi === '待')?.pinyin, 'dāi');
+  assert.equal(all.find(word => word.hanzi === '臭味相投')?.pinyin, 'chòuwèi xiāngtóu');
+  assert.equal(all.find(word => word.hanzi === '卷')?.pinyin, 'juàn');
+  assert.equal(all.find(word => word.hanzi === '种')?.pinyin, 'zhòng');
+  assert(all.some(word => word.hanzi === '田中爱子' && word.bookSlug === 'quyen-3'));
+});

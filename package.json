@@ -15,7 +15,9 @@
     "typecheck": "tsc -b --pretty false",
     "test": "node --import tsx tests/regressions.test.ts",
     "test:browser": "node scripts/test-browser.mjs",
-    "audit:msutong": "node --import tsx scripts/audit-msutong.ts"
+    "audit:msutong": "node --import tsx scripts/audit-msutong.ts",
+    "build:msutong-intermediate": "node --import tsx scripts/build-msutong-intermediate.ts",
+    "audit:msutong-intermediate": "node --import tsx scripts/audit-msutong-intermediate.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

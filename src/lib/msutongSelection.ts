@@ -1,3 +1,5 @@
+export const msutongLevels = [{ slug: 'so-cap', name: 'Sơ cấp' }, { slug: 'trung-cap', name: 'Trung cấp' }] as const;
+export const isMsutongLevel = (level: string) => msutongLevels.some(item => item.slug === level);
 export const msutongBooks = [
   { slug: 'quyen-1', name: 'Quyển 1', number: 1 },
   { slug: 'quyen-2', name: 'Quyển 2', number: 2 },
@@ -8,8 +10,8 @@ export function parseMsutongLessonId(value: string) {
   const match = /^quyen-([1-4])-lesson-([1-9]\d{0,2})$/.exec(value);
   return match ? { bookSlug: `quyen-${match[1]}`, lessonNumber: Number(match[2]) } : null;
 }
-export function msutongBookUrl(bookSlug: string) {
-  return `/mandarin/msutong?${new URLSearchParams({ level: 'so-cap', bookSlugs: bookSlug })}`;
+export function msutongBookUrl(bookSlug: string, level = 'so-cap') {
+  return `/mandarin/msutong?${new URLSearchParams({ level, bookSlugs: bookSlug })}`;
 }
 
 export function getMsutongDistractors(words: { hanzi: string; pinyin: string; meaning: string }[], current: { hanzi: string; pinyin: string; meaning: string }, field: 'pinyin' | 'meaning') {

@@ -10,7 +10,7 @@ import { hsk3ExtendedVocabulary } from './hsk3-extended';
 import { hsk4ExtendedVocabulary } from './hsk4-extended';
 import { hsk5ExtendedVocabulary } from './hsk5-extended';
 import { hsk6ExtendedVocabulary } from './hsk6-extended';
-import { pdfMsutongVocabulary } from './msutong/pdf-vocabulary';
+import { pdfMsutongVocabulary, intermediateMsutongVocabulary } from './msutong/pdf-vocabulary';
 import type { MsutongWord } from './msutong/so-cap-1-vocab';
 import { msutongReadingComprehension, type ReadingComprehensionQuestion, type ReadingComprehensionPassage } from './msutong/reading-comprehension';
 
@@ -46,6 +46,12 @@ const msutongVocabularyData: { [level: string]: { [book: string]: MsutongWord[] 
     'quyen-2': pdfMsutongVocabulary.filter(word => word.bookSlug === 'quyen-2'),
     'quyen-3': pdfMsutongVocabulary.filter(word => word.bookSlug === 'quyen-3'),
     'quyen-4': pdfMsutongVocabulary.filter(word => word.bookSlug === 'quyen-4'),
+  },
+  'trung-cap': {
+    'quyen-1': intermediateMsutongVocabulary.filter(word => word.bookSlug === 'quyen-1'),
+    'quyen-2': intermediateMsutongVocabulary.filter(word => word.bookSlug === 'quyen-2'),
+    'quyen-3': intermediateMsutongVocabulary.filter(word => word.bookSlug === 'quyen-3'),
+    'quyen-4': intermediateMsutongVocabulary.filter(word => word.bookSlug === 'quyen-4'),
   },
   // Dữ liệu cho các cấp độ khác sẽ được thêm vào đây
 };

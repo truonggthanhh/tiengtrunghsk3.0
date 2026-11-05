@@ -173,6 +173,7 @@ const MsutongFlashcardLesson = () => {
         <div className="w-full max-w-2xl">
           <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold">Flashcards (Msutong)</h1>
+            <p className="mt-2 text-sm font-medium text-primary">{level === 'trung-cap' ? 'Trung cấp' : 'Sơ cấp'}</p>
             <p className="text-muted-foreground">Nhấn vào thẻ để xem nghĩa, hoặc dùng phím mũi tên để chuyển từ.</p>
           </div>
           

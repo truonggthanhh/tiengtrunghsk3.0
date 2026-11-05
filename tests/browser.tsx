@@ -750,6 +750,41 @@ await check('Msutong continue-learning retains query selection, including when o
   host.querySelector<HTMLAnchorElement>('[data-home-msutong]')!.click(); await delay(20);
   assert(host.querySelector('[data-msutong-recent]')?.textContent?.includes('quyen-3-lesson-2'), 'Returning home must keep the complete last lesson URL');
 });
+
+await check('Mandarin flashcard keeps pinyin on the answer side and respects the visibility setting', async () => {
+  root.render(<MandarinFlashcard hanzi="你好" pinyin="nǐ hǎo" meaning="Xin chào" showPinyin />);
+  await delay(25);
+  assert(host.querySelector('.flashcard-front')?.textContent?.trim() === '你好', 'The Hanzi side must not reveal pinyin');
+  assert(host.querySelector('.flashcard-back')?.textContent?.includes('nǐ hǎo'), 'The answer side should retain pinyin');
+  const flip = host.querySelector('[role="button"]')!;
+  flip.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+  await delay(20);
+  assert(flip.getAttribute('aria-pressed') === 'true', 'Keyboard flipping must reveal the answer');
+  root.render(<MandarinFlashcard hanzi="你好" pinyin="nǐ hǎo" meaning="Xin chào" showPinyin={false} />);
+  await delay(20);
+  assert(!host.querySelector('.flashcard-back')?.textContent?.includes('nǐ hǎo'), 'Hide-pinyin must apply to the answer side');
+});
+await check('Msutong intermediate selection exposes 40 lessons, exports its catalog and clears selection on level change', async () => {
+  renderMsutong(<MsutongPage />);
+  await delay(25);
+  clickText('Trung cấp'); await delay(25);
+  clickText('Chọn cả 4 quyển'); await delay(20);
+  clickText('Chọn tất cả bài'); await delay(25);
+  assert(host.textContent?.includes('40 bài đã chọn · 1076 mục từ'), 'All intermediate entries must be selectable');
+  const link = host.querySelector<HTMLAnchorElement>('a[href*="/msutong/msutong-flashcard?"]');
+  assert(new URL(link!.href).searchParams.get('level') === 'trung-cap', 'Activities must retain the intermediate level');
+  assert(host.querySelector('a[download]')?.getAttribute('href') === '/data/msutong-intermediate-vocabulary.csv', 'CSV must match the selected level');
+  clickText('Sơ cấp'); await delay(25);
+  assert(!host.querySelector('a[href*="/msutong/msutong-flashcard?"]'), 'A level change clears the earlier selections');
+});
+await check('Msutong flashcards switch levels without showing the other catalog', async () => {
+  renderMsutong(<><Link data-intermediate-switch to="/mandarin/msutong/msutong-flashcard?level=trung-cap&lessonIds=quyen-1-lesson-1">Trung cấp</Link><Routes><Route path="/mandarin/msutong/msutong-flashcard" element={<MsutongFlashcardPage />} /></Routes></>, '/mandarin/msutong/msutong-flashcard?level=so-cap&lessonIds=quyen-1-lesson-1');
+  await delay(25);
+  host.querySelector<HTMLAnchorElement>('[data-intermediate-switch]')!.click(); await delay(30);
+  assert(host.querySelector('.flashcard-front p')?.textContent === getVocabularyByMsutong('trung-cap', ['quyen-1-lesson-1'])[0].hanzi, 'The selected level must supply the card');
+  assert(host.querySelector('.flashcard-front p')?.textContent !== getVocabularyByMsutong('so-cap', ['quyen-1-lesson-1'])[0].hanzi, 'Beginner words must not leak into the intermediate lesson');
+  assert(document.documentElement.scrollWidth <= window.innerWidth + 2, 'The page must fit the viewport');
+});
 (window as unknown as { __showDesignRoute: (path: string, dark: boolean) => Promise<void> }).__showDesignRoute = async (path, dark) => {
   const { default: App } = await import('../src/App');
   localStorage.setItem('theme', dark ? 'dark' : 'light');

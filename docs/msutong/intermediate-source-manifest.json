@@ -1,0 +1,209 @@
+{
+  "level": "trung-cap",
+  "totalRows": 1076,
+  "scope": "All rows in the four end-of-book vocabulary indexes, including supplementary words, idioms, patterns and proper names; plus four proper names found in lesson tables in book 3. Running text and grammar examples are not counted as separate vocabulary.",
+  "method": "Manual transcription of Hanzi and lesson numbers from 22 rendered index pages; embedded OCR used for lookup and to identify additional lesson-table names. Vietnamese glosses are editorial paraphrases, not verbatim PDF translations. Pinyin is dictionary-assisted (pinyin-pro), with reviewed overrides for polyphonic words, neutral tones, erhua, names and patterns.",
+  "tableComparison": "Geometric OCR scan of lesson vocabulary rows used to flag entries absent from indexes. This is a supplemental check, not a claim that every table row has been independently visually proofread.",
+  "books": [
+    {
+      "book": 1,
+      "file": "Msutong Trung Cap 1.pdf",
+      "sha256": "8c803f7ab6acf2990ce09a99fe3043010e0c6e603534fa3039c08f5f92e8d424",
+      "pdfPages": 118,
+      "indexRows": 273,
+      "rows": 273,
+      "lessons": [
+        {
+          "lesson": 1,
+          "rows": 31
+        },
+        {
+          "lesson": 2,
+          "rows": 23
+        },
+        {
+          "lesson": 3,
+          "rows": 22
+        },
+        {
+          "lesson": 4,
+          "rows": 21
+        },
+        {
+          "lesson": 5,
+          "rows": 29
+        },
+        {
+          "lesson": 6,
+          "rows": 31
+        },
+        {
+          "lesson": 7,
+          "rows": 26
+        },
+        {
+          "lesson": 8,
+          "rows": 25
+        },
+        {
+          "lesson": 9,
+          "rows": 29
+        },
+        {
+          "lesson": 10,
+          "rows": 36
+        }
+      ]
+    },
+    {
+      "book": 2,
+      "file": "Msutong Trung Cap 2.pdf",
+      "sha256": "478485e5f980fe0a0095f481c3ce29cc03e9efb3c7b6c9e8f9cf560a4aa7b18e",
+      "pdfPages": 134,
+      "indexRows": 355,
+      "rows": 355,
+      "lessons": [
+        {
+          "lesson": 1,
+          "rows": 46
+        },
+        {
+          "lesson": 2,
+          "rows": 47
+        },
+        {
+          "lesson": 3,
+          "rows": 31
+        },
+        {
+          "lesson": 4,
+          "rows": 40
+        },
+        {
+          "lesson": 5,
+          "rows": 33
+        },
+        {
+          "lesson": 6,
+          "rows": 31
+        },
+        {
+          "lesson": 7,
+          "rows": 31
+        },
+        {
+          "lesson": 8,
+          "rows": 34
+        },
+        {
+          "lesson": 9,
+          "rows": 32
+        },
+        {
+          "lesson": 10,
+          "rows": 30
+        }
+      ]
+    },
+    {
+      "book": 3,
+      "file": "Msutong Trung Cap 3.pdf",
+      "sha256": "d411b48dc5038a018ad6bd447f742ad8664c95a85c91ab2dd4f9bb126f29b9bd",
+      "pdfPages": 134,
+      "indexRows": 235,
+      "rows": 239,
+      "lessons": [
+        {
+          "lesson": 1,
+          "rows": 26
+        },
+        {
+          "lesson": 2,
+          "rows": 23
+        },
+        {
+          "lesson": 3,
+          "rows": 28
+        },
+        {
+          "lesson": 4,
+          "rows": 21
+        },
+        {
+          "lesson": 5,
+          "rows": 25
+        },
+        {
+          "lesson": 6,
+          "rows": 23
+        },
+        {
+          "lesson": 7,
+          "rows": 20
+        },
+        {
+          "lesson": 8,
+          "rows": 22
+        },
+        {
+          "lesson": 9,
+          "rows": 22
+        },
+        {
+          "lesson": 10,
+          "rows": 29
+        }
+      ]
+    },
+    {
+      "book": 4,
+      "file": "Msutong Trung Cap 4.pdf",
+      "sha256": "40c4ab656ef5d9adbf47f5273f3c65064ee656aefea098bc4cc0b22299f95bf4",
+      "pdfPages": 124,
+      "indexRows": 209,
+      "rows": 209,
+      "lessons": [
+        {
+          "lesson": 1,
+          "rows": 22
+        },
+        {
+          "lesson": 2,
+          "rows": 20
+        },
+        {
+          "lesson": 3,
+          "rows": 21
+        },
+        {
+          "lesson": 4,
+          "rows": 20
+        },
+        {
+          "lesson": 5,
+          "rows": 19
+        },
+        {
+          "lesson": 6,
+          "rows": 18
+        },
+        {
+          "lesson": 7,
+          "rows": 21
+        },
+        {
+          "lesson": 8,
+          "rows": 24
+        },
+        {
+          "lesson": 9,
+          "rows": 20
+        },
+        {
+          "lesson": 10,
+          "rows": 24
+        }
+      ]
+    }
+  ]
+}
