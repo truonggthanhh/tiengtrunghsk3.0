@@ -31,7 +31,7 @@ const MsutongPronunciationPage = () => {
   const level = searchParams.get('level') || 'so-cap';
   const lessonIds = useMemo(() => searchParams.get('lessonIds')?.split(',') || [], [searchParams]);
 
-  const practiceVocabulary = useMemo(() => getVocabularyByMsutong(level, lessonIds), [level, lessonIds]);
+  const practiceVocabulary = useMemo(() => getVocabularyByMsutong(level, lessonIds).filter(word => !/[…V]/.test(word.hanzi)), [level, lessonIds]);
 
   // Build URLs for back navigation
   const exerciseSelectionUrl = useMemo(() => {
@@ -251,7 +251,7 @@ const MsutongPronunciationPage = () => {
         <div className="w-full max-w-2xl bg-card p-6 md:p-8 rounded-xl shadow-lg border">
           <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold">Luyện Phát Âm (Msutong)</h1>
-            <p className="text-muted-foreground">Nhấn nút và phát âm chữ Hán hiển thị bên dưới.</p>
+            <p className="text-muted-foreground">Nhấn nút và phát âm chữ Hán hiển thị bên dưới. Mẫu có chỗ trống được ôn bằng flashcard.</p>
           </div>
 
           <div className="mb-4">
@@ -264,9 +264,9 @@ const MsutongPronunciationPage = () => {
 
           <Card className="mb-8 shadow-md bg-gradient-vivid text-white">
             <CardContent className="p-10 flex flex-col items-center justify-center space-y-4">
-              <h2 className="text-7xl md:text-8xl font-bold">{currentWord?.hanzi}</h2>
+              <h2 className={cn("max-w-full break-words text-center font-bold", (currentWord?.hanzi.length ?? 0) > 5 ? "text-3xl md:text-5xl" : "text-5xl md:text-7xl")}>{currentWord?.hanzi}</h2>
               {(showPinyin || feedback !== null) && (
-                <p className="text-3xl md:text-4xl font-medium text-white/90">{currentWord?.pinyin}</p>
+                <p className="max-w-full break-words text-center text-xl md:text-3xl font-medium text-white/90">{currentWord?.pinyin}</p>
               )}
             </CardContent>
           </Card>

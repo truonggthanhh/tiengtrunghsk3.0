@@ -217,7 +217,7 @@ test('Msutong resume links retain book/lesson selection and discard unrelated UR
   assert.equal(url.searchParams.get('lessonIds'), 'quyen-2-lesson-3,quyen-4-lesson-1');
   assert.equal(url.searchParams.get('books'), 'Quyển 2, Quyển 4');
   assert(!recent.href.includes('private-'));
-  for (const path of ['/mandarin/msutong/msutong-flashcard', '/mandarin/msutong/msutong-unknown?lessonIds=quyen-1-lesson-1', '/mandarin/msutong/msutong-flashcard?level=cao-cap&lessonIds=quyen-1-lesson-1']) assert.equal(describeRecentLesson(path, 'mandarin'), null);
+  for (const path of ['/mandarin/msutong/msutong-flashcard', '/mandarin/msutong/msutong-unknown?lessonIds=quyen-1-lesson-1', '/mandarin/msutong/msutong-flashcard?level=unknown-level&lessonIds=quyen-1-lesson-1']) assert.equal(describeRecentLesson(path, 'mandarin'), null);
 });
 
 test('Msutong meaning distractors never mark another translation of the same Hanzi as wrong', async () => {
@@ -284,4 +284,33 @@ test('Msutong intermediate catalog isolates all four books and retains intermedi
   assert.equal(all.find(word => word.hanzi === '卷')?.pinyin, 'juàn');
   assert.equal(all.find(word => word.hanzi === '种')?.pinyin, 'zhòng');
   assert(all.some(word => word.hanzi === '田中爱子' && word.bookSlug === 'quyen-3'));
+});
+
+
+test('Msutong advanced retrieves all 40 lessons, all six tables and preserves source-language meanings', async () => {
+  const { advancedMsutongVocabulary: all } = await import('../src/data/msutong/pdf-vocabulary');
+  const { getFullMsutongVocabularyByLevel, getVocabularyByMsutong } = await import('../src/data/index');
+  const { describeRecentLesson } = await import('../src/lib/learningNavigation');
+  assert.equal(all.length, 1515);
+  assert.deepEqual([1, 2, 3, 4].map(book => all.filter(word => word.bookSlug === `quyen-${book}`).length), [443, 408, 338, 326]);
+  const previousIds = new Set(['so-cap', 'trung-cap'].flatMap(level => getFullMsutongVocabularyByLevel(level).map(word => word.id)));
+  assert(all.every(word => !previousIds.has(word.id)));
+  for (let book = 1; book <= 4; book++) for (let lesson = 1; lesson <= 10; lesson++) {
+    const id = `quyen-${book}-lesson-${lesson}`;
+    const words = all.filter(word => word.bookSlug === `quyen-${book}` && word.lesson === lesson);
+    assert.deepEqual(getVocabularyByMsutong('cao-cap', [id, id]).map(w => w.id), words.map(w => w.id));
+    assert.deepEqual([...new Set(words.flatMap(w => w.sources.filter(s => s.kind === 'vocabulary-table').map(s => s.table)))].sort(), [1, 2, 3, 4, 5, 6]);
+  }
+  assert.equal(all.flatMap(w => w.sources).filter(s => s.kind === 'vocabulary-table').length, 1410);
+  assert(all.some(w => w.hanzi === '手续' && w.sources.some(s => s.pdfPage === 62 && s.table === 3)));
+  assert(all.some(w => w.hanzi === '营养' && w.sources.some(s => s.pdfPage === 48 && s.table === 6)));
+  assert(all.some(w => w.hanzi === '申报' && w.sources.some(s => s.pdfPage === 107 && s.table === 5)));
+  assert(all.some(w => w.hanzi === '志愿者' && w.meaningSource === 'editorial-vietnamese'));
+  assert(all.some(w => w.hanzi === '录用' && w.meaningSource === 'translated-from-source-english' && w.sources.some(s => s.originalMeaning === 'to hire, to employ')));
+  assert.equal(all.find(w => w.hanzi === '背')?.pinyin, 'bēi');
+  assert.equal(all.find(w => w.hanzi === '为')?.pinyin, 'wéi');
+  assert.equal(all.find(w => w.hanzi === '降妖除怪')?.pinyin, 'xiángyāo-chúguài');
+  const recent = describeRecentLesson('/mandarin/msutong/msutong-flashcard?level=cao-cap&lessonIds=quyen-4-lesson-10', 'mandarin');
+  assert(recent?.label.includes('Cao cấp'));
+  assert.equal(new URL(recent!.href, 'https://test.local').searchParams.get('level'), 'cao-cap');
 });

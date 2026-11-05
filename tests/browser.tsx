@@ -693,7 +693,7 @@ for (const language of ['mandarin', 'cantonese'] as const) for (const kind of ['
   });
 }
 function renderMsutong(node: React.ReactNode, entry = '/mandarin/msutong', authenticated = true) {
-  root.render(<QueryClientProvider client={client()}><MemoryRouter initialEntries={[entry]}><MandarinSessionContext.Provider value={{ session: authenticated ? fakeSession('msutong-learner') : null, isLoading: false }}><PinyinProvider>{node}</PinyinProvider></MandarinSessionContext.Provider></MemoryRouter></QueryClientProvider>);
+  root.render(<QueryClientProvider client={client()}><MemoryRouter key={entry} initialEntries={[entry]}><MandarinSessionContext.Provider value={{ session: authenticated ? fakeSession('msutong-learner') : null, isLoading: false }}><PinyinProvider>{node}</PinyinProvider></MandarinSessionContext.Provider></MemoryRouter></QueryClientProvider>);
 }
 await check('Msutong exposes all four books and passes exactly the selected lessons to activities', async () => {
   renderMsutong(<MsutongPage />); await delay(30);
@@ -784,6 +784,21 @@ await check('Msutong flashcards switch levels without showing the other catalog'
   assert(host.querySelector('.flashcard-front p')?.textContent === getVocabularyByMsutong('trung-cap', ['quyen-1-lesson-1'])[0].hanzi, 'The selected level must supply the card');
   assert(host.querySelector('.flashcard-front p')?.textContent !== getVocabularyByMsutong('so-cap', ['quyen-1-lesson-1'])[0].hanzi, 'Beginner words must not leak into the intermediate lesson');
   assert(document.documentElement.scrollWidth <= window.innerWidth + 2, 'The page must fit the viewport');
+});
+await check('Msutong advanced selects every lesson and keeps source citations and Hanzi-only flashcards', async () => {
+  renderMsutong(<MsutongPage />); await delay(25);
+  clickText('Cao cấp'); await delay(25);
+  clickText('Chọn cả 4 quyển'); await delay(20);
+  clickText('Chọn tất cả bài'); await delay(25);
+  assert(host.textContent?.includes('40 bài đã chọn · 1515 mục từ'), 'All advanced cards must be selectable');
+  assert(host.querySelector('a[download]')?.getAttribute('href') === '/data/msutong-advanced-vocabulary.csv', 'Advanced CSV must match the level');
+  const link = host.querySelector<HTMLAnchorElement>('a[href*="/msutong/msutong-flashcard?"]')!;
+  assert(new URL(link.href).searchParams.get('level') === 'cao-cap', 'Activities must retain the advanced level');
+  renderMsutong(<MsutongFlashcardPage />, '/mandarin/msutong/msutong-flashcard?level=cao-cap&lessonIds=quyen-4-lesson-10'); await delay(30);
+  assert(host.textContent?.includes('Cao cấp'), 'The flashcard title must display the right level');
+  assert(host.querySelector('.flashcard-front p')?.textContent === '傣族', 'The front must contain only Hanzi');
+  assert(host.textContent?.includes('trang 102, bảng 1'), 'The source must identify the exact table');
+  assert(document.documentElement.scrollWidth <= window.innerWidth + 2, 'Advanced controls and long entries must fit the viewport');
 });
 (window as unknown as { __showDesignRoute: (path: string, dark: boolean) => Promise<void> }).__showDesignRoute = async (path, dark) => {
   const { default: App } = await import('../src/App');

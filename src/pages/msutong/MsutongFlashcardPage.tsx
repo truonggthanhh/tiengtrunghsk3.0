@@ -1,3 +1,4 @@
+import { msutongLevels } from '@/lib/msutongSelection';
 import type { PdfMsutongWord } from '@/data/msutong/pdf-vocabulary';
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
@@ -173,11 +174,13 @@ const MsutongFlashcardLesson = () => {
         <div className="w-full max-w-2xl">
           <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold">Flashcards (Msutong)</h1>
-            <p className="mt-2 text-sm font-medium text-primary">{level === 'trung-cap' ? 'Trung cấp' : 'Sơ cấp'}</p>
+            <p className="mt-2 text-sm font-medium text-primary">{msutongLevels.find(item => item.slug === level)?.name ?? level}</p>
             <p className="text-muted-foreground">Nhấn vào thẻ để xem nghĩa, hoặc dùng phím mũi tên để chuyển từ.</p>
           </div>
           
-          <p className="mb-3 text-center text-xs text-muted-foreground">{currentWord?.bookSlug?.replace('quyen-', 'Quyển ')} · Bài {currentWord?.lesson} · PDF trang {[...new Set(currentWord?.sources.map(source => source.pdfPage))].join(', ')}</p>
+          <p className="mb-3 text-center text-xs text-muted-foreground">{currentWord?.bookSlug?.replace('quyen-', 'Quyển ')} · Bài {currentWord?.lesson} · PDF {[...new Set(currentWord?.sources.map(source => `trang ${source.pdfPage}${source.table ? `, bảng ${source.table}` : ''}`))].join(' · ')}</p>
+          {currentWord?.meaningSource === 'translated-from-source-english' && <p className="mb-3 text-center text-xs text-muted-foreground">Nghĩa Việt dịch từ nghĩa tiếng Anh trong sách.</p>}
+          {currentWord?.meaningSource === 'editorial-vietnamese' && <p className="mb-3 text-center text-xs text-muted-foreground">Nghĩa Việt biên soạn cho thẻ học.</p>}
           {currentWord?.correction && <p className="mb-3 text-sm text-muted-foreground">{currentWord.correction}</p>}
           <Flashcard
             key={currentWord.id}

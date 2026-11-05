@@ -1,0 +1,206 @@
+{
+  "cards": 1515,
+  "tables": 240,
+  "tableRows": 1410,
+  "indexSupplementRows": 107,
+  "sourceOccurrences": 1517,
+  "books": [
+    {
+      "book": 1,
+      "cards": 443,
+      "tables": 60,
+      "tableRows": 393,
+      "indexSupplementRows": 52,
+      "lessons": [
+        {
+          "lesson": 1,
+          "cards": 41
+        },
+        {
+          "lesson": 2,
+          "cards": 42
+        },
+        {
+          "lesson": 3,
+          "cards": 38
+        },
+        {
+          "lesson": 4,
+          "cards": 54
+        },
+        {
+          "lesson": 5,
+          "cards": 46
+        },
+        {
+          "lesson": 6,
+          "cards": 40
+        },
+        {
+          "lesson": 7,
+          "cards": 42
+        },
+        {
+          "lesson": 8,
+          "cards": 52
+        },
+        {
+          "lesson": 9,
+          "cards": 44
+        },
+        {
+          "lesson": 10,
+          "cards": 44
+        }
+      ]
+    },
+    {
+      "book": 2,
+      "cards": 408,
+      "tables": 60,
+      "tableRows": 390,
+      "indexSupplementRows": 18,
+      "lessons": [
+        {
+          "lesson": 1,
+          "cards": 36
+        },
+        {
+          "lesson": 2,
+          "cards": 41
+        },
+        {
+          "lesson": 3,
+          "cards": 36
+        },
+        {
+          "lesson": 4,
+          "cards": 44
+        },
+        {
+          "lesson": 5,
+          "cards": 37
+        },
+        {
+          "lesson": 6,
+          "cards": 46
+        },
+        {
+          "lesson": 7,
+          "cards": 40
+        },
+        {
+          "lesson": 8,
+          "cards": 40
+        },
+        {
+          "lesson": 9,
+          "cards": 46
+        },
+        {
+          "lesson": 10,
+          "cards": 42
+        }
+      ]
+    },
+    {
+      "book": 3,
+      "cards": 338,
+      "tables": 60,
+      "tableRows": 313,
+      "indexSupplementRows": 25,
+      "lessons": [
+        {
+          "lesson": 1,
+          "cards": 40
+        },
+        {
+          "lesson": 2,
+          "cards": 35
+        },
+        {
+          "lesson": 3,
+          "cards": 38
+        },
+        {
+          "lesson": 4,
+          "cards": 37
+        },
+        {
+          "lesson": 5,
+          "cards": 35
+        },
+        {
+          "lesson": 6,
+          "cards": 34
+        },
+        {
+          "lesson": 7,
+          "cards": 32
+        },
+        {
+          "lesson": 8,
+          "cards": 33
+        },
+        {
+          "lesson": 9,
+          "cards": 32
+        },
+        {
+          "lesson": 10,
+          "cards": 22
+        }
+      ]
+    },
+    {
+      "book": 4,
+      "cards": 326,
+      "tables": 60,
+      "tableRows": 314,
+      "indexSupplementRows": 12,
+      "lessons": [
+        {
+          "lesson": 1,
+          "cards": 29
+        },
+        {
+          "lesson": 2,
+          "cards": 36
+        },
+        {
+          "lesson": 3,
+          "cards": 37
+        },
+        {
+          "lesson": 4,
+          "cards": 31
+        },
+        {
+          "lesson": 5,
+          "cards": 29
+        },
+        {
+          "lesson": 6,
+          "cards": 34
+        },
+        {
+          "lesson": 7,
+          "cards": 31
+        },
+        {
+          "lesson": 8,
+          "cards": 34
+        },
+        {
+          "lesson": 9,
+          "cards": 36
+        },
+        {
+          "lesson": 10,
+          "cards": 29
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

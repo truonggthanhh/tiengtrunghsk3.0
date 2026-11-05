@@ -1,4 +1,4 @@
-export const msutongLevels = [{ slug: 'so-cap', name: 'Sơ cấp' }, { slug: 'trung-cap', name: 'Trung cấp' }] as const;
+export const msutongLevels = [{ slug: 'so-cap', name: 'Sơ cấp' }, { slug: 'trung-cap', name: 'Trung cấp' }, { slug: 'cao-cap', name: 'Cao cấp' }] as const;
 export const isMsutongLevel = (level: string) => msutongLevels.some(item => item.slug === level);
 export const msutongBooks = [
   { slug: 'quyen-1', name: 'Quyển 1', number: 1 },

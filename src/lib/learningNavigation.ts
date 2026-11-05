@@ -1,4 +1,4 @@
-import { msutongBooks, isMsutongLevel, parseMsutongLessonId } from './msutongSelection';
+import { msutongBooks, msutongLevels, isMsutongLevel, parseMsutongLessonId } from './msutongSelection';
 import { BookOpen, BookMarked, Music2, Newspaper, ChartNoAxesCombined, PenLine, Mic2, Layers3, MessageCircle, LibraryBig, Gamepad2, type LucideIcon } from 'lucide-react';
 import type { LearningLanguage } from './auth/navigation';
 
@@ -52,7 +52,7 @@ export function describeRecentLesson(path: string, language: LearningLanguage): 
       if (!label || !isMsutongLevel(level) || !ids.length) return null;
       const bookNames = msutongBooks.filter(book => ids.some(id => parseMsutongLessonId(id)?.bookSlug === book.slug)).map(book => book.name).join(', ');
       const params = new URLSearchParams({ level, lessonIds: ids.join(','), books: bookNames });
-      return { href: `${pathname}?${params}`, label: `Msutong · ${level === 'trung-cap' ? 'Trung cấp · ' : ''}${bookNames} · ${label}` };
+      return { href: `${pathname}?${params}`, label: `Msutong · ${level !== 'so-cap' ? `${msutongLevels.find(item => item.slug === level)!.name} · ` : ''}${bookNames} · ${label}` };
     }
   } else if (/^\/cantonese\/(lessons|practice|review)\/[a-zA-Z0-9_-]+(\/[a-z-]+)?$/.test(pathname)) {
     return { href: pathname, label: pathname.includes('/lessons/') ? 'Bài học Quảng Đông gần đây' : 'Bài luyện Quảng Đông gần đây' };

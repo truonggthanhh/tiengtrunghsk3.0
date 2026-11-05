@@ -103,3 +103,9 @@ The compressed PDFs were subsequently received successfully (587 scanned pages).
 ## Msutong intermediate catalog and flashcard recall
 
 The Mandarin flashcard front no longer reveals pinyin; its answer face respects the existing pinyin toggle. The intermediate catalog adds 1,076 entries across 40 lessons and a separate level selector with level-preserving activity/resume URLs. All 1,072 appendix entries were transcribed from page images; four additional lesson-table names were added. Vietnamese meanings are editorial glosses and pinyin is dictionary-assisted with reviewed overrides. See [scope and reconstruction](docs/msutong/INTERMEDIATE.md) and [audit](docs/msutong/intermediate-data-audit.json).
+
+## Msutong advanced catalog
+
+Added 1,515 cards across four advanced books and 40 lessons, with every one of the 240 vocabulary tables visually transcribed (1,410 entries including constituent rows). Another 107 appendix source rows supplement or corroborate the lesson tables; every source occurrence is retained. Book 2 keeps its original English glosses and labels Vietnamese translations, while index-only Vietnamese glosses are editorial. See [scope and reproduction](docs/msutong/ADVANCED.md) and [table coverage audit](docs/msutong/advanced-data-audit.json).
+
+Three-level activity selection, CSV downloads, flashcard citations, and resume labels now include advanced. Pronunciation skips placeholder patterns and wraps long entries. Validation: all three data audits, lint, typecheck, 23 Node tests, and 61 Chromium cases at 1440px and 320px passed. Browser tests use mocked Supabase clients.

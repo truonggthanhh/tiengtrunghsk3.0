@@ -42,3 +42,7 @@ Kết quả kiểm tra: audit không thiếu dòng nguồn, lint/typecheck/build
 ## Bổ sung trung cấp và mặt thẻ
 
 Đã thêm cấp Trung cấp riêng (4 quyển, 40 bài, 1.076 mục). Xem [nguồn và phạm vi trung cấp](docs/msutong/INTERMEDIATE.md). Mặt trước flashcard tiếng Trung hiện chỉ có chữ Hán và nút nghe; pinyin chuyển về mặt đáp án theo thiết lập hiển thị.
+
+## Bộ cao cấp
+
+Đã thêm 4 quyển cao cấp (40 bài), đối chiếu đủ 240 bảng từ vựng và bổ sung từ phụ lục cuối sách: 1.515 thẻ, giữ 1.517 vị trí nguồn. Xem [phạm vi và dữ liệu cao cấp](docs/msutong/ADVANCED.md), [kiểm tra từng bảng](docs/msutong/advanced-data-audit.json). Trang chọn cấp độ và trang chủ có đủ 12 quyển thuộc ba cấp.
