@@ -1,3 +1,4 @@
+import { useLessonAccess, canOpenLesson } from '@/cantonese/hooks/useLessonAccess';
 import { oneRelation } from '@/lib/relations';
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
@@ -68,9 +69,11 @@ const LessonDetail = () => {
   const { session, isLoading: isSessionLoading } = useSession();
   const { isAdmin, isLoadingProfile } = useProfile();
 
+  const lessonAccess = useLessonAccess(session?.user.id, !isSessionLoading);
+
   // 1. Fetch lesson details with course info
   const { data: lesson, isLoading: isLoadingLesson, error: errorLesson } = useQuery({
-    queryKey: ['cantonese', 'lesson', lessonId],
+    queryKey: ['cantonese', 'lesson', lessonId, session?.user.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('lessons')
@@ -84,7 +87,7 @@ const LessonDetail = () => {
   });
 
   // Check user's course access
-  const { data: userCourseAccess } = useQuery({
+  const { data: userCourseAccess, isLoading: isLoadingCourseAccess, error: errorCourseAccess } = useQuery({
     queryKey: ['cantonese', 'user-course-access', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return [];
@@ -102,18 +105,8 @@ const LessonDetail = () => {
   const hasAccess = React.useMemo(() => {
     if (!lesson) return false;
 
-    // REQUIRE LOGIN: If user is not logged in, no access to any lessons
-    if (!session?.user?.id) return false;
-
-    // If lesson has no course, accessible to all logged-in users
-    if (!lesson.course_id || !lesson.courses) return true;
-
-    // If course is free, accessible to all logged-in users
-    if (lesson.courses.is_free) return true;
-
-    // If course is paid, check if user has access
-    return userCourseAccess?.includes(lesson.course_id);
-  }, [lesson, userCourseAccess, session]);
+    return canOpenLesson({ ...lesson, id: lessonId! }, session?.user.id, isAdmin, userCourseAccess, lessonAccess.data);
+  }, [lesson, lessonId, userCourseAccess, lessonAccess.data, session?.user.id, isAdmin]);
 
   // 2. Derive queryUserId once lesson is loaded
   // ALWAYS use lesson.user_id because exercises belong to the lesson creator
@@ -170,7 +163,7 @@ const LessonDetail = () => {
     // ... (CSV export logic remains the same)
   };
 
-  if (isSessionLoading || isLoadingLesson || isLoadingExercises || isLoadingSessions || isLoadingProfile || isLoadingReviewTests) {
+  if (lessonAccess.isLoading || isLoadingCourseAccess || isSessionLoading || isLoadingLesson || isLoadingExercises || isLoadingSessions || isLoadingProfile || isLoadingReviewTests) {
     return (
       <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white flex items-center justify-center">
         <div className="text-center">
@@ -181,7 +174,7 @@ const LessonDetail = () => {
     );
   }
 
-  if (errorLesson || errorExercises || errorSessions) {
+  if (lessonAccess.error || errorCourseAccess || errorLesson || errorExercises || errorSessions) {
     return (
       <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white flex items-center justify-center">
         <div className="text-center p-6">

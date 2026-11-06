@@ -120,3 +120,9 @@ Imported 4,796 community word-list entries: Boya Elementary II second edition (8
 Xiehanzi.com remains inaccessible through the environment proxy (403 CONNECT); these lists come from public GitHub community repositories, not a direct clone of Xiehanzi. Source hashes, corrections, scope and licensing are recorded in [the library documentation](docs/textbooks/README.md). Boya's original CSV and GPL license are distributed with its derived export. No production database updates are needed.
 
 Validation: rebuilding both data libraries and the coverage audit passed, all three PDF audits passed with unchanged catalog counts (812 / 1,076 / 1,515), lint and TypeScript passed, 25 Node tests passed, and 65 Chromium cases passed at both 1440px and 320px. Production build passed (Vite still reports large bundle chunks). Browser backend responses are mocked; AI-provider requests were not live-tested.
+
+## Cantonese assigned lesson visibility
+
+The library filtered paid-course lessons using only course grants, dropping lessons granted individually by `set_user_lesson_access`. Both the library and detail page now consult the existing `user_lesson_access` records with account-scoped cache keys. They share permission evaluation for direct grants, course grants, free lessons, creators and admins. Detail waits for grants before denying access and reports lookup errors; the library retry refreshes lesson grants too. Supabase RLS remains unchanged and authoritative.
+
+Validation: lint, TypeScript, 25 Node tests, and 66 Chromium cases at 1440px and 320px passed. The library regression includes a directly assigned lesson inside an otherwise inaccessible course, and keeps an unrelated lesson hidden. Additional assertions cover creators, admins and logged-out users. Browser responses are mocked; live account data was not inspected.

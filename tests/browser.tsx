@@ -1,3 +1,5 @@
+import { canOpenLesson } from '../src/cantonese/hooks/useLessonAccess';
+import { ProfileContext as CantoneseProfileContext } from '../src/cantonese/components/providers/ProfileProvider.shared';
 import SentenceChoicePage from '../src/pages/msutong/SentenceChoicePage';
 import SentenceScramblePage from '../src/pages/msutong/SentenceScramblePage';
 import MsutongReadingPage from '../src/pages/msutong/MsutongReadingComprehensionPage';
@@ -554,26 +556,36 @@ await check('Recent lesson is scoped to the current account and rejects invalid 
   render('B'); await delay(25);
   assert(host.querySelector('[data-recent]')?.textContent === 'no-recent-lesson', 'A new account must never inherit the previous account destination');
 });
+await check('Cantonese lesson permissions include direct grants, owners and admins without unlocking unrelated lessons', async () => {
+  const lesson = { id: 'assigned', user_id: 'teacher', course_id: 'paid', courses: { is_free: false } };
+  assert(canOpenLesson(lesson, 'reader', false, [], [{ lesson_id: 'assigned' }]), 'Direct lesson grants must work independently of course grants');
+  assert(canOpenLesson(lesson, 'teacher', false), 'Creators can open their own lessons');
+  assert(canOpenLesson(lesson, 'admin', true), 'Admins can open lessons');
+  assert(!canOpenLesson(lesson, 'other', false), 'Unassigned accounts stay restricted');
+  assert(!canOpenLesson(lesson, undefined, true), 'Logged-out sessions cannot open lessons');
+});
 await check('Cantonese lesson library respects course access and supports accent-insensitive search and list view', async () => {
   const items = [
     { id: 'one', title: 'Chào buổi sáng', description: 'Lời chào', course_id: 'free', courses: { id: 'free', name: 'Nhập môn', is_free: true } },
     { id: 'two', title: 'Đi chợ', description: 'Mua sắm', course_id: 'paid', courses: { id: 'paid', name: 'Hội thoại', is_free: false } },
+    { id: 'assigned', title: 'Bài được cấp riêng', description: '', course_id: 'other', courses: { id: 'other', name: 'Khác', is_free: false } },
     { id: 'locked', title: 'Unavailable lesson', description: '', course_id: 'other', courses: { id: 'other', name: 'Khác', is_free: false } },
   ];
   cantonese.from = ((table: string) => {
-    const builder = new Proxy({}, { get: (_target, name) => name === 'then' ? (resolve: (value: unknown) => void) => setTimeout(() => resolve({ data: table === 'lessons' ? items : [{ course_id: 'paid' }], error: null }), 20) : () => builder });
+    const builder = new Proxy({}, { get: (_target, name) => name === 'then' ? (resolve: (value: unknown) => void) => setTimeout(() => resolve({ data: table === 'lessons' ? items : table === 'user_lesson_access' ? [{ lesson_id: 'assigned' }] : [{ course_id: 'paid' }], error: null }), 20) : () => builder });
     return builder;
   }) as never;
   try {
-    root.render(<QueryClientProvider client={client()}><MemoryRouter><CantoneseSessionContext.Provider value={{ session: fakeSession('reader'), isLoading: false }}><CantoneseLessons /></CantoneseSessionContext.Provider></MemoryRouter></QueryClientProvider>);
-    await until(() => host.querySelectorAll('.library-lesson').length === 2);
+    root.render(<QueryClientProvider client={client()}><MemoryRouter><CantoneseSessionContext.Provider value={{ session: fakeSession('reader'), isLoading: false }}><CantoneseProfileContext.Provider value={{ profile: null, isLoadingProfile: false, isAdmin: false }}><CantoneseLessons /></CantoneseProfileContext.Provider></CantoneseSessionContext.Provider></MemoryRouter></QueryClientProvider>);
+    await until(() => host.querySelectorAll('.library-lesson').length === 3);
+    assert(host.textContent?.includes('Bài được cấp riêng'), 'Directly assigned lessons must remain visible without course access');
     assert(!host.textContent?.includes('Unavailable lesson'), 'Courses without access must remain excluded');
     setInput('[aria-label="Tìm bài học"]', 'chao buoi sang'); await delay(25);
     assert(host.querySelectorAll('.library-lesson').length === 1 && host.textContent?.includes('Chào buổi sáng'), 'Vietnamese search should ignore accents');
     setInput('[aria-label="Tìm bài học"]', 'di cho'); await delay(20);
     assert(host.querySelector<HTMLAnchorElement>('.library-lesson')?.pathname === '/cantonese/lessons/two', 'Search must also match titles beginning with uppercase Đ');
     setInput('[aria-label="Tìm bài học"]', 'nothing'); await delay(20); clickText('Xóa bộ lọc'); await delay(20);
-    assert(host.querySelectorAll('.library-lesson').length === 2, 'Reset must restore the accessible library');
+    assert(host.querySelectorAll('.library-lesson').length === 3, 'Reset must restore the accessible library');
     host.querySelector<HTMLButtonElement>('[aria-label="Xem dạng danh sách"]')!.click(); await delay(20);
     assert(host.querySelector('[aria-label="Xem dạng danh sách"]')?.getAttribute('aria-pressed') === 'true', 'View toggle must expose its selected state');
   } finally { mockClient(cantonese, 'cantonese'); }
