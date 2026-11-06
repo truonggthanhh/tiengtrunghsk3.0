@@ -1,0 +1,2227 @@
+{
+  "authoredSentences": 534,
+  "originalReadingPassages": 89,
+  "originalReadingQuestions": 178,
+  "communityVocabulary": 4796,
+  "catalogVocabulary": 8199,
+  "lessons": 277,
+  "coverage": [
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-1-lesson-1",
+      "words": 7,
+      "sentenceCompletion": 18,
+      "sentenceScramble": 12,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-1-lesson-2",
+      "words": 16,
+      "sentenceCompletion": 26,
+      "sentenceScramble": 13,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-1-lesson-3",
+      "words": 22,
+      "sentenceCompletion": 22,
+      "sentenceScramble": 17,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-1-lesson-4",
+      "words": 20,
+      "sentenceCompletion": 30,
+      "sentenceScramble": 19,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-1-lesson-5",
+      "words": 21,
+      "sentenceCompletion": 34,
+      "sentenceScramble": 20,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-1-lesson-6",
+      "words": 27,
+      "sentenceCompletion": 41,
+      "sentenceScramble": 21,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-1-lesson-7",
+      "words": 21,
+      "sentenceCompletion": 40,
+      "sentenceScramble": 16,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-1-lesson-8",
+      "words": 24,
+      "sentenceCompletion": 21,
+      "sentenceScramble": 13,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-1-lesson-9",
+      "words": 21,
+      "sentenceCompletion": 20,
+      "sentenceScramble": 12,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-1-lesson-10",
+      "words": 21,
+      "sentenceCompletion": 26,
+      "sentenceScramble": 15,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-2-lesson-1",
+      "words": 31,
+      "sentenceCompletion": 42,
+      "sentenceScramble": 21,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-2-lesson-2",
+      "words": 23,
+      "sentenceCompletion": 22,
+      "sentenceScramble": 16,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-2-lesson-3",
+      "words": 23,
+      "sentenceCompletion": 29,
+      "sentenceScramble": 15,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-2-lesson-4",
+      "words": 20,
+      "sentenceCompletion": 25,
+      "sentenceScramble": 16,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-2-lesson-5",
+      "words": 20,
+      "sentenceCompletion": 15,
+      "sentenceScramble": 8,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-2-lesson-6",
+      "words": 20,
+      "sentenceCompletion": 17,
+      "sentenceScramble": 13,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-2-lesson-7",
+      "words": 22,
+      "sentenceCompletion": 16,
+      "sentenceScramble": 14,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-2-lesson-8",
+      "words": 17,
+      "sentenceCompletion": 19,
+      "sentenceScramble": 14,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-2-lesson-9",
+      "words": 23,
+      "sentenceCompletion": 21,
+      "sentenceScramble": 20,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-2-lesson-10",
+      "words": 21,
+      "sentenceCompletion": 24,
+      "sentenceScramble": 23,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-3-lesson-1",
+      "words": 25,
+      "sentenceCompletion": 26,
+      "sentenceScramble": 22,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-3-lesson-2",
+      "words": 20,
+      "sentenceCompletion": 17,
+      "sentenceScramble": 15,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-3-lesson-3",
+      "words": 23,
+      "sentenceCompletion": 21,
+      "sentenceScramble": 18,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-3-lesson-4",
+      "words": 17,
+      "sentenceCompletion": 12,
+      "sentenceScramble": 12,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-3-lesson-5",
+      "words": 16,
+      "sentenceCompletion": 13,
+      "sentenceScramble": 13,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-3-lesson-6",
+      "words": 19,
+      "sentenceCompletion": 16,
+      "sentenceScramble": 13,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-3-lesson-7",
+      "words": 20,
+      "sentenceCompletion": 17,
+      "sentenceScramble": 14,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-3-lesson-8",
+      "words": 18,
+      "sentenceCompletion": 22,
+      "sentenceScramble": 16,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-3-lesson-9",
+      "words": 23,
+      "sentenceCompletion": 28,
+      "sentenceScramble": 21,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-3-lesson-10",
+      "words": 17,
+      "sentenceCompletion": 22,
+      "sentenceScramble": 21,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-4-lesson-1",
+      "words": 22,
+      "sentenceCompletion": 23,
+      "sentenceScramble": 16,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-4-lesson-2",
+      "words": 18,
+      "sentenceCompletion": 15,
+      "sentenceScramble": 12,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-4-lesson-3",
+      "words": 20,
+      "sentenceCompletion": 21,
+      "sentenceScramble": 15,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-4-lesson-4",
+      "words": 22,
+      "sentenceCompletion": 15,
+      "sentenceScramble": 14,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-4-lesson-5",
+      "words": 20,
+      "sentenceCompletion": 18,
+      "sentenceScramble": 13,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-4-lesson-6",
+      "words": 20,
+      "sentenceCompletion": 15,
+      "sentenceScramble": 13,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-4-lesson-7",
+      "words": 21,
+      "sentenceCompletion": 19,
+      "sentenceScramble": 16,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-4-lesson-8",
+      "words": 18,
+      "sentenceCompletion": 18,
+      "sentenceScramble": 13,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-4-lesson-9",
+      "words": 16,
+      "sentenceCompletion": 15,
+      "sentenceScramble": 12,
+      "readings": 1
+    },
+    {
+      "level": "so-cap",
+      "lessonId": "quyen-4-lesson-10",
+      "words": 17,
+      "sentenceCompletion": 20,
+      "sentenceScramble": 15,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-1-lesson-10",
+      "words": 36,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-1-lesson-3",
+      "words": 22,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-1-lesson-2",
+      "words": 23,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-1-lesson-6",
+      "words": 31,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-1-lesson-7",
+      "words": 26,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-1-lesson-4",
+      "words": 21,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-1-lesson-5",
+      "words": 29,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-1-lesson-8",
+      "words": 25,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-1-lesson-1",
+      "words": 31,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-1-lesson-9",
+      "words": 29,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-2-lesson-5",
+      "words": 33,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-2-lesson-10",
+      "words": 30,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-2-lesson-3",
+      "words": 31,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-2-lesson-9",
+      "words": 32,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-2-lesson-6",
+      "words": 31,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-2-lesson-1",
+      "words": 46,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-2-lesson-8",
+      "words": 34,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-2-lesson-7",
+      "words": 31,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-2-lesson-4",
+      "words": 40,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-2-lesson-2",
+      "words": 47,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-3-lesson-5",
+      "words": 25,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-3-lesson-7",
+      "words": 20,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-3-lesson-4",
+      "words": 21,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-3-lesson-3",
+      "words": 28,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-3-lesson-2",
+      "words": 23,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-3-lesson-10",
+      "words": 29,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-3-lesson-6",
+      "words": 23,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-3-lesson-8",
+      "words": 22,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-3-lesson-1",
+      "words": 26,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-3-lesson-9",
+      "words": 22,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-4-lesson-4",
+      "words": 20,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-4-lesson-7",
+      "words": 21,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-4-lesson-2",
+      "words": 20,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-4-lesson-1",
+      "words": 22,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-4-lesson-3",
+      "words": 21,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-4-lesson-9",
+      "words": 20,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-4-lesson-8",
+      "words": 24,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-4-lesson-6",
+      "words": 18,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-4-lesson-10",
+      "words": 24,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "trung-cap",
+      "lessonId": "quyen-4-lesson-5",
+      "words": 19,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-1-lesson-1",
+      "words": 41,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-1-lesson-2",
+      "words": 42,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-1-lesson-3",
+      "words": 38,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-1-lesson-4",
+      "words": 54,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-1-lesson-5",
+      "words": 46,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-1-lesson-6",
+      "words": 40,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-1-lesson-7",
+      "words": 42,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-1-lesson-8",
+      "words": 52,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-1-lesson-9",
+      "words": 44,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-1-lesson-10",
+      "words": 44,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-2-lesson-1",
+      "words": 36,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-2-lesson-2",
+      "words": 41,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-2-lesson-3",
+      "words": 36,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-2-lesson-4",
+      "words": 44,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-2-lesson-5",
+      "words": 37,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-2-lesson-6",
+      "words": 46,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-2-lesson-7",
+      "words": 40,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-2-lesson-8",
+      "words": 40,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-2-lesson-9",
+      "words": 46,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-2-lesson-10",
+      "words": 42,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-3-lesson-1",
+      "words": 40,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-3-lesson-2",
+      "words": 35,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-3-lesson-3",
+      "words": 38,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-3-lesson-4",
+      "words": 37,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-3-lesson-5",
+      "words": 35,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-3-lesson-6",
+      "words": 34,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-3-lesson-7",
+      "words": 32,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-3-lesson-8",
+      "words": 33,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-3-lesson-9",
+      "words": 32,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-3-lesson-10",
+      "words": 22,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-4-lesson-1",
+      "words": 29,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-4-lesson-2",
+      "words": 36,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-4-lesson-3",
+      "words": 37,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-4-lesson-4",
+      "words": 31,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-4-lesson-5",
+      "words": 29,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-4-lesson-6",
+      "words": 34,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-4-lesson-7",
+      "words": 31,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-4-lesson-8",
+      "words": 34,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-4-lesson-9",
+      "words": 36,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "cao-cap",
+      "lessonId": "quyen-4-lesson-10",
+      "words": 29,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-1",
+      "words": 27,
+      "sentenceCompletion": 33,
+      "sentenceScramble": 33,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-2",
+      "words": 30,
+      "sentenceCompletion": 43,
+      "sentenceScramble": 42,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-3",
+      "words": 34,
+      "sentenceCompletion": 43,
+      "sentenceScramble": 38,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-4",
+      "words": 29,
+      "sentenceCompletion": 16,
+      "sentenceScramble": 16,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-5",
+      "words": 25,
+      "sentenceCompletion": 22,
+      "sentenceScramble": 22,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-6",
+      "words": 31,
+      "sentenceCompletion": 24,
+      "sentenceScramble": 24,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-7",
+      "words": 32,
+      "sentenceCompletion": 28,
+      "sentenceScramble": 28,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-8",
+      "words": 28,
+      "sentenceCompletion": 20,
+      "sentenceScramble": 20,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-9",
+      "words": 31,
+      "sentenceCompletion": 25,
+      "sentenceScramble": 25,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-10",
+      "words": 35,
+      "sentenceCompletion": 21,
+      "sentenceScramble": 21,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-11",
+      "words": 39,
+      "sentenceCompletion": 13,
+      "sentenceScramble": 13,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-12",
+      "words": 34,
+      "sentenceCompletion": 32,
+      "sentenceScramble": 32,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-13",
+      "words": 29,
+      "sentenceCompletion": 29,
+      "sentenceScramble": 29,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-14",
+      "words": 37,
+      "sentenceCompletion": 30,
+      "sentenceScramble": 30,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-15",
+      "words": 36,
+      "sentenceCompletion": 16,
+      "sentenceScramble": 16,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-16",
+      "words": 35,
+      "sentenceCompletion": 17,
+      "sentenceScramble": 17,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-17",
+      "words": 40,
+      "sentenceCompletion": 20,
+      "sentenceScramble": 20,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-18",
+      "words": 28,
+      "sentenceCompletion": 29,
+      "sentenceScramble": 29,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-19",
+      "words": 35,
+      "sentenceCompletion": 26,
+      "sentenceScramble": 26,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-20",
+      "words": 38,
+      "sentenceCompletion": 22,
+      "sentenceScramble": 22,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-21",
+      "words": 36,
+      "sentenceCompletion": 9,
+      "sentenceScramble": 9,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-22",
+      "words": 35,
+      "sentenceCompletion": 34,
+      "sentenceScramble": 34,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-23",
+      "words": 47,
+      "sentenceCompletion": 24,
+      "sentenceScramble": 24,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-24",
+      "words": 39,
+      "sentenceCompletion": 23,
+      "sentenceScramble": 23,
+      "readings": 0
+    },
+    {
+      "level": "boya",
+      "lessonId": "quyen-1-lesson-25",
+      "words": 26,
+      "sentenceCompletion": 15,
+      "sentenceScramble": 15,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-1",
+      "words": 30,
+      "sentenceCompletion": 34,
+      "sentenceScramble": 34,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-2",
+      "words": 32,
+      "sentenceCompletion": 37,
+      "sentenceScramble": 34,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-3",
+      "words": 37,
+      "sentenceCompletion": 48,
+      "sentenceScramble": 44,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-4",
+      "words": 29,
+      "sentenceCompletion": 22,
+      "sentenceScramble": 22,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-5",
+      "words": 41,
+      "sentenceCompletion": 47,
+      "sentenceScramble": 47,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-6",
+      "words": 47,
+      "sentenceCompletion": 51,
+      "sentenceScramble": 50,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-7",
+      "words": 33,
+      "sentenceCompletion": 38,
+      "sentenceScramble": 37,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-8",
+      "words": 58,
+      "sentenceCompletion": 30,
+      "sentenceScramble": 30,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-9",
+      "words": 40,
+      "sentenceCompletion": 21,
+      "sentenceScramble": 21,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-10",
+      "words": 54,
+      "sentenceCompletion": 20,
+      "sentenceScramble": 20,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-11",
+      "words": 34,
+      "sentenceCompletion": 19,
+      "sentenceScramble": 19,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-12",
+      "words": 54,
+      "sentenceCompletion": 29,
+      "sentenceScramble": 29,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-13",
+      "words": 35,
+      "sentenceCompletion": 9,
+      "sentenceScramble": 9,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-14",
+      "words": 64,
+      "sentenceCompletion": 33,
+      "sentenceScramble": 33,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-15",
+      "words": 48,
+      "sentenceCompletion": 38,
+      "sentenceScramble": 38,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-16",
+      "words": 41,
+      "sentenceCompletion": 25,
+      "sentenceScramble": 23,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-17",
+      "words": 57,
+      "sentenceCompletion": 39,
+      "sentenceScramble": 39,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-18",
+      "words": 34,
+      "sentenceCompletion": 28,
+      "sentenceScramble": 28,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-19",
+      "words": 59,
+      "sentenceCompletion": 33,
+      "sentenceScramble": 32,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-20",
+      "words": 37,
+      "sentenceCompletion": 28,
+      "sentenceScramble": 28,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-21",
+      "words": 29,
+      "sentenceCompletion": 12,
+      "sentenceScramble": 12,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-22",
+      "words": 30,
+      "sentenceCompletion": 22,
+      "sentenceScramble": 21,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-23",
+      "words": 38,
+      "sentenceCompletion": 16,
+      "sentenceScramble": 16,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-24",
+      "words": 38,
+      "sentenceCompletion": 15,
+      "sentenceScramble": 15,
+      "readings": 0
+    },
+    {
+      "level": "han-ngu",
+      "lessonId": "quyen-1-lesson-25",
+      "words": 47,
+      "sentenceCompletion": 36,
+      "sentenceScramble": 36,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-1-lesson-12",
+      "words": 16,
+      "sentenceCompletion": 29,
+      "sentenceScramble": 28,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-1-lesson-5",
+      "words": 20,
+      "sentenceCompletion": 27,
+      "sentenceScramble": 24,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-1-lesson-9",
+      "words": 14,
+      "sentenceCompletion": 25,
+      "sentenceScramble": 24,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-1-lesson-8",
+      "words": 15,
+      "sentenceCompletion": 34,
+      "sentenceScramble": 29,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-1-lesson-10",
+      "words": 15,
+      "sentenceCompletion": 19,
+      "sentenceScramble": 19,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-1-lesson-2",
+      "words": 4,
+      "sentenceCompletion": 9,
+      "sentenceScramble": 8,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-1-lesson-6",
+      "words": 12,
+      "sentenceCompletion": 24,
+      "sentenceScramble": 22,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-1-lesson-15",
+      "words": 9,
+      "sentenceCompletion": 16,
+      "sentenceScramble": 16,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-1-lesson-13",
+      "words": 12,
+      "sentenceCompletion": 20,
+      "sentenceScramble": 20,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-1-lesson-4",
+      "words": 10,
+      "sentenceCompletion": 17,
+      "sentenceScramble": 17,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-1-lesson-11",
+      "words": 12,
+      "sentenceCompletion": 21,
+      "sentenceScramble": 19,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-1-lesson-14",
+      "words": 18,
+      "sentenceCompletion": 24,
+      "sentenceScramble": 23,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-1-lesson-1",
+      "words": 6,
+      "sentenceCompletion": 13,
+      "sentenceScramble": 11,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-1-lesson-7",
+      "words": 12,
+      "sentenceCompletion": 26,
+      "sentenceScramble": 23,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-1-lesson-3",
+      "words": 12,
+      "sentenceCompletion": 24,
+      "sentenceScramble": 16,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-2-lesson-5",
+      "words": 14,
+      "sentenceCompletion": 26,
+      "sentenceScramble": 25,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-2-lesson-8",
+      "words": 10,
+      "sentenceCompletion": 18,
+      "sentenceScramble": 18,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-2-lesson-14",
+      "words": 7,
+      "sentenceCompletion": 7,
+      "sentenceScramble": 7,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-2-lesson-10",
+      "words": 9,
+      "sentenceCompletion": 16,
+      "sentenceScramble": 16,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-2-lesson-3",
+      "words": 16,
+      "sentenceCompletion": 23,
+      "sentenceScramble": 23,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-2-lesson-11",
+      "words": 11,
+      "sentenceCompletion": 15,
+      "sentenceScramble": 15,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-2-lesson-13",
+      "words": 12,
+      "sentenceCompletion": 17,
+      "sentenceScramble": 17,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-2-lesson-4",
+      "words": 13,
+      "sentenceCompletion": 25,
+      "sentenceScramble": 24,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-2-lesson-2",
+      "words": 15,
+      "sentenceCompletion": 25,
+      "sentenceScramble": 25,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-2-lesson-12",
+      "words": 9,
+      "sentenceCompletion": 15,
+      "sentenceScramble": 15,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-2-lesson-9",
+      "words": 11,
+      "sentenceCompletion": 16,
+      "sentenceScramble": 16,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-2-lesson-6",
+      "words": 13,
+      "sentenceCompletion": 25,
+      "sentenceScramble": 24,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-2-lesson-15",
+      "words": 8,
+      "sentenceCompletion": 9,
+      "sentenceScramble": 9,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-2-lesson-7",
+      "words": 13,
+      "sentenceCompletion": 27,
+      "sentenceScramble": 27,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-2-lesson-1",
+      "words": 13,
+      "sentenceCompletion": 21,
+      "sentenceScramble": 21,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-14",
+      "words": 17,
+      "sentenceCompletion": 26,
+      "sentenceScramble": 26,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-1",
+      "words": 17,
+      "sentenceCompletion": 23,
+      "sentenceScramble": 23,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-10",
+      "words": 16,
+      "sentenceCompletion": 30,
+      "sentenceScramble": 29,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-17",
+      "words": 18,
+      "sentenceCompletion": 22,
+      "sentenceScramble": 22,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-8",
+      "words": 17,
+      "sentenceCompletion": 34,
+      "sentenceScramble": 34,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-2",
+      "words": 23,
+      "sentenceCompletion": 32,
+      "sentenceScramble": 32,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-9",
+      "words": 17,
+      "sentenceCompletion": 17,
+      "sentenceScramble": 17,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-7",
+      "words": 15,
+      "sentenceCompletion": 26,
+      "sentenceScramble": 26,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-6",
+      "words": 18,
+      "sentenceCompletion": 25,
+      "sentenceScramble": 25,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-12",
+      "words": 15,
+      "sentenceCompletion": 18,
+      "sentenceScramble": 18,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-20",
+      "words": 15,
+      "sentenceCompletion": 21,
+      "sentenceScramble": 21,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-16",
+      "words": 16,
+      "sentenceCompletion": 37,
+      "sentenceScramble": 36,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-4",
+      "words": 23,
+      "sentenceCompletion": 35,
+      "sentenceScramble": 35,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-11",
+      "words": 19,
+      "sentenceCompletion": 34,
+      "sentenceScramble": 34,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-18",
+      "words": 21,
+      "sentenceCompletion": 28,
+      "sentenceScramble": 28,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-5",
+      "words": 17,
+      "sentenceCompletion": 25,
+      "sentenceScramble": 25,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-3",
+      "words": 18,
+      "sentenceCompletion": 23,
+      "sentenceScramble": 23,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-15",
+      "words": 26,
+      "sentenceCompletion": 29,
+      "sentenceScramble": 28,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-19",
+      "words": 14,
+      "sentenceCompletion": 21,
+      "sentenceScramble": 21,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-3-lesson-13",
+      "words": 16,
+      "sentenceCompletion": 15,
+      "sentenceScramble": 15,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-4-lesson-1",
+      "words": 41,
+      "sentenceCompletion": 25,
+      "sentenceScramble": 25,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-4-lesson-3",
+      "words": 36,
+      "sentenceCompletion": 29,
+      "sentenceScramble": 29,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-4-lesson-4",
+      "words": 34,
+      "sentenceCompletion": 23,
+      "sentenceScramble": 23,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-4-lesson-6",
+      "words": 36,
+      "sentenceCompletion": 23,
+      "sentenceScramble": 23,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-4-lesson-10",
+      "words": 30,
+      "sentenceCompletion": 32,
+      "sentenceScramble": 32,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-4-lesson-2",
+      "words": 40,
+      "sentenceCompletion": 34,
+      "sentenceScramble": 34,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-4-lesson-5",
+      "words": 35,
+      "sentenceCompletion": 33,
+      "sentenceScramble": 33,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-4-lesson-9",
+      "words": 36,
+      "sentenceCompletion": 39,
+      "sentenceScramble": 39,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-4-lesson-7",
+      "words": 37,
+      "sentenceCompletion": 36,
+      "sentenceScramble": 36,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-4-lesson-8",
+      "words": 36,
+      "sentenceCompletion": 26,
+      "sentenceScramble": 26,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-4-lesson-999",
+      "words": 7,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 1
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-5-lesson-18",
+      "words": 37,
+      "sentenceCompletion": 22,
+      "sentenceScramble": 22,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-5-lesson-15",
+      "words": 32,
+      "sentenceCompletion": 44,
+      "sentenceScramble": 44,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-5-lesson-19",
+      "words": 35,
+      "sentenceCompletion": 32,
+      "sentenceScramble": 31,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-5-lesson-12",
+      "words": 37,
+      "sentenceCompletion": 19,
+      "sentenceScramble": 19,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-5-lesson-16",
+      "words": 34,
+      "sentenceCompletion": 32,
+      "sentenceScramble": 32,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-5-lesson-17",
+      "words": 42,
+      "sentenceCompletion": 44,
+      "sentenceScramble": 44,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-5-lesson-14",
+      "words": 36,
+      "sentenceCompletion": 29,
+      "sentenceScramble": 29,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-5-lesson-13",
+      "words": 37,
+      "sentenceCompletion": 31,
+      "sentenceScramble": 31,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-5-lesson-11",
+      "words": 37,
+      "sentenceCompletion": 24,
+      "sentenceScramble": 24,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-5-lesson-20",
+      "words": 35,
+      "sentenceCompletion": 40,
+      "sentenceScramble": 40,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-6-lesson-7",
+      "words": 48,
+      "sentenceCompletion": 22,
+      "sentenceScramble": 22,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-6-lesson-1",
+      "words": 38,
+      "sentenceCompletion": 13,
+      "sentenceScramble": 13,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-6-lesson-8",
+      "words": 43,
+      "sentenceCompletion": 21,
+      "sentenceScramble": 21,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-6-lesson-13",
+      "words": 39,
+      "sentenceCompletion": 20,
+      "sentenceScramble": 20,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-6-lesson-6",
+      "words": 43,
+      "sentenceCompletion": 14,
+      "sentenceScramble": 14,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-6-lesson-3",
+      "words": 44,
+      "sentenceCompletion": 13,
+      "sentenceScramble": 13,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-6-lesson-12",
+      "words": 48,
+      "sentenceCompletion": 15,
+      "sentenceScramble": 14,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-6-lesson-15",
+      "words": 45,
+      "sentenceCompletion": 11,
+      "sentenceScramble": 11,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-6-lesson-9",
+      "words": 45,
+      "sentenceCompletion": 11,
+      "sentenceScramble": 11,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-6-lesson-16",
+      "words": 41,
+      "sentenceCompletion": 20,
+      "sentenceScramble": 20,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-6-lesson-4",
+      "words": 44,
+      "sentenceCompletion": 8,
+      "sentenceScramble": 8,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-6-lesson-2",
+      "words": 39,
+      "sentenceCompletion": 17,
+      "sentenceScramble": 17,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-6-lesson-11",
+      "words": 45,
+      "sentenceCompletion": 18,
+      "sentenceScramble": 18,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-6-lesson-10",
+      "words": 42,
+      "sentenceCompletion": 16,
+      "sentenceScramble": 16,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-6-lesson-5",
+      "words": 51,
+      "sentenceCompletion": 19,
+      "sentenceScramble": 19,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-6-lesson-18",
+      "words": 40,
+      "sentenceCompletion": 14,
+      "sentenceScramble": 14,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-6-lesson-14",
+      "words": 42,
+      "sentenceCompletion": 19,
+      "sentenceScramble": 19,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-6-lesson-17",
+      "words": 36,
+      "sentenceCompletion": 12,
+      "sentenceScramble": 12,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-7-lesson-34",
+      "words": 34,
+      "sentenceCompletion": 6,
+      "sentenceScramble": 6,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-7-lesson-36",
+      "words": 38,
+      "sentenceCompletion": 8,
+      "sentenceScramble": 8,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-7-lesson-30",
+      "words": 36,
+      "sentenceCompletion": 16,
+      "sentenceScramble": 16,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-7-lesson-23",
+      "words": 45,
+      "sentenceCompletion": 16,
+      "sentenceScramble": 16,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-7-lesson-27",
+      "words": 34,
+      "sentenceCompletion": 14,
+      "sentenceScramble": 14,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-7-lesson-20",
+      "words": 38,
+      "sentenceCompletion": 21,
+      "sentenceScramble": 21,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-7-lesson-21",
+      "words": 44,
+      "sentenceCompletion": 8,
+      "sentenceScramble": 8,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-7-lesson-19",
+      "words": 44,
+      "sentenceCompletion": 11,
+      "sentenceScramble": 11,
+      "readings": 1
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-7-lesson-33",
+      "words": 40,
+      "sentenceCompletion": 13,
+      "sentenceScramble": 13,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-7-lesson-31",
+      "words": 29,
+      "sentenceCompletion": 7,
+      "sentenceScramble": 7,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-7-lesson-28",
+      "words": 46,
+      "sentenceCompletion": 13,
+      "sentenceScramble": 13,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-7-lesson-35",
+      "words": 35,
+      "sentenceCompletion": 12,
+      "sentenceScramble": 12,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-7-lesson-29",
+      "words": 37,
+      "sentenceCompletion": 21,
+      "sentenceScramble": 21,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-7-lesson-32",
+      "words": 39,
+      "sentenceCompletion": 7,
+      "sentenceScramble": 7,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-7-lesson-26",
+      "words": 37,
+      "sentenceCompletion": 9,
+      "sentenceScramble": 9,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-7-lesson-24",
+      "words": 40,
+      "sentenceCompletion": 14,
+      "sentenceScramble": 14,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-7-lesson-25",
+      "words": 40,
+      "sentenceCompletion": 11,
+      "sentenceScramble": 11,
+      "readings": 0
+    },
+    {
+      "level": "hsk-standard",
+      "lessonId": "quyen-7-lesson-22",
+      "words": 36,
+      "sentenceCompletion": 12,
+      "sentenceScramble": 12,
+      "readings": 0
+    }
+  ],
+  "errors": []
+}

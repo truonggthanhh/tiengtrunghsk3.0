@@ -12,6 +12,7 @@ export interface ReadingComprehensionPassage {
   title: string;
   passage: string;
   questions: ReadingComprehensionQuestion[];
+  source?: string;
 }
 
 export const msutongReadingComprehension: ReadingComprehensionPassage[] = [

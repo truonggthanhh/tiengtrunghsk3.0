@@ -7,7 +7,7 @@ export const msutongBooks = [
   { slug: 'quyen-4', name: 'Quyển 4', number: 4 },
 ] as const;
 export function parseMsutongLessonId(value: string) {
-  const match = /^quyen-([1-4])-lesson-([1-9]\d{0,2})$/.exec(value);
+  const match = /^quyen-([1-9])-lesson-([1-9]\d{0,2})$/.exec(value);
   return match ? { bookSlug: `quyen-${match[1]}`, lessonNumber: Number(match[2]) } : null;
 }
 export function msutongBookUrl(bookSlug: string, level = 'so-cap') {

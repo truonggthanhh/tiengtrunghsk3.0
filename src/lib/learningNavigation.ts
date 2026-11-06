@@ -1,4 +1,5 @@
-import { msutongBooks, msutongLevels, isMsutongLevel, parseMsutongLessonId } from './msutongSelection';
+import { curriculumBooks, curriculumTitle, isTextbookLevel, isCurriculumLessonId } from './textbookCatalog';
+import { isMsutongLevel, parseMsutongLessonId } from './msutongSelection';
 import { BookOpen, BookMarked, Music2, Newspaper, ChartNoAxesCombined, PenLine, Mic2, Layers3, MessageCircle, LibraryBig, Gamepad2, type LucideIcon } from 'lucide-react';
 import type { LearningLanguage } from './auth/navigation';
 
@@ -48,11 +49,11 @@ export function describeRecentLesson(path: string, language: LearningLanguage): 
       const label = msutong[1] === 'reading-comprehension' ? 'Đọc hiểu' : activity?.label;
       const url = new URL(path, 'https://app.invalid');
       const level = url.searchParams.get('level') ?? 'so-cap';
-      const ids = [...new Set((url.searchParams.get('lessonIds') ?? '').split(',').filter(id => parseMsutongLessonId(id)))];
-      if (!label || !isMsutongLevel(level) || !ids.length) return null;
-      const bookNames = msutongBooks.filter(book => ids.some(id => parseMsutongLessonId(id)?.bookSlug === book.slug)).map(book => book.name).join(', ');
+      const ids = [...new Set((url.searchParams.get('lessonIds') ?? '').split(',').filter(id => isCurriculumLessonId(level, id)))];
+      if (!label || (!isMsutongLevel(level) && !isTextbookLevel(level)) || !ids.length) return null;
+      const bookNames = curriculumBooks(level).filter(book => ids.some(id => parseMsutongLessonId(id)?.bookSlug === book.slug)).map(book => book.name).join(', ');
       const params = new URLSearchParams({ level, lessonIds: ids.join(','), books: bookNames });
-      return { href: `${pathname}?${params}`, label: `Msutong · ${level !== 'so-cap' ? `${msutongLevels.find(item => item.slug === level)!.name} · ` : ''}${bookNames} · ${label}` };
+      return { href: `${pathname}?${params}`, label: `${curriculumTitle(level)} · ${bookNames} · ${label}` };
     }
   } else if (/^\/cantonese\/(lessons|practice|review)\/[a-zA-Z0-9_-]+(\/[a-z-]+)?$/.test(pathname)) {
     return { href: pathname, label: pathname.includes('/lessons/') ? 'Bài học Quảng Đông gần đây' : 'Bài luyện Quảng Đông gần đây' };

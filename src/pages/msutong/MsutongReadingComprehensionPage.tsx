@@ -1,3 +1,4 @@
+import { curriculumTitle } from '@/lib/textbookCatalog';
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -175,7 +176,7 @@ const MsutongReadingComprehensionPage = () => {
         <div className="w-full max-w-3xl bg-white/90 backdrop-blur-lg p-6 md:p-8 rounded-xl shadow-2xl border-0">
           <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold flex items-center justify-center gap-2">
-              <BookText className="h-7 w-7 text-primary" /> Đọc hiểu (Msutong)
+              <BookText className="h-7 w-7 text-primary" /> Đọc hiểu ({curriculumTitle(level)})
             </h1>
             <p className="text-muted-foreground">
               {currentPassage.title} (Bài {currentPassage.lesson}, Quyển {currentPassage.bookSlug.replace('quyen-', '')})
@@ -187,7 +188,7 @@ const MsutongReadingComprehensionPage = () => {
               <Card className="mb-8 shadow-md bg-gradient-ocean text-white border-0">
                 <CardHeader>
                   <CardTitle className="text-2xl text-white">{currentPassage.title}</CardTitle>
-                  <CardDescription className="text-white/90">Đọc kỹ đoạn văn sau:</CardDescription>
+                  <CardDescription className="text-white/90">Đọc kỹ đoạn văn luyện tập bổ sung sau:</CardDescription>
                   {showPinyin && (
                     <p className="text-sm text-white/70 italic mt-2">
                       💡 Bài đọc hiểu tập trung vào kỹ năng đọc - Pinyin không được cung cấp
@@ -288,4 +289,7 @@ const MsutongReadingComprehensionPage = () => {
   );
 };
 
-export default MsutongReadingComprehensionPage;
+export default function SelectedLessonActivity() {
+  const [params] = useSearchParams();
+  return <MsutongReadingComprehensionPage key={`${params.get('level') ?? 'so-cap'}:${params.get('lessonIds') ?? ''}`} />;
+}

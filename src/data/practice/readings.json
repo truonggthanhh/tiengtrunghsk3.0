@@ -1,0 +1,2939 @@
+[
+  {
+    "id": 8001001,
+    "level": "so-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 1,
+    "title": "Chào thầy cô",
+    "passage": "老师，您好！你好，我是新学生。您是我们的老师吗？你们好，请坐。今天的汉语课很好。王老师在教室里。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Người kể đang ở đâu?",
+        "options": [
+          "Trong bệnh viện",
+          "Trên xe buýt",
+          "Trong lớp học",
+          "Ở sân bay"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Chào thầy cô”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “老师” mang nghĩa nào?",
+        "options": [
+          "tốt, đẹp, hay",
+          "xưng hô tôn trọng",
+          "thầy giáo, cô giáo",
+          "anh, chị, bạn,…"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Em chào thầy cô ạ!"
+      }
+    ]
+  },
+  {
+    "id": 8001002,
+    "level": "so-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 2,
+    "title": "Bạn cùng lớp mới",
+    "passage": "我的名字是小林。他叫小王。他是中国人。你的名字是什么？我和他是同学。今天，我们是新同学了。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Bạn mới đến từ nước nào?",
+        "options": [
+          "Thái Lan",
+          "Trung Quốc",
+          "Pháp",
+          "Nhật Bản"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Bạn cùng lớp mới”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “名字” mang nghĩa nào?",
+        "options": [
+          "thầy giáo, cô giáo",
+          "tên",
+          "anh, chị, bạn,…",
+          "tốt, đẹp, hay"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Tên tôi là Tiểu Lâm."
+      }
+    ]
+  },
+  {
+    "id": 8001003,
+    "level": "so-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 3,
+    "title": "Gặp thầy mới",
+    "passage": "请问，您贵姓？老师说他姓李。这是老师的名片。我很高兴。认识新老师，我很高兴。李先生也是我们的汉语老师。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Người kể cảm thấy thế nào?",
+        "options": [
+          "Vui khi làm quen",
+          "Tức giận vì mất đồ",
+          "Lo bị trễ máy bay",
+          "Buồn vì nghỉ học"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Gặp thầy mới”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “请问” mang nghĩa nào?",
+        "options": [
+          "xin hỏi",
+          "anh, chị, bạn,…",
+          "tốt, đẹp, hay",
+          "thầy giáo, cô giáo"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Xin hỏi thầy mang họ gì ạ?"
+      }
+    ]
+  },
+  {
+    "id": 8001004,
+    "level": "so-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 4,
+    "title": "Hỏi đường",
+    "passage": "师傅，请问去人民广场怎么走？人民广场离这里不远。地铁站很近。去那里要多少钱？司机说要二十块。我说谢谢，然后上车。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Người kể muốn đến đâu?",
+        "options": [
+          "Bệnh viện",
+          "Bưu điện",
+          "Trường học",
+          "Quảng trường Nhân dân"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Hỏi đường”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “师傅” mang nghĩa nào?",
+        "options": [
+          "anh, chị, bạn,…",
+          "tốt, đẹp, hay",
+          "thầy giáo, cô giáo",
+          "sư phụ, thầy"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Bác ơi, xin hỏi đi Quảng trường Nhân dân thế nào?"
+      }
+    ]
+  },
+  {
+    "id": 8001005,
+    "level": "so-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 5,
+    "title": "Bữa trưa",
+    "passage": "中午，我很饿。我要一碗米饭。朋友要一盘牛肉。我们还要一盘青菜。我想喝一杯茶。菜很快就来了。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Người kể muốn uống gì?",
+        "options": [
+          "Nước cam",
+          "Sữa đậu nành",
+          "Trà",
+          "Cà phê"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Bữa trưa”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “饿” mang nghĩa nào?",
+        "options": [
+          "tốt, đẹp, hay",
+          "thầy giáo, cô giáo",
+          "đói",
+          "anh, chị, bạn,…"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Buổi trưa, tôi rất đói."
+      }
+    ]
+  },
+  {
+    "id": 8002010,
+    "level": "so-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 10,
+    "title": "Đến nhà bạn",
+    "passage": "星期天，我去朋友家做客。我到门口以后先敲门。朋友的妈妈说欢迎。家里的孩子都很高兴。阿姨说，别客气，多吃一点。吃完饭，我对阿姨说您辛苦了。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Gia đình người bạn đón khách thế nào?",
+        "options": [
+          "Nhiệt tình",
+          "Không mở cửa",
+          "Không ai ở nhà",
+          "Yêu cầu khách về ngay"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Đến nhà bạn”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “做客” mang nghĩa nào?",
+        "options": [
+          "làm khách",
+          "anh, chị, bạn,…",
+          "tốt, đẹp, hay",
+          "thầy giáo, cô giáo"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Chủ nhật, tôi đến chơi nhà bạn."
+      }
+    ]
+  },
+  {
+    "id": 8003010,
+    "level": "so-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 10,
+    "title": "Xem một trận bóng",
+    "passage": "今晚有一场世界杯比赛。我和朋友一起看电视转播。这场比赛非常精彩。最后五分钟，大家都很紧张。我们支持的队最后赢了。比赛结束以后，我们才回家。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Đội người kể cổ vũ có kết quả gì?",
+        "options": [
+          "Thua trận",
+          "Trận đấu bị hủy",
+          "Không có đội nào thi đấu",
+          "Thắng trận"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Xem một trận bóng”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “世界杯” mang nghĩa nào?",
+        "options": [
+          "anh, chị, bạn,…",
+          "tốt, đẹp, hay",
+          "thầy giáo, cô giáo",
+          "World Cup"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Tối nay có một trận đấu World Cup."
+      }
+    ]
+  },
+  {
+    "id": 8101001,
+    "level": "trung-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 1,
+    "title": "Bữa cơm gia đình",
+    "passage": "妈妈先炒蔬菜，再煮汤。今天的晚饭都是家常菜。爷爷喜欢吃清淡的食物。妈妈的拿手菜是西红柿炒蛋。我帮妈妈把菜端到桌子上。大家今天的胃口都很好。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Ai nấu bữa tối trong đoạn văn?",
+        "options": [
+          "Cô giáo",
+          "Người phục vụ",
+          "Mẹ",
+          "Bố"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Bữa cơm gia đình”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “炒” mang nghĩa nào?",
+        "options": [
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "xào, rang",
+          "sắp xếp"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Mẹ xào rau trước rồi nấu canh."
+      }
+    ]
+  },
+  {
+    "id": 8101002,
+    "level": "trung-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 2,
+    "title": "Dự đám cưới",
+    "passage": "周六我要参加朋友的婚礼。我为婚礼准备了一套西装。新娘穿着白色的婚纱。客人的服装各有特色。这场婚礼的布置中西合璧。这次经历给我留下了深刻的印象。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật chọn trang phục nào?",
+        "options": [
+          "Đồng phục học sinh",
+          "Một bộ com lê",
+          "Đồ thể thao",
+          "Áo mưa"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Dự đám cưới”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “参加” mang nghĩa nào?",
+        "options": [
+          "nửa tin nửa ngờ",
+          "tham gia",
+          "sắp xếp",
+          "uổng công, vô ích"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Thứ Bảy tôi sẽ dự đám cưới của bạn."
+      }
+    ]
+  },
+  {
+    "id": 8101003,
+    "level": "trung-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 3,
+    "title": "Buổi tập đầu tiên",
+    "passage": "我约朋友周末一起去体育馆。我们都换上了运动鞋。打羽毛球以前，我们先热身。朋友是打羽毛球的高手。运动让我们充满活力。我们决定为了健康坚持锻炼。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Mọi người làm gì trước khi chơi cầu lông?",
+        "options": [
+          "Khởi động",
+          "Ăn tối",
+          "Đi ngủ",
+          "Mua quà"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Buổi tập đầu tiên”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “约” mang nghĩa nào?",
+        "options": [
+          "hẹn",
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Tôi hẹn bạn cuối tuần cùng đi nhà thi đấu."
+      }
+    ]
+  },
+  {
+    "id": 8101004,
+    "level": "trung-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 4,
+    "title": "Tự đi Tây An",
+    "passage": "这个假期，我们打算去西安。出发前，我们一起查旅游攻略。我们选择自助游，不跟旅行团。第一天，我们参观了兵马俑。第二天，我们在古城墙上散步。回来后，我们把旅途中的见闻写成了日记。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhóm bạn đến thành phố nào?",
+        "options": [
+          "Bắc Kinh",
+          "Hà Nội",
+          "Thượng Hải",
+          "Tây An"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Tự đi Tây An”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “假期” mang nghĩa nào?",
+        "options": [
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "kỳ nghỉ"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Kỳ nghỉ này, chúng tôi định đi Tây An."
+      }
+    ]
+  },
+  {
+    "id": 8101005,
+    "level": "trung-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 5,
+    "title": "Tìm lại điện thoại",
+    "passage": "上车时，我随手把手机放在座位上。因为手机调成了静音，我听不到铃声。下车前，朋友提醒我记得拿东西。细心的朋友发现手机还在座位上。回家后，我马上给手机充电。原来手机没丢，真是虚惊一场。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Điện thoại được tìm thấy ở đâu?",
+        "options": [
+          "Ở sân bay",
+          "Trong hiệu sách",
+          "Trên ghế",
+          "Trong tủ lạnh"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Tìm lại điện thoại”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “随手” mang nghĩa nào?",
+        "options": [
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "tiện tay",
+          "sắp xếp"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Lúc lên xe, tôi tiện tay đặt điện thoại lên ghế."
+      }
+    ]
+  },
+  {
+    "id": 8101006,
+    "level": "trung-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 6,
+    "title": "Món quà nhỏ",
+    "passage": "中秋节前，我给同事准备了一盒月饼。礼物虽然不贵，却代表我的心意。我在卡片上写下了真诚的祝福。同事说他很喜欢这种表达方式。我们一边喝茶，一边交流工作经验。后来，他也主动帮我解决了一个难题。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Món quà được gửi vào dịp nào?",
+        "options": [
+          "Ngày Nhà giáo",
+          "Tết Trung thu",
+          "Tết Dương lịch",
+          "Ngày Quốc tế Thiếu nhi"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Món quà nhỏ”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “同事” mang nghĩa nào?",
+        "options": [
+          "nửa tin nửa ngờ",
+          "đồng nghiệp",
+          "sắp xếp",
+          "uổng công, vô ích"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Trước Tết Trung thu, tôi chuẩn bị một hộp bánh trung thu cho đồng nghiệp."
+      }
+    ]
+  },
+  {
+    "id": 8101007,
+    "level": "trung-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 7,
+    "title": "Nụ cười trước buổi nói chuyện",
+    "passage": "明天我要在班上做一次演讲。因为太紧张，我一直愁眉苦脸。朋友提醒我多想想自己的优点。他的鼓励给了我力量。我对着镜子练习自然的笑容。准备充分以后，我的紧张慢慢消失了。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật lo lắng vì việc gì?",
+        "options": [
+          "Sắp diễn thuyết",
+          "Bị mất ví",
+          "Lỡ tàu",
+          "Bị cảm"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Nụ cười trước buổi nói chuyện”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “演讲” mang nghĩa nào?",
+        "options": [
+          "diễn thuyết",
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Ngày mai tôi sẽ diễn thuyết trước lớp."
+      }
+    ]
+  },
+  {
+    "id": 8101008,
+    "level": "trung-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 8,
+    "title": "Gọi món vừa đủ",
+    "passage": "今天我们在一家广东饭店用餐。点菜以前，我先问大家的口味。朋友不吃肉，所以我们点了两个素菜。我们选了米饭作为主食。服务员建议我们注意荤素搭配。我们没有点太多，免得浪费。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhóm bạn muốn tránh điều gì?",
+        "options": [
+          "Ăn cùng nhau",
+          "Uống trà",
+          "Xem thực đơn",
+          "Lãng phí thức ăn"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Gọi món vừa đủ”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “用餐” mang nghĩa nào?",
+        "options": [
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "dùng bữa"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Hôm nay chúng tôi dùng bữa tại một nhà hàng Quảng Đông."
+      }
+    ]
+  },
+  {
+    "id": 8101009,
+    "level": "trung-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 9,
+    "title": "Làm quen ở câu lạc bộ",
+    "passage": "刚到俱乐部时，周围都是陌生的面孔。我主动向旁边的同学打招呼。我们很快找到了共同的话题。原来我们都对京剧感兴趣。他用流利的汉语介绍了自己的经历。认识新朋友是我今天最大的收获。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Hai người nói về chủ đề nào?",
+        "options": [
+          "Bóng chày",
+          "Lái xe",
+          "Kinh kịch",
+          "Thời tiết ở châu Âu"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Làm quen ở câu lạc bộ”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “陌生” mang nghĩa nào?",
+        "options": [
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "xa lạ",
+          "sắp xếp"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Khi mới đến câu lạc bộ, xung quanh toàn là những gương mặt xa lạ."
+      }
+    ]
+  },
+  {
+    "id": 8101010,
+    "level": "trung-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 10,
+    "title": "Buổi chiều xem tranh",
+    "passage": "周末，我们陪爷爷去看画展。爷爷提前安排好了路线。他对年轻人喜欢的时尚也很了解。看完以后，我们一起讨论最喜欢的作品。爷爷说保持年轻的心态很重要。黄昏时，我们才离开展馆。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhóm bạn đi xem gì?",
+        "options": [
+          "Phim tài liệu",
+          "Triển lãm tranh",
+          "Thi đấu bóng đá",
+          "Biểu diễn xiếc"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Buổi chiều xem tranh”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “画展” mang nghĩa nào?",
+        "options": [
+          "nửa tin nửa ngờ",
+          "triển lãm tranh",
+          "sắp xếp",
+          "uổng công, vô ích"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Cuối tuần, chúng tôi cùng ông đi xem triển lãm tranh."
+      }
+    ]
+  },
+  {
+    "id": 8102001,
+    "level": "trung-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 1,
+    "title": "Không hút thuốc trong phòng",
+    "passage": "这家咖啡店是公共场所。门口贴着明显的禁烟标志。店员说二手烟会影响其他客人。我们都了解抽烟对健康的危害。压力大不能成为随处抽烟的借口。想抽烟的人可以选择去指定区域。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Vì sao quán đặt biển cấm hút thuốc?",
+        "options": [
+          "Để giảm ánh sáng",
+          "Để bảo vệ khách khỏi khói thuốc",
+          "Để bán thêm bánh",
+          "Để đổi thực đơn"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Không hút thuốc trong phòng”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “场所” mang nghĩa nào?",
+        "options": [
+          "nửa tin nửa ngờ",
+          "địa điểm, nơi chốn",
+          "sắp xếp",
+          "uổng công, vô ích"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Quán cà phê này là nơi công cộng."
+      }
+    ]
+  },
+  {
+    "id": 8102002,
+    "level": "trung-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 2,
+    "title": "Lần đầu đến chơi",
+    "passage": "朋友热情地接待了我。第一次到他家，我对一切都很陌生。他请我坐下，让我放松一点。他为早餐煎了两个荷包蛋。这样周到的照顾让我很感动。这次做客给我留下了美好的印象。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Chủ nhà đã làm gì?",
+        "options": [
+          "Chuẩn bị bữa sáng",
+          "Đóng cửa bỏ đi",
+          "Hủy cuộc hẹn",
+          "Nhờ khách tự nấu"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Lần đầu đến chơi”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “接待” mang nghĩa nào?",
+        "options": [
+          "tiếp đón",
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Bạn đón tiếp tôi nhiệt tình."
+      }
+    ]
+  },
+  {
+    "id": 8102003,
+    "level": "trung-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 3,
+    "title": "Hoạt động ở khu phố",
+    "passage": "傍晚，我们来到小区的广场。这里每天都有人跳广场舞。朋友有点害羞，不敢加入。热心的邻居邀请他一起编舞。大家把音量调低，避免扰民。练习一段时间后，朋友变得更自信了。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Mọi người điều chỉnh âm lượng vì sao?",
+        "options": [
+          "Để tập nhảy nhanh hơn",
+          "Để tiết kiệm điện thoại",
+          "Để bán vé",
+          "Để không làm phiền hàng xóm"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Hoạt động ở khu phố”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “广场” mang nghĩa nào?",
+        "options": [
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "quảng trường"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Chiều tối, chúng tôi đến quảng trường của khu dân cư."
+      }
+    ]
+  },
+  {
+    "id": 8102004,
+    "level": "trung-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 4,
+    "title": "Giữ lại ảnh thật",
+    "passage": "旅行时，我们在湖边自拍。朋友用软件调整了照片的颜色。我觉得过度修图会让照片失真。对我来说，照片是为了记录真实的生活。我把原来的照片保存在相册里。最后，我们选了一张自然的照片上传。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật giữ lại bản ảnh nào?",
+        "options": [
+          "Chỉ ảnh quảng cáo",
+          "Ảnh đã xóa hết người",
+          "Bản ảnh chưa chỉnh sửa",
+          "Chỉ ảnh đen trắng"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Giữ lại ảnh thật”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “自拍” mang nghĩa nào?",
+        "options": [
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "tự chụp ảnh",
+          "sắp xếp"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Khi du lịch, chúng tôi tự chụp ảnh bên hồ."
+      }
+    ]
+  },
+  {
+    "id": 8102005,
+    "level": "trung-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 5,
+    "title": "Sở thích sau giờ làm",
+    "passage": "叔叔最近想学一项新本领。他决定从简单的滑板动作学起。家人担心这样做有点冒险。实际上，他每次都戴好头盔和护具。他说实现梦想需要努力。现在，他很享受学习的过程。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Người chú muốn học môn gì?",
+        "options": [
+          "Trượt tuyết",
+          "Trượt ván",
+          "Bơi lặn",
+          "Cờ vua"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Sở thích sau giờ làm”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “叔叔” mang nghĩa nào?",
+        "options": [
+          "nửa tin nửa ngờ",
+          "chú, bác trai",
+          "sắp xếp",
+          "uổng công, vô ích"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Gần đây chú muốn học một kỹ năng mới."
+      }
+    ]
+  },
+  {
+    "id": 8102006,
+    "level": "trung-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 6,
+    "title": "Chậu cây nhỏ",
+    "passage": "我在院里放了一个花盆。几天后，土里长出了小小的芽。我每天记录植物的成长。看到叶子变大，我很吃惊。爷爷建议我不要浇太多水。照顾植物让我更懂得珍惜生命。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Cây được đặt ở đâu?",
+        "options": [
+          "Trong sân",
+          "Trên tàu",
+          "Ở nhà hàng",
+          "Trong tủ áo"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Chậu cây nhỏ”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “院里” mang nghĩa nào?",
+        "options": [
+          "trong sân, trong khuôn viên",
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Tôi đặt một chậu hoa trong sân."
+      }
+    ]
+  },
+  {
+    "id": 8102007,
+    "level": "trung-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 7,
+    "title": "Bữa sáng khác nhau",
+    "passage": "我的同屋是北方人。他习惯早上吃馒头。我是南方人，更喜欢米饭和米粉。我们经常交流饮食习惯的差异。无论吃什么，我们都注意营养。不同的早餐也体现了不同的文化。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Hai người có sở thích giống hệt nhau không?",
+        "options": [
+          "Có, chỉ ăn một món",
+          "Không, nên không nói chuyện",
+          "Không được đề cập đến thức ăn",
+          "Không, nhưng tôn trọng nhau"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Bữa sáng khác nhau”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “北方人” mang nghĩa nào?",
+        "options": [
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "người miền Bắc"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Bạn cùng phòng của tôi là người miền Bắc Trung Quốc."
+      }
+    ]
+  },
+  {
+    "id": 8102008,
+    "level": "trung-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 8,
+    "title": "Thanh toán khi mua đồ",
+    "passage": "今天出门，我忘记带钱包了。买东西时，我才发现自己没有现金。营业员告诉我可以用手机支付。我先检查了自己的账号。为了安全，我重新检查了支付设置。我不想因为粗心而增加风险。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật đã để quên thứ gì?",
+        "options": [
+          "Vé tàu",
+          "Áo khoác",
+          "Ví tiền",
+          "Giày"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Thanh toán khi mua đồ”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “钱包” mang nghĩa nào?",
+        "options": [
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "ví tiền",
+          "sắp xếp"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Hôm nay ra ngoài, tôi quên mang ví."
+      }
+    ]
+  },
+  {
+    "id": 8102009,
+    "level": "trung-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 9,
+    "title": "Buổi học ngoài giờ",
+    "passage": "今天下班以后，我要去上书法课。因为路上堵车，我差点儿迟到。幸好我赶上了最后一班地铁。这个班的学生都是成人。大家都想体验写毛笔字的乐趣。回家时，我顺便买了明天的早餐。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật muốn đến đâu sau giờ làm?",
+        "options": [
+          "Công trường",
+          "Lớp thư pháp",
+          "Sân bay",
+          "Bệnh viện"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Buổi học ngoài giờ”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “下班” mang nghĩa nào?",
+        "options": [
+          "nửa tin nửa ngờ",
+          "tan làm",
+          "sắp xếp",
+          "uổng công, vô ích"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Hôm nay sau giờ làm tôi sẽ đi học thư pháp."
+      }
+    ]
+  },
+  {
+    "id": 8102010,
+    "level": "trung-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 10,
+    "title": "Bị thương rồi bình phục",
+    "passage": "最近我觉得自己有点倒霉。跑步时，我不小心摔跤了。医生检查后说没有骨折。虽然受伤不重，我还是需要休息。经过治疗，情况慢慢好转了。我觉得有家人照顾已经很幸运。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Bác sĩ khuyên nhân vật làm gì?",
+        "options": [
+          "Nghỉ ngơi và điều trị",
+          "Tiếp tục chạy ngay",
+          "Bỏ hết thuốc",
+          "Thức khuya làm việc"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Bị thương rồi bình phục”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “倒霉” mang nghĩa nào?",
+        "options": [
+          "xui xẻo",
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Gần đây tôi thấy mình hơi xui."
+      }
+    ]
+  },
+  {
+    "id": 8103001,
+    "level": "trung-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 1,
+    "title": "Chuẩn bị hành lý",
+    "passage": "为了让旅途更轻松，我提前整理行李。我把重要的资料放进双肩包。箱子里装着衣服和干净的毛巾。太重的箱子需要办理托运。护照和手机都要随身带着。准备充分，出发那天就会更顺利。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật chuẩn bị cho việc gì?",
+        "options": [
+          "Một chuyến đi",
+          "Một buổi phỏng vấn",
+          "Một trận đấu",
+          "Một cuộc thi nấu ăn"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Chuẩn bị hành lý”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “旅途” mang nghĩa nào?",
+        "options": [
+          "hành trình",
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Để chuyến đi thoải mái hơn, tôi sắp hành lý từ trước."
+      }
+    ]
+  },
+  {
+    "id": 8103002,
+    "level": "trung-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 2,
+    "title": "Mất thẻ ngân hàng",
+    "passage": "开学前，我去银行办理业务。我本来打算交学费。仔细找过以后，我发现银行卡不见了。工作人员建议我马上挂失。我在营业厅了解了补卡流程。朋友鼓励我冷静处理问题。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật xử lý việc mất thẻ thế nào?",
+        "options": [
+          "Đăng mật khẩu lên mạng",
+          "Bỏ qua hoàn toàn",
+          "Nhờ người lạ rút tiền",
+          "Liên hệ ngân hàng báo mất"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Mất thẻ ngân hàng”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “开学” mang nghĩa nào?",
+        "options": [
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "khai giảng, bắt đầu học kỳ"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Trước khi nhập học, tôi đến ngân hàng làm thủ tục."
+      }
+    ]
+  },
+  {
+    "id": 8103003,
+    "level": "trung-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 3,
+    "title": "Một tách trà cho bạn",
+    "passage": "朋友来访时，我拿出了茶壶。我准备给他泡一壶绿茶。我先用热水洗了两个茶杯。茶叶泡开以后，房间里都是香味。朋友说这款茶的口感很清爽。我把买茶的店推荐给了他。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật pha gì cho khách?",
+        "options": [
+          "Sữa nóng",
+          "Cà phê hòa tan",
+          "Trà xanh",
+          "Nước ngọt"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Một tách trà cho bạn”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “茶壶” mang nghĩa nào?",
+        "options": [
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "ấm trà",
+          "sắp xếp"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Khi bạn đến thăm, tôi lấy ấm trà ra."
+      }
+    ]
+  },
+  {
+    "id": 8103004,
+    "level": "trung-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 4,
+    "title": "Học chơi quần vợt",
+    "passage": "天气好的时候，我喜欢在户外运动。这个月，我开始学打网球。教练先给我示范正确的动作。我反复练习接球，不怕失败。只有专心练习，才能慢慢进步。虽然出汗很多，我还是觉得很开心。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Ai hướng dẫn động tác cho nhân vật?",
+        "options": [
+          "Tài xế",
+          "Huấn luyện viên",
+          "Bác sĩ",
+          "Đầu bếp"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Học chơi quần vợt”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “户外” mang nghĩa nào?",
+        "options": [
+          "nửa tin nửa ngờ",
+          "ngoài trời",
+          "sắp xếp",
+          "uổng công, vô ích"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Khi trời đẹp, tôi thích vận động ngoài trời."
+      }
+    ]
+  },
+  {
+    "id": 8103005,
+    "level": "trung-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 5,
+    "title": "Đọc sách khi đi xa",
+    "passage": "坐长途车时，我常常阅读电子书。一个小小的设备就能携带很多书。不过，我在家还是喜欢看纸质书。纸张的触感让我觉得很亲切。对我来说，电子书不能完全替代纸质书。我会根据不同的场合作出选择。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Điều gì tiện khi dùng sách điện tử?",
+        "options": [
+          "Dễ mang theo nhiều sách",
+          "Không cần đọc chữ",
+          "Luôn miễn phí",
+          "Không cần thiết bị"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Đọc sách khi đi xa”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “电子书” mang nghĩa nào?",
+        "options": [
+          "sách điện tử",
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Khi đi xe đường dài, tôi thường đọc sách điện tử."
+      }
+    ]
+  },
+  {
+    "id": 8103006,
+    "level": "trung-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 6,
+    "title": "Sinh nhật xa nhà",
+    "passage": "今年生日，我正好在外地工作。同事给我准备了一个小蛋糕。大家帮我点好了蜡烛。我闭上眼睛，许下一个愿望。家人也打来电话，送上生日祝福。他们的支持让我在外地也不觉得孤单。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Gia đình gửi lời chúc bằng cách nào?",
+        "options": [
+          "Gửi fax",
+          "Nhờ tài xế nhắn",
+          "Đăng báo",
+          "Gọi điện"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Sinh nhật xa nhà”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “外地” mang nghĩa nào?",
+        "options": [
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "nơi khác, tỉnh khác"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Sinh nhật năm nay, tôi đang làm việc xa nhà."
+      }
+    ]
+  },
+  {
+    "id": 8103007,
+    "level": "trung-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 7,
+    "title": "Tập đàn để vui",
+    "passage": "我最近开始学钢琴。以前，我从来没学过这种乐器。每天晚上，我都安排半小时训练。老师让我先练一首简单的歌曲。我不急着参加比赛得奖。学琴对我来说主要是自娱自乐。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật học đàn với mục đích gì?",
+        "options": [
+          "Thay nghề lập tức",
+          "Bán nhạc cụ",
+          "Tự giải trí",
+          "Giành giải quốc tế ngay"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Tập đàn để vui”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “钢琴” mang nghĩa nào?",
+        "options": [
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "đàn piano",
+          "sắp xếp"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Gần đây tôi bắt đầu học piano."
+      }
+    ]
+  },
+  {
+    "id": 8103008,
+    "level": "trung-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 8,
+    "title": "Giúp một chú mèo",
+    "passage": "回家的路上，我看到一只流浪的小猫。它看上去很害怕，我不想伤害它。我先在旁边放了一点猫粮。过了一会儿，它才开始信任我。我联系了志愿者，一起救这只小猫。带它看过兽医后，我才考虑把它当作宠物收养。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Chú mèo được đưa đi đâu trước?",
+        "options": [
+          "Vào lớp học",
+          "Đến chỗ bác sĩ thú y",
+          "Lên tàu",
+          "Ra sân khấu"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Giúp một chú mèo”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “流浪” mang nghĩa nào?",
+        "options": [
+          "nửa tin nửa ngờ",
+          "lang thang",
+          "sắp xếp",
+          "uổng công, vô ích"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Trên đường về nhà, tôi nhìn thấy một chú mèo nhỏ lang thang."
+      }
+    ]
+  },
+  {
+    "id": 8103009,
+    "level": "trung-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 9,
+    "title": "Trung thu qua màn hình",
+    "passage": "中秋节到了，我特别想念亲人。晚上，我和家人打开了视频通话。我们一边聊天，一边在各自的窗前赏月。距离没有让我们的感情变淡。大家都盼着下次能真正团圆。转眼就到了该说晚安的时间。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Cả nhà cùng ngắm gì?",
+        "options": [
+          "Mặt trăng",
+          "Trận bóng",
+          "Pháo hoa",
+          "Biển"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Trung thu qua màn hình”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “亲人” mang nghĩa nào?",
+        "options": [
+          "người thân",
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Tết Trung thu đến, tôi đặc biệt nhớ người thân."
+      }
+    ]
+  },
+  {
+    "id": 8103010,
+    "level": "trung-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 10,
+    "title": "Đi cùng hướng dẫn viên",
+    "passage": "这次我和一个小旅行团去云南。导游带我们走进一座古城。她给我们介绍了当地古代的生活。我们还看到了特别的文字。古城安静的氛围让我很放松。这次旅行让我感受到文化的魅力。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Hướng dẫn viên giúp nhóm tìm hiểu điều gì?",
+        "options": [
+          "Cách sửa xe",
+          "Giá cổ phiếu",
+          "Công thức nấu ăn",
+          "Lịch sử địa phương"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Đi cùng hướng dẫn viên”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “旅行团” mang nghĩa nào?",
+        "options": [
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "đoàn du lịch"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Lần này tôi cùng một đoàn du lịch nhỏ đi Vân Nam."
+      }
+    ]
+  },
+  {
+    "id": 8104001,
+    "level": "trung-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 1,
+    "title": "Gửi lời chào bằng bưu thiếp",
+    "passage": "旅行时，我买了一张明信片。卡片上的图案是当地的一座桥。我在背面写下了给朋友的问候。几句简单的话就能表达我的心意。朋友说他会好好保存这张卡片。亲手写信也有特别的乐趣。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật viết gì ở mặt sau bưu thiếp?",
+        "options": [
+          "Mật khẩu ngân hàng",
+          "Hóa đơn",
+          "Quảng cáo tuyển dụng",
+          "Lời hỏi thăm"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Gửi lời chào bằng bưu thiếp”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “明信片” mang nghĩa nào?",
+        "options": [
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "bưu thiếp"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Khi đi du lịch, tôi mua một tấm bưu thiếp."
+      }
+    ]
+  },
+  {
+    "id": 8104002,
+    "level": "trung-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 2,
+    "title": "Đổi cách đi làm",
+    "passage": "最近，我改变了去公司的方式。以前，我每天都打车上班。路上的汽车尾气让我很不舒服。为了减少污染，我决定多坐地铁。刚开始我需要克服早起的困难。我希望用小小的行动保护环境。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật chọn cách đi làm mới vì sao?",
+        "options": [
+          "Không thích gặp bạn",
+          "Công ty cấm đi bộ",
+          "Muốn giảm ô nhiễm",
+          "Muốn mua xe mới"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Đổi cách đi làm”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “方式” mang nghĩa nào?",
+        "options": [
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "phương thức",
+          "sắp xếp"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Gần đây tôi thay đổi cách đi đến công ty."
+      }
+    ]
+  },
+  {
+    "id": 8104003,
+    "level": "trung-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 3,
+    "title": "Tìm nơi ở phù hợp",
+    "passage": "我们最近打算搬家。市区的公寓交通方便，但是租金高。郊区的房子更安静，空间也大。我们仔细比较了附近的设施。选房子不能不考虑自己的收入。最后，我们选了一套最适合的房子。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Hai người cuối cùng chọn nơi ở theo tiêu chí nào?",
+        "options": [
+          "Chỉ nhìn màu sơn",
+          "Phù hợp thu nhập và nhu cầu",
+          "Phải là biệt thự",
+          "Xa mọi tiện ích"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Tìm nơi ở phù hợp”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “搬家” mang nghĩa nào?",
+        "options": [
+          "nửa tin nửa ngờ",
+          "chuyển nhà",
+          "sắp xếp",
+          "uổng công, vô ích"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Gần đây chúng tôi định chuyển nhà."
+      }
+    ]
+  },
+  {
+    "id": 8104004,
+    "level": "trung-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 4,
+    "title": "Câu chuyện vui",
+    "passage": "晚饭后，爷爷给我们讲故事。他用幽默的语言介绍故事里的人物。其中一个故事和买西瓜有关。讲到厨房里的香味时，弟弟都馋了。爷爷提醒我们要友好地对待别人。我们从故事中感受到智慧的力量。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Ông kể chuyện vào lúc nào?",
+        "options": [
+          "Sau bữa tối",
+          "Giữa cuộc thi",
+          "Trước giờ thi",
+          "Trong buổi họp công ty"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Câu chuyện vui”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “故事” mang nghĩa nào?",
+        "options": [
+          "câu chuyện",
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Sau bữa tối, ông kể chuyện cho chúng tôi."
+      }
+    ]
+  },
+  {
+    "id": 8104005,
+    "level": "trung-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 5,
+    "title": "Nhớ quê bên biển",
+    "passage": "傍晚，我独自走在沙滩上。海浪一次次拍打着岸边。看着大海，我的心情慢慢平静下来。这时，我想起了远方的故乡。每当想家，我就给家人打电话。电话那头传来了一段熟悉的曲子。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật làm gì khi nhớ quê?",
+        "options": [
+          "Bỏ công việc ngay",
+          "Mua vé xem xiếc",
+          "Đóng cửa quán",
+          "Gọi điện cho gia đình"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Nhớ quê bên biển”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “沙滩” mang nghĩa nào?",
+        "options": [
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "bãi cát"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Chiều tối, tôi đi một mình trên bãi cát."
+      }
+    ]
+  },
+  {
+    "id": 8104006,
+    "level": "trung-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 6,
+    "title": "Chia việc nhà",
+    "passage": "周日，我们一起打扫房间。爸爸负责整理书架。我把餐桌擦得干干净净。弟弟展示了最近学到的厨艺。大家互相提醒，没有把家务都留给一个人。分担家务也是尊重家人的一种方式。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Gia đình giải quyết việc nhà thế nào?",
+        "options": [
+          "Thuê hàng xóm chuyển nhà",
+          "Không dọn nữa",
+          "Phân công cùng làm",
+          "Để một người làm hết"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Chia việc nhà”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “打扫” mang nghĩa nào?",
+        "options": [
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "quét dọn",
+          "sắp xếp"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Chủ nhật, chúng tôi cùng dọn phòng."
+      }
+    ]
+  },
+  {
+    "id": 8104007,
+    "level": "trung-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 7,
+    "title": "Chăm sóc người bệnh",
+    "passage": "我在医院做志愿者，帮助病人。今天，我负责照看一位老人。医生会向他解释治疗的安排。我不会随便询问他的隐私。需要帮忙时，我先征求他的意见。家人的陪伴给了他很大的信心。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Người kể cần tôn trọng điều gì của bệnh nhân?",
+        "options": [
+          "Quy định gửi xe ở trường",
+          "Quyền riêng tư",
+          "Sở thích của hàng xóm",
+          "Giờ mở cửa siêu thị"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Chăm sóc người bệnh”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “病人” mang nghĩa nào?",
+        "options": [
+          "nửa tin nửa ngờ",
+          "người bệnh",
+          "sắp xếp",
+          "uổng công, vô ích"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Tôi làm tình nguyện viên ở bệnh viện, giúp đỡ bệnh nhân."
+      }
+    ]
+  },
+  {
+    "id": 8104008,
+    "level": "trung-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 8,
+    "title": "Chuẩn bị xin việc",
+    "passage": "毕业前，我开始准备求职。这家公司的第一关是笔试。我先复习了和专业有关的知识。面试那天，我会穿整洁的服装。如果通过初试，我就继续准备下一轮。老师给了我很多实用的建议。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật dự định làm gì nếu qua vòng đầu?",
+        "options": [
+          "Chuẩn bị vòng phỏng vấn tiếp theo",
+          "Nghỉ học ngay",
+          "Đổi số điện thoại",
+          "Bỏ hồ sơ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Chuẩn bị xin việc”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “求职” mang nghĩa nào?",
+        "options": [
+          "tìm việc",
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Trước khi tốt nghiệp, tôi bắt đầu chuẩn bị xin việc."
+      }
+    ]
+  },
+  {
+    "id": 8104009,
+    "level": "trung-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 9,
+    "title": "Giữ liên lạc với bạn",
+    "passage": "朋友要搬到别的城市，我们为他饯行。吃饭以后，大家在门口合影。我把照片保存下来，留作纪念。以后我们还可以隔着屏幕聊天。距离不会轻易改变真正的友谊。我们约好多使用视频通话的功能。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Vì sao mọi người gặp nhau?",
+        "options": [
+          "Thi học kỳ",
+          "Tuyển nhân viên",
+          "Xem thi đấu",
+          "Tiễn một người bạn chuyển đi"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Giữ liên lạc với bạn”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “饯行” mang nghĩa nào?",
+        "options": [
+          "sắp xếp",
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "tiễn bằng bữa ăn, tiệc chia tay"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Bạn sắp chuyển đến thành phố khác, chúng tôi tổ chức tiệc tiễn."
+      }
+    ]
+  },
+  {
+    "id": 8104010,
+    "level": "trung-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 10,
+    "title": "Xem bóng tại sân",
+    "passage": "周末，我们到现场看篮球比赛。主队一开始发挥得很好。但是对手也没有放弃。最后一分钟，一次罚球改变了比分。进球的时候，观众都站起来鼓掌。整个球场充满了欢呼声。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Khán giả phản ứng thế nào khi đội ghi bàn?",
+        "options": [
+          "Đổi kênh truyền hình",
+          "Yêu cầu dừng bán vé",
+          "Vỗ tay và reo hò",
+          "Rời sân hết"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Xem bóng tại sân”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “现场” mang nghĩa nào?",
+        "options": [
+          "uổng công, vô ích",
+          "nửa tin nửa ngờ",
+          "hiện trường, tại chỗ",
+          "sắp xếp"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Cuối tuần, chúng tôi đến sân xem bóng rổ trực tiếp."
+      }
+    ]
+  },
+  {
+    "id": 8201001,
+    "level": "cao-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 1,
+    "title": "Lần gặp đối tác",
+    "passage": "第一次见面时，我很注意握手的礼节。我提前洗手，保持双手清洁。对方是一位长辈，我礼貌地向他问好。他微笑着向我伸出右手。短暂的接触让气氛变得自然。我也用认真的态度表达敬意。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Hai người làm gì khi gặp nhau?",
+        "options": [
+          "Mua thực phẩm",
+          "Thi đấu",
+          "Bắt tay chào hỏi",
+          "Đổi chỗ ở"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Lần gặp đối tác”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “礼节” mang nghĩa nào?",
+        "options": [
+          "sạch sẽ",
+          "nhất định phải, nhất thiết",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Lần đầu gặp mặt, tôi rất chú ý phép lịch sự khi bắt tay."
+      }
+    ]
+  },
+  {
+    "id": 8201002,
+    "level": "cao-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 2,
+    "title": "Nhận nuôi thú cưng",
+    "passage": "弟弟想在家养一只宠物。我们先讨论家里是否有足够的空间。爸爸说养动物需要责任心。如果经常出差，就必须安排好照顾的人。我们还要注意家里的卫生。最后，我们决定先帮助附近的流浪动物。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Gia đình cân nhắc điều gì trước khi nuôi chó?",
+        "options": [
+          "Lịch chiếu phim",
+          "Không gian và trách nhiệm",
+          "Giá vé máy bay",
+          "Số bàn ở quán"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Nhận nuôi thú cưng”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “宠物” mang nghĩa nào?",
+        "options": [
+          "sạch sẽ",
+          "thú cưng",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Em trai muốn nuôi một con thú cưng ở nhà."
+      }
+    ]
+  },
+  {
+    "id": 8201003,
+    "level": "cao-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 3,
+    "title": "Lên kế hoạch đi tàu biển",
+    "passage": "我打算和家人坐邮轮旅行。这次行程预计需要三天。因为担心晕船，我先咨询了医生。我们根据身体状况调整了计划。我也仔细查看了船上的餐饮安排。我希望一家人能悠闲地度过假期。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật lo ngại điều gì trước chuyến đi?",
+        "options": [
+          "Bị say sóng",
+          "Không có hộ chiếu",
+          "Muốn đổi việc",
+          "Không thích xem biển"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Lên kế hoạch đi tàu biển”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “邮轮” mang nghĩa nào?",
+        "options": [
+          "du thuyền",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Tôi định đi du lịch bằng tàu biển cùng gia đình."
+      }
+    ]
+  },
+  {
+    "id": 8201004,
+    "level": "cao-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 4,
+    "title": "Khẩu vị trong bữa ăn",
+    "passage": "朋友邀请我去品尝他做的菜。做饭前，他先问了大家的口味。一位客人是素食主义者，不吃肉。我不能吃太辣，所以没有加辣椒油。朋友准备了不同的菜，方便大家搭配。他说好吃之外，也要考虑营养。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Chủ nhà xử lý khẩu vị khác nhau thế nào?",
+        "options": [
+          "Ép mọi người ăn cay",
+          "Chỉ nấu một món thịt",
+          "Không mời khách nữa",
+          "Hỏi trước và chuẩn bị nhiều lựa chọn"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Khẩu vị trong bữa ăn”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “品尝” mang nghĩa nào?",
+        "options": [
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ",
+          "nếm, thưởng thức"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Bạn mời tôi đến nếm các món bạn nấu."
+      }
+    ]
+  },
+  {
+    "id": 8201005,
+    "level": "cao-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 5,
+    "title": "Bài học về môi trường",
+    "passage": "今天，气象台发布了天气消息。消息说酷热的天气还会继续。课堂上，我们也讨论了冰川融化的问题。老师介绍了附近保护区的情况。大家希望这种行动能持续下去。每个人都可以为改善环境做点事。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Bản tin thời tiết nói về điều gì?",
+        "options": [
+          "Tuyết trong thành phố",
+          "Gió biển",
+          "Nắng nóng kéo dài",
+          "Mưa suốt tuần"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Bài học về môi trường”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “气象台” mang nghĩa nào?",
+        "options": [
+          "coi trọng, chú trọng",
+          "sạch sẽ",
+          "đài khí tượng",
+          "nghi lễ, lễ tiết"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Hôm nay đài khí tượng công bố thông tin thời tiết."
+      }
+    ]
+  },
+  {
+    "id": 8201006,
+    "level": "cao-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 6,
+    "title": "Chậm lại khi đi xa",
+    "passage": "到机场后，我先去办理托运。因为队伍太长，我有点上火。工作人员耐心地解释了手续。办完以后，我慢慢步行到登机口。提前出门让我能从容不迫地候机。我发现做好计划比一味着急更能提高效率。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Điều gì làm nhân vật bực lúc đầu?",
+        "options": [
+          "Xe bị trộm",
+          "Phải chờ làm thủ tục",
+          "Mất toàn bộ tiền",
+          "Hủy kỳ nghỉ"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Chậm lại khi đi xa”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “托运” mang nghĩa nào?",
+        "options": [
+          "sạch sẽ",
+          "gửi vận chuyển, ký gửi",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đến sân bay, tôi làm thủ tục ký gửi trước."
+      }
+    ]
+  },
+  {
+    "id": 8201007,
+    "level": "cao-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 7,
+    "title": "Giúp người lạc đường",
+    "passage": "回家时，一个陌生人向我问路。他说自己刚到这里，已经迷路了。我主动帮他在地图上找路线。帮助别人时，也需要留意风险。清楚的指路同样能传达善意。看他找到公交站，我祝他一路平安。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Người kể đã giúp người lạ thế nào?",
+        "options": [
+          "Chỉ đường trên bản đồ",
+          "Cho mượn hộ chiếu",
+          "Giao mật khẩu",
+          "Bán vé giả"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Giúp người lạc đường”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “陌生人” mang nghĩa nào?",
+        "options": [
+          "người lạ",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Khi về nhà, một người lạ hỏi đường tôi."
+      }
+    ]
+  },
+  {
+    "id": 8201008,
+    "level": "cao-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 8,
+    "title": "Tìm công việc đầu tiên",
+    "passage": "毕业以后，我开始考虑就业的问题。我先了解了几个不同的行业。根据招聘要求，我修改了简历。公司很快通知我去面试。面试官特别重视团队合作的能力。比起暂时的工资，我更关心长远的前途。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Ứng viên gửi gì cho công ty?",
+        "options": [
+          "Thực đơn",
+          "Vé xem phim",
+          "Bản đồ du lịch",
+          "Sơ yếu lý lịch"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Tìm công việc đầu tiên”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “就业” mang nghĩa nào?",
+        "options": [
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ",
+          "làm việc, đi làm"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Sau khi tốt nghiệp, tôi bắt đầu cân nhắc việc đi làm."
+      }
+    ]
+  },
+  {
+    "id": 8201009,
+    "level": "cao-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 9,
+    "title": "Tôn trọng lựa chọn của bạn",
+    "passage": "朋友说他目前选择单身。他希望先把精力放在事业上。他也很享受独立的生活。我认为朋友应该互相支持。每个人对生活都有不同的观念。我们都期待自己能过得幸福。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Người kể nhìn nhận việc độc thân thế nào?",
+        "options": [
+          "Muốn ép bạn kết hôn",
+          "Không muốn giữ tình bạn",
+          "Tôn trọng lựa chọn cá nhân",
+          "Cho là luôn thất bại"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Tôn trọng lựa chọn của bạn”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “单身” mang nghĩa nào?",
+        "options": [
+          "coi trọng, chú trọng",
+          "sạch sẽ",
+          "độc thân, đơn thân; trở thành độc thân",
+          "nghi lễ, lễ tiết"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Bạn nói hiện tại chọn sống độc thân."
+      }
+    ]
+  },
+  {
+    "id": 8201010,
+    "level": "cao-cap",
+    "bookSlug": "quyen-1",
+    "lesson": 10,
+    "title": "Mang hộp đi mua đồ",
+    "passage": "我最近尽量少用一次性用品。出门前，我会检查随身的物品。买熟食时，我带上自己的盒子。这样就能减少多余的包装。少制造垃圾有助于减少污染。我希望这种做法能得到更广泛的应用。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật mang theo gì khi mua thức ăn?",
+        "options": [
+          "Máy ảnh",
+          "Hộp đựng có thể dùng lại",
+          "Bút mới",
+          "Đèn bàn"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Mang hộp đi mua đồ”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “一次性” mang nghĩa nào?",
+        "options": [
+          "sạch sẽ",
+          "dùng một lần",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Gần đây tôi cố gắng dùng ít đồ dùng một lần."
+      }
+    ]
+  },
+  {
+    "id": 8202001,
+    "level": "cao-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 1,
+    "title": "Nhận kết quả tuyển dụng",
+    "passage": "作为应聘者，我参加了两轮面试。公司公布名单时，我没有被录用。虽然觉得遗憾，我还是礼貌地询问原因。这次挫折让我看清了自己的不足。我学着承受压力，继续做准备。一次失败并不决定一个人的前途。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật phản ứng ra sao khi chưa được chọn?",
+        "options": [
+          "Bỏ mọi kế hoạch",
+          "Hỏi lịch sự và tiếp tục chuẩn bị",
+          "Tự ý sửa danh sách",
+          "Đòi vào làm ngay"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Nhận kết quả tuyển dụng”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “应聘者” mang nghĩa nào?",
+        "options": [
+          "sạch sẽ",
+          "người ứng tuyển, ứng viên",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Với tư cách ứng viên, tôi tham gia hai vòng phỏng vấn."
+      }
+    ]
+  },
+  {
+    "id": 8202002,
+    "level": "cao-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 2,
+    "title": "Một ngày trong bệnh viện",
+    "passage": "姐姐在医院的外科工作。她和同事轮休，保证随时有人值班。每天查房时，她都会叮嘱病人按时吃药。遇到不明白的地方，家属可以向她提问。她还会示范一些简单的护理操作。良好的沟通能减少很多误会。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Bác sĩ giải thích thao tác để làm gì?",
+        "options": [
+          "Giúp người nhà hiểu việc chăm sóc",
+          "Bán máy móc",
+          "Đổi đồng phục",
+          "Rút ngắn tên khoa"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Một ngày trong bệnh viện”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “外科” mang nghĩa nào?",
+        "options": [
+          "khoa ngoại",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Chị làm việc tại khoa ngoại của bệnh viện."
+      }
+    ]
+  },
+  {
+    "id": 8202003,
+    "level": "cao-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 3,
+    "title": "Sau khi nghỉ hưu",
+    "passage": "退休后，爸爸和老伴儿开始规划新生活。他们按照自己的节奏安排每一天。早上，他们互相陪伴着去散步。有了兴趣和朋友，他们并不觉得孤单。身体允许的时候，他们尽量自理。我也明白，尽孝不只是给父母买东西。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Bố mẹ chọn cách sống nào?",
+        "options": [
+          "Chỉ chờ con gọi",
+          "Không ra khỏi nhà",
+          "Ngừng gặp bạn bè",
+          "Có hoạt động và sở thích riêng"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Sau khi nghỉ hưu”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “老伴儿” mang nghĩa nào?",
+        "options": [
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ",
+          "bạn đời lúc tuổi già"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Sau khi nghỉ hưu, bố cùng bạn đời bắt đầu lên kế hoạch cuộc sống mới."
+      }
+    ]
+  },
+  {
+    "id": 8202004,
+    "level": "cao-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 4,
+    "title": "Thiết bị thông minh trong nhà",
+    "passage": "我们买了一个机器人帮忙做家务。它可以自动清扫房间。第一次使用前，我仔细阅读了程序说明。涉及个人信息的功能需要得到用户许可。了解工作原理以后，家人用起来更放心。我们认为机器能帮忙，却不能取代家人的关心。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Gia đình làm gì trước khi dùng thiết bị mới?",
+        "options": [
+          "Bỏ hết quy tắc",
+          "Dùng ngay khi chưa lắp",
+          "Đọc hướng dẫn và kiểm tra quyền",
+          "Đưa mật khẩu cho người lạ"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Thiết bị thông minh trong nhà”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “家务” mang nghĩa nào?",
+        "options": [
+          "coi trọng, chú trọng",
+          "sạch sẽ",
+          "việc nhà",
+          "nghi lễ, lễ tiết"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Chúng tôi mua một robot để giúp làm việc nhà."
+      }
+    ]
+  },
+  {
+    "id": 8202005,
+    "level": "cao-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 5,
+    "title": "Ăn Tết yên tĩnh hơn",
+    "passage": "除夕那天，一家人团聚在一起。爷爷给孩子们介绍过年的民俗。过去，人们常常用鞭炮增添节日气氛。现在，我们更注意噪声对邻居的影响。小区提前发出了禁止燃放的通告。我们用彩灯和祝福代替燃放烟花。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Gia đình thay việc đốt pháo bằng gì?",
+        "options": [
+          "Đốt rác trong sân",
+          "Đèn trang trí và lời chúc",
+          "Đua xe đêm",
+          "Khoan tường"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Ăn Tết yên tĩnh hơn”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “除夕” mang nghĩa nào?",
+        "options": [
+          "sạch sẽ",
+          "đêm giao thừa âm lịch",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Ngày giao thừa, cả gia đình quây quần bên nhau."
+      }
+    ]
+  },
+  {
+    "id": 8202006,
+    "level": "cao-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 6,
+    "title": "Xây nền tảng cho đội bóng",
+    "passage": "最近，我们经常讨论足坛的新闻。为了组建校队，大家先确认了训练场地。教练提醒前锋不要只顾自己射门。全队也要一起练习防守。认真拼搏比责怪队友更有意义。有了学校的赞助，我们可以坚持长期训练。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Đội bóng coi trọng điều gì?",
+        "options": [
+          "Tập luyện và hợp tác lâu dài",
+          "Chỉ dựa vào may mắn",
+          "Chỉ mua áo mới",
+          "Không cần phòng thủ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Xây nền tảng cho đội bóng”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “足坛” mang nghĩa nào?",
+        "options": [
+          "giới bóng đá",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Gần đây chúng tôi thường thảo luận tin tức của giới bóng đá."
+      }
+    ]
+  },
+  {
+    "id": 8202007,
+    "level": "cao-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 7,
+    "title": "Chọn thành phố làm việc",
+    "passage": "作为一名海归，她正在选择工作的城市。她没有只被高薪吸引。她仔细了解了当地的就业环境。她也希望能尽快融入社区。比较以后，她发现各地的生活成本有差距。最后，她选择了自己最看重的发展机会。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật so sánh những gì?",
+        "options": [
+          "Chỉ màu tòa nhà",
+          "Chỉ chiều cao đồng nghiệp",
+          "Mỗi số điện thoại",
+          "Việc làm, chi phí và sinh hoạt"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Chọn thành phố làm việc”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “海归” mang nghĩa nào?",
+        "options": [
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ",
+          "người du học trở về nước; về nước sau du học"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Là người du học trở về, cô đang chọn thành phố làm việc."
+      }
+    ]
+  },
+  {
+    "id": 8202008,
+    "level": "cao-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 8,
+    "title": "Tham quan vùng sinh thái",
+    "passage": "这个小岛很重视生态保护。当地人对旅游进行了长期规划。游客可以来这里休闲，但必须遵守规定。每年都有鸟类经过这里迁徙。村民希望保留岛上的原貌。离开前，我意识到不留垃圾也是一种保护。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Khách được nhắc làm gì?",
+        "options": [
+          "Đốt lửa ở mọi nơi",
+          "Đổ thức ăn xuống nước",
+          "Không để lại rác",
+          "Tự ý bắt chim"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Tham quan vùng sinh thái”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “生态” mang nghĩa nào?",
+        "options": [
+          "coi trọng, chú trọng",
+          "sạch sẽ",
+          "sinh thái",
+          "nghi lễ, lễ tiết"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Hòn đảo nhỏ này rất coi trọng bảo vệ sinh thái."
+      }
+    ]
+  },
+  {
+    "id": 8202009,
+    "level": "cao-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 9,
+    "title": "Đọc về hành trình thỉnh kinh",
+    "passage": "参观大雁塔后，我对历史更感兴趣了。我开始阅读和取经有关的故事。书中介绍了佛经的翻译过程。这些记录为后人留下了珍贵的资料。我还了解了沿途不同地区的风土人情。这段历史让我思考人们对知识的追求。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật đọc sách để tìm hiểu điều gì?",
+        "options": [
+          "Công thức làm bánh",
+          "Lịch sử và văn hóa",
+          "Giá vé tàu",
+          "Cách chơi bóng"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Đọc về hành trình thỉnh kinh”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “大雁塔” mang nghĩa nào?",
+        "options": [
+          "sạch sẽ",
+          "tháp Đại Nhạn",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Sau khi tham quan tháp Đại Nhạn, tôi hứng thú với lịch sử hơn."
+      }
+    ]
+  },
+  {
+    "id": 8202010,
+    "level": "cao-cap",
+    "bookSlug": "quyen-2",
+    "lesson": 10,
+    "title": "Làm việc theo quy tắc",
+    "passage": "项目开始前，我们先搜集用户的意见。每条反馈都会被认真记录。团队鼓励创新，也强调诚实。经过讨论，我们采纳了一个可行的建议。执行过程接受大家的监督。我们不会为了暂时的成绩而投机取巧。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhóm chọn giải pháp nào?",
+        "options": [
+          "Thu thập ý kiến và minh bạch",
+          "Chỉ nghe người nói lớn",
+          "Giấu mọi phản hồi",
+          "Đổ lỗi cho khách"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Làm việc theo quy tắc”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “搜集” mang nghĩa nào?",
+        "options": [
+          "thu thập",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Trước khi dự án bắt đầu, chúng tôi thu thập ý kiến người dùng."
+      }
+    ]
+  },
+  {
+    "id": 8203001,
+    "level": "cao-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 1,
+    "title": "Thanh toán ở cửa hàng",
+    "passage": "我常去家附近的杂货店买东西。现在，店主在柜台放了一个二维码。结账时，我先扫描店里的付款码。确认金额时，我始终很谨慎。这种方式很快捷，但也不能马虎。安全和方便都会影响用户的体验。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật kiểm tra gì trước khi xác nhận?",
+        "options": [
+          "Số tiền thanh toán",
+          "Ngày sinh của khách",
+          "Màu ví của nhân viên",
+          "Biển số xe"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Thanh toán ở cửa hàng”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “杂货店” mang nghĩa nào?",
+        "options": [
+          "tiệm tạp hóa",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Tôi thường mua đồ ở tiệm tạp hóa gần nhà."
+      }
+    ]
+  },
+  {
+    "id": 8203002,
+    "level": "cao-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 2,
+    "title": "Thay đổi thói quen sinh hoạt",
+    "passage": "学校最近发布了一份健康提醒。提醒指出，熬夜在学生中很普遍。我发现自己的睡眠也有些不足。朋友鼓励我先从规律作息做起。我决定保证充足的睡眠，并每天散步。坚持几周后，我感到自己确实受益了。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật quyết định thay đổi điều gì?",
+        "options": [
+          "Bỏ mọi bữa ăn",
+          "Không ra ngoài",
+          "Chỉ uống cà phê",
+          "Ngủ sớm và vận động đều"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Thay đổi thói quen sinh hoạt”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “发布” mang nghĩa nào?",
+        "options": [
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ",
+          "công bố, đưa ra"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Gần đây trường đưa ra một thông báo về sức khỏe."
+      }
+    ]
+  },
+  {
+    "id": 8203003,
+    "level": "cao-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 3,
+    "title": "Lựa chọn sau khi ra trường",
+    "passage": "拿到文凭以后，我没有急着决定去向。老师提醒我，择业要考虑长远发展。我比较了不同城市提供的机遇。读书时的兼职经历帮助我了解自己。我渴望在真正喜欢的领域工作。最后，我选择了一个前景较好的岗位。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật cân nhắc điều gì khi chọn việc?",
+        "options": [
+          "Số bàn của nhà hàng",
+          "Màu đồng phục bạn bè",
+          "Sở trường và cơ hội phát triển",
+          "Chỉ tên tòa nhà"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Lựa chọn sau khi ra trường”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “文凭” mang nghĩa nào?",
+        "options": [
+          "coi trọng, chú trọng",
+          "sạch sẽ",
+          "văn bằng, bằng cấp",
+          "nghi lễ, lễ tiết"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Sau khi nhận bằng, tôi không vội quyết định hướng đi."
+      }
+    ]
+  },
+  {
+    "id": 8203004,
+    "level": "cao-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 4,
+    "title": "Bình tĩnh giải quyết bất đồng",
+    "passage": "我和同事在一次合作中产生了分歧。讨论不顺利，我的情绪很低落。为了避免冲突爆发，我们先暂停了谈话。冷静后，我们把彼此的担心说清楚。体贴对方并不意味着放弃原则。下班后的散步也帮我解压。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Hai người làm gì sau khi bình tĩnh?",
+        "options": [
+          "Đổ lỗi công khai",
+          "Nói rõ lo lắng và lắng nghe",
+          "Ngừng hợp tác vĩnh viễn",
+          "Xóa toàn bộ tài liệu"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Bình tĩnh giải quyết bất đồng”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “合作” mang nghĩa nào?",
+        "options": [
+          "sạch sẽ",
+          "hợp tác",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Tôi và đồng nghiệp có bất đồng trong một lần hợp tác."
+      }
+    ]
+  },
+  {
+    "id": 8203005,
+    "level": "cao-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 5,
+    "title": "Chọn một sản phẩm bền",
+    "passage": "买新电器前，我比较了几个品牌。我看重性价比，不只是最低的价格。产品的耐久度对我同样重要。虽然款式不算最新，它的功能很实用。我希望企业能创造更可靠的产品。真实的使用评价比夸张的广告更值得传播。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật quan tâm điều gì ngoài giá?",
+        "options": [
+          "Độ bền và bảo hành",
+          "Chỉ màu túi",
+          "Chiều cao người bán",
+          "Số đèn ở cửa hàng"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Chọn một sản phẩm bền”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “品牌” mang nghĩa nào?",
+        "options": [
+          "thương hiệu",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Trước khi mua đồ điện mới, tôi so sánh vài thương hiệu."
+      }
+    ]
+  },
+  {
+    "id": 8203006,
+    "level": "cao-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 6,
+    "title": "Tôn trọng nhịp sống riêng",
+    "passage": "姐姐常被别人叫作大龄青年。她认为婚龄不该成为唯一的标准。她愿意认识异性，但不想匆忙决定。家人学着用更包容的态度和她交流。每个人对生活都有自己的倾向。听到家人的理解，她的困惑减少了许多。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Gia đình đồng ý điều gì?",
+        "options": [
+          "Quyết định thay mọi việc",
+          "Chỉ xem thu nhập",
+          "Hủy mọi cuộc gặp",
+          "Không ép người trẻ kết hôn vội"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Tôn trọng nhịp sống riêng”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “大龄” mang nghĩa nào?",
+        "options": [
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ",
+          "lớn tuổi, quá lứa"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Chị thường bị người khác gọi là người trẻ quá tuổi kết hôn."
+      }
+    ]
+  },
+  {
+    "id": 8203007,
+    "level": "cao-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 7,
+    "title": "Bắt đầu chạy bộ",
+    "passage": "我想通过锻炼改善身体状况。朋友建议我不要一开始就挑战马拉松。我们应该根据自己的体质制定计划。我先选择了一双舒适的跑鞋。有了同伴，训练不再那么枯燥。适量运动不应该变成新的负担。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật bắt đầu với mục tiêu nào?",
+        "options": [
+          "Tập suốt đêm",
+          "Không nghỉ ngày nào",
+          "Chạy quãng ngắn phù hợp sức mình",
+          "Thắng ma ra tông ngay"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Bắt đầu chạy bộ”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “锻炼” mang nghĩa nào?",
+        "options": [
+          "coi trọng, chú trọng",
+          "sạch sẽ",
+          "rèn luyện, tập thể dục",
+          "nghi lễ, lễ tiết"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Tôi muốn cải thiện tình trạng cơ thể qua tập luyện."
+      }
+    ]
+  },
+  {
+    "id": 8203008,
+    "level": "cao-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 8,
+    "title": "Sống ở thành phố nào?",
+    "passage": "不同地域的生活各有特点。我查阅了几家研究机构的资料。大城市的公共设施比较齐全。但是，在那里立足也需要承担较高的成本。我不想只是跟着潮流作决定。考虑实际需求后，我更倾向住在中小城市。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật chọn nơi ở dựa trên điều gì?",
+        "options": [
+          "Số cửa hàng thời trang",
+          "Nhu cầu thực tế của mình",
+          "Chỉ theo trào lưu",
+          "Tên đường dài nhất"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Sống ở thành phố nào?”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “地域” mang nghĩa nào?",
+        "options": [
+          "sạch sẽ",
+          "địa phương, khu vực, vùng",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Cuộc sống ở các vùng khác nhau có nét riêng."
+      }
+    ]
+  },
+  {
+    "id": 8203009,
+    "level": "cao-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 9,
+    "title": "Chăm sóc tuổi già",
+    "passage": "社区最近举办了关于老龄化的讲座。我和父母一起讨论未来的养老方案。我们先了解他们真正的需求。附近的服务中心热情地接待了我们。工作人员帮我们比较不同选择是否合理。父母也希望保持适度的社交和活动。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Kế hoạch được lập theo điều gì?",
+        "options": [
+          "Sức khỏe và nhu cầu của cha mẹ",
+          "Sở thích của người bán",
+          "Giá vé xem phim",
+          "Ý kiến người qua đường"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Chăm sóc tuổi già”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “老龄化” mang nghĩa nào?",
+        "options": [
+          "lão hóa",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Gần đây cộng đồng tổ chức buổi nói chuyện về già hóa dân số."
+      }
+    ]
+  },
+  {
+    "id": 8203010,
+    "level": "cao-cap",
+    "bookSlug": "quyen-3",
+    "lesson": 10,
+    "title": "Hòa nhập nơi ở mới",
+    "passage": "刚到新城市时，我暂时住在朋友家。附近的交通很便捷，方便我找工作。我和周围的邻居也很合得来。大家建议我发挥自己的一技之长。相处时，我们都注意尊重对方的隐私。慢慢地，我找到了更适宜的生活方式。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Khi mới đến, nhân vật tạm ở đâu?",
+        "options": [
+          "Bệnh viện",
+          "Nhà ga",
+          "Ký túc xá của trường",
+          "Nhà một người bạn"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Hòa nhập nơi ở mới”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “暂时” mang nghĩa nào?",
+        "options": [
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ",
+          "tạm, tạm thời"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Khi mới đến thành phố mới, tôi tạm ở nhà bạn."
+      }
+    ]
+  },
+  {
+    "id": 8204001,
+    "level": "cao-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 1,
+    "title": "Nhắc nhau không hút thuốc",
+    "passage": "在社交场合，尊重别人也是一种礼仪。每个人都有不同的嗜好，但不该影响他人。朋友顺手递给我一支烟。我认为交际不一定要靠吸烟。我礼貌地拒绝，并继续用意志力坚持戒烟。健康的代价不能用面子来衡量。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật xử lý khi bạn mời thuốc thế nào?",
+        "options": [
+          "Tranh cãi lớn tiếng",
+          "Nhận thuốc để giữ thể diện",
+          "Rời cuộc họp không nói",
+          "Từ chối lịch sự"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Nhắc nhau không hút thuốc”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “礼仪” mang nghĩa nào?",
+        "options": [
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ",
+          "lễ nghi, nghi thức"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Trong giao tiếp xã hội, tôn trọng người khác cũng là phép lịch sự."
+      }
+    ]
+  },
+  {
+    "id": 8204002,
+    "level": "cao-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 2,
+    "title": "Bữa tối không nhìn màn hình",
+    "passage": "最近，我的伴侣觉得自己被冷落了。我承认自己有时太沉迷手机。不断响起的消息妨碍了我们的交流。为了减少干扰，我们决定吃饭时把手机收起来。面对面谈一谈，我们才能解决矛盾。慢慢地，我们的晚餐又变得从容了。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Gia đình thống nhất quy tắc nào?",
+        "options": [
+          "Mỗi người ăn riêng",
+          "Luôn quay video bữa ăn",
+          "Cất điện thoại khi ăn",
+          "Không trò chuyện lúc ăn"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Bữa tối không nhìn màn hình”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “伴侣” mang nghĩa nào?",
+        "options": [
+          "coi trọng, chú trọng",
+          "sạch sẽ",
+          "bạn đời, người tình; bạn đồng hành",
+          "nghi lễ, lễ tiết"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Gần đây bạn đời của tôi cảm thấy bị lạnh nhạt."
+      }
+    ]
+  },
+  {
+    "id": 8204003,
+    "level": "cao-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 3,
+    "title": "Xem nội dung trên mạng",
+    "passage": "弟弟最近很喜欢一位网络偶像。我请他说说对方真正的才华。我们发现有些宣传很夸张。频繁的炒作不一定代表作品有价值。观看热门内容时，我们都需要保持警惕。比起外表，我更欣赏一个人的学识和人格。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật đánh giá người nổi tiếng theo điều gì?",
+        "options": [
+          "Tên tài khoản dài",
+          "Nội dung và tài năng thực tế",
+          "Chỉ số người theo dõi",
+          "Chỉ kiểu tóc"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Xem nội dung trên mạng”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “偶像” mang nghĩa nào?",
+        "options": [
+          "sạch sẽ",
+          "thần tượng",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Gần đây em trai rất thích một thần tượng trên mạng."
+      }
+    ]
+  },
+  {
+    "id": 8204004,
+    "level": "cao-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 4,
+    "title": "Đi làm bằng xe đạp chung",
+    "passage": "地铁站旁边新增了一排共享自行车。这种服务给附近的人带来了便利。使用前，我先扫码查看车辆信息。为了保障安全，我检查了刹车和车锁。社区提倡大家文明停车。方便自己的同时，也要维护公共空间的和谐。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật kiểm tra gì trước khi dùng xe?",
+        "options": [
+          "Phanh và khóa xe",
+          "Lịch chiếu phim",
+          "Giá nhà đất",
+          "Tên quán ăn"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Đi làm bằng xe đạp chung”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “共享” mang nghĩa nào?",
+        "options": [
+          "cùng chia sẻ, cộng hưởng",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Bên ga tàu điện ngầm có thêm một hàng xe đạp dùng chung."
+      }
+    ]
+  },
+  {
+    "id": 8204005,
+    "level": "cao-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 5,
+    "title": "So sánh trước khi mua",
+    "passage": "我以前特别偏爱外形漂亮的产品。只要看起来气派，我就容易心动。后来，我发现这样消费太盲目。现在，我会精打细算，先列出实际需求。我的消费理念也慢慢改变了。多下功夫比较，常常能避免买错东西。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật quyết định mua dựa trên điều gì?",
+        "options": [
+          "Chỉ quảng cáo đẹp",
+          "Số khách đứng chờ",
+          "Màu bảng hiệu",
+          "Nhu cầu và chất lượng thực tế"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “So sánh trước khi mua”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “偏爱” mang nghĩa nào?",
+        "options": [
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ",
+          "chuộng hơn, yêu hơn, thích hơn"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Trước đây tôi đặc biệt thích sản phẩm có hình thức đẹp."
+      }
+    ]
+  },
+  {
+    "id": 8204006,
+    "level": "cao-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 6,
+    "title": "Mua sắm có kế hoạch",
+    "passage": "促销开始时，我差点儿马上下单。冷静一下后，我发现那只是一时的冲动。面对不断弹出的广告，我试着保持淡定。我也查询了邮政运费和退货条件。收到包裹后，纸箱可以留着循环使用。真正的优惠应该建立在实际需要上。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật làm gì trước khi đặt hàng?",
+        "options": [
+          "Mua hết hàng giảm giá",
+          "Đổi địa chỉ ngẫu nhiên",
+          "Kiểm tra mình có thật sự cần không",
+          "Bỏ qua giá vận chuyển"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Mua sắm có kế hoạch”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “下单” mang nghĩa nào?",
+        "options": [
+          "coi trọng, chú trọng",
+          "sạch sẽ",
+          "đặt hàng",
+          "nghi lễ, lễ tiết"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Khi khuyến mãi bắt đầu, tôi suýt đặt hàng ngay."
+      }
+    ]
+  },
+  {
+    "id": 8204007,
+    "level": "cao-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 7,
+    "title": "Giới hạn thời gian chơi",
+    "passage": "朋友担心自己太沉溺网络游戏。他坦言最近很少出门了。我建议他增加和人交流的渠道。共同的兴趣可以帮助维护友谊。但是，长期足不出户并不适合他。我们约好限制游戏时间，也多见面增进了解。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Hai người thống nhất làm gì?",
+        "options": [
+          "Không liên lạc nữa",
+          "Đặt giờ chơi và vẫn gặp bạn trực tiếp",
+          "Chơi suốt đêm",
+          "Bỏ mọi hoạt động ngoài trời"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Giới hạn thời gian chơi”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “沉溺” mang nghĩa nào?",
+        "options": [
+          "sạch sẽ",
+          "chìm ngập, chìm đắm",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Bạn lo mình quá chìm đắm trong trò chơi trên mạng."
+      }
+    ]
+  },
+  {
+    "id": 8204008,
+    "level": "cao-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 8,
+    "title": "Nói lời từ chối phù hợp",
+    "passage": "同事来请我帮忙时，我真诚地听了他的请求。我不想随便找个理由推托。不过，也要为已有的工作安排着想。我用得体的方式说明了时间冲突。我提议换个时间，说话也注意分寸。尊重彼此的时间是我们合作的准则。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Nhân vật từ chối nhiệm vụ mới thế nào?",
+        "options": [
+          "Nói rõ lịch làm việc và đề nghị thời điểm khác",
+          "Không trả lời nữa",
+          "Bịa chuyện trách người khác",
+          "Nhận rồi không làm"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Nói lời từ chối phù hợp”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “真诚” mang nghĩa nào?",
+        "options": [
+          "chân thành, thành thật",
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ"
+        ],
+        "correctAnswerIndex": 0,
+        "explanation": "Khi đồng nghiệp nhờ giúp, tôi chân thành lắng nghe đề nghị."
+      }
+    ]
+  },
+  {
+    "id": 8204009,
+    "level": "cao-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 9,
+    "title": "Trồng cây giữ đất",
+    "passage": "这片地区多年面临干旱的问题。当地人开始限制不合理的砍伐。他们希望通过种树提高植被覆盖率。志愿者在沙丘附近一点点固定沙土。记录多年的变迁，需要耐心和数据。每一份长期的努力都是一种贡献。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Người dân muốn cải thiện điều gì?",
+        "options": [
+          "Giá vé xe",
+          "Âm lượng loa",
+          "Mật độ cửa hàng",
+          "Tình trạng đất khô và cát"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Trồng cây giữ đất”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “干旱” mang nghĩa nào?",
+        "options": [
+          "nghi lễ, lễ tiết",
+          "coi trọng, chú trọng",
+          "sạch sẽ",
+          "hạn hán, khô hạn"
+        ],
+        "correctAnswerIndex": 3,
+        "explanation": "Khu vực này nhiều năm đối mặt với vấn đề khô hạn."
+      }
+    ]
+  },
+  {
+    "id": 8204010,
+    "level": "cao-cap",
+    "bookSlug": "quyen-4",
+    "lesson": 10,
+    "title": "Du lịch tôn trọng văn hóa",
+    "passage": "这次旅行让我了解了不同的民族风情。在傣族村寨，导游提醒我们尊重当地习惯。我们参观了一座古老的建筑。下午，村民为大家演奏了传统音乐。游览时，想给别人拍照应该先征得同意。这段经历让我大开眼界，也学会了谦虚。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Khách cần làm gì trước khi chụp ảnh người khác?",
+        "options": [
+          "Tự ý đăng ảnh",
+          "Yêu cầu họ đổi trang phục",
+          "Xin phép",
+          "Trả lời thay họ"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Du lịch tôn trọng văn hóa”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “风情” mang nghĩa nào?",
+        "options": [
+          "coi trọng, chú trọng",
+          "sạch sẽ",
+          "phong tục tập quán",
+          "nghi lễ, lễ tiết"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Chuyến đi này giúp tôi hiểu phong tục của các dân tộc khác nhau."
+      }
+    ]
+  },
+  {
+    "id": 8304999,
+    "level": "hsk-standard",
+    "bookSlug": "quyen-4",
+    "lesson": 999,
+    "title": "Tình bạn và quà tặng",
+    "passage": "金钱并不能买到真正的友情。对我来说，友情需要认真经营。选择朋友时，我们也需要判断力。遇到心烦的事，我会找信任的朋友聊聊。我们常在小店里一边喝葡萄汁，一边谈心。这家店提供优质的服务，让人感到放松。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Người kể cho rằng điều gì quan trọng trong tình bạn?",
+        "options": [
+          "Chỉ so sánh thu nhập",
+          "Sự chân thành và thời gian dành cho nhau",
+          "Quà càng đắt càng tốt",
+          "Không cần lắng nghe"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Tình bạn và quà tặng”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “金钱” mang nghĩa nào?",
+        "options": [
+          "Bố",
+          "tiền bạc, kim tiền",
+          "Yêu",
+          "Tám"
+        ],
+        "correctAnswerIndex": 1,
+        "explanation": "Tiền bạc không thể mua được tình bạn thật sự."
+      }
+    ]
+  },
+  {
+    "id": 8307019,
+    "level": "hsk-standard",
+    "bookSlug": "quyen-7",
+    "lesson": 19,
+    "title": "Nấu món ăn quê nhà",
+    "passage": "在外地生活久了，我开始怀念家乡的味道。我按照妈妈的建议准备好原料。先把萝卜切成细丝。加入少许酱油后，再均匀地搅拌。接着，用文火慢慢煮。虽然第一次做，这道菜还是很可口。",
+    "source": "editorial-practice",
+    "questions": [
+      {
+        "questionText": "Người kể nấu món ăn này vì sao?",
+        "options": [
+          "Muốn bán điện thoại",
+          "Tập viết thư pháp",
+          "Nhớ quê hương",
+          "Chuẩn bị đi thi lái xe"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Đối chiếu các chi tiết trong đoạn “Nấu món ăn quê nhà”."
+      },
+      {
+        "questionText": "Trong đoạn văn, “怀念” mang nghĩa nào?",
+        "options": [
+          "Tám",
+          "Bố",
+          "nhớ nhung, tưởng nhớ",
+          "Yêu"
+        ],
+        "correctAnswerIndex": 2,
+        "explanation": "Sống xa lâu ngày, tôi bắt đầu nhớ hương vị quê nhà."
+      }
+    ]
+  }
+]

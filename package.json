@@ -19,7 +19,10 @@
     "build:msutong-intermediate": "node --import tsx scripts/build-msutong-intermediate.ts",
     "audit:msutong-intermediate": "node --import tsx scripts/audit-msutong-intermediate.ts",
     "build:msutong-advanced": "node --import tsx scripts/build-msutong-advanced.ts",
-    "audit:msutong-advanced": "node --import tsx scripts/audit-msutong-advanced.ts"
+    "audit:msutong-advanced": "node --import tsx scripts/audit-msutong-advanced.ts",
+    "build:practice-library": "node --import tsx scripts/build-practice-library.ts",
+    "build:textbook-library": "node --import tsx scripts/build-textbook-library.ts",
+    "audit:practice-library": "node --import tsx scripts/audit-practice-library.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

@@ -1,3 +1,4 @@
+import { curriculumTitle } from '@/lib/textbookCatalog';
 import { getMsutongDistractors } from '@/lib/msutongSelection';
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
@@ -229,7 +230,7 @@ const MsutongMeaningChoicePage = () => {
         <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
           <div className="w-full max-w-2xl">
             <div className="mb-6 text-center">
-              <h1 className="text-3xl font-bold">Chọn Nghĩa (Msutong)</h1>
+              <h1 className="text-3xl font-bold">Chọn Nghĩa ({curriculumTitle(level)})</h1>
               <p className="text-muted-foreground">Chọn nghĩa đúng cho từ vựng sau.</p>
             </div>
 

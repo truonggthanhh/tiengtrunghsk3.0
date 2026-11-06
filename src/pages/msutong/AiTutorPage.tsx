@@ -12,12 +12,13 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import { curriculumTitle } from '@/lib/textbookCatalog';
 
 const MsutongAiTutorPage = () => {
   const [searchParams] = useSearchParams();
-  const level = searchParams.get('level') || 'Sơ cấp';
+  const level = searchParams.get('level') || 'so-cap';
   const books = searchParams.get('books') || 'Không rõ';
-  const lessons = searchParams.get('lessons') || 'Không rõ';
+  const lessons = searchParams.get('lessons') || searchParams.get('lessonIds') || 'Không rõ';
   const lessonIds = useMemo(() => searchParams.get('lessonIds')?.split(',') || [], [searchParams]);
 
   // Build URLs for back navigation
@@ -109,7 +110,7 @@ const MsutongAiTutorPage = () => {
     try {
       const { GoogleGenerativeAI } = await import('@google/generative-ai');
       const genAI = new GoogleGenerativeAI(apiKey!);
-      const systemPrompt = `Bạn là một gia sư tiếng Trung tên là "HaoHao AI". Nhiệm vụ của bạn là giúp người dùng luyện tập theo giáo trình Msutong. Người dùng đã chọn cấp độ: ${level}, quyển: ${books}, và các bài: ${lessons}. Hãy luôn thân thiện, kiên nhẫn và đưa ra những câu trả lời ngắn gọn, dễ hiểu. Khi người dùng nói, bạn sẽ nhận được văn bản phiên âm. Dựa vào đó, hãy đưa ra phản hồi về ngữ pháp, cách dùng từ và cả những lỗi phát âm có thể xảy ra. Bắt đầu cuộc trò chuyện bằng cách chào người dùng và hỏi họ muốn luyện tập kỹ năng gì dựa trên các bài đã chọn. Chỉ trả lời bằng tiếng Việt.`;
+      const systemPrompt = `Bạn là một gia sư tiếng Trung tên là "HaoHao AI". Nhiệm vụ của bạn là giúp người dùng luyện tập theo giáo trình ${curriculumTitle(level)}. Người dùng đã chọn cấp độ: ${level}, quyển: ${books}, và các bài: ${lessons}. Hãy luôn thân thiện, kiên nhẫn và đưa ra những câu trả lời ngắn gọn, dễ hiểu. Khi người dùng nói, bạn sẽ nhận được văn bản phiên âm. Dựa vào đó, hãy đưa ra phản hồi về ngữ pháp, cách dùng từ và cả những lỗi phát âm có thể xảy ra. Bắt đầu cuộc trò chuyện bằng cách chào người dùng và hỏi họ muốn luyện tập kỹ năng gì dựa trên các bài đã chọn. Chỉ trả lời bằng tiếng Việt.`;
 
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", systemInstruction: systemPrompt });
       const session = model.startChat({ history: [] });
@@ -194,8 +195,8 @@ const MsutongAiTutorPage = () => {
         <Card className="w-full max-w-3xl h-[80vh] flex flex-col">
           <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <CardTitle>Trợ lý ảo Msutong</CardTitle>
-              <CardDescription>Luyện nói theo {level} {books} - Bài {lessons}</CardDescription>
+              <CardTitle>Trợ lý ảo {curriculumTitle(level)}</CardTitle>
+              <CardDescription>Luyện nói theo {curriculumTitle(level)} · {books} · {lessons}</CardDescription>
             </div>
             <div className="flex items-center space-x-2">
               <Switch id="chat-mode" checked={chatMode === 'voice'} onCheckedChange={(checked) => setChatMode(checked ? 'voice' : 'text')} />

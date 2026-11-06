@@ -5,7 +5,7 @@ import type { MsutongWord } from './so-cap-1-vocab';
 
 export interface PdfMsutongWord extends MsutongWord {
   category: string;
-  sources: { kind: string; pdfPage: number; row: number; column?: string; table?: number; originalMeaning?: string }[];
+  sources: { kind: string; pdfPage?: number; row: number; column?: string; table?: number; originalMeaning?: string; url?: string; sourceFile?: string }[];
   meaningSource?: string;
   correction?: string;
   exampleSource?: string;

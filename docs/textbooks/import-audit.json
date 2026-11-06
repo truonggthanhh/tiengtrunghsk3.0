@@ -1,0 +1,25 @@
+{
+  "sourceRows": 4798,
+  "imported": 4796,
+  "duplicateOccurrences": 2,
+  "summary": [
+    {
+      "level": "boya",
+      "words": 836,
+      "englishGlosses": [],
+      "lessons": 25
+    },
+    {
+      "level": "han-ngu",
+      "words": 1046,
+      "englishGlosses": [],
+      "lessons": 25
+    },
+    {
+      "level": "hsk-standard",
+      "words": 2914,
+      "englishGlosses": [],
+      "lessons": 107
+    }
+  ]
+}

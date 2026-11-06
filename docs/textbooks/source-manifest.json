@@ -1,0 +1,59 @@
+{
+  "retrieved": "2026-11-06",
+  "files": [
+    {
+      "catalog": "boya",
+      "file": "BoyaChinese_Elementary_II_Vocavulary_List.csv",
+      "sha256": "0e9437e679babd106faf47aca11cb631da8010dc93a37aa4e7118d23d426ebfd",
+      "bytes": 50551
+    },
+    {
+      "catalog": "hanyu",
+      "file": "初级第二册上.txt",
+      "sha256": "7c652fbe4298e2b271633fc645720951ecfa53777c4d6a1ad4a7894bbb0ab414",
+      "bytes": 26136
+    },
+    {
+      "catalog": "hsk",
+      "file": "HSK Standard Course Vocabulary - hsk_5a.csv",
+      "sha256": "6bbb8aadf15b7b83f56cbe8e7d97241760f3ce09885ca3c49e2aced6f0c0609b",
+      "bytes": 72497
+    },
+    {
+      "catalog": "hsk",
+      "file": "HSK Standard Course Vocabulary - hsk_1.csv",
+      "sha256": "b6981d5eb592723f29ebe7e3763ba78ec90eb8c070f5b6ad8e04bce4ea6e449d",
+      "bytes": 15937
+    },
+    {
+      "catalog": "hsk",
+      "file": "HSK Standard Course Vocabulary - hsk_4a.csv",
+      "sha256": "18398f93335195ff306d0ccf79f721a4fc91e49cdbb8ad47d16542ed26417a0d",
+      "bytes": 34018
+    },
+    {
+      "catalog": "hsk",
+      "file": "HSK Standard Course Vocabulary - hsk_3.csv",
+      "sha256": "f7b14ccd9a4fa9121c754af11e23fe74c3c1ba5a00b34c03b277c2726b3a89fc",
+      "bytes": 30353
+    },
+    {
+      "catalog": "hsk",
+      "file": "HSK Standard Course Vocabulary - hsk_5b.csv",
+      "sha256": "31197f6eb2f285d44fa4da666d99216b228f306439ccd8a71bf281ee3978b091",
+      "bytes": 68027
+    },
+    {
+      "catalog": "hsk",
+      "file": "HSK Standard Course Vocabulary - hsk_4b.csv",
+      "sha256": "5012192db55c2699f0a707e18c29547e378d36cd01a1fc91f4bb70e6a12f090d",
+      "bytes": 37636
+    },
+    {
+      "catalog": "hsk",
+      "file": "HSK Standard Course Vocabulary - hsk_2.csv",
+      "sha256": "2fc4fd3b757cfdda6c85f6e98e9de11555403aa79b6a09c117c9a0743a74aecf",
+      "bytes": 14723
+    }
+  ]
+}

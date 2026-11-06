@@ -278,7 +278,7 @@ test('Msutong intermediate catalog isolates all four books and retains intermedi
   }
   const url = '/mandarin/msutong/msutong-flashcard?level=trung-cap&lessonIds=quyen-3-lesson-2';
   assert.equal(new URL(describeRecentLesson(url, 'mandarin')!.href, 'https://test.local').searchParams.get('level'), 'trung-cap');
-  assert.deepEqual(getReadingComprehensionByMsutong('trung-cap', ['quyen-1-lesson-1']), []);
+  assert(getReadingComprehensionByMsutong('trung-cap', ['quyen-1-lesson-1']).length > 0);
   assert.equal(all.find(word => word.hanzi === '待')?.pinyin, 'dāi');
   assert.equal(all.find(word => word.hanzi === '臭味相投')?.pinyin, 'chòuwèi xiāngtóu');
   assert.equal(all.find(word => word.hanzi === '卷')?.pinyin, 'juàn');
@@ -313,4 +313,45 @@ test('Msutong advanced retrieves all 40 lessons, all six tables and preserves so
   const recent = describeRecentLesson('/mandarin/msutong/msutong-flashcard?level=cao-cap&lessonIds=quyen-4-lesson-10', 'mandarin');
   assert(recent?.label.includes('Cao cấp'));
   assert.equal(new URL(recent!.href, 'https://test.local').searchParams.get('level'), 'cao-cap');
+});
+
+
+test('all 120 Msutong lessons have sentence practice and reading, with target words from the selected lesson', async () => {
+  const { getSentenceExercisesByMsutong, getReadingComprehensionByMsutong } = await import('../src/data/index');
+  const { practiceSegments, acceptsPracticeSentence } = await import('../src/lib/sentencePractice');
+  for (const level of ['so-cap', 'trung-cap', 'cao-cap']) for (let book = 1; book <= 4; book++) for (let lesson = 1; lesson <= 10; lesson++) {
+    const id = `quyen-${book}-lesson-${lesson}`;
+    const sentences = getSentenceExercisesByMsutong(level, [id]);
+    assert(new Set(sentences.map(s => s.sentence)).size >= 6, `${level}/${id} needs at least six different sentences`);
+    for (const item of sentences) {
+      assert.equal(item.sentence.split(item.word.hanzi).length, 2);
+      assert(item.translation);
+      assert(acceptsPracticeSentence(practiceSegments(item.sentence, item.segments).join(''), item.sentence));
+    }
+    const passages = getReadingComprehensionByMsutong(level, [id]);
+    assert(passages.length > 0, `${level}/${id} needs reading`);
+    assert(passages.every(p => p.questions.every(q => q.options.length === 4 && new Set(q.options).size === 4 && q.correctAnswerIndex >= 0 && q.correctAnswerIndex < 4)));
+  }
+  assert(acceptsPracticeSentence('我们周末陪爷爷去看画展', '周末，我们陪爷爷去看画展。', ['我们周末陪爷爷去看画展。']));
+  assert(!acceptsPracticeSentence('我们不去看画展', '周末，我们陪爷爷去看画展。'));
+});
+
+test('community textbooks preserve book and chapter boundaries, complete glosses and distinct identities', async () => {
+  const { getFullMsutongVocabularyByLevel, getVocabularyByMsutong } = await import('../src/data/index');
+  const { describeRecentLesson } = await import('../src/lib/learningNavigation');
+  const previous = new Set(['so-cap', 'trung-cap', 'cao-cap'].flatMap(level => getFullMsutongVocabularyByLevel(level).map(w => w.id)));
+  for (const [level, count] of [['boya', 836], ['han-ngu', 1046], ['hsk-standard', 2914]] as const) {
+    const all = getFullMsutongVocabularyByLevel(level);
+    assert.equal(all.length, count);
+    assert(all.every(w => w.hanzi && w.pinyin && w.meaning && !previous.has(w.id)));
+    for (const key of new Set(all.map(w => `${w.bookSlug}-lesson-${w.lesson}`))) {
+      const selected = getVocabularyByMsutong(level, [key]);
+      assert(selected.length > 0, `${level}/${key}`);
+      assert(selected.every(w => `${w.bookSlug}-lesson-${w.lesson}` === key));
+    }
+  }
+  const lastBook = getVocabularyByMsutong('hsk-standard', ['quyen-7-lesson-20']);
+  assert(lastBook.some(w => w.hanzi === '护国寺'));
+  assert(getVocabularyByMsutong('hsk-standard', ['quyen-7-lesson-2']).length === 0);
+  assert(describeRecentLesson('/mandarin/msutong/msutong-flashcard?level=boya&lessonIds=quyen-1-lesson-25', 'mandarin')?.label.includes('Boya'));
 });

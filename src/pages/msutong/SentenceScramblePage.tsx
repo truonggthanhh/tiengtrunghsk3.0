@@ -1,7 +1,9 @@
+import { curriculumTitle } from '@/lib/textbookCatalog';
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
-import { getVocabularyByMsutong } from '@/data';
+import { getSentenceExercisesByMsutong } from '@/data';
+import { acceptsPracticeSentence, practiceSegments } from '@/lib/sentencePractice';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ArrowRight, Home, RefreshCw, Grid3X3, ListOrdered } from 'lucide-react';
@@ -32,7 +34,7 @@ const MsutongSentenceScramblePage = () => {
   const lessonIds = useMemo(() => searchParams.get('lessonIds')?.split(',') || [], [searchParams]);
   const { trackQuizCompletion } = useGamificationTracking();
 
-  const vocabulary = useMemo(() => getVocabularyByMsutong(level, lessonIds), [level, lessonIds]);
+  const vocabulary = useMemo(() => getSentenceExercisesByMsutong(level, lessonIds), [level, lessonIds]);
 
   // Build URLs for back navigation
   const exerciseSelectionUrl = useMemo(() => {
@@ -51,17 +53,10 @@ const MsutongSentenceScramblePage = () => {
     return `/mandarin/msutong?${params.toString()}`;
   }, [level, lessonIds]);
 
-  const allAvailableQuestions = useMemo(() => {
-    return vocabulary.flatMap(word =>
-      word.examples ? word.examples.map(ex => ({
-          sentence: ex.hanzi,
-          translation: ex.translation, pinyin: ex.pinyin
-      })) : []
-    ).filter(q => q.sentence);
-  }, [vocabulary]);
+  const allAvailableQuestions = useMemo(() => [...new Map(vocabulary.map(item => [item.sentence, item])).values()], [vocabulary]);
 
   const [questionCount, setQuestionCount] = useState<number | null>(null);
-  const [questions, setQuestions] = useState<{ sentence: string; translation: string; pinyin?: string; }[]>([]);
+  const [questions, setQuestions] = useState<ReturnType<typeof getSentenceExercisesByMsutong>>([]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState<CharObject[]>([]);
@@ -75,7 +70,7 @@ const MsutongSentenceScramblePage = () => {
 
   const resetCurrentQuestion = useCallback(() => {
     if (currentQuestion) {
-        const chars = currentQuestion.sentence.replace(/[，。？！]/g, '').split('');
+        const chars = practiceSegments(currentQuestion.sentence, currentQuestion.segments);
         setShuffledChars(shuffleArray(chars.map((char, index) => ({ char, id: index }))));
         setUserAnswer([]);
         setAnswerStatus(null);
@@ -122,9 +117,9 @@ const MsutongSentenceScramblePage = () => {
   const handleSubmit = () => {
     if (answerStatus) return;
     const userAnswerString = userAnswer.map(c => c.char).join('');
-    const correctAnswerString = currentQuestion.sentence.replace(/[，。？！]/g, '');
+    const correctAnswerString = currentQuestion.sentence;
 
-    if (userAnswerString === correctAnswerString) {
+    if (acceptsPracticeSentence(userAnswerString, correctAnswerString, currentQuestion.acceptedSentences)) {
       setAnswerStatus('correct');
       setCorrectAnswers(prev => prev + 1);
       setTimeout(() => {
@@ -163,7 +158,7 @@ const MsutongSentenceScramblePage = () => {
             Dạng bài tập này đang được phát triển hoặc các bài bạn chọn không có câu ví dụ. Vui lòng quay lại sau.
           </p>
           <Button asChild>
-            <Link to="/mandarin/msutong">
+            <Link to={lessonSelectionUrl}>
               <Home className="mr-2 h-4 w-4" /> Quay lại trang chọn bài
             </Link>
           </Button>
@@ -183,21 +178,19 @@ const MsutongSentenceScramblePage = () => {
                 <CardDescription>Bạn muốn ôn tập bao nhiêu câu?</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-4">
-                {[10, 20, 50].map(count => (
+                {[5, 10, 20, 50].filter(count => count < allAvailableQuestions.length).map(count => (
                   <Button
                     key={count}
                     onClick={() => handleStart(count)}
-                    disabled={allAvailableQuestions.length < count}
                     size="lg"
                     className="font-bold"
                   >
                     {count} câu
-                    {allAvailableQuestions.length < count && ` (Không đủ câu)`}
                   </Button>
                 ))}
                 <Button onClick={() => handleStart(allAvailableQuestions.length)} size="lg" className="font-bold">Tất cả ({allAvailableQuestions.length} câu)</Button>
                 <Button asChild variant="outline" className="font-bold">
-                  <Link to="/mandarin/msutong">
+                  <Link to={lessonSelectionUrl}>
                     <Home className="mr-2 h-4 w-4" /> Quay về trang chọn bài
                   </Link>
                 </Button>
@@ -253,7 +246,8 @@ const MsutongSentenceScramblePage = () => {
         <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
           <div className="w-full max-w-3xl">
             <div className="mb-6 text-center">
-              <h1 className="text-3xl font-bold">Sắp Xếp Câu (Msutong)</h1>
+              <h1 className="text-3xl font-bold">Sắp Xếp Câu ({curriculumTitle(level)})</h1>
+              <p className="mt-2 text-xs text-muted-foreground">Câu luyện tập bổ sung, không phải trích nguyên văn giáo trình.</p>
               <p className="text-muted-foreground">Sắp xếp các từ sau thành một câu hoàn chỉnh.</p>
             </div>
 
@@ -292,6 +286,7 @@ const MsutongSentenceScramblePage = () => {
               ))}
             </div>
 
+            {answerStatus === 'correct' && <p role="status" className="mb-4 text-center font-semibold text-green-700 dark:text-green-300">Chính xác!</p>}
             <div className="flex justify-center gap-4">
               {answerStatus !== 'correct' && (
                 <Button onClick={handleSubmit} size="lg" disabled={!!answerStatus || userAnswer.length === 0} className="font-bold">
@@ -340,4 +335,7 @@ const MsutongSentenceScramblePage = () => {
   );
 };
 
-export default MsutongSentenceScramblePage;
+export default function SelectedLessonActivity() {
+  const [params] = useSearchParams();
+  return <MsutongSentenceScramblePage key={`${params.get('level') ?? 'so-cap'}:${params.get('lessonIds') ?? ''}`} />;
+}

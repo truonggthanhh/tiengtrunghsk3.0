@@ -1,6 +1,9 @@
+import SentenceChoicePage from '../src/pages/msutong/SentenceChoicePage';
+import SentenceScramblePage from '../src/pages/msutong/SentenceScramblePage';
+import MsutongReadingPage from '../src/pages/msutong/MsutongReadingComprehensionPage';
 import MsutongPage from '../src/pages/MsutongPage';
 import MsutongFlashcardPage from '../src/pages/msutong/MsutongFlashcardPage';
-import { getVocabularyByMsutong } from '../src/data';
+import { getSentenceExercisesByMsutong, getVocabularyByMsutong } from '../src/data';
 import MandarinBlogList from '../src/mandarin/pages/BlogPage';
 import CantoneseBlogList from '../src/cantonese/pages/BlogPage';
 import CantoneseSongDetail from '../src/cantonese/pages/SongDetail';
@@ -799,6 +802,48 @@ await check('Msutong advanced selects every lesson and keeps source citations an
   assert(host.querySelector('.flashcard-front p')?.textContent === '傣族', 'The front must contain only Hanzi');
   assert(host.textContent?.includes('trang 102, bảng 1'), 'The source must identify the exact table');
   assert(document.documentElement.scrollWidth <= window.innerWidth + 2, 'Advanced controls and long entries must fit the viewport');
+});
+await check('Textbook library selects Boya, Hanyu and all seven HSK volumes without mixing catalogs', async () => {
+  for (const [level, name, count] of [['boya', 'Boya', 836], ['han-ngu', 'Giáo trình Hán ngữ', 1046], ['hsk-standard', 'Giáo trình chuẩn HSK', 2914]] as const) {
+    renderMsutong(<MsutongPage />, `/mandarin/msutong?level=${level}`); await delay(30);
+    assert(host.textContent?.includes(name), 'Selected curriculum must be visible');
+    clickText('Chọn tất cả quyển'); await delay(25);
+    clickText('Chọn tất cả bài'); await delay(35);
+    assert(host.textContent?.includes(`${count} mục từ`), 'All actual source rows must be selectable');
+    assert(host.querySelector('a[download]')?.getAttribute('href') === `/data/textbooks/${level}-vocabulary.csv`, 'Download must match curriculum');
+    const link = host.querySelector<HTMLAnchorElement>('a[href*="msutong-flashcard?"]')!;
+    assert(new URL(link.href).searchParams.get('level') === level, 'Activity must preserve curriculum');
+  }
+});
+await check('Advanced sentence completion has real questions and hides full pinyin until answering', async () => {
+  renderMsutong(<SentenceChoicePage />, '/mandarin/msutong/msutong-sentence-choice?level=cao-cap&lessonIds=quyen-1-lesson-1'); await delay(30);
+  assert(host.textContent?.includes('5 câu') && !host.textContent?.includes('Không đủ câu'), 'Short lessons offer only usable batch sizes');
+  assert(host.querySelector('a[href*="step=lesson"]')?.getAttribute('href')?.includes('level=cao-cap'), 'Back navigation preserves the selected catalog');
+  clickText('Tất cả (6 câu)'); await delay(35);
+  assert(host.textContent?.includes('___'), 'An authored target must be blanked');
+  assert(host.textContent?.includes('Dựa vào nghĩa tiếng Việt'), 'Translation disambiguates the requested sense');
+  assert(!host.querySelector('p.italic'), 'Full-sentence pinyin must not reveal the missing word');
+  assert(document.documentElement.scrollWidth <= window.innerWidth + 2, 'Long sentence questions must fit');
+});
+await check('Intermediate sentence scramble uses movable phrase tiles and can submit a correct answer', async () => {
+  const entry = '/mandarin/msutong/msutong-sentence-scramble?level=trung-cap&lessonIds=quyen-1-lesson-1';
+  renderMsutong(<SentenceScramblePage />, entry); await delay(30);
+  clickText('Tất cả (6 câu)'); await delay(30);
+  const candidates = getSentenceExercisesByMsutong('trung-cap', ['quyen-1-lesson-1']);
+  const question = candidates.find(item => host.textContent?.includes(item.translation))!;
+  assert(question?.segments?.some(token => token.length > 1), 'Authored questions use word groups');
+  for (const token of question.segments!.filter(token => !/^[，。？！]$/.test(token))) {
+    const buttons = [...host.querySelectorAll<HTMLButtonElement>('button')].filter(button => button.textContent?.trim() === token && !button.disabled);
+    assert(buttons.length > 0, `Missing tile ${token}`); buttons[buttons.length - 1].click(); await delay(5);
+  }
+  clickText('Kiểm tra'); await delay(20);
+  assert(host.textContent?.includes('Chính xác') || host.textContent?.includes('Đúng rồi'), 'A valid arrangement must be accepted');
+});
+await check('Advanced reading opens an original passage and its comprehension questions', async () => {
+  renderMsutong(<MsutongReadingPage />, '/mandarin/msutong/msutong-reading-comprehension?level=cao-cap&lessonIds=quyen-1-lesson-1'); await delay(30);
+  assert(host.textContent?.includes('Lần gặp đối tác'), 'Reading must match selected lesson');
+  clickText('Bắt đầu làm bài'); await delay(20);
+  assert(host.textContent?.includes('Hai người làm gì khi gặp nhau?'), 'Authored question must render');
 });
 (window as unknown as { __showDesignRoute: (path: string, dark: boolean) => Promise<void> }).__showDesignRoute = async (path, dark) => {
   const { default: App } = await import('../src/App');

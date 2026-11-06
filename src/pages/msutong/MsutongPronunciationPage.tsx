@@ -1,3 +1,4 @@
+import { curriculumTitle } from '@/lib/textbookCatalog';
 import { acceptsMsutongAnswer } from '@/lib/msutongSelection';
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
@@ -31,7 +32,7 @@ const MsutongPronunciationPage = () => {
   const level = searchParams.get('level') || 'so-cap';
   const lessonIds = useMemo(() => searchParams.get('lessonIds')?.split(',') || [], [searchParams]);
 
-  const practiceVocabulary = useMemo(() => getVocabularyByMsutong(level, lessonIds).filter(word => !/[…V]/.test(word.hanzi)), [level, lessonIds]);
+  const practiceVocabulary = useMemo(() => getVocabularyByMsutong(level, lessonIds).filter(word => /^[\p{Script=Han}]+$/u.test(word.hanzi)), [level, lessonIds]);
 
   // Build URLs for back navigation
   const exerciseSelectionUrl = useMemo(() => {
@@ -250,7 +251,7 @@ const MsutongPronunciationPage = () => {
       <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
         <div className="w-full max-w-2xl bg-card p-6 md:p-8 rounded-xl shadow-lg border">
           <div className="mb-6 text-center">
-            <h1 className="text-3xl font-bold">Luyện Phát Âm (Msutong)</h1>
+            <h1 className="text-3xl font-bold">Luyện Phát Âm ({curriculumTitle(level)})</h1>
             <p className="text-muted-foreground">Nhấn nút và phát âm chữ Hán hiển thị bên dưới. Mẫu có chỗ trống được ôn bằng flashcard.</p>
           </div>
 

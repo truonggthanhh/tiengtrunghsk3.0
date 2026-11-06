@@ -1,10 +1,11 @@
+import { curriculumTitle } from '@/lib/textbookCatalog';
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
-import { getVocabularyByMsutong, getFullMsutongVocabularyByLevel, type VocabularyWord } from '@/data';
+import { getFullMsutongVocabularyByLevel, getSentenceExercisesByMsutong } from '@/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowRight, Home, CheckCircle2, XCircle, Grid3X3, ListOrdered, Lightbulb } from 'lucide-react';
+import { ArrowRight, Home, CheckCircle2, XCircle, Grid3X3, ListOrdered } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 import { cn } from '@/lib/utils';
 import { usePinyin } from '@/contexts/PinyinContext.shared';
@@ -27,7 +28,6 @@ const MsutongSentenceChoicePage = () => {
   const lessonIds = useMemo(() => searchParams.get('lessonIds')?.split(',') || [], [searchParams]);
   const { trackQuizCompletion } = useGamificationTracking();
 
-  const practiceVocabulary = useMemo(() => getVocabularyByMsutong(level, lessonIds), [level, lessonIds]);
   const distractorVocabulary = useMemo(() => getFullMsutongVocabularyByLevel(level), [level]);
 
   // Build URLs for back navigation
@@ -47,18 +47,10 @@ const MsutongSentenceChoicePage = () => {
     return `/mandarin/msutong?${params.toString()}`;
   }, [level, lessonIds]);
   
-  const allAvailableQuestions = useMemo(() => {
-    return practiceVocabulary.flatMap(word => 
-      word.examples ? word.examples.map(ex => ({ 
-          word: word, 
-          sentence: ex.hanzi, 
-          translation: ex.translation 
-      })) : []
-    ).filter(q => q.sentence && q.word);
-  }, [practiceVocabulary]);
+  const allAvailableQuestions = useMemo(() => getSentenceExercisesByMsutong(level, lessonIds), [level, lessonIds]);
 
   const [questionCount, setQuestionCount] = useState<number | null>(null);
-  const [questions, setQuestions] = useState<{ word: VocabularyWord; sentence: string; translation: string; }[]>([]);
+  const [questions, setQuestions] = useState<ReturnType<typeof getSentenceExercisesByMsutong>>([]);
   
   const [currentIndex, setCurrentIndex] = useState(0);
   const [options, setOptions] = useState<string[]>([]);
@@ -66,7 +58,6 @@ const MsutongSentenceChoicePage = () => {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [showResult, setShowResult] = useState(false);
-  const [showHint, setShowHint] = useState(false);
 
   const currentQuestion = useMemo(() => questions[currentIndex], [questions, currentIndex]);
 
@@ -84,7 +75,7 @@ const MsutongSentenceChoicePage = () => {
 
     const correctOption = currentQuestion.word.hanzi;
     const incorrectOptions = distractorVocabulary
-      .filter(word => word.hanzi !== correctOption)
+      .filter(word => /^[\p{Script=Han}]+$/u.test(word.hanzi) && word.hanzi !== correctOption && word.meaning !== currentQuestion.word.meaning)
       .map(word => word.hanzi);
 
     const shuffledIncorrect = shuffleArray([...new Set(incorrectOptions)]).slice(0, 3);
@@ -96,7 +87,6 @@ const MsutongSentenceChoicePage = () => {
   const goToNextWord = useCallback(() => {
     setSelectedAnswer(null);
     setIsCorrect(null);
-    setShowHint(false);
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(prev => prev + 1);
     } else {
@@ -131,7 +121,6 @@ const MsutongSentenceChoicePage = () => {
     setShowResult(false);
     setSelectedAnswer(null);
     setIsCorrect(null);
-    setShowHint(false);
   };
   
   const handleAnswer = (answer: string) => {
@@ -154,7 +143,6 @@ const MsutongSentenceChoicePage = () => {
     setCurrentIndex(0);
     setCorrectAnswers(0);
     setShowResult(false);
-    setShowHint(false);
   };
 
   if (allAvailableQuestions.length === 0) {
@@ -167,7 +155,7 @@ const MsutongSentenceChoicePage = () => {
             Dạng bài tập này đang được phát triển hoặc các bài bạn chọn không có câu ví dụ. Vui lòng quay lại sau.
           </p>
           <Button asChild>
-            <Link to="/mandarin/msutong">
+            <Link to={lessonSelectionUrl}>
               <Home className="mr-2 h-4 w-4" /> Quay lại trang chọn bài
             </Link>
           </Button>
@@ -187,21 +175,19 @@ const MsutongSentenceChoicePage = () => {
               <CardDescription>Bạn muốn ôn tập bao nhiêu câu?</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
-              {[10, 20, 50].map(count => (
+              {[5, 10, 20, 50].filter(count => count < allAvailableQuestions.length).map(count => (
                 <Button 
                   key={count} 
                   onClick={() => handleStart(count)} 
-                  disabled={allAvailableQuestions.length < count}
                   size="lg"
                   className="font-bold"
                 >
                   {count} câu
-                  {allAvailableQuestions.length < count && ` (Không đủ câu)`}
                 </Button>
               ))}
               <Button onClick={() => handleStart(allAvailableQuestions.length)} size="lg" className="font-bold">Tất cả ({allAvailableQuestions.length} câu)</Button>
               <Button asChild variant="outline" className="font-bold">
-                <Link to="/mandarin/msutong">
+                <Link to={lessonSelectionUrl}>
                   <Home className="mr-2 h-4 w-4" /> Quay về trang chọn bài
                 </Link>
               </Button>
@@ -258,8 +244,9 @@ const MsutongSentenceChoicePage = () => {
         <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
           <div className="w-full max-w-2xl">
             <div className="mb-6 text-center">
-              <h1 className="text-3xl font-bold">Điền Từ Vào Câu (Msutong)</h1>
-              <p className="text-muted-foreground">Chọn từ đúng để hoàn thành câu sau.</p>
+              <h1 className="text-3xl font-bold">Điền Từ Vào Câu ({curriculumTitle(level)})</h1>
+              <p className="mt-2 text-xs text-muted-foreground">Câu luyện tập bổ sung, không phải trích nguyên văn giáo trình.</p>
+              <p className="text-muted-foreground">Dựa vào nghĩa tiếng Việt, chọn từ đúng để hoàn thành câu.</p>
             </div>
 
             <div className="mb-4">
@@ -273,34 +260,15 @@ const MsutongSentenceChoicePage = () => {
             <Card className="mb-8 shadow-md bg-gradient-ocean text-white border-0">
               <CardContent className="p-10 flex flex-col items-center justify-center text-center gap-4">
                 <h2 className="text-4xl md:text-5xl font-bold tracking-wider">{questionSentence}</h2>
-                {showPinyin && currentQuestion?.sentence && (
+                {showPinyin && selectedAnswer && currentQuestion?.sentence && (
                   <p className="text-xl font-medium text-white/80 italic">
                     {/* Show pinyin for the full sentence if available from example data */}
-                    {practiceVocabulary.find(w => w.hanzi === currentQuestion.word.hanzi)?.examples?.find(ex => ex.hanzi === currentQuestion.sentence)?.pinyin || ''}
+                    {currentQuestion.pinyin || ''}
                   </p>
                 )}
-                {(showHint || selectedAnswer) ? (
-                  <p className="text-lg text-white/90">{currentQuestion?.translation}</p>
-                ) : (
-                  <p className="text-lg text-white/70 italic">Nghĩa tiếng Việt đã được ẩn</p>
-                )}
+                <p className="text-lg text-white/90">{currentQuestion?.translation}</p>
               </CardContent>
             </Card>
-
-            {!selectedAnswer && !showHint && (
-              <div className="mb-4 text-center">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setShowHint(true)}
-                  className="font-bold"
-                  size="sm"
-                >
-                  <Lightbulb className="mr-2 h-4 w-4" />
-                  Gợi ý đáp án
-                </Button>
-              </div>
-            )}
 
             <div className="grid grid-cols-2 gap-4">
               {options.map((option, index) => {
@@ -362,4 +330,7 @@ const MsutongSentenceChoicePage = () => {
   );
 };
 
-export default MsutongSentenceChoicePage;
+export default function SelectedLessonActivity() {
+  const [params] = useSearchParams();
+  return <MsutongSentenceChoicePage key={`${params.get('level') ?? 'so-cap'}:${params.get('lessonIds') ?? ''}`} />;
+}

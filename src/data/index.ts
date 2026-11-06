@@ -1,3 +1,6 @@
+import textbookVocabulary from './textbooks/vocabulary.json';
+import practiceSentences from './practice/sentences.json';
+import practiceReadings from './practice/readings.json';
 import { parseMsutongLessonId } from '../lib/msutongSelection';
 import { hsk1Vocabulary, type VocabularyWord } from './hsk1';
 import { hsk2Vocabulary } from './hsk2';
@@ -13,6 +16,13 @@ import { hsk6ExtendedVocabulary } from './hsk6-extended';
 import { pdfMsutongVocabulary, intermediateMsutongVocabulary, advancedMsutongVocabulary } from './msutong/pdf-vocabulary';
 import type { MsutongWord } from './msutong/so-cap-1-vocab';
 import { msutongReadingComprehension, type ReadingComprehensionQuestion, type ReadingComprehensionPassage } from './msutong/reading-comprehension';
+
+const supplementalExamples = new Map<string, typeof practiceSentences>();
+for (const item of practiceSentences) {
+  const key = `${item.level}:${item.wordId}`;
+  const bucket = supplementalExamples.get(key) ?? [];
+  bucket.push(item); supplementalExamples.set(key, bucket);
+}
 
 const vocabularyData: { [key: string]: VocabularyWord[] } = {
   '1': hsk1Vocabulary,
@@ -61,8 +71,17 @@ const msutongVocabularyData: { [level: string]: { [book: string]: MsutongWord[] 
   },
 };
 
+// Community textbook rows share the same activity adapter and keep their own IDs.
+for (const word of textbookVocabulary) {
+  const level = msutongVocabularyData[word.level] ??= {};
+  (level[word.bookSlug] ??= []).push(word);
+}
+
 const msutongReadingComprehensionData: { [level: string]: ReadingComprehensionPassage[] } = {
-  'so-cap': msutongReadingComprehension,
+  'so-cap': [...msutongReadingComprehension, ...practiceReadings.filter(item => item.level === 'so-cap')],
+  'trung-cap': practiceReadings.filter(item => item.level === 'trung-cap'),
+  'cao-cap': practiceReadings.filter(item => item.level === 'cao-cap'),
+  'hsk-standard': practiceReadings.filter(item => item.level === 'hsk-standard'),
   // Dữ liệu cho các cấp độ khác sẽ được thêm vào đây
 };
 
@@ -86,7 +105,7 @@ export const getFullMsutongVocabularyByLevel = (level: string): MsutongWord[] =>
   });
 };
 
-export const getVocabularyByMsutong = (level: string, lessonIds: string[]): VocabularyWord[] => {
+export const getVocabularyByMsutong = (level: string, lessonIds: string[]): MsutongWord[] => {
   const selections = [...new Set(lessonIds)].flatMap(id => {
     const parsed = parseMsutongLessonId(id);
     return parsed ? [parsed] : [];
@@ -114,8 +133,35 @@ export const getVocabularyByMsutong = (level: string, lessonIds: string[]): Voca
       uniqueIds.add(word.id);
       return true;
     }
+  }).map(word => {
+    const supplements = supplementalExamples.get(`${level}:${word.id}`) ?? [];
+    if (!supplements.length) return word;
+    const examples = [...(word.examples ?? [])];
+    for (const item of supplements) if (!examples.some(example => example.hanzi === item.sentence)) examples.push({ hanzi: item.sentence, pinyin: item.pinyin, translation: item.translation });
+    return { ...word, examples };
   });
 };
+
+export interface SentenceExercise {
+  word: VocabularyWord;
+  sentence: string;
+  translation: string;
+  pinyin?: string;
+  segments?: string[];
+  acceptedSentences: string[];
+}
+export function getSentenceExercisesByMsutong(level: string, lessonIds: string[]): SentenceExercise[] {
+  const words = getVocabularyByMsutong(level, lessonIds);
+  const seen = new Set<string>();
+  return words.flatMap(word => (word.examples ?? []).flatMap(example => {
+    if (!example.hanzi || !example.translation || !/^[\p{Script=Han}]+$/u.test(word.hanzi) || example.hanzi.split(word.hanzi).length !== 2) return [];
+    const key = `${word.hanzi}|${example.hanzi}`;
+    if (seen.has(key)) return [];
+    seen.add(key);
+    const authored = (supplementalExamples.get(`${level}:${word.id}`) ?? []).find(item => item.sentence === example.hanzi);
+    return [{ word, sentence: example.hanzi, translation: example.translation, pinyin: example.pinyin, segments: authored?.segments, acceptedSentences: authored?.acceptedSentences ?? [] }];
+  }));
+}
 
 export const getReadingComprehensionByMsutong = (level: string, lessonIds: string[]): ReadingComprehensionPassage[] => {
   const passagesForLevel = msutongReadingComprehensionData[level];

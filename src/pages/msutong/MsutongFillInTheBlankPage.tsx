@@ -1,3 +1,4 @@
+import { curriculumTitle } from '@/lib/textbookCatalog';
 import { acceptsMsutongAnswer } from '@/lib/msutongSelection';
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
@@ -218,7 +219,7 @@ const MsutongFillInTheBlankPage = () => {
         <main className="container mx-auto p-4 md:p-8 flex-grow flex flex-col items-center justify-center">
           <div className="w-full max-w-2xl">
             <div className="mb-6 text-center">
-              <h1 className="text-3xl font-bold">Điền Từ (Msutong)</h1>
+              <h1 className="text-3xl font-bold">Điền Từ ({curriculumTitle(level)})</h1>
               <p className="text-muted-foreground">Dựa vào phiên âm và nghĩa, hãy điền chữ Hán tương ứng.</p>
             </div>
 
