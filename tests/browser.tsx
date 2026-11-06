@@ -1,3 +1,6 @@
+import TextbookPicker from '../src/components/TextbookPicker';
+import LegalPage from '../src/pages/LegalPage';
+import { policyPages } from '../src/data/legal/policies';
 import { canOpenLesson } from '../src/cantonese/hooks/useLessonAccess';
 import { ProfileContext as CantoneseProfileContext } from '../src/cantonese/components/providers/ProfileProvider.shared';
 import SentenceChoicePage from '../src/pages/msutong/SentenceChoicePage';
@@ -199,7 +202,7 @@ await check('Main app routes mount with their actual providers', async () => {
   const { default: App } = await import('../src/App');
   history.replaceState(null, '', '/');
   root.render(<App />);
-  for (const [path, expected] of [['/', 'Chọn phương ngữ'], ['/mandarin', 'HSK'], ['/cantonese', 'Một câu tiếng Quảng'], ['/mandarin/blog/sample', 'Regression blog'], ['/cantonese/blog/sample', 'Regression blog'], ['/mandarin/notebook', 'Sổ từ tiếng Trung'], ['/cantonese/notebook', 'Sổ từ Quảng Đông'], ['/mandarin/forgot-password', 'Quên mật khẩu'], ['/cantonese/forgot-password', 'Quên mật khẩu'], ['/mandarin/update-password', 'Liên kết không hợp lệ'], ['/cantonese/update-password', 'Liên kết không hợp lệ'], ['/mandarin/login', 'Chào mừng bạn trở lại'], ['/cantonese/login', 'Chào mừng bạn trở lại'], ['/mandarin/songs', 'Để giai điệu dẫn đường'], ['/cantonese/songs', 'Để giai điệu dẫn đường'], ['/mandarin/blog', 'Góc đọc'], ['/cantonese/blog', 'Góc đọc'], ['/mandarin/dictionary', 'Tra một từ.'], ['/cantonese/lessons', 'Một bài học.'], ['/mandarin/hsk/1/flashcard', 'Flashcards HSK 1'], ['/mandarin/msutong', 'Học theo quyển.'], ['/mandarin/msutong/msutong-flashcard?level=so-cap&lessonIds=quyen-1-lesson-1', 'Flashcard']]) {
+  for (const [path, expected] of [['/', 'Chọn phương ngữ'], ['/mandarin', 'HSK'], ['/cantonese', 'Một câu tiếng Quảng'], ['/mandarin/blog/sample', 'Regression blog'], ['/cantonese/blog/sample', 'Regression blog'], ['/mandarin/notebook', 'Sổ từ tiếng Trung'], ['/cantonese/notebook', 'Sổ từ Quảng Đông'], ['/mandarin/forgot-password', 'Quên mật khẩu'], ['/cantonese/forgot-password', 'Quên mật khẩu'], ['/mandarin/update-password', 'Liên kết không hợp lệ'], ['/cantonese/update-password', 'Liên kết không hợp lệ'], ['/mandarin/login', 'Chào mừng bạn trở lại'], ['/cantonese/login', 'Chào mừng bạn trở lại'], ['/mandarin/songs', 'Để giai điệu dẫn đường'], ['/cantonese/songs', 'Để giai điệu dẫn đường'], ['/mandarin/blog', 'Góc đọc'], ['/cantonese/blog', 'Góc đọc'], ['/mandarin/dictionary', 'Tra một từ.'], ['/cantonese/lessons', 'Một bài học.'], ['/mandarin/hsk/1/flashcard', 'Flashcards HSK 1'], ['/mandarin/msutong', 'Bạn đang học giáo trình nào?'], ['/mandarin/textbooks', 'Bạn đang học giáo trình nào?'], ['/mandarin/textbooks?curriculum=msutong', 'Học theo quyển.'], ['/legal/privacy?from=cantonese', 'Chính sách bảo mật'], ['/mandarin/msutong/msutong-flashcard?level=so-cap&lessonIds=quyen-1-lesson-1', 'Flashcard']]) {
     history.pushState(null, '', path);
     window.dispatchEvent(new PopStateEvent('popstate'));
     await delay(50);
@@ -283,8 +286,27 @@ for (const language of ['mandarin', 'cantonese'] as const) {
     assert(calls === 0, 'Mismatched passwords must never reach the SDK');
     setInput('#auth-confirmation', 'password12'); await delay(10);
     host.querySelector('form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    assert(calls === 0, 'Consent must not be inferred from signup submission');
+    for (const key of ['age', 'terms', 'processing']) {
+      const input = host.querySelector<HTMLInputElement>(`#signup-policy-${key}`)!;
+      assert(!input.checked, 'Consent must never be preselected'); input.click(); await delay(5);
+    }
+    host.querySelector('form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     await until(() => Boolean(host.textContent?.includes('Hãy mở email')));
     assert(calls === 1 && host.textContent?.includes('Gửi lại email xác nhận'), 'Verification must be clearly actionable');
+  });
+  await check(`${language} Google login requires an explicit data choice before redirecting`, async () => {
+    let calls = 0;
+    const original = sdk.auth.signInWithOAuth;
+    sdk.auth.signInWithOAuth = (() => { calls++; return Promise.resolve({ data: { url: 'https://example.test' }, error: null }); }) as never;
+    try {
+      root.render(<MemoryRouter key={`google-${language}`}><LoginScreen client={sdk} language={language} session={null} isLoading={false} /></MemoryRouter>); await delay(25);
+      clickText('Tiếp tục với Google'); await delay(10);
+      assert(calls === 0, 'Google must not receive a request before acknowledgement');
+      for (const key of ['age', 'terms', 'processing']) { host.querySelector<HTMLInputElement>(`#google-policy-${key}`)!.click(); await delay(5); }
+      clickText('Tiếp tục với Google'); await delay(10);
+      assert(calls === 1, 'An explicit choice permits Google login');
+    } finally { sdk.auth.signInWithOAuth = original; }
   });
   await check(`${language} password recovery: network rejection unlocks the form`, async () => {
     sdk.auth.resetPasswordForEmail = (() => Promise.reject(new Error('Network fetch failed'))) as never;
@@ -707,9 +729,29 @@ for (const language of ['mandarin', 'cantonese'] as const) for (const kind of ['
     } finally { mockClient(sdk, language); }
   });
 }
-function renderMsutong(node: React.ReactNode, entry = '/mandarin/msutong', authenticated = true) {
+function renderMsutong(node: React.ReactNode, entry = '/mandarin/msutong?level=so-cap', authenticated = true) {
   root.render(<QueryClientProvider client={client()}><MemoryRouter key={entry} initialEntries={[entry]}><MandarinSessionContext.Provider value={{ session: authenticated ? fakeSession('msutong-learner') : null, isLoading: false }}><PinyinProvider>{node}</PinyinProvider></MandarinSessionContext.Provider></MemoryRouter></QueryClientProvider>);
 }
+await check('Textbook landing and homepage picker require a family choice before showing book controls', async () => {
+  renderMsutong(<MsutongPage />, '/mandarin/textbooks', false); await delay(30);
+  assert(host.querySelectorAll('main [aria-label="Chọn giáo trình"] a').length === 4, 'Four textbook families must be discoverable without login');
+  assert(!host.querySelector('[aria-label="Chọn Quyển 1"]'), 'Books must not expand before choosing a family');
+  renderMsutong(<MsutongPage />, '/mandarin/textbooks?level=boya'); await delay(30);
+  assert(host.textContent?.includes('836 mục từ'), 'Boya selection opens its own catalog');
+  assert(!host.querySelector('[aria-label="Cấp độ Msutong"]'), 'Boya must not display Msutong levels');
+  root.render(<MemoryRouter><TextbookPicker /></MemoryRouter>); await delay(25);
+  assert(host.querySelectorAll('a').length === 4 && !host.textContent?.includes('Quyển 4'), 'Homepage picker remains a family-level overview');
+  assert(document.documentElement.scrollWidth <= window.innerWidth + 2, 'Catalog cards fit narrow viewports');
+});
+await check('All legal pages are public and keep Cantonese return navigation', async () => {
+  for (const policy of policyPages) {
+    root.render(<MemoryRouter key={policy.slug} initialEntries={[`/legal/${policy.slug}?from=cantonese`]}><Routes><Route path="/legal/:document" element={<LegalPage />} /></Routes></MemoryRouter>); await delay(20);
+    assert(host.querySelector('h1')?.textContent === policy.title, 'Every policy has a dedicated readable page');
+    assert(host.querySelector('a[href="/cantonese"]'), 'Legal pages return to the correct language');
+    assert(host.querySelector('a[href="mailto:disneychanelmovie@gmail.com"]'), 'Real contact channel must be provided');
+    assert(document.documentElement.scrollWidth <= window.innerWidth + 2, 'Policy text must fit narrow viewports');
+  }
+});
 await check('Msutong exposes all four books and passes exactly the selected lessons to activities', async () => {
   renderMsutong(<MsutongPage />); await delay(30);
   for (let book = 1; book <= 4; book++) {

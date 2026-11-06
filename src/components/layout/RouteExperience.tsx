@@ -11,7 +11,7 @@ export default function RouteExperience() {
     initial.current = false;
     const language = pathname.startsWith('/cantonese') ? 'Quảng Đông' : 'Tiếng Trung';
     const slug = pathname.split('/').at(-1) ?? '';
-    const titles: Record<string, string> = { mandarin: 'Học tiếng Trung', cantonese: 'Học tiếng Quảng Đông', notebook: 'Sổ từ cá nhân', lessons: 'Thư viện bài học', songs: 'Học qua bài hát', dictionary: 'Từ điển Trung – Việt', blog: 'Góc đọc', login: 'Đăng nhập', profile: 'Hồ sơ của tôi', 'forgot-password': 'Quên mật khẩu', 'update-password': 'Đặt mật khẩu mới', 'learning-progress': 'Tiến độ học', admin: 'Quản trị', dashboard: 'Quản trị', msutong: 'Giáo trình Msutong' };
+    const titles: Record<string, string> = { mandarin: 'Học tiếng Trung', cantonese: 'Học tiếng Quảng Đông', notebook: 'Sổ từ cá nhân', lessons: 'Thư viện bài học', songs: 'Học qua bài hát', dictionary: 'Từ điển Trung – Việt', blog: 'Góc đọc', login: 'Đăng nhập', profile: 'Hồ sơ của tôi', 'forgot-password': 'Quên mật khẩu', 'update-password': 'Đặt mật khẩu mới', 'learning-progress': 'Tiến độ học', admin: 'Quản trị', dashboard: 'Quản trị', msutong: 'Giáo trình', textbooks: 'Giáo trình', terms: 'Điều khoản sử dụng', privacy: 'Chính sách bảo mật', 'data-processing': 'Thông báo xử lý dữ liệu', storage: 'Lưu trữ trình duyệt', contact: 'Liên hệ' };
     const mode = practiceModes.find(item => item.slug === slug);
     document.title = pathname === '/' ? 'HaoHao · Mỗi ngày một ngôn ngữ mới' : `${titles[slug] ?? mode?.label ?? language} · HaoHao`;
     document.documentElement.lang = 'vi';

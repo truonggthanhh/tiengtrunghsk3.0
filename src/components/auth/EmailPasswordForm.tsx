@@ -1,3 +1,6 @@
+import PolicyAcknowledgement from './PolicyAcknowledgement';
+import { emptyPolicyChoice, acceptedPolicy } from '@/lib/policyConsent';
+import { legalVersion } from '@/data/legal/policies';
 import { authErrorMessage } from '@/lib/auth/errors';
 import { useRef, useState, type FormEvent } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
@@ -11,6 +14,7 @@ import { toError } from '@/lib/errors';
 
 
 export default function EmailPasswordForm({ client, language, returnUrl }: { client: SupabaseClient; language: LearningLanguage; returnUrl?: string }) {
+  const [policyChoice, setPolicyChoice] = useState(emptyPolicyChoice);
   const [signUp, setSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -32,11 +36,12 @@ export default function EmailPasswordForm({ client, language, returnUrl }: { cli
     if (!email.trim() || !password) { setError('Vui lòng nhập email và mật khẩu.'); return; }
     if (signUp && password.length < 8) { setError('Mật khẩu mới cần ít nhất 8 ký tự.'); return; }
     if (signUp && password !== confirmation) { setError('Mật khẩu xác nhận không khớp.'); return; }
+    if (signUp && !acceptedPolicy(policyChoice)) { setError('Vui lòng xác nhận độ tuổi, điều khoản và lựa chọn xử lý dữ liệu trước khi đăng ký.'); return; }
     busy.current = true; setPending(true);
     try {
       if (signUp) {
         const { data, error: responseError } = await client.auth.signUp({ email: email.trim(), password,
-          options: { emailRedirectTo: redirectTo, data: { first_name: name.trim() } } });
+          options: { emailRedirectTo: redirectTo, data: { first_name: name.trim(), legal_acknowledgement: { version: legalVersion, accepted_at: new Date().toISOString(), terms: true, processing: true, age_16_plus: true } } } });
         if (responseError) throw responseError;
         if (data.user?.identities?.length === 0) throw new Error('User already registered');
         if (!data.session) {
@@ -77,6 +82,7 @@ export default function EmailPasswordForm({ client, language, returnUrl }: { cli
         <Button type="button" variant="ghost" size="icon" className="absolute right-1 top-0" aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'} aria-pressed={showPassword} onClick={() => setShowPassword(value => !value)}>{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</Button></div>
         {signUp && <p className="text-xs text-muted-foreground">Tối thiểu 8 ký tự; nên kết hợp chữ, số và ký hiệu.</p>}</div>
       {signUp && <div className="space-y-2"><Label htmlFor="auth-confirmation">Nhập lại mật khẩu</Label><Input id="auth-confirmation" type={showPassword ? 'text' : 'password'} autoComplete="new-password" required value={confirmation} onChange={e => setConfirmation(e.target.value)} /></div>}
+      {signUp && <PolicyAcknowledgement language={language} prefix="signup-policy" value={policyChoice} onChange={setPolicyChoice} />}
       <Button type="submit" className="w-full">{pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}{pending ? 'Đang xử lý…' : signUp ? 'Đăng ký tài khoản' : 'Đăng nhập bằng email'}</Button>
     </fieldset>
     {canResend && <Button type="button" variant="outline" className="w-full" disabled={pending} onClick={resend}>Gửi lại email xác nhận</Button>}

@@ -126,3 +126,13 @@ Validation: rebuilding both data libraries and the coverage audit passed, all th
 The library filtered paid-course lessons using only course grants, dropping lessons granted individually by `set_user_lesson_access`. Both the library and detail page now consult the existing `user_lesson_access` records with account-scoped cache keys. They share permission evaluation for direct grants, course grants, free lessons, creators and admins. Detail waits for grants before denying access and reports lookup errors; the library retry refreshes lesson grants too. Supabase RLS remains unchanged and authoritative.
 
 Validation: lint, TypeScript, 25 Node tests, and 66 Chromium cases at 1440px and 320px passed. The library regression includes a directly assigned lesson inside an otherwise inaccessible course, and keeps an unrelated lesson hidden. Additional assertions cover creators, admins and logged-out users. Browser responses are mocked; live account data was not inspected.
+
+## Textbook family navigation and legal information
+
+The homepage and `/mandarin/textbooks` now present four families first: Msutong, Boya, Hanyu and HSK Standard Course. Choosing one opens its scoped catalog; only Msutong exposes the three-level selector. Existing level/book/lesson URLs and activity routes remain usable, and the header labels the entry “Giáo trình”.
+
+Added five public legal pages and links from both homepages, the language gateway and login. Text reflects the supplied operator display name HaoHao, contact disneychanelmovie@gmail.com, no current course sales and no service for under-16s. Separate unchecked acknowledgements cover age, terms and necessary account data processing in email signup/Google access. Email signup metadata carries the policy version and timestamp; this is not an immutable legal audit log. Policies disclose Supabase projects, browser storage, AI, speech, third-party content and the lack of an automatic retention schedule.
+
+See [the legal review and remaining operational work](docs/legal/REVIEW.md). Government legal sources are blocked by the environment proxy, so current legislation/guidance was not verified against primary text. This change does not establish legal compliance, supplier agreements, cross-border filings, copyright clearance or a durable OAuth consent record. Production account data and external filings were not changed.
+
+Validation: lint, TypeScript, production build, 25 Node tests and 70 Chromium cases passed at desktop/320px. An additional 390px mobile run passed with visual inspection of textbook and policy screenshots. Vite continues to warn about existing large chunks.

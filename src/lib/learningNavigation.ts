@@ -20,7 +20,7 @@ export function learningLinks(language: LearningLanguage): LearningLink[] {
   const base = `/${language}`;
   return [
     { label: language === 'mandarin' ? 'Lộ trình HSK' : 'Bài học', href: language === 'mandarin' ? `${base}#learning-path` : `${base}/lessons`, icon: BookOpen, description: language === 'mandarin' ? 'Chọn cấp độ và dạng bài tập' : 'Khám phá thư viện bài học Quảng Đông', keywords: 'khoa hoc khóa học luyen tap luyện tập' },
-    ...(language === 'mandarin' ? [{ label: 'Giáo trình Msutong', href: `${base}/msutong`, icon: LibraryBig, description: 'Học theo giáo trình quen thuộc' }] : []),
+    ...(language === 'mandarin' ? [{ label: 'Giáo trình', href: `${base}/textbooks`, icon: LibraryBig, description: 'Học theo giáo trình quen thuộc' }] : []),
     { label: 'Sổ từ cá nhân', href: `${base}/notebook`, icon: BookMarked, description: 'Lưu từ và ôn lại những từ chưa nhớ', keywords: 'so tu flashcard on tap ôn tập' },
     { label: 'Bài hát', href: `${base}/songs`, icon: Music2, description: language === 'mandarin' ? 'Luyện nghe cùng Mandopop' : 'Khám phá giai điệu Cantopop', keywords: 'bai hat nhac âm nhạc' },
     ...(language === 'mandarin' ? [{ label: 'Từ điển Trung – Việt', href: `${base}/dictionary`, icon: BookOpen, description: 'Tra chữ Hán, pinyin và nghĩa tiếng Việt', keywords: 'tu dien tra cuu' }] : []),
@@ -32,6 +32,7 @@ export function learningLinks(language: LearningLanguage): LearningLink[] {
 }
 export function isLearningLinkActive(href: string, pathname: string, hash = '') {
   const [path, anchor] = href.split('#');
+  if (path === '/mandarin/textbooks' && (pathname === '/mandarin/msutong' || pathname.startsWith('/mandarin/msutong/'))) return true;
   if (anchor) return pathname === path && hash === `#${anchor}`;
   return pathname === path || pathname.startsWith(`${path}/`);
 }

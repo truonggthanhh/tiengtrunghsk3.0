@@ -1,3 +1,6 @@
+import PolicyAcknowledgement from './PolicyAcknowledgement';
+import { emptyPolicyChoice, acceptedPolicy } from '@/lib/policyConsent';
+import LegalLinks from '@/components/LegalLinks';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import type { Session, SupabaseClient } from '@supabase/supabase-js';
@@ -12,6 +15,8 @@ export default function LoginScreen({ client, language, session, isLoading, sess
   const { search } = useLocation();
   const navigate = useNavigate();
   const target = safeReturnPath(new URLSearchParams(search).get('returnUrl'), language, language === 'cantonese' ? '/cantonese/lessons' : '/mandarin');
+  const [googlePolicyOpen, setGooglePolicyOpen] = useState(false);
+  const [googlePolicy, setGooglePolicy] = useState(emptyPolicyChoice);
   const [error, setError] = useState('');
   const [pending, setPending] = useState(false);
   const busy = useRef(false);
@@ -19,6 +24,7 @@ export default function LoginScreen({ client, language, session, isLoading, sess
   if (isLoading || session) return <div role="status" className="flex min-h-[60vh] items-center justify-center gap-3"><Loader2 className="h-5 w-5 animate-spin" />Đang kiểm tra phiên đăng nhập…</div>;
   async function google() {
     if (busy.current) return;
+    if (!acceptedPolicy(googlePolicy)) { setGooglePolicyOpen(true); setError('Trước khi tiếp tục với Google, vui lòng xác nhận độ tuổi, điều khoản và lựa chọn xử lý dữ liệu.'); return; }
     busy.current = true; setPending(true); setError('');
     try {
       const { error: responseError } = await client.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}${target}` } });
@@ -39,7 +45,9 @@ export default function LoginScreen({ client, language, session, isLoading, sess
           {(sessionError || error) && <p role="alert" className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{sessionError || error}</p>}
           <fieldset disabled={pending}><EmailPasswordForm client={client} language={language} returnUrl={target} /></fieldset>
           <div className="flex items-center gap-3 text-xs text-muted-foreground"><hr className="flex-1" />HOẶC<hr className="flex-1" /></div>
+          {googlePolicyOpen && <fieldset disabled={pending}><PolicyAcknowledgement language={language} prefix="google-policy" value={googlePolicy} onChange={setGooglePolicy} /></fieldset>}
           <Button type="button" variant="outline" className="w-full" disabled={pending} onClick={google}>{pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Tiếp tục với Google</Button>
+          <p className="text-xs leading-6 text-muted-foreground">Đăng nhập Google có thể chia sẻ email, tên và ảnh đại diện với hệ thống xác thực. Hãy đọc thông báo xử lý dữ liệu trước khi tiếp tục.</p><LegalLinks language={language} />
         </CardContent>
       </Card>
     </div>

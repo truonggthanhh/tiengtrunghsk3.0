@@ -1,3 +1,4 @@
+import LegalPage from './pages/LegalPage';
 import Header from '@/components/Header';
 import RouteExperience from '@/components/layout/RouteExperience';
 import React, { lazy, Suspense } from "react";
@@ -136,6 +137,7 @@ const App = () => (
                 <Routes>
             {/* Language Selection */}
             <Route path="/" element={<LanguageSelection />} />
+            <Route path="/legal/:document" element={<LegalPage />} />
 
             {/* Mandarin App Routes */}
             <Route path="/mandarin">
@@ -367,7 +369,8 @@ const App = () => (
                 }
               />
 
-              {/* Msutong Routes */}
+              {/* Textbook library and legacy Msutong routes */}
+              <Route path="textbooks" element={<SessionContextProvider><PinyinProvider><MsutongPage /></PinyinProvider></SessionContextProvider>} />
               <Route
                 path="msutong"
                 element={
